@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  examples/vulnerable-manifest.xml
+  ================================
+
+  A deliberately vulnerable AndroidManifest.xml for Chapter 32, Lab 02.
+
+  There are MORE THAN THIRTY planted issues in this file. Some are obvious.
+  Several are invisible unless you know the targetSdk Version Matrix
+  (README section 3.4). Two are below </application>, where most auditors stop
+  reading. One is a positive finding that a careless auditor will report as a
+  vulnerability and be wrong about.
+
+  HOW TO USE THIS FILE
+    1. Audit it BY HAND against the checklist in README section 5.6.
+       Write down every finding with a severity before you look at anything else.
+    2. Then run the script:
+         python3 ../scripts/manifest-audit.py vulnerable-manifest.xml
+    3. Then, and only then, open vulnerable-manifest-ANSWERS.md.
+
+    Every difference between your list and the answer key is either a gap in
+    your process or a gap in the key. Work out which.
+
+  WHAT THIS FILE IS NOT
+    It is not a buildable app on its own. It references classes and resources
+    that do not exist here. It is an audit target, not a project. If you want a
+    runnable version, create an empty Android project, replace its manifest with
+    this one, and create stub classes for every android:name — the build errors
+    are themselves a useful inventory exercise.
+
+  DO NOT SHIP ANY PART OF THIS FILE. Every value in it is wrong on purpose.
+  The credentials are fabricated and are not live.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.example.vulnerable"
+    android:versionCode="42"
+    android:versionName="3.4.1"
+    android:installLocation="preferExternal"
+    android:sharedUserId="com.example.shared">
+
+    <!-- ============================================================== -->
+    <!--  SDK levels — read this FIRST. Everything below depends on it. -->
+    <!-- ============================================================== -->
+    <uses-sdk
+        android:minSdkVersion="19"
+        android:targetSdkVersion="28" />
+
+    <!-- ============================================================== -->
+    <!--  Permissions requested                                          -->
+    <!-- ============================================================== -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+    <!-- A permission declared by SOME OTHER app. Whoever installed first
+         decided its protectionLevel. -->
+    <uses-permission android:name="com.partner.permission.SHARED_SYNC" />
+
+    <!-- ============================================================== -->
+    <!--  Permissions this app DEFINES                                   -->
+    <!-- ============================================================== -->
+
+    <!-- protectionLevel omitted entirely. -->
+    <permission android:name="com.example.vulnerable.permission.READ_USERS" />
+
+    <!-- Explicitly normal. -->
+    <permission
+        android:name="com.example.vulnerable.permission.ADMIN"
+        android:protectionLevel="normal" />
+
+    <!-- This one is done correctly. Recognising it is part of the exercise. -->
+    <permission
+        android:name="com.example.vulnerable.permission.INTERNAL_IPC"
+        android:protectionLevel="signature" />
+
+    <permission-tree
+        android:name="com.example.vulnerable.permission.dynamic"
+        android:label="@string/tree_label" />
+
+    <!-- ============================================================== -->
+    <!--  Package visibility                                             -->
+    <!-- ============================================================== -->
+    <queries>
+        <package android:name="com.topjohnwu.magisk" />
+        <package android:name="eu.chainfire.supersu" />
+        <package android:name="de.robv.android.xposed.installer" />
+        <package android:name="com.competitor.bankingapp" />
+        <package android:name="com.another.bank" />
+    </queries>
+
+    <!-- ============================================================== -->
+    <!--  Libraries and features                                         -->
+    <!-- ============================================================== -->
+    <uses-library android:name="org.apache.http.legacy" android:required="false" />
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <uses-feature android:name="android.hardware.fingerprint" android:required="false" />
+
+    <application
+        android:name=".VulnApp"
+        android:appComponentFactory="com.example.vulnerable.loader.EarlyFactory"
+        android:allowBackup="true"
+        android:debuggable="true"
+        android:testOnly="true"
+        android:usesCleartextTraffic="true"
+        android:requestLegacyExternalStorage="true"
+        android:hasFragileUserData="true"
+        android:label="@string/app_name"
+        android:icon="@mipmap/ic_launcher"
+        android:theme="@style/Theme.App">
+
+        <!-- ============================================================ -->
+        <!--  <meta-data> — where SDK integration guides put keys        -->
+        <!-- ============================================================ -->
+        <!--
+             Every credential below is invented and is written so it does NOT match
+             a secret-scanner pattern: underscores after sk_live_, dots after AIzaSy.
+             A realistic-looking fake blocks push for every fork and trains people to
+             click "allow this secret". See SECURITY.md section 4.2a.
+        -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSy.EXAMPLE.NOT.A.REAL.KEY.ch32" />
+        <meta-data
+            android:name="com.example.partner.API_SECRET"
+            android:value="sk_live_EXAMPLE_NOT_A_REAL_KEY_ch32" />
+        <meta-data
+            android:name="com.example.vulnerable.BACKEND_TOKEN"
+            android:value="eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJmYWtlIn0.NOT_A_REAL_TOKEN" />
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-0000000000000000~0000000000" />
+        <meta-data
+            android:name="com.example.vulnerable.CONFIG"
+            android:resource="@xml/app_config" />
+
+        <!-- ============================================================ -->
+        <!--  Activities                                                 -->
+        <!-- ============================================================ -->
+
+        <!-- The launcher. Note what is NOT declared here. -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Deep-link handler that loads the URI into a WebView. -->
+        <activity
+            android:name=".WebViewActivity"
+            android:exported="true"
+            android:allowTaskReparenting="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="vulnapp" android:host="open" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" android:host="*" android:pathPattern=".*" />
+            </intent-filter>
+        </activity>
+
+        <!-- Developer settings. Switches the API base URL. -->
+        <activity
+            android:name=".debug.DevSettingsActivity"
+            android:exported="true" />
+
+        <!-- Internal admin screen, correctly locked down… -->
+        <activity
+            android:name=".AdminActivity"
+            android:exported="false"
+            android:permission="com.example.vulnerable.permission.INTERNAL_IPC" />
+
+        <!-- …and then reopened by an alias. -->
+        <activity-alias
+            android:name=".PublicAdminEntry"
+            android:targetActivity=".AdminActivity"
+            android:exported="true"
+            android:permission=""
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="com.example.vulnerable.OPEN_ADMIN" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity-alias>
+
+        <!-- The PIN entry screen. -->
+        <activity
+            android:name=".PinActivity"
+            android:exported="true"
+            android:showWhenLocked="true"
+            android:turnScreenOn="true"
+            android:allowEmbedded="true" />
+
+        <!-- No android:exported attribute at all, but it HAS an intent-filter.
+             What is its effective export state? The answer depends on the
+             targetSdk at the top of this file. -->
+        <activity android:name=".ShareReceiverActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="*/*" />
+            </intent-filter>
+        </activity>
+
+        <!-- Disabled. Is it therefore unreachable? -->
+        <activity
+            android:name=".LegacyImportActivity"
+            android:exported="true"
+            android:enabled="false" />
+
+        <!-- ============================================================ -->
+        <!--  Services                                                   -->
+        <!-- ============================================================ -->
+
+        <!-- A bound service exposing an AIDL admin interface. -->
+        <service android:name=".AdminService" android:exported="true">
+            <intent-filter>
+                <action android:name="com.example.vulnerable.ADMIN" />
+            </intent-filter>
+        </service>
+
+        <!-- Sync service, "protected". -->
+        <service
+            android:name=".SyncService"
+            android:exported="true"
+            android:permission="com.example.vulnerable.permission.ADMIN" />
+
+        <!-- Media parsing service handling untrusted input, in-process. -->
+        <service android:name=".MediaParseService" android:exported="false" />
+
+        <!-- An accessibility service. Read the referenced XML. -->
+        <service
+            android:name=".AssistService"
+            android:exported="true"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/accessibility_config" />
+        </service>
+
+        <!-- ============================================================ -->
+        <!--  Receivers                                                  -->
+        <!-- ============================================================ -->
+
+        <receiver android:name=".BootReceiver" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Acts on an attacker-controlled "url" extra. -->
+        <receiver android:name=".CommandReceiver" android:exported="true">
+            <intent-filter android:priority="2147483647">
+                <action android:name="com.example.vulnerable.ACTION_SYNC" />
+                <action android:name="com.example.vulnerable.ACTION_LOGOUT" />
+                <action android:name="com.example.vulnerable.ACTION_SET_ENDPOINT" />
+            </intent-filter>
+        </receiver>
+
+        <!-- ============================================================ -->
+        <!--  Providers                                                  -->
+        <!-- ============================================================ -->
+
+        <!-- Backed by the app's SQLite database. -->
+        <provider
+            android:name=".UserProvider"
+            android:authorities="com.example.vulnerable.users"
+            android:exported="true"
+            android:readPermission="com.example.vulnerable.permission.READ_USERS"
+            android:grantUriPermissions="true">
+            <path-permission
+                android:pathPrefix="/public/"
+                android:readPermission="android.permission.INTERNET" />
+        </provider>
+
+        <!-- Serves files. The <paths> resource is where the real defect lives. -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="files"
+            android:exported="true"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths_insecure" />
+        </provider>
+
+        <!-- An SDK-injected initialisation provider. Contributed by a library,
+             not written by the app developer. -->
+        <provider
+            android:name="com.analytics.sdk.AnalyticsInitProvider"
+            android:authorities="com.example.vulnerable.analyticsinit"
+            android:exported="false"
+            android:initOrder="100" />
+
+        <!-- ============================================================ -->
+        <!--  Profiling                                                  -->
+        <!-- ============================================================ -->
+        <profileable android:shell="true" android:enabled="true" />
+
+    </application>
+
+    <!-- ============================================================== -->
+    <!--  BELOW </application>. This is where auditors stop reading.     -->
+    <!-- ============================================================== -->
+    <instrumentation
+        android:name="androidx.test.runner.AndroidJUnitRunner"
+        android:targetPackage="com.example.vulnerable"
+        android:functionalTest="false"
+        android:handleProfiling="false"
+        android:label="Tests for com.example.vulnerable" />
+
+</manifest>

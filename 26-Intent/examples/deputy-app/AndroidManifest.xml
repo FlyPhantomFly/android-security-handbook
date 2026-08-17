@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    examples/deputy-app/AndroidManifest.xml
+
+    The victim in labs 01 and 04. Deliberately vulnerable, deliberately minimal.
+
+    THE SHAPE THAT MATTERS
+        Two exported routers (.RedirectorActivity, vulnerable; and
+        .RedirectorActivityFixed, validated) and four non-exported components
+        (.SecretActivity, .DetailActivity, .SettingsActivity, and MainActivity's
+        siblings). The exploit's whole job is to reach a non-exported one.
+
+    NOTE ON android:exported
+        Every component states it explicitly. That is mandatory from targetSdk 31
+        and good practice below it, and it means nothing here depends on a default
+        you would have to look up. See 32-Manifest section 3.4 for the full matrix.
+
+    NOTE ON targetSdk
+        Set to 30 on purpose, so the PendingIntent mutability demonstration in
+        lab 04 can be run BOTH ways: at 30 the mandate does not apply and a token
+        is mutable by default; bump it to 31 in build.sh and the same code fails to
+        construct until it states FLAG_IMMUTABLE or FLAG_MUTABLE. Watching that
+        build break is the most convincing explanation of the mandate there is.
+
+    AUTHORISED TESTING ONLY.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.pentest.deputy">
+
+    <uses-sdk android:minSdkVersion="24" android:targetSdkVersion="30" />
+
+    <application
+        android:label="Deputy (vulnerable)"
+        android:allowBackup="false"
+        android:supportsRtl="true">
+
+        <!-- Launcher. Exported because a launcher entry must be. -->
+        <activity android:name=".MainActivity" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!--
+            VULNERABLE ROUTER.
+
+            Exported with a custom action and CATEGORY_DEFAULT, so it is reachable
+            by an implicit startActivity from any app. It also declares a
+            BROWSABLE deep link, which makes flavour B (the string/URI form)
+            reachable from a WEB PAGE — a full severity band above flavour A.
+        -->
+        <activity android:name=".RedirectorActivity" android:exported="true">
+            <intent-filter>
+                <action android:name="com.pentest.deputy.ROUTE" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <!--
+                    Two <data> elements. NOT two pairs: the platform stores schemes
+                    and hosts in independent SETS, so this accepts
+                    deputy://route, deputy://open, http://route and http://open.
+                    Lab 02 measures exactly this.
+                -->
+                <data android:scheme="deputy" android:host="route" />
+                <data android:scheme="http"   android:host="open" />
+            </intent-filter>
+        </activity>
+
+        <!-- FIXED ROUTER. Same export posture, same payload, different outcome. -->
+        <activity android:name=".RedirectorActivityFixed" android:exported="true">
+            <intent-filter>
+                <action android:name="com.pentest.deputy.ROUTE_SAFE" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <!-- Hands out PendingIntents. Exported: that is how tokens escape. -->
+        <activity android:name=".TokenActivity" android:exported="true">
+            <intent-filter>
+                <action android:name="com.pentest.deputy.GET_TOKEN" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <!-- THE PRIZE. Not exported. Reaching it is the exploit result. -->
+        <activity android:name=".SecretActivity" android:exported="false" />
+
+        <!--
+            The CTF component (lab 04). Exported, and holding three flags.
+
+            Filter 1 declares TWO schemes and TWO hosts across two <data> elements.
+            The developer meant deputy://locker and vault://open. The platform
+            stores schemes and authorities as independent SETS, so it also accepts
+            deputy://open and vault://locker. One of those is a flag.
+
+            Filter 2 deliberately omits android.intent.category.DEFAULT, so no
+            implicit startActivity can ever match it. It is reachable explicitly,
+            by class name, and the class name is right here in the manifest.
+        -->
+        <activity android:name=".VaultActivity" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="deputy" android:host="locker" />
+                <data android:scheme="vault"  android:host="open" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.pentest.deputy.VAULT_DIRECT" />
+                <!-- NO CATEGORY_DEFAULT. This is deliberate. -->
+            </intent-filter>
+        </activity>
+
+        <!-- Legitimate routes for the FIXED router's allow-list. Not exported. -->
+        <activity android:name=".DetailActivity"   android:exported="false" />
+        <activity android:name=".SettingsActivity" android:exported="false" />
+
+    </application>
+</manifest>

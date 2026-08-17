@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  examples/server-app/AndroidManifest.xml
+
+  The control group for chapter 67.
+
+  This app runs the SAME seven checks as ../guarded-app. The difference is
+  what it does with them: it does not decide anything. It reports the signals
+  to a server and asks for the secret. The server decides, and the secret only
+  ever exists on the device if the server chose to send it.
+
+  Every technique in this chapter still works against this app. You can hook
+  every check, forge every signal, flip every boolean - and you still do not
+  get the secret, because the bytes were never here to be unlocked. That is not
+  because the client got stronger. It is because the client stopped being the
+  thing that mattered.
+
+  usesCleartextTraffic is true because the reference server in server.py speaks
+  plain HTTP over an adb reverse tunnel. A real deployment uses TLS and pins
+  it; see ../../36-CertificatePinning/README.md, and note that pinning is
+  itself a client-side control that this chapter can defeat - which is the
+  point being made, not a contradiction of it.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="com.pentest.ch67.server">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:label="CH67 Server-Decided"
+        android:allowBackup="false"
+        android:usesCleartextTraffic="true">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+    </application>
+</manifest>

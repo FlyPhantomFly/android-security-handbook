@@ -1,0 +1,213 @@
+# annotated-init.rc — how to read an Android init service definition,
+#                     and what "wrong" looks like.
+#
+# WHAT THIS DEMONSTRATES
+#   The init .rc audit from ../README.md sections 8.3 and 9.4 is the single
+#   highest-value static check on a firmware image, because five lines declare
+#   a daemon's ENTIRE privilege budget: its user, groups, capabilities, SELinux
+#   domain and IPC endpoints.
+#
+#   Below are four realistic service definitions — two bad, two good — each
+#   annotated line by line. Read them together; the contrast is the lesson.
+#
+# HOW TO USE IT
+#   1. Extract the .rc files from a firmware image or a device:
+#        adb shell 'ls /vendor/etc/init/ /system/etc/init/'
+#        adb pull /vendor/etc/init/ ./vendor-init/
+#
+#   2. Run the audit from ../scripts/firmware-triage.sh, or by hand:
+#        grep -rhA12 '^service ' ./vendor-init/ \
+#          | grep -E '^service |user |group |capabilities |seclabel |socket '
+#
+#   3. Compare what you find against the patterns below.
+#
+# REFERENCE
+#   The full init language:
+#   https://android.googlesource.com/platform/system/core/+/master/init/README.md
+
+
+# ===========================================================================
+# EXAMPLE 1 — BAD. A realistic vendor anti-pattern.
+#
+# This is the shape you will actually find on OEM devices. It contains three
+# separate findings in six lines.
+# ===========================================================================
+
+service oem_diag /vendor/bin/oem_diagd
+    class late_start
+    # FINDING 1: there is NO 'user' line.
+    #   An init service with no 'user' directive runs as ROOT by default.
+    #   This is the most common privilege mistake in vendor init files, and it
+    #   is invisible unless you know the default. Nothing in the file says
+    #   "root" — the absence is the problem.
+
+    capabilities SYS_ADMIN NET_ADMIN NET_RAW
+    # FINDING 2: an extremely broad capability set.
+    #   SYS_ADMIN is close to root in practical terms — it covers mount,
+    #   namespace manipulation, and a long list of privileged operations.
+    #   A diagnostics daemon almost certainly does not need it. Even if the
+    #   daemon dropped to a non-root user, these capabilities would keep most
+    #   of the privilege.
+
+    socket oem_diag stream 0666 root root
+    # FINDING 3: a WORLD-READABLE, WORLD-WRITABLE UNIX socket.
+    #   Mode 0666 means EVERY app on the device can connect to it. This is an
+    #   IPC endpoint sitting entirely outside the framework permission model:
+    #   no permission check, no Binder caller-UID verification, nothing.
+    #
+    #   If oem_diagd accepts commands that do privileged things — and a
+    #   diagnostics daemon usually does — then any installed app can ask it to.
+    #   See ../../24-IPC/README.md.
+
+    seclabel u:r:vendor_diag:s0
+    # At least it has an explicit domain. Whether that domain is adequately
+    # constrained is a separate question — check the .te rules in
+    # /vendor/etc/selinux/. See ../../22-SELinux/README.md.
+
+# HOW TO ASSESS THIS
+#   Attacker : any app installed on the device, with no permissions at all
+#   Access    : connect() to /dev/socket/oem_diag
+#   Gain      : whatever oem_diagd will do on request, executed as root
+#   Severity  : High to Critical, depending on the command surface
+#
+# TO CONFIRM, you must actually speak to the socket from an unprivileged app —
+# reproducing from `adb shell` is NOT sufficient, because shell (UID 2000) has
+# privileges an app does not. See ../../77-UsefulCommands/README.md.
+
+
+# ===========================================================================
+# EXAMPLE 2 — BAD in a subtler way.
+#
+# This one declares a user, which looks responsible, but gives it back.
+# ===========================================================================
+
+service oem_update /vendor/bin/oem_updated
+    class main
+    user system
+    # Looks good — not root.
+
+    group system inet net_raw sdcard_rw media_rw everybody
+    # ...but the supplementary groups undo much of it.
+    #   'inet'      = network access
+    #   'net_raw'   = raw sockets
+    #   'sdcard_rw' = shared storage write
+    #   'media_rw'  = media storage write
+    #   'everybody' = a catch-all group on some vendor builds
+    #
+    # Groups are how Android grants coarse capabilities outside the permission
+    # system. A long group list on a daemon deserves the same scrutiny as a
+    # long permission list on an app.
+
+    capabilities DAC_OVERRIDE
+    # DAC_OVERRIDE bypasses ALL filesystem permission checks. Combined with the
+    # storage groups above, this daemon can read and write essentially anything
+    # on /data that SELinux permits. The 'user system' line is close to
+    # cosmetic at this point.
+
+    seclabel u:r:vendor_update:s0
+
+# THE LESSON
+#   Do not stop reading at the 'user' line. Groups and capabilities can restore
+#   most of what dropping root gave up. Assess the WHOLE budget.
+
+
+# ===========================================================================
+# EXAMPLE 3 — GOOD. Least privilege, done properly.
+# ===========================================================================
+
+service oem_sensor /vendor/bin/oem_sensord
+    class hal
+    user oem_sensor
+    # A dedicated UID, used by nothing else. Compromising this daemon gains
+    # you exactly this daemon's access and nothing more.
+
+    group oem_sensor
+    # One group, matching the user. No incidental grants.
+
+    # No 'capabilities' line at all — so no capabilities. The daemon does not
+    # need to bypass DAC or manipulate the network, so it cannot.
+
+    seclabel u:r:hal_sensors_default:s0
+    # A standard, well-reviewed AOSP HAL domain rather than a bespoke vendor
+    # one. Reusing platform domains means reusing platform review.
+
+    socket oem_sensor stream 0660 oem_sensor oem_sensor
+    # Mode 0660, owned by the daemon's own user and group. Only processes in
+    # that group can connect. Compare with Example 1's 0666.
+
+    oneshot
+    # Does not restart forever if it crashes — which also means a crash loop
+    # will be visible rather than silently masked.
+
+# WHY THIS IS FINE
+#   Dedicated UID · no capabilities · standard SELinux domain · restricted
+#   socket. An attacker who fully compromises oem_sensord gains sensor access,
+#   which is what the daemon legitimately has.
+
+
+# ===========================================================================
+# EXAMPLE 4 — GOOD. A service that genuinely needs root, constrained properly.
+# ===========================================================================
+
+service oem_firmware /vendor/bin/oem_fw_loader
+    class core
+    # No 'user' line, so root — but here it is DELIBERATE and justified:
+    # loading firmware to a device node requires it.
+
+    capabilities SYS_MODULE
+    # Exactly one capability, the one actually needed. Not SYS_ADMIN.
+    # An explicit narrow capability set is far better than implicit full root,
+    # even when the service runs as UID 0.
+
+    oneshot
+    # Runs once at boot and exits. The privileged process does not persist,
+    # so there is no long-lived root process to attack.
+
+    disabled
+    # Not started automatically...
+
+    seclabel u:r:vendor_fw_loader:s0
+
+on property:sys.boot_completed=1
+    start oem_firmware
+    # ...started by an explicit trigger instead. The window in which it runs is
+    # bounded and predictable.
+
+# WHY THIS IS ACCEPTABLE
+#   Root is sometimes genuinely required. What distinguishes acceptable from
+#   negligent is: a narrow capability set, a short lifetime (oneshot), no IPC
+#   endpoint exposed, and an explicit SELinux domain.
+
+
+# ===========================================================================
+# THE AUDIT CHECKLIST
+#
+# For every service in a firmware image, record:
+#
+#   [ ] user            absent = ROOT. Is that justified?
+#   [ ] group           long lists deserve scrutiny; note inet, net_raw,
+#                       sdcard_rw, media_rw, and any catch-all groups
+#   [ ] capabilities    SYS_ADMIN and DAC_OVERRIDE are close to full root
+#   [ ] seclabel        absent may still get a domain via type_transition —
+#                       verify in sepolicy rather than assuming
+#   [ ] socket          mode 066x/077x = reachable by EVERY app on the device
+#   [ ] oneshot         absent on a helper means it restarts forever
+#   [ ] disabled        plus a trigger = bounded lifetime, which is good
+#   [ ] class           'core' and 'main' start early; 'late_start' after boot
+#
+# EXTRACT THEM ALL:
+#
+#   awk '
+#     /^service /        { if (svc) emit(); svc=$2; bin=$3; usr="root(DEFAULT)";
+#                          cap=""; sec=""; sock="" }
+#     /^[ \t]+user /        { usr=$2 }
+#     /^[ \t]+capabilities/ { $1=""; cap=substr($0,2) }
+#     /^[ \t]+seclabel /    { sec=$2 }
+#     /^[ \t]+socket /      { sock=sock" "$2"("$4")" }
+#     END { if (svc) emit() }
+#     function emit() { printf "%-14s %-28s cap=[%s] sec=[%s] sock=[%s]\n",
+#                              usr, svc, cap, sec, sock }
+#   ' /vendor/etc/init/*.rc | sort
+#
+# Or just run ../scripts/firmware-triage.sh, which does this and more.
+# ===========================================================================

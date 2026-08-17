@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    examples/permissive_network_security_config.xml
+
+    A DELIBERATELY BAD Network Security Config. Every defect in it is one this
+    chapter has seen in a shipping app, and each is annotated with what it does,
+    why a developer wrote it, and what it costs.
+
+    In a project this file lives at:
+        app/src/main/res/xml/network_security_config.xml
+    and is wired up from the manifest with:
+        <application android:networkSecurityConfig="@xml/network_security_config" ... >
+
+    Audit it with this chapter's own tool. The exact command line, including the
+    target-sdk and debuggable flags this file needs, is in examples/README.md.
+
+    The hardened counterpart is examples/hardened_network_security_config.xml.
+    Read the two side by side; the interesting part is how few characters
+    separate them.
+
+    XML COMMENTS CANNOT CONTAIN A DOUBLE HYPHEN. The XML specification forbids
+    it outright, so both aapt2 and every text parser reject the whole resource,
+    and the build failure reads as "failed to load XML file" against a file that
+    plainly exists. That is why the command line above is not quoted here: it
+    carries long-form flags, and a pair of hyphens inside this comment would
+    break the file. Every dash below is deliberately single. This is not a
+    hypothetical: the first draft of this example did exactly that, and the
+    chapter's own auditor was what caught it.
+-->
+<network-security-config>
+
+    <!--
+        DEFECT 1  -  cleartextTrafficPermitted="true" in <base-config>
+        SEVERITY  -  HIGH when a cleartext endpoint is actually in use
+
+        This is the whole app. Every hostname that no <domain-config> below
+        matches may be reached over plaintext HTTP.
+
+        WHY A DEVELOPER WRITES IT
+        They targeted API 28, an old endpoint stopped working, the exception was
+        `java.net.UnknownServiceException: CLEARTEXT communication to X not
+        permitted by network security policy`, and the first search result said
+        to add this. It made the exception go away in ten seconds. Narrowing it
+        to a <domain-config> would have taken twenty minutes and a conversation
+        with whoever owns that endpoint.
+
+        WHAT IT COSTS
+        Anything on the network path - a hostile access point, a compromised
+        home router, an ISP that injects, another app with the right
+        permissions on an older device - can read and rewrite every non-HTTPS
+        request. That includes the ones the developer forgot about: crash
+        reports, ad requests, remote configuration, and the JSON blob that says
+        `"force_upgrade": false`.
+
+        HOW TO REPORT IT HONESTLY
+        Not as "cleartext is permitted". As "this request, to this host, carried
+        this data, in the clear", with the capture attached. A global permit
+        with no plaintext traffic actually observed is a LOW.
+    -->
+    <base-config cleartextTrafficPermitted="true">
+
+        <trust-anchors>
+            <!--
+                The system store. This entry is what an app gets by default, so
+                writing it changes nothing. It is here because of DEFECT 2:
+                once you write a <trust-anchors> block you REPLACE the inherited
+                set, you do not add to it. A developer who writes only the
+                <certificates src="user"/> line below and omits this one
+                produces an app that trusts the user store and NOTHING ELSE,
+                and then cannot reach any normal HTTPS server. That failure is
+                loud, so it gets fixed - by adding this line, which is how the
+                two end up together.
+            -->
+            <certificates src="system" />
+
+            <!--
+                DEFECT 2  -  <certificates src="user"/> in <base-config>
+                SEVERITY  -  HIGH
+
+                Restores the pre-API-24 behaviour: certificate authorities the
+                device owner installed are trusted, for every host in the app.
+
+                WHY A DEVELOPER WRITES IT
+                Two reasons, and they are worth telling apart.
+                  (a) They needed to proxy their own debug build, put this in
+                      the main source set instead of src/debug/, and it shipped.
+                      This is the common one.
+                  (b) An enterprise customer terminates TLS at a corporate
+                      appliance and asked for it. That is a business decision,
+                      not a bug - but it should be scoped to the customer's
+                      hosts, not applied to the whole app.
+
+                WHAT IT COSTS
+                Anyone who can get a CA into the user store owns this app's
+                traffic. That is a tester with adb, an MDM enrolment, a
+                convincing "install this profile for company wifi" prompt, and
+                on some OEM builds a sideloaded app with the right intent. No
+                root, no repackaging, no Frida.
+
+                MEASURED: this is exactly what the file-manager app ships, scoped to
+                a set of advertising SDK domains rather than globally. See the
+                chapter README section 5.4.
+            -->
+            <certificates src="user" />
+        </trust-anchors>
+    </base-config>
+
+    <!--
+        DEFECT 3  -  a <domain-config> that trusts the user store, on the hosts
+                     that matter most
+        SEVERITY  -  HIGH
+
+        Note the inheritance trap in the other direction: this block does NOT
+        declare cleartextTrafficPermitted, so it inherits "true" from
+        <base-config>. A reader who checks only this element concludes the API
+        endpoint is HTTPS only. It is not.
+    -->
+    <domain-config>
+        <domain includeSubdomains="true">api.example.com</domain>
+
+        <trust-anchors>
+            <certificates src="system" />
+            <!--
+                DEFECT 4  -  overridePins="true" outside <debug-overrides>
+                SEVERITY  -  HIGH
+
+                overridePins means: a chain terminating in one of THESE
+                certificates skips the <pin-set> below entirely. Applied to the
+                user store, it converts the pin set from a control into a
+                comment. The pins are still there, they still look like
+                security in a code review, and they no longer stop anything.
+            -->
+            <certificates src="user" overridePins="true" />
+        </trust-anchors>
+
+        <!--
+            DEFECT 5  -  an expired pin-set
+            SEVERITY  -  HIGH, and it is the single most under-reported defect
+                         in this whole subsystem
+
+            The date is in the past. When an expiration passes, the platform
+            stops enforcing the pins. It does not warn, it does not log, and
+            nothing in the app breaks - which is precisely why nobody notices.
+            The team still believes they are pinned. A code reviewer looking at
+            this file still believes they are pinned. They have not been since
+            the date below.
+
+            MEASURED: the social-media app's shipping APK on the test device carries
+            expiration="2021-07-1" over socialvendor.example, socialphotos.example,
+            socialcdn.example and eleven more, with fifteen pins behind it. The marketplace app's
+            carries expiration="2022-07-01" with ten pins. Both were read off a
+            phone in 2026. See README section 5.5.
+
+            DEFECT 6  -  exactly one pin
+            SEVERITY  -  MEDIUM (resilience, not confidentiality)
+
+            RFC 7469 section 4.3 wants a backup pin over a key that is held
+            offline and not yet in service. With one pin, an emergency key
+            rotation bricks every installed copy of the app against this host,
+            and no server-side change can fix it. That failure mode is why
+            teams rip pinning out and never put it back.
+        -->
+        <pin-set expiration="2021-01-01">
+            <pin digest="SHA-256">7HIpactkIAq2Y49orFOOQKurWxmmSFZhBCoQYcRhJ3Y=</pin>
+        </pin-set>
+    </domain-config>
+
+    <!--
+        DEFECT 7  -  cleartext for an analytics domain
+        SEVERITY  -  MEDIUM, and DO NOT inflate it
+
+        This is the honest-severity case. A scoped permit over one telemetry
+        host is not the same finding as the global permit at the top of this
+        file, and writing them up identically is how a report loses its reader.
+
+        What decides the severity is what actually travels. Open the capture. If
+        it is a batch of screen names and a stable device identifier, that is a
+        privacy finding with a real impact and a bounded one. If the same
+        beacon carries the session token "for convenience", it is a HIGH and the
+        cleartext flag is not even the interesting part.
+    -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">metrics.example-analytics.com</domain>
+    </domain-config>
+
+    <!--
+        DEFECT 8  -  a <debug-overrides> block, which in THIS file is inert
+        SEVERITY  -  INFO. It is not a finding. Read the next paragraph before
+                     you put it in a report.
+
+        <debug-overrides> is applied only when the running app's ApplicationInfo
+        carries FLAG_DEBUGGABLE - that is, when android:debuggable="true" in the
+        effective manifest. A normal release build does not have it, so the
+        platform parses this block and then builds nothing from it.
+
+        This is the most over-reported item in mobile application testing.
+        "The application trusts user-installed certificates in its network
+        security configuration" is a true sentence about the text of the file
+        and a false sentence about the application, and a client's engineers
+        will know that.
+
+        MEASURED: the professional-network app's shipping APK contains a <debug-overrides> block
+        trusting system and user certificates and NOTHING ELSE - no
+        <base-config>, no <domain-config>. Dumping the platform's own
+        ApplicationConfig inside the running app shows a single default
+        configuration with SystemCertificateSource as its only anchor source.
+        The block was discarded. See README section 3.7 and 5.6.
+
+        WHEN IT IS A FINDING: when android:debuggable really is true in the
+        build you were given. Then this block is live, overridePins defaults to
+        TRUE inside it, and the app trusts your CA and ignores its own pins. At
+        that point the finding is "the release build is debuggable", and this is
+        its impact.
+    -->
+    <debug-overrides>
+        <trust-anchors>
+            <certificates src="user" />
+        </trust-anchors>
+    </debug-overrides>
+
+</network-security-config>

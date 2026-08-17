@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  examples/02-injecting-sdk-AndroidManifest.xml
+  ==========================================================================
+  Place at:  evil-sdk/src/main/AndroidManifest.xml
+
+  PURPOSE
+      This is the manifest of a *library* (an Android library module, which
+      publishes as an AAR). Nothing here is unusual: real analytics SDKs, crash
+      reporters, deep-link routers and payment SDKs all declare components
+      exactly like this, for legitimate reasons.
+
+      The point of the example is what happens next. The manifest merger
+      combines this file with the host application's manifest. Every element
+      below that has no counterpart in the host's manifest is added VERBATIM to
+      the shipped APK — exported, with its intent filters, reachable by any
+      other app on the device and, for the BROWSABLE activity, from a web page.
+
+      The host application's developers never wrote any of it and, in the
+      overwhelming majority of real projects, have never read the merged result.
+
+  SEE
+      ../README.md sections 3.10 and 5.3.2
+      ../scripts/manifest-merge-diff.py
+  ==========================================================================
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="com.evil.sdk">
+
+    <!--
+      A permission the HOST app now requests. It appears in the Play listing,
+      in Settings, and — because ACCESS_FINE_LOCATION is a dangerous
+      permission — in a runtime prompt shown to the host app's users.
+      The host's developers did not ask for it.
+    -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+    <!--
+      Package visibility on Android 11+. A library can widen what the host app
+      is able to see about other installed applications.
+    -->
+    <queries>
+        <package android:name="com.android.chrome" />
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="https" />
+        </intent>
+    </queries>
+
+    <application>
+
+        <!--
+          (1) An exported BroadcastReceiver.
+
+          Any application on the device can send this a broadcast. The code in
+          CommandReceiver.onReceive then runs INSIDE THE HOST APP'S PROCESS,
+          with the host app's UID, the host app's granted permissions, and
+          access to the host app's private data directory.
+
+          Reach it with `adb shell am broadcast -a com.evil.sdk.EXECUTE` targeted
+          at com.example.host/com.evil.sdk.CommandReceiver, carrying string
+          extras cmd and endpoint. The full command line is in
+          ../labs/lab-02-manifest-merger-archaeology.md step B1; it is not
+          repeated here because its extras flags begin with a double hyphen,
+          which XML forbids inside a comment and aapt2 rejects.
+        -->
+        <receiver
+            android:name="com.evil.sdk.CommandReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.evil.sdk.EXECUTE" />
+            </intent-filter>
+        </receiver>
+
+        <!--
+          (2) A BROWSABLE deep-link activity.
+
+          BROWSABLE means a link on any web page can launch it. This is the
+          canonical starting point for intent-redirection findings: the router
+          typically reads a URL or a nested Intent from an extra and hands it
+          to a WebView or to startActivity() without validating it.
+
+          Reach it with:
+            adb shell am start -a android.intent.action.VIEW -d "evilsdk://open?url=https://attacker.example/"
+          Or from a web page:
+            <a href="evilsdk://open?url=https://attacker.example/">Continue</a>
+        -->
+        <activity
+            android:name="com.evil.sdk.RouterActivity"
+            android:exported="true"
+            android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="evilsdk" />
+            </intent-filter>
+        </activity>
+
+        <!--
+          (3) A self-initialising ContentProvider.
+
+          This is the standard SDK bootstrap trick: a provider's onCreate runs
+          before Application.onCreate, so the SDK initialises itself with no
+          call from the host app at all. androidx.startup.InitializationProvider
+          is the well-known benign example of exactly this pattern.
+
+          The security consequence is that the SDK runs code in the host's
+          process on every launch, unconditionally, whether or not the host
+          ever uses the SDK. exported="false" is correct here and is what a
+          well-behaved SDK does; note that many do not set it at all.
+        -->
+        <provider
+            android:name="com.evil.sdk.SdkInitProvider"
+            android:authorities="${applicationId}.evilsdk-init"
+            android:exported="false"
+            android:initOrder="100" />
+
+        <!--
+          (4) Application-level meta-data, read by the SDK's own code and
+          sometimes by others. This is also where SDKs expect API keys to be
+          placed by the host developer — which is how a credential ends up in
+          the merged manifest.
+        -->
+        <meta-data
+            android:name="com.evil.sdk.ENDPOINT"
+            android:value="https://collect.evil.example/v1" />
+
+        <!--
+          (5) An exported Service. Any app can bind to it and call across the
+          Binder interface it exposes, executing as the host app.
+        -->
+        <service
+            android:name="com.evil.sdk.SyncService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.evil.sdk.BIND_SYNC" />
+            </intent-filter>
+        </service>
+
+    </application>
+</manifest>

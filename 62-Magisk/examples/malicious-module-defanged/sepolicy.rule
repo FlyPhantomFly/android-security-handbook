@@ -1,0 +1,33 @@
+# LAB FIXTURE - DEFANGED - DO NOT INSTALL
+#
+# This file is inert in this repository because the module is never installed.
+# It is here because it is one of the three things in a hostile module that you
+# can catch WITHOUT reading a single line of shell, and because its blast radius
+# is routinely underestimated.
+#
+# Read what these actually say.
+#
+#   permissive untrusted_app
+#     "untrusted_app" is not this module, and it is not the companion app. It is
+#     the domain that EVERY ordinary application on the device runs in. Making it
+#     permissive disables SELinux enforcement for all of them at once, which
+#     removes the only remaining boundary between apps once something has root.
+#     A module needing this has, at best, misdiagnosed its own problem.
+#
+#   allow untrusted_app { magisk_file su_exec } ...
+#     Grants every ordinary app access to Magisk's own files and to executing
+#     su. Combined with the magisk.db row this module's post-fs-data.sh writes,
+#     any app on the device can become root without a prompt.
+#
+#   permissive magisk
+#     Removes the constraints on Magisk's own domain. Less alarming than the
+#     first line and still not something a battery optimiser needs.
+#
+# The honest developer alternative, for contrast, is in
+# ../pentest-prep-module/sepolicy.rule: derive one narrow rule from one observed
+# avc denial, and nothing else.
+
+permissive untrusted_app
+allow untrusted_app magisk_file file { read write open getattr execute }
+allow untrusted_app su_exec file { read open execute execute_no_trans }
+permissive magisk

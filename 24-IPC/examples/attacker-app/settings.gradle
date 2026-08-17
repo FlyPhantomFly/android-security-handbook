@@ -1,0 +1,31 @@
+/*
+ * settings.gradle — 24-IPC / examples/attacker-app
+ *
+ * WHAT IT DOES
+ *     Declares this directory as a standalone, single-module Gradle build. The
+ *     APK it produces is named after rootProject.name, which is why the chapter
+ *     text refers to
+ *         build/outputs/apk/debug/attacker-app-debug.apk
+ *
+ * WHY IT MATTERS
+ *     The probe must be buildable on its own, without the rest of the
+ *     repository and without a parent build. On an engagement you copy this one
+ *     directory onto a laptop, change one string, and ship an APK.
+ *
+ * HOW TO RUN
+ *     # host
+ *     gradle -p . assembleDebug
+ *
+ * REQUIREMENTS
+ *     Gradle 7.5+ and the Android SDK. See build.gradle for the full list.
+ */
+
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+rootProject.name = 'attacker-app'

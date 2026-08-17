@@ -1,0 +1,246 @@
+================================================================================
+posture-measured.txt -- two devices, one tool, opposite verdicts.
+================================================================================
+
+WHAT THIS IS
+    Unedited output from ../scripts/adb-posture.sh against two real targets
+    with deliberately opposite ADB configurations, side by side, so you can
+    see which fields actually move the severity.
+
+    Everything here is READ-ONLY. Nothing in this file changed a device.
+    In particular, TCP mode was NOT enabled on the physical phone, and the
+    authorised-key store was NOT modified. The property values shown were
+    re-read afterwards and were unchanged.
+
+WHY IT MATTERS
+    "ADB is enabled" is not a finding. Two of the lines below are the
+    difference between an informational note and a critical one, and they are
+    not the lines most people look at.
+
+================================================================================
+TARGET A -- Redmi M2101K6P, Android 11 / API 30, `user` build, rooted (Magisk)
+            The physical daily-driver phone this repository is written against.
+================================================================================
+
+== Device ==
+  device.model                       M2101K6P
+  device.fingerprint                 Redmi/sweetin/sweetin:11/RKQ1.200826.002/V12.5.10.0.RKFINXM:user/release-keys
+  device.release                     11
+  device.sdk                         30
+  device.security_patch              2021-12-01
+  device.abi                         arm64-v8a
+
+== Build stance -- what adbd is ALLOWED to be ==
+  build.ro.secure                    1
+  build.ro.debuggable                0
+  build.type                         user
+  build.tags                         release-keys
+  build.ro.adb.secure                1
+  adb.root.permitted                 no (ro.debuggable=0) -- adb root will be refused; root comes from su instead
+  adb.authentication                 REQUIRED -- adbd sends A_AUTH and verifies a signature
+
+== adbd itself ==
+  adbd.pid                           12675
+  adbd.user                          shell
+  adbd.selinux                       u:r:adbd:s0
+  adbd.init.state                    running
+  shell.parent                       /apex/com.android.adbd/bin/adbd --root_seclabel=u:r:su:s0
+  adbd.origin                        APEX (com.android.adbd) -- updatable without an OS update
+
+== Network exposure ==
+  settings.adb_enabled               1
+  settings.adb_wifi_enabled          0
+  tcp.service.adb.tcp.port           unset (USB only until next adb tcpip)
+  tcp.persist.adb.tcp.port           unset
+  tcp.listening.ports                27042 41025
+  tcp.5555                           not listening
+  tcp.exposed                        no
+
+== Authorised host keys (counts and metadata only -- never key bytes) ==
+  keys.dir                           ls: /data/misc/adb: Permission denied
+  keys.readable.as.shell             NO -- and that is correct
+  keys.count                         1
+  keys.bytes                         714
+  keys.mode                          -rw-r----- 1 system shell u:object_r:adb_keys_file:s0  714 2026-04-28 01:25 /data/misc/adb/adb_keys
+  keys.field.widths                  700
+  keys.temp.entries                  1
+  keys.temp.lastConnection           1786359848299  (Mon Aug 10 16:34:08 IST 2026)
+
+== The shell identity you are actually driving ==
+  shell.id                           uid=2000(shell) gid=2000(shell) groups=2000(shell),1004(input),1007(log),1011(adb),1015(sdcard_rw),1028(sdcard_r),1078(ext_data_rw),1079(ext_obb_rw),3001(net_bt_admin),3002(net_bt),3003(inet),3006(net_bw_stats),3009(readproc),3011(uhid) context=u:r:shell:s0
+  shell.selinux                      u:r:shell:s0
+  shell.caps                         CapEff: 0000000000000000  CapBnd: 00000000000000c0
+  shell.package                      userId=2000
+  shell.runtime.perms.granted        16
+
+== Severity call ==
+
+  ADB is USB-only on this device right now.
+
+  "USB debugging is enabled" on its own is NOT a finding on a test device and
+  should not be written up as one. It becomes a finding when it is combined
+  with something: an unattended device an attacker can physically reach, a
+  build where ro.adb.secure is 0, an authorised key on a host you do not
+  control, or a screen lock that is absent so the authorisation dialog can be
+  accepted by whoever is holding it.
+
+--------------------------------------------------------------------------------
+NOTES ON TARGET A
+--------------------------------------------------------------------------------
+
+  keys.readable.as.shell = NO
+      The DAC bits allow it -- /data/misc/adb is created by init as
+      "mkdir /data/misc/adb 02750 system shell", so the group is shell and the
+      group read bit is set. SELinux refuses anyway. The kernel log shows why:
+
+        avc: denied { search } for comm="cat" name="adb" ino=240
+             scontext=u:r:shell:s0 tcontext=u:object_r:adb_keys_file:s0
+             tclass=dir permissive=0
+
+      Any checklist that tells you to `cat /data/misc/adb/adb_keys` from
+      `adb shell` has never been run on a real device.
+
+  keys.bytes = 714, keys.field.widths = 700
+      One key. 700 base64 characters is the fixed width of a 2048-bit ADB
+      public key: the blob is a 524-byte mincrypt RSAPublicKey struct
+      (4 + 4 + 256 + 256 + 4), and 524 bytes base64-encode to exactly 700
+      characters. 714 = 700 + a space + a 12-character comment + a newline.
+      NO KEY MATERIAL IS PRINTED HERE OR BY THE SCRIPT -- only widths.
+
+  shell.caps CapBnd = 0xc0
+      Bits 6 and 7: CAP_SETGID and CAP_SETUID. adbd holds NO effective
+      capabilities (CapEff = 0) but keeps those two in the bounding set so it
+      can change identity for processes it spawns, which is what makes
+      `run-as` work.
+
+  shell.parent
+      The parent of every `adb shell` is adbd itself, not zygote. That is the
+      cheapest one-command proof that a shell is not an app: no ART, no
+      Context, no package record, and therefore no targetSdkVersion and none
+      of the behaviour changes Android gates on it.
+
+  shell.runtime.perms.granted = 16
+      Sixteen runtime permissions pre-granted to uid 2000 with SYSTEM_FIXED,
+      meaning the user cannot revoke them. They include CAMERA, RECORD_AUDIO,
+      READ_SMS, ACCESS_FINE_LOCATION and ACCESS_BACKGROUND_LOCATION. On top of
+      that sit 183 install-time permissions from com.android.shell.
+
+  tcp.listening.ports = 27042 41025
+      27042 is frida-server, which this device is running deliberately. It is
+      NOT part of ADB, and it is worth noticing that a posture tool will
+      surface your own tooling -- record it as methodology so nobody later
+      reports it as a finding against the device.
+
+  WRITE-UP FOR TARGET A
+      "USB debugging is enabled with one authorised host key, last used on
+      10 August. The device requires cryptographic authentication, is not
+      reachable over the network, and adbd cannot be elevated to root because
+      the build is not debuggable. This is an informational observation about
+      the test device's configuration, not a finding."
+
+================================================================================
+TARGET B -- Android 16 / API 35 emulator image, `userdebug` build
+            A disposable target, used for everything that needed TCP.
+================================================================================
+
+  build.ro.secure                    1
+  build.ro.debuggable                1
+  build.type                         userdebug
+  build.tags                         dev-keys
+  build.ro.adb.secure                0
+  adb.authentication                 NOT REQUIRED -- any host that can reach adbd is trusted immediately
+  adbd.pid                           5152
+  adbd.user                          shell
+  adbd.selinux                       u:r:adbd:s0
+  adbd.origin                        APEX (com.android.adbd) -- updatable without an OS update
+  tcp.5555                           OPEN -- the classic adb-over-TCP port is listening
+  tcp.service.adb.tcp.port           unset (USB only until next adb tcpip)
+  tcp.persist.adb.tcp.port           unset
+  tcp.exposed                        YES
+  shell.runtime.perms.granted        38
+  severity.exposed                   1
+
+--------------------------------------------------------------------------------
+NOTES ON TARGET B
+--------------------------------------------------------------------------------
+
+  ro.adb.secure = 0
+      No authentication. At all. This chapter's client connected and got a
+      shell without ever being asked for a key -- see handshake-transcript.txt,
+      where the A_AUTH exchange is simply absent.
+
+      This is not "an emulator quirk to be ignored". It is the SAME
+      configuration that shipped on the set-top boxes, TVs and development
+      boards that self-propagating ADB malware colonised from 2018 onward.
+      If you find it on a product, that is the finding.
+
+  ro.debuggable = 1
+      `adb root` is honoured. Measured:
+
+        $ adb -s emulator-5554 root
+        restarting adbd as root
+        $ adb -s emulator-5554 shell 'ps -A -o USER,LABEL,NAME | grep adbd'
+        root  u:r:su:s0  adbd
+
+      Note the SELinux domain: a rooted adbd is u:r:su:s0, not u:r:adbd:s0.
+      The domain name comes from the --root_seclabel argument init passes.
+      (The emulator was returned to `adb unroot` immediately afterwards.)
+
+      Combined with the line above, this is an unauthenticated REMOTE ROOT
+      shell to anyone who can route a packet to the port.
+
+  tcp.5555 OPEN while service.adb.tcp.port is UNSET
+      *** This is why the script was changed. ***
+
+      The emulator's adbd listens on TCP without the property being set,
+      because the emulator starts it in TCP mode directly rather than through
+      the property trigger. An earlier version of the posture script read only
+      the properties and reported tcp.exposed=no for a device with an open,
+      unauthenticated debug port.
+
+      A LISTENING SOCKET BEATS A PROPERTY. Check /proc/net/tcp for state 0A,
+      not just getprop. A configuration check that can be wrong in the safe
+      direction is worse than no check.
+
+  shell.runtime.perms.granted = 38
+      More than the API 30 device's 16, because API 35 has more runtime
+      permissions in existence. The number is not comparable across versions;
+      what is comparable is that both are far more than any app gets.
+
+  WRITE-UP FOR TARGET B, IF IT WERE A PRODUCT
+      "The device exposes an unauthenticated Android Debug Bridge service on
+      TCP port 5555. No credential is required (ro.adb.secure=0), and the
+      build permits privilege elevation of the daemon (ro.debuggable=1), so
+      any host with network reachability obtains a root shell without
+      interaction. Rating: CRITICAL. Remediation: set ro.adb.secure=1 and
+      ro.debuggable=0 in the shipping image, remove any TCP debug port from
+      the boot configuration, and gate both in CI."
+
+================================================================================
+THE COMPARISON, REDUCED
+================================================================================
+
+  Field                       Target A            Target B          Moves severity?
+  --------------------------  ------------------  ----------------  ---------------
+  ro.adb.secure               1                   0                 *** YES ***
+  ro.debuggable               0                   1                 *** YES ***
+  a socket listening on 5555  no                  yes               *** YES ***
+  adb_enabled                 1                   1                 no
+  adbd user                   shell               shell             no
+  adbd SELinux domain         u:r:adbd:s0         u:r:adbd:s0       no
+  build type                  user                userdebug         indirectly
+  authorised key count        1                   n/a (none needed) contextually
+
+  Only three fields decide it, and "adb_enabled = 1" -- the one everybody
+  quotes -- is not among them.
+
+================================================================================
+REPRODUCE
+================================================================================
+
+  # host, read-only, never enables TCP and never writes to /data/misc/adb
+  ../scripts/adb-posture.sh -s <serial> --root
+
+  # machine-readable, for diffing a fleet between audits
+  ../scripts/adb-posture.sh -s <serial> --kv > posture-$(date +%F).kv
+  diff -u posture-2026-07-01.kv posture-2026-08-12.kv

@@ -1,0 +1,393 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  examples/secure-manifest.xml
+  ===========================
+
+  The corrected counterpart to vulnerable-manifest.xml. Every decision here is
+  deliberate, and the comments say WHY rather than WHAT — a manifest whose
+  comments only restate the attribute names teaches nobody anything.
+
+  Read this file next to vulnerable-manifest.xml and
+  vulnerable-manifest-ANSWERS.md. The three together are the whole chapter in
+  practical form.
+
+  THE ORGANISING PRINCIPLE
+    The manifest decides WHETHER THE DOOR OPENS. The code decides WHAT IS
+    BEHIND IT. Manifest-only protection gives you one decision for an entire
+    interface; an in-code check on Binder.getCallingUid() gives you one per
+    operation. Anything that matters needs both.
+
+  This is an audit reference, not a buildable project.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!--
+      No `package` attribute: with modern AGP the effective package comes from
+      `namespace` in build.gradle.kts and the applicationId is injected at build
+      time. No sharedUserId — the app sandbox is a UID boundary and this app
+      keeps it. No installLocation — internalOnly is the default and the default
+      is right.
+    -->
+
+    <!--
+      minSdk 24 removes the pre-Marshmallow branch of the threat model entirely:
+      runtime permissions, no MODE_WORLD_*, and user-added CA certificates are
+      not trusted by default. targetSdk 34 opts into every hardening in the
+      Version Matrix. Both live in build.gradle.kts; they are shown here so the
+      file reads as a complete example.
+
+        android { defaultConfig { minSdk = 24; targetSdk = 34 } }
+    -->
+
+    <!-- Exactly the permissions the app uses, and no more. Over-privilege is a
+         real finding under MASVS-PLATFORM and a Play policy risk. -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <!-- The maxSdkVersion pattern: request the legacy storage permission only
+         where it still means something. Its presence tells an auditor the
+         developer understood the scoped-storage transition. -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28" />
+
+    <!-- Package visibility, declared narrowly instead of QUERY_ALL_PACKAGES. -->
+    <queries>
+        <package android:name="com.example.companion" />
+    </queries>
+
+    <!--
+      Custom permissions at signature level. Only apps signed with the same
+      certificate can be granted these, which for a third-party attacker means
+      unreachable. protectionLevel is ALWAYS explicit: omitting it yields
+      "normal", which grants itself to anyone who asks.
+
+      The names are namespaced under the package so that squatting by another
+      app is at least conspicuous. Remember that the FIRST app to define a
+      permission name sets its level.
+    -->
+    <permission
+        android:name="com.example.app.permission.READ_USERS"
+        android:protectionLevel="signature"
+        android:label="@string/perm_read_users_label"
+        android:description="@string/perm_read_users_desc" />
+    <permission
+        android:name="com.example.app.permission.WRITE_USERS"
+        android:protectionLevel="signature"
+        android:label="@string/perm_write_users_label"
+        android:description="@string/perm_write_users_desc" />
+
+    <!--
+      The <application> element below, attribute by attribute.
+
+      allowBackup / dataExtractionRules / fullBackupContent
+          Backup off, AND a modern rules file present as belt-and-braces in case
+          a future change flips allowBackup back on. dataExtractionRules has two
+          INDEPENDENT rule sets (cloud-backup and device-transfer); excluding a
+          secret from one and not the other is an incomplete fix.
+
+      usesCleartextTraffic / networkSecurityConfig
+          Cleartext off by attribute AND by config. The config supersedes the
+          attribute when both are present, so the config is the one that must be
+          right — but stating both makes the intent unambiguous to the next
+          reader and to your auditor.
+
+      taskAffinity=""
+          One line that closes the whole task-hijacking (StrandHogg) class for
+          every Activity in the app. An Activity with no affinity has no task
+          identity for a malicious app to adopt.
+
+      memtagMode
+          Native memory-safety hardening. Its presence is a POSITIVE finding an
+          auditor should call out, not merely an absence of a negative.
+
+      DELIBERATELY NOT DECLARED, because the defaults are correct:
+          debuggable                   owned by the build type, never the manifest
+          testOnly                     never set outside the IDE's own install path
+          profileable                  debug variants only (src/debug/…)
+          requestLegacyExternalStorage the app uses MediaStore/SAF
+          appComponentFactory          no reason to hook component creation
+          hasFragileUserData           data must not survive uninstall
+          permission                   per-component permissions instead, because an
+                                       application-level permission is OVERRIDDEN
+                                       rather than added to by a component-level one
+    -->
+    <application
+        android:name=".App"
+        android:label="@string/app_name"
+        android:icon="@mipmap/ic_launcher"
+        android:theme="@style/Theme.App"
+        android:allowBackup="false"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:usesCleartextTraffic="false"
+        android:networkSecurityConfig="@xml/network_security_config"
+        android:taskAffinity=""
+        android:memtagMode="sync">
+
+        <!-- ============================================================ -->
+        <!--  Activities                                                   -->
+        <!-- ============================================================ -->
+
+        <!--
+          The launcher MUST be exported: the system launcher starts it. That is
+          not a finding. taskAffinity is inherited as "" from <application>, and
+          is repeated here so a future edit to <application> cannot silently
+          re-open the hijacking class on the one Activity where it matters most.
+        -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:taskAffinity=""
+            android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!--
+          Every internal screen states exported="false" EXPLICITLY rather than
+          relying on the default. The default is correct, but an explicit
+          declaration survives the addition of an <intent-filter> by a future
+          developer who is only trying to make internal navigation work.
+        -->
+        <activity android:name=".SettingsActivity" android:exported="false" />
+        <activity android:name=".AdminActivity"    android:exported="false" />
+        <activity android:name=".ProfileActivity"  android:exported="false" />
+
+        <!--
+          The authentication screen.
+            noHistory           - finished as soon as the user navigates away, so
+                                  it cannot be resumed from Recents
+            excludeFromRecents  - keeps the task out of the Overview screen.
+                                  NOTE: this does NOT stop the system writing a
+                                  task snapshot; FLAG_SECURE on the window is the
+                                  control for that, and it belongs in code:
+                                      window.setFlags(FLAG_SECURE, FLAG_SECURE)
+            no showWhenLocked, no turnScreenOn, no allowEmbedded
+        -->
+        <activity
+            android:name=".LoginActivity"
+            android:exported="false"
+            android:noHistory="true"
+            android:excludeFromRecents="true" />
+
+        <!--
+          Deep links done properly:
+            - https scheme, never a custom scheme (custom schemes are unowned;
+              any app may declare the same one)
+            - an exact host, never "*"
+            - a pathPrefix, never pathPattern=".*"
+            - autoVerify="true", backed by a live
+              https://app.example.com/.well-known/assetlinks.json that lists this
+              package and the SHA-256 of its signing certificate
+
+          Declaring autoVerify does NOT mean verification succeeded. Confirm on
+          a device with:  adb shell pm get-app-links <pkg>
+
+          And the code still validates: the Activity must not hand the received
+          URI to WebView.loadUrl without an allow-list check.
+
+          API 35+: requireContentUriPermissionFromCaller makes the caller prove
+          it already holds permission on any content:// URI it passes in.
+        -->
+        <activity
+            android:name=".DeepLinkActivity"
+            android:exported="true"
+            android:taskAffinity=""
+            android:requireContentUriPermissionFromCaller="readAndWrite">
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https"
+                      android:host="app.example.com"
+                      android:pathPrefix="/open" />
+            </intent-filter>
+        </activity>
+
+        <!--
+          No <activity-alias> anywhere in this file. An alias is a SECOND,
+          independently configured entry point whose exported and permission
+          attributes do NOT inherit from its target, and it is the classic way an
+          exported="false" Activity turns out to be reachable. If you must use
+          one, give it exactly the posture of its target:
+
+            <activity-alias android:name=".Legacy"
+                            android:targetActivity=".AdminActivity"
+                            android:exported="false"
+                            android:permission="com.example.app.permission.READ_USERS" />
+        -->
+
+        <!-- ============================================================ -->
+        <!--  Services                                                     -->
+        <!-- ============================================================ -->
+
+        <!-- Internal work. No filter, explicit exported="false". -->
+        <service
+            android:name=".SyncService"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
+
+        <!--
+          Untrusted-input parsing in Android's own sandbox. An isolated process
+          has no permissions of its own, no access to the app's data directory,
+          and essentially no Binder access to system services, so a memory-safety
+          bug in the parser yields almost nothing. This is what Chrome's renderer
+          uses.
+        -->
+        <service
+            android:name=".MediaParseService"
+            android:exported="false"
+            android:isolatedProcess="true"
+            android:process=":parser" />
+
+        <!--
+          If a bound service genuinely must be reachable by the vendor's
+          companion app, BOTH halves are required: a signature permission in the
+          manifest, and a per-call identity check in code.
+
+            private void requireTrustedCaller() {
+                int uid = Binder.getCallingUid();
+                if (uid == Process.myUid()) return;
+                String[] pkgs = getPackageManager().getPackagesForUid(uid);
+                if (pkgs == null) throw new SecurityException("unknown caller");
+                for (String p : pkgs)
+                    if (SignatureUtil.hasSameSigningCertificate(this, p)) return;
+                throw new SecurityException("caller " + uid + " not trusted");
+            }
+        -->
+        <service
+            android:name=".CompanionBridgeService"
+            android:exported="true"
+            android:permission="com.example.app.permission.READ_USERS" />
+
+        <!-- ============================================================ -->
+        <!--  Receivers                                                    -->
+        <!-- ============================================================ -->
+
+        <!--
+          Not exported. Internal events are delivered with an explicit Intent or
+          through a local bus, never through a manifest-declared exported
+          receiver. No priority attribute: the maximum-priority idiom is
+          cargo-cult and, on ordered broadcasts, is itself an interception
+          primitive.
+        -->
+        <receiver android:name=".InternalEventReceiver" android:exported="false" />
+
+        <!--
+          BOOT_COMPLETED requires exported="true" because the SYSTEM sends the
+          broadcast. That is correct, not a finding. The receiver must treat the
+          Intent as untrusted anyway and must not read attacker-controllable
+          extras from it.
+        -->
+        <receiver android:name=".BootReceiver" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+        <!--
+          NOT VISIBLE HERE: context-registered receivers. From targetSdk 33 they
+          must declare RECEIVER_EXPORTED or RECEIVER_NOT_EXPORTED, and the
+          correct call is:
+
+            ContextCompat.registerReceiver(ctx, receiver, filter,
+                                           ContextCompat.RECEIVER_NOT_EXPORTED);
+
+          A manifest audit alone can never enumerate an app's receiver surface.
+        -->
+
+        <!-- ============================================================ -->
+        <!--  Providers                                                    -->
+        <!-- ============================================================ -->
+
+        <!--
+          A provider serving the vendor's companion app.
+            - authority namespaced with ${applicationId} so it cannot collide
+              with another app's (a collision means the second installer FAILS
+              to install)
+            - readPermission AND writePermission both set, explicitly, even
+              though they name different permissions: readPermission does NOT
+              cover writes, and assuming it does is one of the most common real
+              findings
+            - grantUriPermissions="false": no ad-hoc URI grants that would bypass
+              those permissions
+            - NO <path-permission>. path-permission is an OR, not an AND: it
+              grants an ALTERNATIVE route in and usually widens access.
+              Authorisation belongs in code.
+            - forceUriPermissions requires a grant even for this app's own
+              components
+        -->
+        <provider
+            android:name=".UserProvider"
+            android:authorities="${applicationId}.users"
+            android:exported="true"
+            android:readPermission="com.example.app.permission.READ_USERS"
+            android:writePermission="com.example.app.permission.WRITE_USERS"
+            android:grantUriPermissions="false"
+            android:forceUriPermissions="true" />
+
+        <!--
+          FileProvider done correctly. This is the ONE provider that is designed
+          to be exported="false" with grantUriPermissions="true": all access
+          comes from per-URI grants attached to an Intent, never from the
+          component being exported.
+
+          The <paths> resource is where the real defect usually lives — see
+          file_paths_secure.xml next to this file, and file_paths_insecure.xml
+          for the shape you will find in the wild.
+        -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths_secure" />
+        </provider>
+
+        <!--
+          Remove an SDK's auto-init provider that the app does not want. This is
+          the canonical tools:node="remove" usage; without it the component
+          appears in the merged manifest even though nobody on the team wrote it.
+        -->
+        <provider
+            android:name="com.analytics.sdk.AnalyticsInitProvider"
+            android:authorities="${applicationId}.analyticsinit"
+            tools:node="remove" />
+
+        <!--
+          <meta-data> carries configuration, never credentials. Anything an SDK
+          integration guide tells you to paste here ships in plaintext in every
+          copy of the APK. If a secret is genuinely required, the operation
+          belongs on the server and the client gets a short-lived, scoped,
+          revocable token after authentication.
+        -->
+        <meta-data
+            android:name="com.example.app.CONFIG"
+            android:resource="@xml/app_config" />
+
+    </application>
+
+    <!--
+      Remove a permission an SDK injected through the manifest merger. Read the
+      merger report to find out what was injected in the first place:
+        app/build/outputs/logs/manifest-merger-release-report.txt
+    -->
+    <uses-permission android:name="com.google.android.gms.permission.AD_ID"
+        tools:node="remove" />
+
+    <!--
+      NOTHING BELOW </application> except the line above.
+
+      No <instrumentation>: test runners live in src/androidTest/ so they are
+      merged only into the test APK. An <instrumentation> element in a shipped
+      manifest lets anyone with adb run code inside the app's process with the
+      app's UID and permissions, and it sits exactly here, at the bottom of the
+      file, where auditors stop reading.
+    -->
+
+</manifest>

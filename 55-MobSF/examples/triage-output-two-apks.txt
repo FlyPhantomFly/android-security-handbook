@@ -1,0 +1,66 @@
+
+==============================================================================
+  TRIAGE RANKING - where the next four hours go
+==============================================================================
+  #    package                        version   triage  MobSF  cvss  top signal
+------------------------------------------------------------------------------
+  1    org.android.cmpen              2.0           82     38   6.6  debug_cert x1
+  2    org.android.cmpen              1.0           58     34   5.0  debuggable x1
+------------------------------------------------------------------------------
+  'MobSF' is MobSF's own security_score. It is shown so you can see that the
+  two columns do not have to agree - and when they disagree, ask which one
+  knows what the application is FOR. Neither does; only one pretends to.
+==============================================================================
+
+  1. org.android.cmpen   [triage 82]
+     CMPen-Android-App-v1.2.apk  0.27MB  minSdk 24 / targetSdk 35   report from MobSF v4.x (fixture)
+     *** this report is a shipped FIXTURE, not MobSF output ***
+     ranking terms:
+         +12  debug_cert x1                the debug private key ships with the SDK; anyone can sign an
+         +14  unprotected_provider x1      a reachable data surface an ordinary app can call TODAY (per
+         +10  permission_level_unknown x1  a component whose guard is a permission whose LEVEL nobody r
+         +16  js_bridge x1                 addJavascriptInterface plus attacker-influenced URL is remot
+          +9  browsable x1                 an entry point reachable from a web page, per deep-linked ac
+          +6  secrets_interesting x1       secret candidates that survived classification, per value
+         +10  exported_activities x5       surface, per activity. Cheap to enumerate, usually nothing
+          +5  weak_crypto x1               a specific API with specific arguments; fast to confirm, oft
+          +3  cleartext x1                 the FLAG alone. Permits cleartext; proves none is sent
+          +3  backup x1                    config note until you name the file that leaves the device
+          -6  pin_claimed                  a configured pin: budget an extra session for interception b
+     secrets: 7 raw -> ciphertext=4, digest=1, pin=1, plaintext=1
+              1 are noise by classification alone (pin / URL / too short)
+     first three moves:
+       - read the @JavascriptInterface methods, then find who controls the loaded URL (43-WebView)
+       - resolve every provider's protectionLevel, then query the authority from an unprivileged app (27-ContentProviders, 23-Permissions)
+       - adb shell am start -a android.intent.action.VIEW -d '<scheme>://...' (26-Intent)
+
+  2. org.android.cmpen   [triage 58]
+     CMPen-Android-App-v1.0.apk  5.38MB  minSdk 20 / targetSdk 33   report from MobSF v4.x (fixture)
+     *** this report is a shipped FIXTURE, not MobSF output ***
+     ranking terms:
+         +30  debuggable x1                run-as reads the private data directory with no root. Demons
+         +12  debug_cert x1                the debug private key ships with the SDK; anyone can sign an
+         +12  secrets_interesting x2       secret candidates that survived classification, per value
+          +4  exported_activities x2       surface, per activity. Cheap to enumerate, usually nothing
+          +3  cleartext x1                 the FLAG alone. Permits cleartext; proves none is sent
+          +3  backup x1                    config note until you name the file that leaves the device
+          -6  pin_claimed                  a configured pin: budget an extra session for interception b
+     secrets: 6 raw -> ciphertext=1, pin=3, unknown=2
+              3 are noise by classification alone (pin / URL / too short)
+     first three moves:
+       - adb shell run-as <pkg> ls -la /data/data/<pkg>/shared_prefs   (33-Storage)
+       - decode and classify each surviving secret candidate before naming any of them
+       - map the pinning surface BEFORE bypassing: pinning-surface.py (36-CertificatePinning)
+
+==============================================================================
+  WHAT NO RANKING OF REPORTS CAN SEE
+------------------------------------------------------------------------------
+  runtime-registered receivers - 29-BroadcastReceivers measured 299 of 431 distinct
+    actions (69%) with no manifest-declared receiver anywhere on the device.
+  RegisterNatives bindings - a .so with JNI_OnLoad and no Java_ exports has a native
+    surface that is not enumerable from the file at all (16-JNI).
+  reflection and dynamically loaded DEX - the code may not be in the artefact.
+  splits - a scan of base.apk alone can report ZERO controls for an app whose code
+    ships in split_config APKs. 38-TamperDetection measured exactly that.
+  server-side enforcement and remote config - not on the device.
+==============================================================================

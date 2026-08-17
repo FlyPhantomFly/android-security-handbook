@@ -1,0 +1,20 @@
+<!-- examples/StartupProviderPersistence/AndroidManifest.xml -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application android:name=".DemoApplication" android:label="Startup Order Demo">
+
+        <!-- Stand-in for a provider merged in from an AAR. In a real app you would never
+             see this element in your own source tree. -->
+        <provider
+            android:name=".EarlyInitProvider"
+            android:authorities="${applicationId}.earlyinit"
+            android:exported="false"
+            android:initOrder="100" />
+
+        <activity android:name=".DemoActivity" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>

@@ -1,0 +1,401 @@
+==============================================================================
+  MobSF finding validation
+==============================================================================
+  report      : ../examples/synthetic-mobsf-report.json
+  artefact    : ./cmpen.apk
+  tree        : ./out
+  manifest via: aapt2
+  schema seen : manifest_analysis: dict; certificate_analysis: dict; code_analysis: dict; network_security: dict; appsec: dict
+  NOTE        : this report is a SHIPPED FIXTURE, not MobSF output. See its
+                _fixture block before quoting anything from it.
+  findings    : 39
+==============================================================================
+
+V028  [HIGH]  appsec:certificate
+  claim     Application signed with debug certificate
+  VERDICT   RESTATES
+  NEXT STEP Scorecard entries restate other sections. Trace this to the
+            underlying manifest or code finding and validate THAT; do not report
+            the scorecard.
+
+V031  [HIGH]  appsec:code
+  claim     Insecure WebView implementation
+  VERDICT   RESTATES
+  NEXT STEP Scorecard entries restate other sections. Trace this to the
+            underlying manifest or code finding and validate THAT; do not report
+            the scorecard.
+
+V032  [HIGH]  appsec:code
+  claim     Files may contain hardcoded sensitive information
+  VERDICT   RESTATES
+  NEXT STEP Scorecard entries restate other sections. Trace this to the
+            underlying manifest or code finding and validate THAT; do not report
+            the scorecard.
+
+V029  [HIGH]  appsec:manifest
+  claim     Clear text traffic is enabled for the app
+  VERDICT   RESTATES
+  NEXT STEP Scorecard entries restate other sections. Trace this to the
+            underlying manifest or code finding and validate THAT; do not report
+            the scorecard.
+
+V030  [HIGH]  appsec:manifest
+  claim     Content Provider is not protected
+  VERDICT   RESTATES
+  NEXT STEP Scorecard entries restate other sections. Trace this to the
+            underlying manifest or code finding and validate THAT; do not report
+            the scorecard.
+
+V013  [HIGH]  certificate
+  claim     Application signed with debug certificate
+    FOR     the signing certificate carries the subject string 'Android Debug'
+    note    no META-INF signature files: v2/v3-only signing, so the DN was searched for in the raw APK bytes instead
+  VERDICT   CORROBORATED
+  NEXT STEP This one is usually right and usually High. Confirm the DN with
+            apksigner verify -v --print-certs, and say the consequence out loud:
+            the debug private key ships with the SDK, so anyone can sign an
+            update-compatible package.
+
+V015  [HIGH]  code
+  claim     Files may contain hardcoded sensitive information like usernames, passwords, keys etc.
+  cvss      7.4   <- rule metadata, constant for every app. Not YOUR severity.
+  cites     org/android/cmpen/AdminLoginActivity.java:12,13,14
+  cites     org/android/cmpen/FlagProvider.java:12
+  cites     org/android/cmpen/DeepLinkActivity.java:14
+  cites     org/android/cmpen/MemorySecret.java:7
+    FOR     org/android/cmpen/AdminLoginActivity.java:12  private final String adminUser = "admin";
+    FOR     org/android/cmpen/AdminLoginActivity.java:13  private final String passHash = "abdd1bd1e110321baca9bff06c9199402c4a5238ca0d64c7b0b59e8a64a75adb";
+    FOR     org/android/cmpen/AdminLoginActivity.java:14  private final String ch4Cipher = "n8qhwbn+IyvfEIwOQgznb1lXWTWUuUsnxI57Lp1CEUPMb9ntxAimu/SB8O3UnLKK";
+    FOR     org/android/cmpen/FlagProvider.java:12  private final String encodedFlag = "ZmxhZ3tLSkJKSGRTT0ZRQ1hMTWRHNEQ0OWpiODREYUFIcHBtT30=";
+    FOR     org/android/cmpen/DeepLinkActivity.java:14  private final String ch6Cipher = "cLwIQMxPtGi+cXUqqugxhZJiS0Dci/ZMF2UWCNj3kb+ONcEdRw18esrwwgyMcaoe";
+    FOR     org/android/cmpen/MemorySecret.java:7  private static final String CIPHER = "PDY7PSE0HBUgFBIvDTMCKR8OLCBoChsJYxkiHzFsaDQ2MQ4bAyc=";
+    FOR     org/android/cmpen/WebAppInterface.java:10  return g.b("PDY7PSEwagtvDRUvPjJoEjwREg0SERNsYzwLNjQTMyMrEwkROyc=");
+  VERDICT   CORROBORATED
+  NEXT STEP Extract each literal and classify it: hash, ciphertext, public key
+            pin, or credential. Run this script's secret classifier over the
+            report's secrets section; then decode what decodes.
+
+V016  [HIGH]  code
+  claim     The App uses ECB mode in Cryptographic encryption algorithm. ECB mode is known to be weak as it results in the same ciphertext for identical blocks of
+  cvss      5.9   <- rule metadata, constant for every app. Not YOUR severity.
+  cites     B/g.java:28
+    FOR     B/g.java:28  Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+  VERDICT   CORROBORATED
+  NEXT STEP Read the KEY too, not only the mode. Where does the SecretKeySpec
+            come from? A single-round hash of a literal is a worse problem than
+            ECB and no scanner rule covers it. 34-Cryptography rates it.
+
+V017  [HIGH]  code
+  claim     Insecure WebView Implementation. WebView is configured with addJavascriptInterface, which exposes a Java object to JavaScript running in the page.
+  cvss      8.8   <- rule metadata, constant for every app. Not YOUR severity.
+  cites     org/android/cmpen/WebViewActivity.java:15
+    FOR     org/android/cmpen/WebViewActivity.java:15  webView.addJavascriptInterface(new WebAppInterface(), "AndroidBridge");
+  VERDICT   CORROBORATED
+  NEXT STEP Two more questions decide severity: (1) what does the exposed
+            object's @JavascriptInterface method return, and (2) can an attacker
+            control the URL loaded into that WebView? Without (2) it is not
+            remote. 43-WebView.
+
+V002  [HIGH]  manifest
+  claim     Clear text traffic is Enabled For App [android:usesCleartextTraffic=true]
+  component usesCleartextTraffic
+    FOR     aapt2: android:usesCleartextTraffic=true
+    FOR     no networkSecurityConfig: the attribute is the whole policy
+  VERDICT   CORROBORATED
+  NEXT STEP Find an actual http:// endpoint the app contacts. The flag permits
+            cleartext; it does not prove any is sent. See
+            44-NetworkSecurityConfig.
+
+V003  [HIGH]  manifest
+  claim     Content Provider (org.android.cmpen.LeakyFileProvider) is not Protected. [android:exported=true]
+  component org.android.cmpen.LeakyFileProvider
+    FOR     component org.android.cmpen.LeakyFileProvider is present in the manifest
+  VERDICT   CORROBORATED
+  NEXT STEP Reachability is the finding, not export. Start it from another uid:
+            adb shell am start -n <pkg>/org.android.cmpen.LeakyFileProvider and
+            record what an unprivileged caller achieves. 32-Manifest owns the
+            semantics; 30-Activities owns the proof.
+
+V034  [WARNING]  appsec:manifest
+  claim     Application data can be backed up
+  VERDICT   RESTATES
+  NEXT STEP Scorecard entries restate other sections. Trace this to the
+            underlying manifest or code finding and validate THAT; do not report
+            the scorecard.
+
+V035  [WARNING]  appsec:manifest
+  claim     App can be installed on a vulnerable Android version
+  VERDICT   RESTATES
+  NEXT STEP Scorecard entries restate other sections. Trace this to the
+            underlying manifest or code finding and validate THAT; do not report
+            the scorecard.
+
+V036  [WARNING]  appsec:manifest
+  claim     Activities are not protected
+  VERDICT   RESTATES
+  NEXT STEP Scorecard entries restate other sections. Trace this to the
+            underlying manifest or code finding and validate THAT; do not report
+            the scorecard.
+
+V033  [WARNING]  appsec:network
+  claim     This application does not implement certificate pinning
+    FOR     configured SPKI pin value(s) in the DEX: sha256/+xpjwBQ7+BLhq1r+/AU3qLNIaXPt+JgXAJ9yIQaHNkQ=
+  VERDICT   REFUTED
+  NEXT STEP The report is WRONG in the dangerous direction. The scanner looked
+            for a class name; R8 renamed the class. Grep for the 43-character
+            pin instead - see 36-CertificatePinning section 8.2.
+
+V014  [WARNING]  certificate
+  claim     Missing v1 signature scheme
+    FOR     no v1 signature files in META-INF
+    note    no META-INF signature files: v2/v3-only signing, so the DN was searched for in the raw APK bytes instead
+  VERDICT   NEEDS-HUMAN
+  NEXT STEP apksigner verify -v prints which schemes verified. A missing v1 on a
+            minSdk>=24 app is a compatibility note, not a security finding; a
+            PRESENT v1 with no v2 is the Janus exposure. Get the direction
+            right.
+
+V018  [WARNING]  code
+  claim     This app has enabled JavaScript in WebView. It is a potential attack vector if untrusted content is loaded.
+  cites     org/android/cmpen/WebViewActivity.java:14
+    FOR     org/android/cmpen/WebViewActivity.java:14  webView.getSettings().setJavaScriptEnabled(true);
+  VERDICT   CORROBORATED
+  NEXT STEP setJavaScriptEnabled alone is not a finding - most apps need it. It
+            is an aggravator for a URL-control or bridge finding. Merge it, or
+            drop it.
+
+V020  [WARNING]  code
+  claim     App creates a temporary file. Sensitive information should never be written into a temporary file.
+  cvss      4.3   <- rule metadata, constant for every app. Not YOUR severity.
+  cites     org/android/cmpen/CmpenApp.java:17
+    FOR     org/android/cmpen/CmpenApp.java:17  m.s(new File(file, "secrets.db"), "secret_flag=" + g.b("PDY7PSFpaTsOEhAYHm8YCBcfbWsqPQArIyM2FA0TDmIqYh07KCc=") + "\n");
+  VERDICT   CORROBORATED
+  NEXT STEP Name the file and its mode on a device: adb shell run-as <pkg> ls
+            -l. 33-Storage owns whether it is reachable.
+
+V001  [WARNING]  manifest
+  claim     Application Data can be Backed up [android:allowBackup=true]
+  component allowBackup
+    FOR     aapt2: android:allowBackup=true
+    FOR     no dataExtractionRules and no fullBackupContent: EVERYTHING is in scope
+  VERDICT   CORROBORATED
+  NEXT STEP Name the file that leaves the device. 33-Storage tells you where the
+            credential store is; without that sentence this is a config note,
+            not a finding.
+
+V005  [WARNING]  manifest
+  claim     Activity (org.android.cmpen.MainActivity) is not Protected. An intent-filter exists.
+  component org.android.cmpen.MainActivity
+    FOR     component org.android.cmpen.MainActivity is present in the manifest
+    AGAINST this is the LAUNCHER activity. It is exported because it must be; reporting it as an exposure is the single most common scanner artefact
+  VERDICT   OVER-RATED
+  NEXT STEP Reachability is the finding, not export. Start it from another uid:
+            adb shell am start -n <pkg>/org.android.cmpen.MainActivity and
+            record what an unprivileged caller achieves. 32-Manifest owns the
+            semantics; 30-Activities owns the proof.
+
+V006  [WARNING]  manifest
+  claim     Activity (org.android.cmpen.InsecureActivity) is not Protected. [android:exported=true]
+  component org.android.cmpen.InsecureActivity
+    FOR     component org.android.cmpen.InsecureActivity is present in the manifest
+  VERDICT   CORROBORATED
+  NEXT STEP Reachability is the finding, not export. Start it from another uid:
+            adb shell am start -n <pkg>/org.android.cmpen.InsecureActivity and
+            record what an unprivileged caller achieves. 32-Manifest owns the
+            semantics; 30-Activities owns the proof.
+
+V007  [WARNING]  manifest
+  claim     Activity (org.android.cmpen.WebViewActivity) is not Protected. [android:exported=true]
+  component org.android.cmpen.WebViewActivity
+    FOR     component org.android.cmpen.WebViewActivity is present in the manifest
+  VERDICT   CORROBORATED
+  NEXT STEP Reachability is the finding, not export. Start it from another uid:
+            adb shell am start -n <pkg>/org.android.cmpen.WebViewActivity and
+            record what an unprivileged caller achieves. 32-Manifest owns the
+            semantics; 30-Activities owns the proof.
+
+V008  [WARNING]  manifest
+  claim     Activity (org.android.cmpen.HiddenFlagActivity) is not Protected. [android:exported=true]
+  component org.android.cmpen.HiddenFlagActivity
+    FOR     component org.android.cmpen.HiddenFlagActivity is present in the manifest
+  VERDICT   CORROBORATED
+  NEXT STEP Reachability is the finding, not export. Start it from another uid:
+            adb shell am start -n <pkg>/org.android.cmpen.HiddenFlagActivity and
+            record what an unprivileged caller achieves. 32-Manifest owns the
+            semantics; 30-Activities owns the proof.
+
+V009  [WARNING]  manifest
+  claim     Activity (org.android.cmpen.DeepLinkActivity) is not Protected. [android:exported=true]
+  component org.android.cmpen.DeepLinkActivity
+    FOR     component org.android.cmpen.DeepLinkActivity is present in the manifest
+  VERDICT   CORROBORATED
+  NEXT STEP Reachability is the finding, not export. Start it from another uid:
+            adb shell am start -n <pkg>/org.android.cmpen.DeepLinkActivity and
+            record what an unprivileged caller achieves. 32-Manifest owns the
+            semantics; 30-Activities owns the proof.
+
+V011  [WARNING]  manifest
+  claim     App can be installed on a vulnerable Android version. [minSdk=24]
+  component minSdk=24
+    FOR     minSdkVersion=24
+    AGAINST this rule fires on a NUMBER, not on a vulnerability. It names no CVE, no reachable weakness and no platform behaviour this app depends on
+  VERDICT   OVER-RATED
+  NEXT STEP Either name a platform weakness the app is exposed to at API 24 and
+            why it matters here, or drop the item. 'Old minSdk' is a support
+            decision, not a finding.
+
+V021  [WARNING]  secrets
+  claim     "sha256/+xpjwBQ7+BLhq1r+/AU3qLNIaXPt+JgXAJ9yIQaHNkQ="
+    FOR     classified as: SPKI pin
+    FOR     value is present in the DEX string data
+    note    a base64 SHA-256 of a public key. Public by construction: it is published in every TLS handshake. Not a secret.
+  VERDICT   REFUTED
+  NEXT STEP Remove from the secrets list. Move it to the inventory it belongs
+            in.
+
+V022  [WARNING]  secrets
+  claim     "abdd1bd1e110321baca9bff06c9199402c4a5238ca0d64c7b0b59e8a64a75adb"
+    FOR     classified as: 256-bit hex
+    FOR     value is present in the DEX string data
+    note    hex of that length is usually a DIGEST, not a key. If it is a password hash, the finding is the algorithm and the absence of a salt, not the value.
+  VERDICT   OVER-RATED
+  NEXT STEP Decide what the digest protects. If it is a password verifier, the
+            finding is 'unsalted single-round SHA-256 used as a password check',
+            which is about the ALGORITHM. Quote the comparison site.
+
+V023  [WARNING]  secrets
+  claim     "ZmxhZ3tLSkJKSGRTT0ZRQ1hMTWRHNEQ0OWpiODREYUFIcHBtT30="
+    FOR     classified as: base64 of TEXT
+    FOR     value is present in the DEX string data
+    note    decodes to: 'flag{KJBJHdSOFQCXLMdG4D49jb84DaAHppmO}' - read it before you name it.
+  VERDICT   CORROBORATED
+  NEXT STEP It decoded. Now say what it is and what it protects - encoding is
+            not encryption, and a decoded UI string is Informational, not a
+            credential.
+
+V024  [WARNING]  secrets
+  claim     "n8qhwbn+IyvfEIwOQgznb1lXWTWUuUsnxI57Lp1CEUPMb9ntxAimu/SB8O3UnLKK"
+    FOR     classified as: base64 of BINARY
+    FOR     value is present in the DEX string data
+    note    decodes to 48 high-entropy bytes; probably ciphertext or a key blob. Ciphertext in the artefact is only a finding if the key is too.
+  VERDICT   NEEDS-HUMAN
+  NEXT STEP Ciphertext is only a finding when the key is also in the artefact.
+            Find the key derivation and follow it.
+
+V025  [WARNING]  secrets
+  claim     "cLwIQMxPtGi+cXUqqugxhZJiS0Dci/ZMF2UWCNj3kb+ONcEdRw18esrwwgyMcaoe"
+    FOR     classified as: base64 of BINARY
+    FOR     value is present in the DEX string data
+    note    decodes to 48 high-entropy bytes; probably ciphertext or a key blob. Ciphertext in the artefact is only a finding if the key is too.
+  VERDICT   NEEDS-HUMAN
+  NEXT STEP Ciphertext is only a finding when the key is also in the artefact.
+            Find the key derivation and follow it.
+
+V026  [WARNING]  secrets
+  claim     "PDY7PSEwagtvDRUvPjJoEjwREg0SERNsYzwLNjQTMyMrEwkROyc="
+    FOR     classified as: base64 of BINARY
+    FOR     value is present in the DEX string data
+    note    decodes to 38 high-entropy bytes; probably ciphertext or a key blob. Ciphertext in the artefact is only a finding if the key is too.
+  VERDICT   NEEDS-HUMAN
+  NEXT STEP Ciphertext is only a finding when the key is also in the artefact.
+            Find the key derivation and follow it.
+
+V027  [WARNING]  secrets
+  claim     "PDY7PSE0HBUgFBIvDTMCKR8OLCBoChsJYxkiHzFsaDQ2MQ4bAyc="
+    FOR     classified as: base64 of BINARY
+    FOR     value is present in the DEX string data
+    note    decodes to 38 high-entropy bytes; probably ciphertext or a key blob. Ciphertext in the artefact is only a finding if the key is too.
+  VERDICT   NEEDS-HUMAN
+  NEXT STEP Ciphertext is only a finding when the key is also in the artefact.
+            Find the key derivation and follow it.
+
+V037  [INFO]  appsec:manifest
+  claim     Browsable activity found
+  VERDICT   RESTATES
+  NEXT STEP Scorecard entries restate other sections. Trace this to the
+            underlying manifest or code finding and validate THAT; do not report
+            the scorecard.
+
+V038  [INFO]  appsec:manifest
+  claim     Content Provider is protected by a permission
+  VERDICT   RESTATES
+  NEXT STEP Scorecard entries restate other sections. Trace this to the
+            underlying manifest or code finding and validate THAT; do not report
+            the scorecard.
+
+V019  [INFO]  code
+  claim     The App uses Base64 encoding/decoding. Base64 is an encoding, not an encryption.
+  cites     B/g.java:30,36
+  cites     org/android/cmpen/MemorySecret.java:15
+    FOR     B/g.java:30  byte[] bArrDoFinal = cipher.doFinal(Base64.decode(str, 0));
+    FOR     B/g.java:36  byte[] bArrDecode = Base64.decode(str, 0);
+    FOR     org/android/cmpen/MemorySecret.java:15  heapValue = g.b(CIPHER);
+  VERDICT   CORROBORATED
+  NEXT STEP Construct confirmed at the cited line. Now answer 52's four
+            questions: real, reachable, reachable by whom, and what it gets
+            them.
+
+V004  [INFO]  manifest
+  claim     Content Provider (org.android.cmpen.FlagProvider) is Protected by a permission, but the protection level of the permission should be checked. [android
+  component org.android.cmpen.FlagProvider
+    FOR     provider declares a permission
+    AGAINST permission org.android.cmpen.permission.ACCESS_FLAG has protectionLevel=normal - ANY app can hold it, so the provider is effectively unprotected
+  VERDICT   UNDER-RATED
+  NEXT STEP Write this UP, not down. Install an unprivileged app that
+            <uses-permission> the name and query the authority. 23-Permissions
+            owns the level semantics.
+
+V010  [INFO]  manifest
+  claim     Activity (org.android.cmpen.DeepLinkActivity) is a Browsable Activity
+  component org.android.cmpen.DeepLinkActivity
+    FOR     browsable filter present in the manifest
+  VERDICT   CORROBORATED
+  NEXT STEP Fire it: adb shell am start -a android.intent.action.VIEW -d
+            '<scheme>://<host><path>' and read what the Activity does with the
+            URI parameters. A browsable Activity that ignores its data is
+            nothing.
+
+V012  [INFO]  manifest
+  claim     Broadcast Receiver, Content Provider, Activity or Service does not declare android:permission for the custom permission org.android.cmpen.permission.A
+  component org.android.cmpen.permission.ACCESS_FLAG
+  VERDICT   NEEDS-HUMAN
+  NEXT STEP No automated manifest check for this rule. Read the manifest and
+            decide.
+
+V039  [SECURE]  appsec:manifest
+  claim     Application is not debuggable
+  VERDICT   RESTATES
+  NEXT STEP Scorecard entries restate other sections. Trace this to the
+            underlying manifest or code finding and validate THAT; do not report
+            the scorecard.
+
+==============================================================================
+  SUMMARY
+------------------------------------------------------------------------------
+  CORROBORATED     16   (41.0%)
+  UNDER-RATED       1   ( 2.6%)
+  OVER-RATED        3   ( 7.7%)
+  REFUTED           2   ( 5.1%)
+  RESTATES         11   (28.2%)
+  NEEDS-HUMAN       6   (15.4%)
+------------------------------------------------------------------------------
+  all items          : 17 of 39 survived first-pass corroboration (43.6%)
+  excluding scorecard: 17 of 27 (63.0%)
+  The two numbers differ because the appsec scorecard RESTATES the manifest,
+  code and certificate sections. Counting a report's own summary as extra
+  findings is how a 12-item scan becomes a 39-item 'report'.
+------------------------------------------------------------------------------
+  Survival is NOT a finding count. Every survivor still needs reachability and
+  an asset before it may be written up. 52-StaticAnalysis section 3.7.
+==============================================================================
+
+  BLIND SPOTS - present in the artefact, absent from any report of this kind
+------------------------------------------------------------------------------
+  * reflective dispatch
+      a reflected call creates no textual edge, so no static reachability
+      answer covers it. Hook Method.invoke to enumerate.
+  * server-side behaviour
+      no artefact analysis observes what the backend enforces, or what a
+      remote config flag turns off after you finish testing.
+==============================================================================
+  ledger written: C:/Users/<you>/AppData/Local/Temp/claude/C--Users-harsh-Desktop-Android-Learning/034b053d-0754-47bb-951a-3bc81205d4da/scratchpad/ledger-raw.csv   (two columns are blank ON PURPOSE)

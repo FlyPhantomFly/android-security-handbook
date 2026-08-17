@@ -1,0 +1,428 @@
+{
+  "_fixture": {
+    "WHAT_THIS_IS": "A hand-built fixture in the SHAPE of a MobSF Android static-analysis JSON report. MobSF was NOT run to produce it. See 55-MobSF/README.md section 1.6 for why.",
+    "WHY_IT_EXISTS": "The two scripts in ../scripts/ must be runnable by a reader who has no MobSF instance. They parse a report; this is a report to parse.",
+    "WHAT_IS_REAL": "Every VALUE below is a real measurement of the APK named in file_name, taken on 2026-08-12 with aapt2 (build-tools 35.0.1), jadx 1.5.3 CLI, apksigner 35.0.1, unzip and grep on the analysis host. The package name, component list, flags, protection level, certificate DN and digests, file sizes, hashes, code locations, URL, and the OkHttp pin value were all read off the artefact.",
+    "WHAT_IS_NOT_REAL": "The report STRUCTURE — key names, rule identifiers, severity strings, cvss numbers, the security_score, and the exact English of each title — follows MobSF's documented report shape as closely as could be reconstructed WITHOUT a running instance. Rule ids in particular are plausible reconstructions, not verified MobSF strings. MobSF's schema also drifts between versions (see README section 3.9). DO NOT cite this file's rule ids as MobSF's. Read your own report.",
+    "HOW_TO_REPLACE_IT": "curl -s -H \"Authorization: $MOBSF_API_KEY\" -X POST --data \"hash=<sha256>\" http://127.0.0.1:8000/api/v1/report_json > real-report.json",
+    "TARGET": "CMPen-Android-App v1.2 (org.android.cmpen) - a public, deliberately-vulnerable Android training application. Naming it is fine; it is a teaching target, not a commercial product.",
+    "APK_SHA256": "137186672dd93517bd6c85637c04c7f7cf912458e3ea9c887072dbbf00c39638"
+  },
+
+  "version": "v4.x (fixture)",
+  "title": "Static Analysis Report",
+  "file_name": "CMPen-Android-App-v1.2.apk",
+  "app_name": "CMPenV2 - Android",
+  "app_type": "apk",
+  "size": "0.27MB",
+  "md5": "FIXTURE-NOT-MEASURED",
+  "sha1": "FIXTURE-NOT-MEASURED",
+  "sha256": "137186672dd93517bd6c85637c04c7f7cf912458e3ea9c887072dbbf00c39638",
+  "package_name": "org.android.cmpen",
+  "main_activity": "org.android.cmpen.MainActivity",
+  "target_sdk": "35",
+  "max_sdk": "",
+  "min_sdk": "24",
+  "version_name": "2.0",
+  "version_code": "2",
+
+  "exported_count": {
+    "exported_activities": 5,
+    "exported_services": 0,
+    "exported_receivers": 0,
+    "exported_providers": 2
+  },
+
+  "activities": [
+    "org.android.cmpen.MainActivity",
+    "org.android.cmpen.AdminLoginActivity",
+    "org.android.cmpen.NetworkChallengeActivity",
+    "org.android.cmpen.InsecureActivity",
+    "org.android.cmpen.DeepLinkActivity",
+    "org.android.cmpen.WebViewActivity",
+    "org.android.cmpen.HiddenFlagActivity"
+  ],
+  "exported_activities": [
+    "org.android.cmpen.MainActivity",
+    "org.android.cmpen.InsecureActivity",
+    "org.android.cmpen.DeepLinkActivity",
+    "org.android.cmpen.WebViewActivity",
+    "org.android.cmpen.HiddenFlagActivity"
+  ],
+  "browsable_activities": {
+    "org.android.cmpen.DeepLinkActivity": {
+      "schemes": ["ctfapp://"],
+      "hosts": ["open"],
+      "paths": ["/admin"]
+    }
+  },
+  "services": [],
+  "receivers": [],
+  "providers": [
+    "org.android.cmpen.LeakyFileProvider",
+    "org.android.cmpen.FlagProvider"
+  ],
+  "libraries": [],
+
+  "permissions": {
+    "android.permission.INTERNET": {
+      "status": "normal",
+      "info": "full Internet access",
+      "description": "Allows an application to create network sockets."
+    }
+  },
+  "malware_permissions": {
+    "top_malware_permissions": [],
+    "other_abused_permissions": [],
+    "total_malware_permissions": 0,
+    "total_other_permissions": 0
+  },
+
+  "certificate_analysis": {
+    "certificate_info": "APK is signed\nv1 signature: False\nv2 signature: True\nv3 signature: False\nv4 signature: False\nX.509 Subject: C=US, O=Android, CN=Android Debug\nSignature Algorithm: rsassa_pkcs1v15\nValid From: 2025-01-01 00:00:00+00:00\nValid To: 2055-01-01 00:00:00+00:00\nIssuer: C=US, O=Android, CN=Android Debug\nSerial Number: 0x1\nHash Algorithm: sha256\nmd5: 6b9420ec533a337ede988b2ef45c5f46\nsha1: 6d4671812340e5c6dc3fecff99fbc93056319480\nsha256: 5b571963d738e3b631162671e82ce4a4e67cd4ea76882c427c16a3fec54d3266\nPublicKey Algorithm: rsa\nBit Size: 2048",
+    "certificate_findings": [
+      [
+        "high",
+        "Application signed with a debug certificate. Production application must not be shipped with a debug certificate.",
+        "Application signed with debug certificate"
+      ],
+      [
+        "warning",
+        "Application is not signed with the v1 signature scheme. On devices below Android 7.0 the APK will not install.",
+        "Missing v1 signature scheme"
+      ]
+    ],
+    "certificate_summary": { "high": 1, "warning": 1, "info": 0 }
+  },
+
+  "manifest_analysis": {
+    "manifest_summary": { "high": 3, "warning": 8, "info": 2, "suppressed": 0 },
+    "manifest_anal": [
+      {
+        "rule": "app_allowbackup",
+        "title": "Application Data can be Backed up [android:allowBackup=true]",
+        "severity": "warning",
+        "description": "This flag allows anyone to backup your application data via adb. It allows users who have enabled USB debugging to copy application data off of the device.",
+        "name": "Application Data can be Backed up",
+        "component": ["allowBackup"]
+      },
+      {
+        "rule": "clear_text_traffic",
+        "title": "Clear text traffic is Enabled For App [android:usesCleartextTraffic=true]",
+        "severity": "high",
+        "description": "The app intends to use cleartext network traffic, such as cleartext HTTP, FTP stacks, DownloadManager, and MediaPlayer.",
+        "name": "Clear text traffic is Enabled For App",
+        "component": ["usesCleartextTraffic"]
+      },
+      {
+        "rule": "exported_provider",
+        "title": "Content Provider (org.android.cmpen.LeakyFileProvider) is not Protected. [android:exported=true]",
+        "severity": "high",
+        "description": "A Content Provider is found to be shared with other apps on the device therefore leaving it accessible to any other application on the device.",
+        "name": "Content Provider is not Protected",
+        "component": ["org.android.cmpen.LeakyFileProvider"]
+      },
+      {
+        "rule": "exported_protected_permission_normal",
+        "title": "Content Provider (org.android.cmpen.FlagProvider) is Protected by a permission, but the protection level of the permission should be checked. [android:exported=true] [android:readPermission=org.android.cmpen.permission.ACCESS_FLAG]",
+        "severity": "info",
+        "description": "A Content Provider is found to be shared with other apps on the device therefore leaving it accessible to any other application on the device. It is protected by a permission which is not defined in the analysed application. As a result, the protection level of the permission should be checked where it is defined. If it is set to normal or dangerous, a malicious application can request and obtain the permission and interact with the component.",
+        "name": "Content Provider is Protected by a permission",
+        "component": ["org.android.cmpen.FlagProvider"]
+      },
+      {
+        "rule": "exported_activity",
+        "title": "Activity (org.android.cmpen.MainActivity) is not Protected. An intent-filter exists.",
+        "severity": "warning",
+        "description": "An Activity is found to be shared with other apps on the device therefore leaving it accessible to any other application on the device. The presence of intent-filter indicates that the Activity is explicitly exported.",
+        "name": "Activity is not Protected. An intent-filter exists",
+        "component": ["org.android.cmpen.MainActivity"]
+      },
+      {
+        "rule": "exported_activity",
+        "title": "Activity (org.android.cmpen.InsecureActivity) is not Protected. [android:exported=true]",
+        "severity": "warning",
+        "description": "An Activity is found to be shared with other apps on the device therefore leaving it accessible to any other application on the device.",
+        "name": "Activity is not Protected",
+        "component": ["org.android.cmpen.InsecureActivity"]
+      },
+      {
+        "rule": "exported_activity",
+        "title": "Activity (org.android.cmpen.WebViewActivity) is not Protected. [android:exported=true]",
+        "severity": "warning",
+        "description": "An Activity is found to be shared with other apps on the device therefore leaving it accessible to any other application on the device.",
+        "name": "Activity is not Protected",
+        "component": ["org.android.cmpen.WebViewActivity"]
+      },
+      {
+        "rule": "exported_activity",
+        "title": "Activity (org.android.cmpen.HiddenFlagActivity) is not Protected. [android:exported=true]",
+        "severity": "warning",
+        "description": "An Activity is found to be shared with other apps on the device therefore leaving it accessible to any other application on the device.",
+        "name": "Activity is not Protected",
+        "component": ["org.android.cmpen.HiddenFlagActivity"]
+      },
+      {
+        "rule": "exported_activity",
+        "title": "Activity (org.android.cmpen.DeepLinkActivity) is not Protected. [android:exported=true]",
+        "severity": "warning",
+        "description": "An Activity is found to be shared with other apps on the device therefore leaving it accessible to any other application on the device.",
+        "name": "Activity is not Protected",
+        "component": ["org.android.cmpen.DeepLinkActivity"]
+      },
+      {
+        "rule": "browsable_activity",
+        "title": "Activity (org.android.cmpen.DeepLinkActivity) is a Browsable Activity",
+        "severity": "info",
+        "description": "A Browsable Activity is an activity that can be invoked by the browser via a deeplink. Schemes: ctfapp:// Hosts: open Paths: /admin",
+        "name": "Browsable Activity found",
+        "component": ["org.android.cmpen.DeepLinkActivity"]
+      },
+      {
+        "rule": "vulnerable_os_version",
+        "title": "App can be installed on a vulnerable Android version. [minSdk=24]",
+        "severity": "warning",
+        "description": "This application can be installed on an older version of Android that has multiple unfixed vulnerabilities.",
+        "name": "App can be installed on a vulnerable Android version",
+        "component": ["minSdk=24"]
+      },
+      {
+        "rule": "improper_provider_permission",
+        "title": "Broadcast Receiver, Content Provider, Activity or Service does not declare android:permission for the custom permission org.android.cmpen.permission.ACCESS_FLAG",
+        "severity": "info",
+        "description": "A custom permission is declared by the application. The protection level determines who may hold it.",
+        "name": "Custom permission declared",
+        "component": ["org.android.cmpen.permission.ACCESS_FLAG"]
+      }
+    ]
+  },
+
+  "network_security": {
+    "network_findings": [],
+    "network_summary": { "high": 0, "warning": 0, "info": 0, "secure": 0 }
+  },
+
+  "code_analysis": {
+    "summary": { "high": 3, "warning": 2, "info": 1, "secure": 0, "suppressed": 0 },
+    "findings": {
+      "Files may contain hardcoded sensitive information like usernames, passwords, keys etc.": {
+        "files": {
+          "org/android/cmpen/AdminLoginActivity.java": "12,13,14",
+          "org/android/cmpen/FlagProvider.java": "12",
+          "org/android/cmpen/DeepLinkActivity.java": "14",
+          "org/android/cmpen/MemorySecret.java": "7",
+          "org/android/cmpen/WebAppInterface.java": "10"
+        },
+        "metadata": {
+          "cvss": 7.4,
+          "cwe": "CWE-312 Cleartext Storage of Sensitive Information",
+          "owasp-mobile": "M9: Reverse Engineering",
+          "masvs": "MSTG-STORAGE-14",
+          "reference": "https://mas.owasp.org/MASVS/",
+          "description": "Files may contain hardcoded sensitive information like usernames, passwords, keys etc.",
+          "severity": "high"
+        }
+      },
+      "The App uses ECB mode in Cryptographic encryption algorithm. ECB mode is known to be weak as it results in the same ciphertext for identical blocks of plaintext.": {
+        "files": { "B/g.java": "28" },
+        "metadata": {
+          "cvss": 5.9,
+          "cwe": "CWE-327 Use of a Broken or Risky Cryptographic Algorithm",
+          "owasp-mobile": "M5: Insufficient Cryptography",
+          "masvs": "MSTG-CRYPTO-2",
+          "reference": "https://mas.owasp.org/MASVS/",
+          "description": "The App uses ECB mode in Cryptographic encryption algorithm.",
+          "severity": "high"
+        }
+      },
+      "Insecure WebView Implementation. WebView is configured with addJavascriptInterface, which exposes a Java object to JavaScript running in the page.": {
+        "files": { "org/android/cmpen/WebViewActivity.java": "15" },
+        "metadata": {
+          "cvss": 8.8,
+          "cwe": "CWE-749 Exposed Dangerous Method or Function",
+          "owasp-mobile": "M1: Improper Platform Usage",
+          "masvs": "MSTG-PLATFORM-7",
+          "reference": "https://mas.owasp.org/MASVS/",
+          "description": "Insecure WebView Implementation. WebView is configured with addJavascriptInterface.",
+          "severity": "high"
+        }
+      },
+      "This app has enabled JavaScript in WebView. It is a potential attack vector if untrusted content is loaded.": {
+        "files": { "org/android/cmpen/WebViewActivity.java": "14" },
+        "metadata": {
+          "cvss": 0.0,
+          "cwe": "",
+          "owasp-mobile": "M1: Improper Platform Usage",
+          "masvs": "MSTG-PLATFORM-5",
+          "reference": "https://mas.owasp.org/MASVS/",
+          "description": "This app has enabled JavaScript in WebView.",
+          "severity": "warning"
+        }
+      },
+      "The App uses Base64 encoding/decoding. Base64 is an encoding, not an encryption.": {
+        "files": {
+          "B/g.java": "30,36",
+          "org/android/cmpen/MemorySecret.java": "15"
+        },
+        "metadata": {
+          "cvss": 0.0,
+          "cwe": "",
+          "owasp-mobile": "",
+          "masvs": "MSTG-CRYPTO-1",
+          "reference": "https://mas.owasp.org/MASVS/",
+          "description": "Base64 encoding/decoding is used.",
+          "severity": "info"
+        }
+      },
+      "App creates a temporary file. Sensitive information should never be written into a temporary file.": {
+        "files": { "org/android/cmpen/CmpenApp.java": "17" },
+        "metadata": {
+          "cvss": 4.3,
+          "cwe": "CWE-276 Incorrect Default Permissions",
+          "owasp-mobile": "M2: Insecure Data Storage",
+          "masvs": "MSTG-STORAGE-2",
+          "reference": "https://mas.owasp.org/MASVS/",
+          "description": "App creates a temporary file.",
+          "severity": "warning"
+        }
+      }
+    }
+  },
+
+  "binary_analysis": [],
+  "file_analysis": [],
+
+  "android_api": {
+    "api_crypto": {
+      "files": { "B/g.java": "20,28" },
+      "metadata": { "description": "Crypto", "severity": "info" }
+    },
+    "api_webview": {
+      "files": { "org/android/cmpen/WebViewActivity.java": "13,14,15,20" },
+      "metadata": { "description": "Load and Manipulate WebView", "severity": "info" }
+    },
+    "api_base64_decode": {
+      "files": { "B/g.java": "30,36" },
+      "metadata": { "description": "Base64 Decode", "severity": "info" }
+    },
+    "api_content_provider": {
+      "files": {
+        "org/android/cmpen/FlagProvider.java": "38",
+        "org/android/cmpen/LeakyFileProvider.java": "40"
+      },
+      "metadata": { "description": "Content Provider", "severity": "info" }
+    }
+  },
+
+  "urls": [
+    {
+      "urls": ["https://ninja.secops.group"],
+      "path": "b/h.java:93"
+    }
+  ],
+  "domains": {
+    "ninja.secops.group": {
+      "bad": "no",
+      "geolocation": {},
+      "ofac": false
+    }
+  },
+  "emails": [],
+  "firebase_urls": [],
+  "trackers": { "detected_trackers": 0, "total_trackers": 400, "trackers": [] },
+
+  "secrets": [
+    "\"sha256/+xpjwBQ7+BLhq1r+/AU3qLNIaXPt+JgXAJ9yIQaHNkQ=\"",
+    "\"abdd1bd1e110321baca9bff06c9199402c4a5238ca0d64c7b0b59e8a64a75adb\"",
+    "\"ZmxhZ3tLSkJKSGRTT0ZRQ1hMTWRHNEQ0OWpiODREYUFIcHBtT30=\"",
+    "\"n8qhwbn+IyvfEIwOQgznb1lXWTWUuUsnxI57Lp1CEUPMb9ntxAimu/SB8O3UnLKK\"",
+    "\"cLwIQMxPtGi+cXUqqugxhZJiS0Dci/ZMF2UWCNj3kb+ONcEdRw18esrwwgyMcaoe\"",
+    "\"PDY7PSEwagtvDRUvPjJoEjwREg0SERNsYzwLNjQTMyMrEwkROyc=\"",
+    "\"PDY7PSE0HBUgFBIvDTMCKR8OLCBoChsJYxkiHzFsaDQ2MQ4bAyc=\""
+  ],
+
+  "apkid": {},
+  "behaviour": {},
+  "niap_analysis": {},
+  "playstore_details": {},
+  "average_cvss": 6.6,
+
+  "appsec": {
+    "security_score": 38,
+    "app_name": "CMPenV2 - Android",
+    "file_name": "CMPen-Android-App-v1.2.apk",
+    "hash": "137186672dd93517bd6c85637c04c7f7cf912458e3ea9c887072dbbf00c39638",
+    "average_cvss": 6.6,
+    "total_trackers": 400,
+    "trackers": 0,
+    "high": [
+      {
+        "title": "Application signed with debug certificate",
+        "description": "Application is signed with a debug certificate. Production applications must not be shipped with a debug certificate.",
+        "section": "certificate"
+      },
+      {
+        "title": "Clear text traffic is enabled for the app",
+        "description": "The app intends to use cleartext network traffic.",
+        "section": "manifest"
+      },
+      {
+        "title": "Content Provider is not protected",
+        "description": "org.android.cmpen.LeakyFileProvider is exported with no permission.",
+        "section": "manifest"
+      },
+      {
+        "title": "Insecure WebView implementation",
+        "description": "addJavascriptInterface exposes a Java object to page JavaScript.",
+        "section": "code"
+      },
+      {
+        "title": "Files may contain hardcoded sensitive information",
+        "description": "Hardcoded secrets found in 5 files.",
+        "section": "code"
+      }
+    ],
+    "warning": [
+      {
+        "title": "This application does not implement certificate pinning",
+        "description": "No certificate pinning implementation was detected. Certificate pinning is recommended for applications handling sensitive data.",
+        "section": "network"
+      },
+      {
+        "title": "Application data can be backed up",
+        "description": "android:allowBackup is true.",
+        "section": "manifest"
+      },
+      {
+        "title": "App can be installed on a vulnerable Android version",
+        "description": "minSdk 24.",
+        "section": "manifest"
+      },
+      {
+        "title": "Activities are not protected",
+        "description": "5 activities are exported without permission.",
+        "section": "manifest"
+      }
+    ],
+    "info": [
+      {
+        "title": "Browsable activity found",
+        "description": "org.android.cmpen.DeepLinkActivity handles ctfapp://open/admin.",
+        "section": "manifest"
+      },
+      {
+        "title": "Content Provider is protected by a permission",
+        "description": "org.android.cmpen.FlagProvider declares a readPermission.",
+        "section": "manifest"
+      }
+    ],
+    "secure": [
+      {
+        "title": "Application is not debuggable",
+        "description": "android:debuggable is not set in the manifest.",
+        "section": "manifest"
+      }
+    ],
+    "hotspot": []
+  }
+}

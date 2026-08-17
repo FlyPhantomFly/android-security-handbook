@@ -1,0 +1,160 @@
+Output of examples/attacker-app/, built with its own build.sh and run against
+real services on a physical device.
+
+Every measurement below is verbatim. The one edit made before committing is to
+package NAMES: assessed third-party applications are written
+`com.vendor.<category>`, per 72-RealWorldFindings/references/README.md section 4.
+Platform and OEM system packages keep their real names -- they are the operating
+system under test, and no verdict here is attached to any of them.
+
+  Device      Redmi M2101K6P (sweetin), MIUI 12.5, kernel 4.14.180
+  Release     Android 11, API 30, arm64-v8a
+  Attacker    com.pentest.ch28probe, uid 10313, targetSdk 30,
+              ONE permission: android.permission.QUERY_ALL_PACKAGES
+  Victim      com.example.notesvault, uid 10310, the VULNERABLE build of
+              examples/VaultService-vulnerable.java
+  Also probed three real system/vendor services, unmodified
+
+  Root was used ONLY to install the two test APKs, because this device refuses
+  ordinary `adb install` with INSTALL_FAILED_USER_RESTRICTED (a MIUI setting,
+  not an Android behaviour). The attack itself used no root, no adb privileges
+  and no permissions: it is a plain app calling bindService().
+
+Reproduce with:
+
+    sh examples/attacker-app/build.sh install
+    adb logcat -c
+    adb shell am start -n com.pentest.ch28probe/.ProbeActivity \
+      --es targets 'com.example.notesvault/com.example.notesvault.VaultService,com.android.keychain/com.android.keychain.KeyChainService,com.android.settings/com.android.settings.wifi.MiuiWifiService,com.miui.analytics/com.miui.analytics.AnalyticsService' \
+      --es tokencodes '1+3'
+    adb logcat -d -s CH28:V CH28VAULT:V
+
+================================================================================
+RUN 1 -- FOUR TARGETS, FOUR DIFFERENT OUTCOMES
+================================================================================
+
+CH28    : probe uid=10313 pid=21583
+
+CH28    : BIND-RETURN com.example.notesvault/com.example.notesvault.VaultService => true
+CH28    : BIND-RETURN com.android.keychain/com.android.keychain.KeyChainService => true
+CH28    : BIND-RETURN com.android.settings/com.android.settings.wifi.MiuiWifiService => false
+          SecurityException: Not allowed to bind to service
+          Intent { cmp=com.android.settings/.wifi.MiuiWifiService }
+CH28    : BIND-RETURN com.miui.analytics/com.miui.analytics.AnalyticsService => true
+
+CH28    : CONNECTED com.miui.analytics/...AnalyticsService descriptor='com.miui.analytics.ICore' alive=true ping=true local=false
+CH28    :   TX code=1 ok=true replyBytes=100 exception=java.lang.SecurityException: Binder invocation to an incorrect interface
+CH28    :   TX code=2 ok=true replyBytes=100 exception=java.lang.SecurityException: Binder invocation to an incorrect interface
+CH28    :   TX code=3 ok=true replyBytes=100 exception=java.lang.SecurityException: Binder invocation to an incorrect interface
+CH28    :   TOKEN-TX code=1 ok=true replyBytes=8  exception=(none) string='null'
+CH28    :   TOKEN-TX code=3 ok=true replyBytes=12 exception=(none) string=''
+
+CH28VAULT: onBind intent=Intent { cmp=com.example.notesvault/.VaultService } callingUid=10310
+CH28    : CONNECTED com.example.notesvault/...VaultService descriptor='com.example.notesvault.IVaultService' alive=true ping=true local=false
+CH28    :   TX code=1 ok=true replyBytes=100 exception=java.lang.SecurityException: Binder invocation to an incorrect interface
+CH28    :   TX code=2 ok=true replyBytes=100 exception=java.lang.SecurityException: Binder invocation to an incorrect interface
+CH28    :   TX code=3 ok=true replyBytes=100 exception=java.lang.SecurityException: Binder invocation to an incorrect interface
+CH28VAULT: getAuthToken() called by uid=10313 pid=21583
+CH28    :   TOKEN-TX code=1 ok=true replyBytes=92 exception=(none)
+            string='eyJhbGciOiJIUzI1NiJ9.SECRET-SESSION-TOKEN'
+CH28VAULT: isUnlocked() by uid=10313
+CH28    :   TOKEN-TX code=3 ok=true replyBytes=8 exception=(none) string='null'
+
+CH28    : SUMMARY [VaultService=true, KeyChainService=true, MiuiWifiService=false,
+                   AnalyticsService=true]
+CH28    : PROBE-DONE
+
+WHAT EACH OF THE FOUR TAUGHT
+----------------------------
+
+VaultService          THE FULL CHAIN. bind -> descriptor -> token -> secret, in
+                      about twenty lines of attacker code, from an app with one
+                      permission. Note the two log lines from the VICTIM: onBind
+                      saw callingUid=10310 (its OWN uid) while getAuthToken saw
+                      uid=10313 (the real attacker). Same connection, two
+                      different answers, one millisecond apart. That is
+                      README section 3.7 and it is the reason the vulnerable
+                      version's onBind check is inert.
+
+KeyChainService       bindService returned TRUE and onServiceConnected NEVER
+                      FIRED. Its onBind returns a binder only for the action it
+                      expects and null otherwise, and we sent a bare component
+                      Intent. A tester who recorded the `true` and stopped would
+                      have filed a critical finding against the system
+                      credential store based on a connection that never existed.
+                      service-recon.py rates this service OPEN, correctly, and
+                      says in its own summary that OPEN is a work queue.
+
+MiuiWifiService       The permission gate working. It is guarded by
+                      com.xiaomi.permission.ACCESS_WIFI, protectionLevel
+                      signature, so the refusal is loud and specific. This is a
+                      CONTROL OBSERVED, not a finding, and it belongs in the
+                      report as one.
+
+AnalyticsService      A real vendor service, reached and called. The blind
+                      probe at codes 1-3 with an empty parcel produced
+                      "Binder invocation to an incorrect interface" three times,
+                      which is how you know it is an AIDL Stub rather than a raw
+                      Binder. Writing the descriptor it had already given us
+                      (com.miui.analytics.ICore) got past enforceInterface, and
+                      codes 1 and 3 then executed and returned. Whether anything
+                      those methods do is worth reporting is a separate
+                      question. Reaching them was free.
+
+================================================================================
+RUN 2 -- PACKAGE VISIBILITY, AS A CONTROLLED EXPERIMENT
+================================================================================
+
+Same prober, same targets, same device, same minute. The ONLY difference is one
+line in AndroidManifest.xml.
+
+  WITHOUT <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"/>
+
+    BIND-RETURN com.vendor.fileexplorer/com.google.firebase.iid.FirebaseInstanceIdService => false
+    (no exception, nothing in logcat, no denial anywhere on the device)
+
+  WITH it
+
+    BIND-RETURN com.vendor.fileexplorer/com.google.firebase.iid.FirebaseInstanceIdService => true
+    CONNECTED   ... descriptor='' alive=true ping=true local=false
+      TX code=1 ok=false replyBytes=0 exception=(none)
+      TX code=2 ok=false replyBytes=0 exception=(none)
+      TX code=3 ok=false replyBytes=0 exception=(none)
+
+    BIND-RETURN com.vendor.shortvideo/com.vendor.shortvideo.common.firebase.MyFirebaseMessagingService => true
+    CONNECTED   ... descriptor='' alive=true ping=true local=false
+
+TWO CONCLUSIONS, BOTH OF WHICH CHANGE HOW YOU TEST
+
+1.  A bare `false` with no exception is package visibility, not a control. If
+    you do not know this, you will write "not reachable" about services that are
+    wide open. On API 30+ this is the single most likely cause of a false
+    negative in service testing.
+
+2.  descriptor='' means the object is a RAW Binder, not an AIDL Stub. Nothing
+    enforces an interface token, so every transaction code is reachable with an
+    empty parcel, and `ok=false` here simply means the default onTransact did
+    not handle codes 1-3. Those are the services worth sweeping properly,
+    because there is no token to get right and no generated Stub to read.
+
+================================================================================
+FOR THE REPORT: WHAT THIS DOES AND DOES NOT PROVE
+================================================================================
+
+PROVES   An unprivileged, permission-free third-party app can bind an exported
+         service in another app and invoke its methods, and the service sees the
+         attacker's true uid and does nothing with it.
+
+PROVES   The interface descriptor is disclosed to any caller on request, so
+         "the interface is not documented" is not a control.
+
+PROVES   A caller check written in onBind() compares the app against itself.
+
+DOES NOT PROVE anything about the three real device services beyond
+         reachability. Reaching com.miui.analytics.ICore is not a finding; what
+         its methods do would have to be established by reading the APK. The
+         chapter deliberately stops there.
+
+DOES NOT PROVE that this generalises to API 31+ devices unchanged. Package
+         visibility, background start rules and foregroundServiceType all
+         changed after API 30 and this device cannot exhibit those changes.

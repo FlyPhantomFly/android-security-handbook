@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  examples/fixed-vault/backup_rules.xml
+
+  A REFERENCE FILE, not one this example's build wires in.
+
+  examples/fixed-vault takes the blunt option and sets allowBackup="false", so
+  no rules file is consulted. This file is shipped because the blunt option is
+  frequently the wrong one in production: users expect their data to move to a
+  new phone, and switching backup off for the whole app to protect one file is a
+  product regression sold as a security fix. What you usually want is backup ON
+  and the sensitive files excluded, which is what this expresses.
+
+  HOW TO WIRE IT UP
+
+    Put this file at res/xml/backup_rules.xml and the sibling below at
+    res/xml/data_extraction_rules.xml, then declare BOTH in the manifest:
+
+        <application
+            android:allowBackup="true"
+            android:fullBackupContent="@xml/backup_rules"
+            android:dataExtractionRules="@xml/data_extraction_rules">
+
+    Ship both attributes. The platform reads fullBackupContent up to API 30 and
+    dataExtractionRules from API 31, and ignores the other one. An app that
+    declares only dataExtractionRules is UNPROTECTED on every device below API
+    31 — and since the older format is the one that governs `adb backup`, that
+    is precisely the population where the exposure is easiest to exploit. This
+    is the most common way a correctly-intentioned exclusion ends up doing
+    nothing.
+
+  THE DOMAIN NAMES, WHICH ARE NOT PATHS
+
+    Each <include>/<exclude> takes a domain plus a path relative to that
+    domain's root. The domains that exist:
+
+        root         the CE directory itself   /data/user/0/<pkg>/
+        file         files/
+        database     databases/
+        sharedpref   shared_prefs/
+        external     the app-specific external directory
+        device_root / device_file / device_database / device_sharedpref
+                     the same set under DEVICE-ENCRYPTED storage (API 31+ rules
+                     format only)
+
+    Two directories are ALWAYS excluded and need no rule: cache/ and
+    code_cache/. So is no_backup/, which exists for exactly this purpose.
+
+    Paths are relative and must not start with a slash. `path="auth.xml"` under
+    domain="sharedpref" means shared_prefs/auth.xml. A leading slash silently
+    matches nothing, which is a failure mode with no error message.
+
+  VERIFY IT, DO NOT ASSUME IT
+
+    A rules file that does not do what you think is indistinguishable from one
+    that works, until somebody extracts the backup. Test it:
+
+        # host
+        adb shell bmgr enabled
+        adb shell bmgr backupnow <package>
+        adb backup -f out.ab -noapk <package>     # where still supported
+        # then unpack out.ab and list what came out — see labs/lab-04
+
+    An empty or 1 KB .ab file is not proof of protection; it is often proof that
+    the backup transport refused for an unrelated reason.
+-->
+<full-backup-content>
+
+    <!--
+      Exclusions are evaluated before inclusions, and an <exclude> with no
+      matching <include> siblings means "back up everything EXCEPT this".
+      That is the shape used here, because an allowlist that someone forgets to
+      extend when they add a file fails open.
+    -->
+
+    <!-- The sealed record. Excluded even though it is ciphertext: the key is a
+         non-exportable AndroidKeyStore key, so a restored copy on a different
+         device is undecryptable anyway, and shipping it merely widens the
+         attack surface for no benefit. -->
+    <exclude domain="file" path="vault.bin" />
+
+    <!-- Anything the app staged and has not cleaned up. Defence in depth
+         against the leaky app's FIX-1 bug reappearing. -->
+    <exclude domain="file" path="staging/" />
+
+    <!-- The session preferences. In the fixed app these hold only a label and
+         a timestamp, but excluding them costs nothing and means a future
+         developer who adds a token here does not silently create a leak. -->
+    <exclude domain="sharedpref" path="session.xml" />
+
+    <!-- The notes database and both of its companions. Excluding notes.db
+         alone is a classic near-miss: the -wal file is a separate file and is
+         backed up separately, and it contains the rows. -->
+    <exclude domain="database" path="notes.db" />
+    <exclude domain="database" path="notes.db-wal" />
+    <exclude domain="database" path="notes.db-shm" />
+    <exclude domain="database" path="notes.db-journal" />
+
+    <!-- Nothing sensitive should be on external storage at all, but if a
+         library puts something there, keep it out of the cloud copy. -->
+    <exclude domain="external" path="." />
+
+</full-backup-content>
+
+<!--
+  THE API 31+ EQUIVALENT, for res/xml/data_extraction_rules.xml. Kept in this
+  comment rather than as a second file so the two stay side by side; copy it out
+  when you need it.
+
+  Note the structural change: the newer format splits CLOUD BACKUP from
+  DEVICE-TO-DEVICE TRANSFER, and you almost always want different answers for
+  the two. A credential that must not go to Google Drive may be perfectly
+  acceptable on a cable between two phones the same person owns. The older
+  format cannot express that distinction at all.
+
+  <?xml version="1.0" encoding="utf-8"?>
+  <data-extraction-rules>
+      <cloud-backup>
+          <exclude domain="file"       path="vault.bin" />
+          <exclude domain="sharedpref" path="session.xml" />
+          <exclude domain="database"   path="notes.db" />
+          <exclude domain="database"   path="notes.db-wal" />
+          <exclude domain="database"   path="notes.db-shm" />
+          <exclude domain="external"   path="." />
+          <exclude domain="device_file" path="." />
+      </cloud-backup>
+
+      <device-transfer>
+          <exclude domain="file"     path="vault.bin" />
+          <exclude domain="database" path="notes.db-wal" />
+      </device-transfer>
+  </data-extraction-rules>
+-->

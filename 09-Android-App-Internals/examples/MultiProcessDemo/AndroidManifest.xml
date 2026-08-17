@@ -1,0 +1,23 @@
+<!-- examples/MultiProcessDemo/AndroidManifest.xml -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application android:name=".DemoApplication" android:label="Multi-Process Demo">
+
+        <activity android:name=".MainActivity" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- The whole demo is this one attribute.
+             A value starting with ":" is PRIVATE to this package: the real process name
+             becomes com.example.multiproc:remote and no other package can ever join it.
+             A value WITHOUT the colon is a global process name, which another package may
+             join only if it has the same UID and the same signing certificate. -->
+        <service
+            android:name=".RemoteService"
+            android:process=":remote"
+            android:exported="false" />
+
+    </application>
+</manifest>

@@ -1,0 +1,607 @@
+# semgrep-crypto.yml — Android cryptography anti-patterns.
+#
+# WHAT IT DOES
+#   Semgrep rules for the finding catalogue in ../README.md section 5.2. Each rule
+#   carries the same F-nn identifier used in that catalogue, so a Semgrep hit maps
+#   one-to-one onto a report row, its explanation and its remediation snippet.
+#
+#   Covered: ECB (explicit and the silent one-token form), static and zero IVs,
+#   java.util.Random for key material, hardcoded SecretKeySpec, MD5/SHA-1,
+#   GCM tag lengths given in bytes, PBKDF2 with too few iterations, textbook and
+#   PKCS#1 v1.5 RSA, non-constant-time comparison of secrets, SHA1PRNG key
+#   derivation, keys derived from device identifiers, and unauthenticated modes.
+#
+# WHY IT MATTERS
+#   grep finds strings; Semgrep matches the abstract syntax tree, so it does not
+#   fire on a commented-out line, it follows a constant through a variable
+#   assignment, and it can require that two things co-occur inside one function.
+#   That reduces the false-positive rate enough to run it in CI, which is the only
+#   place a crypto rule actually prevents anything.
+#
+#   It is still static analysis. Every hit needs runtime confirmation before it
+#   goes in a report — see ../scripts/frida-jca-universal-hook.js.
+#
+# HOW TO RUN
+#   # host — against decompiled sources
+#   jadx -d jadx-out/ target.apk
+#   semgrep --config semgrep-crypto.yml jadx-out/sources/
+#
+#   # host — against an app's own source tree, in CI
+#   semgrep --config semgrep-crypto.yml --error app/src/main/java/
+#
+#   # host — only the high-severity rules
+#   semgrep --config semgrep-crypto.yml --severity ERROR .
+#
+#   # host — SARIF for a code-scanning dashboard
+#   semgrep --config semgrep-crypto.yml --sarif -o crypto.sarif .
+#
+# REQUIREMENTS
+#   semgrep >= 1.0   (pip install semgrep)
+#   Java and Kotlin analysers are built in; no extra packs needed.
+#
+#   Semgrep cannot read Smali. For an APK you have only as bytes, decompile first
+#   with jadx, or use ../scripts/detect-ecb.py, which does read Smali.
+#
+# AUTHORISED TESTING ONLY.
+
+rules:
+
+  # ------------------------------------------------------------------ F-02 ---
+  - id: android-cipher-no-mode-is-ecb
+    message: >-
+      F-02 (HIGH): Cipher.getInstance() was given a bare algorithm name with no
+      mode or padding. The JCA resolves this to <alg>/ECB/PKCS5Padding. ECB
+      encrypts each 16-byte block independently, so identical plaintext blocks
+      produce identical ciphertext blocks (structure leaks) and blocks can be cut
+      and pasted between records (integrity and authorisation break). The
+      developer did not choose ECB — they chose nothing, and the default chose for
+      them. Fix: Cipher.getInstance("AES/GCM/NoPadding") and let the provider
+      generate the nonce.
+    severity: ERROR
+    languages: [java, kotlin]
+    metadata:
+      finding-id: F-02
+      masvs: MASVS-CRYPTO-1
+      cwe: "CWE-327: Use of a Broken or Risky Cryptographic Algorithm"
+      references:
+        - https://mas.owasp.org/MASVS/05-MASVS-CRYPTO/
+        - ../README.md#f-02--ecb-mode
+    patterns:
+      - pattern-either:
+          - pattern: javax.crypto.Cipher.getInstance("AES")
+          - pattern: javax.crypto.Cipher.getInstance("AES_128")
+          - pattern: javax.crypto.Cipher.getInstance("AES_192")
+          - pattern: javax.crypto.Cipher.getInstance("AES_256")
+          - pattern: javax.crypto.Cipher.getInstance("DES")
+          - pattern: javax.crypto.Cipher.getInstance("DESede")
+          - pattern: javax.crypto.Cipher.getInstance("Blowfish")
+          - pattern: javax.crypto.Cipher.getInstance("RC2")
+          - pattern: Cipher.getInstance("AES")
+          - pattern: Cipher.getInstance("AES_128")
+          - pattern: Cipher.getInstance("AES_192")
+          - pattern: Cipher.getInstance("AES_256")
+          - pattern: Cipher.getInstance("DES")
+          - pattern: Cipher.getInstance("DESede")
+          - pattern: Cipher.getInstance("Blowfish")
+          - pattern: Cipher.getInstance("RC2")
+
+  - id: android-cipher-explicit-ecb
+    message: >-
+      F-02 (HIGH): ECB mode requested explicitly. The usual justification is "CBC
+      needs an IV and I do not want to change the storage format". The format has
+      to change: store nonce || ciphertext || tag and use AES/GCM/NoPadding.
+    severity: ERROR
+    languages: [java, kotlin]
+    metadata:
+      finding-id: F-02
+      masvs: MASVS-CRYPTO-1
+      cwe: "CWE-327"
+    patterns:
+      - pattern-regex: 'getInstance\s*\(\s*"[A-Za-z0-9_]+/ECB/[A-Za-z0-9]+"'
+      - pattern-not-regex: 'getInstance\s*\(\s*"RSA/ECB/OAEP'
+
+  # ------------------------------------------------------------------ F-03 ---
+  - id: android-static-iv
+    message: >-
+      F-03 (MEDIUM–HIGH): a fixed IV. An IvParameterSpec built from a string
+      literal, a zero-filled array, or the key itself makes CBC deterministic —
+      identical plaintexts produce identical ciphertexts. That enables equality
+      detection across records and dictionary attacks wherever the plaintext space
+      is small (PINs, booleans, enumerated values). An unpredictable IV is also
+      what BEAST taught us to require. Fix: do not pass an IV when encrypting;
+      call cipher.getIV() afterwards and store it alongside the ciphertext.
+    severity: ERROR
+    languages: [java, kotlin]
+    metadata:
+      finding-id: F-03
+      masvs: MASVS-CRYPTO-1
+      cwe: "CWE-329: Generation of Predictable IV with CBC Mode"
+    patterns:
+      - pattern-either:
+          - pattern: new IvParameterSpec("...".getBytes(...))
+          - pattern: new IvParameterSpec("...".getBytes())
+          - pattern: new IvParameterSpec(new byte[$N])
+          - pattern: IvParameterSpec("...".toByteArray(...))
+          - pattern: IvParameterSpec(ByteArray($N))
+          - pattern: |
+              $IV = new byte[16];
+              ...
+              new IvParameterSpec($IV)
+          - pattern: new IvParameterSpec($KEY.getEncoded())
+          - pattern: IvParameterSpec($KEY.encoded)
+
+  - id: android-static-iv-constant-field
+    message: >-
+      F-03 (MEDIUM–HIGH): a constant IV held in a static final field. Every
+      message encrypted by this app shares one IV, which removes the only source
+      of randomness in CBC.
+    severity: ERROR
+    languages: [java]
+    metadata:
+      finding-id: F-03
+      masvs: MASVS-CRYPTO-1
+    patterns:
+      - pattern-either:
+          - pattern: static final byte[] $IV = "...".getBytes(...);
+          - pattern: static final byte[] $IV = new byte[$N];
+          - pattern: private static final byte[] $IV = "...".getBytes(...);
+      - pattern-inside: |
+          class $C { ... }
+
+  # ------------------------------------------------------------------ F-06 ---
+  - id: android-random-for-key-material
+    message: >-
+      F-06 (HIGH): java.util.Random used to produce bytes. Random is a 48-bit
+      linear congruential generator; two consecutive outputs are enough to recover
+      its internal state and predict everything it will ever emit. Seeding it from
+      System.currentTimeMillis() makes it worse, because the seed space is a few
+      million values around a known time. Any key, IV, nonce, session token, OTP,
+      password-reset code or CSRF token generated this way is predictable.
+      Fix: new SecureRandom() with no explicit seed.
+    severity: ERROR
+    languages: [java, kotlin]
+    metadata:
+      finding-id: F-06
+      masvs: MASVS-CRYPTO-1
+      cwe: "CWE-338: Use of Cryptographically Weak PRNG"
+    patterns:
+      - pattern-either:
+          - pattern: new java.util.Random(...).nextBytes(...)
+          - pattern: new Random(...).nextBytes(...)
+          - pattern: Random(...).nextBytes(...)
+          - pattern: |
+              $R = new Random(...);
+              ...
+              $R.nextBytes($B);
+          - pattern: |
+              $R = new java.util.Random(...);
+              ...
+              $R.nextInt(...)
+          - pattern: Math.random()
+
+  - id: android-securerandom-setseed
+    message: >-
+      F-05 (HIGH): SecureRandom.setSeed() used to make key generation
+      deterministic. This is the SHA1PRNG anti-pattern: getInstance("SHA1PRNG"),
+      setSeed(secret), nextBytes(key). It was never a key derivation function — it
+      has no salt and no work factor — and from Android 7 setSeed supplements
+      rather than replaces the internal seed, so the same code produces DIFFERENT
+      keys on different releases. Apps usually discover this as a data-loss
+      incident rather than as a review finding.
+      Fix: PBKDF2WithHmacSHA256 for passwords, HKDF for high-entropy secrets.
+    severity: ERROR
+    languages: [java, kotlin]
+    metadata:
+      finding-id: F-05
+      masvs: MASVS-CRYPTO-2
+      cwe: "CWE-336: Same Seed in PRNG"
+    patterns:
+      - pattern-either:
+          - pattern: SecureRandom.getInstance("SHA1PRNG")
+          - pattern: java.security.SecureRandom.getInstance("SHA1PRNG")
+          - pattern: |
+              $SR = SecureRandom.getInstance(...);
+              ...
+              $SR.setSeed(...);
+          - pattern: |
+              $SR = new SecureRandom(...);
+              ...
+              $SR.setSeed(...);
+          - pattern: new SecureRandom($SEED)
+
+  # ------------------------------------------------------------------ F-01 ---
+  - id: android-hardcoded-secretkeyspec
+    message: >-
+      F-01 (HIGH–CRITICAL): SecretKeySpec built from a literal. A key compiled
+      into the APK is identical for every installation, so a single APK download
+      compromises every user — the exposure is global, not per-device. R8 and
+      ProGuard rename identifiers; they do not encrypt string constants, so this
+      survives obfuscation and is recoverable with `strings classes.dex`.
+      Fix: generate the key in the AndroidKeyStore (see
+      examples/04-keystore-backed-vault.kt) or derive it from a user secret with
+      PBKDF2.
+    severity: ERROR
+    languages: [java, kotlin]
+    metadata:
+      finding-id: F-01
+      masvs: MASVS-CRYPTO-2
+      cwe: "CWE-321: Use of Hard-coded Cryptographic Key"
+    patterns:
+      - pattern-either:
+          - pattern: new SecretKeySpec("...".getBytes(...), ...)
+          - pattern: new SecretKeySpec("...".getBytes(), ...)
+          - pattern: SecretKeySpec("...".toByteArray(...), ...)
+          - pattern: new javax.crypto.spec.SecretKeySpec("...".getBytes(...), ...)
+          - pattern: |
+              $K = "...";
+              ...
+              new SecretKeySpec($K.getBytes(...), ...)
+          - pattern: |
+              static final String $K = "...";
+              ...
+              new SecretKeySpec($K.getBytes(...), ...)
+          - pattern: new SecretKeySpec(android.util.Base64.decode("...", ...), ...)
+          - pattern: new SecretKeySpec(new byte[]{...}, ...)
+
+  - id: android-hardcoded-key-in-buildconfig
+    message: >-
+      F-09 (MEDIUM–HIGH): a secret read from BuildConfig. BuildConfig fields are
+      compiled into the DEX as plain constants and are recovered with
+      `strings classes.dex` or `aapt2 dump strings`. Putting a value in
+      gradle.properties keeps it out of version control; it does not keep it out
+      of the shipped APK.
+      Fix: the value must live on a server the app authenticates to, or in the
+      AndroidKeyStore, or not exist.
+    severity: WARNING
+    languages: [java, kotlin]
+    metadata:
+      finding-id: F-09
+      masvs: MASVS-STORAGE-2
+      cwe: "CWE-798: Use of Hard-coded Credentials"
+    patterns:
+      - pattern-regex: 'BuildConfig\.[A-Z_]*(KEY|SECRET|PASSWORD|TOKEN|PASSPHRASE)[A-Z_]*'
+
+  # ------------------------------------------------------------------ F-07 ---
+  - id: android-weak-digest-md5-sha1
+    message: >-
+      F-07 (context-dependent): MD5 or SHA-1. Both are collision-broken (SHAttered
+      demonstrated a real SHA-1 collision in 2017). This is a finding when the
+      digest is used for integrity checking, digital signatures, certificate
+      handling, password hashing or key derivation. It is NOT a finding when it is
+      used as a cache key, an ETag or a de-duplication hash. Establish which
+      before you report it — reporting a cache key as a cryptographic
+      vulnerability is the fastest way to have the rest of your report ignored.
+      Fix: SHA-256, and HMAC-SHA256 whenever a key is involved.
+    severity: WARNING
+    languages: [java, kotlin]
+    metadata:
+      finding-id: F-07
+      masvs: MASVS-CRYPTO-1
+      cwe: "CWE-328: Use of Weak Hash"
+    patterns:
+      - pattern-either:
+          - pattern: MessageDigest.getInstance("MD5")
+          - pattern: MessageDigest.getInstance("SHA-1")
+          - pattern: MessageDigest.getInstance("SHA1")
+          - pattern: java.security.MessageDigest.getInstance("MD5")
+          - pattern: java.security.MessageDigest.getInstance("SHA-1")
+          - pattern: Mac.getInstance("HmacMD5")
+          - pattern: Signature.getInstance("MD5withRSA")
+          - pattern: Signature.getInstance("SHA1withRSA")
+          - pattern: Signature.getInstance("SHA1withECDSA")
+
+  - id: android-hash-used-as-kdf
+    message: >-
+      F-05 (HIGH): the output of a bare hash is being used as an encryption key.
+      A hash is not a key derivation function. It is deliberately fast, it takes
+      no salt and it has no work factor, so an attacker who guesses the input
+      space (a password, a device id, a constant) recovers the key at billions of
+      candidates per second on a GPU. Fix: PBKDF2WithHmacSHA256 with a random
+      per-record salt and >= 600,000 iterations, or Argon2id, or — if the input is
+      already high-entropy — HKDF.
+    severity: ERROR
+    languages: [java, kotlin]
+    metadata:
+      finding-id: F-05
+      masvs: MASVS-CRYPTO-2
+      cwe: "CWE-916: Use of Password Hash With Insufficient Computational Effort"
+    patterns:
+      - pattern-either:
+          - pattern: new SecretKeySpec(MessageDigest.getInstance(...).digest(...), ...)
+          - pattern: SecretKeySpec(MessageDigest.getInstance(...).digest(...), ...)
+          - pattern: |
+              $D = MessageDigest.getInstance(...);
+              ...
+              $B = $D.digest(...);
+              ...
+              new SecretKeySpec($B, ...)
+
+  # ------------------------------------------------------------------ F-12 ---
+  - id: android-gcm-tag-length-in-bytes
+    message: >-
+      F-12 (HIGH): GCMParameterSpec takes the authentication tag length in BITS,
+      not bytes. Passing 16 requests a 16-bit tag, which an attacker forges in
+      roughly 2^15 attempts; passing 8 is worse still. NIST SP 800-38D permits
+      128, 120, 112, 104 and 96, and 128 is the only value you should be writing.
+      This is one of the few genuine off-by-a-factor-of-eight security bugs.
+    severity: ERROR
+    languages: [java, kotlin]
+    metadata:
+      finding-id: F-12
+      masvs: MASVS-CRYPTO-1
+      references:
+        - https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-38d.pdf
+    patterns:
+      - pattern-either:
+          - pattern: new GCMParameterSpec(4, ...)
+          - pattern: new GCMParameterSpec(8, ...)
+          - pattern: new GCMParameterSpec(12, ...)
+          - pattern: new GCMParameterSpec(16, ...)
+          - pattern: new GCMParameterSpec(32, ...)
+          - pattern: new GCMParameterSpec(64, ...)
+          - pattern: GCMParameterSpec(8, ...)
+          - pattern: GCMParameterSpec(16, ...)
+          - pattern: GCMParameterSpec(32, ...)
+          - pattern: GCMParameterSpec(64, ...)
+
+  - id: android-gcm-missing-tag-length
+    message: >-
+      F-12 (INFO): a GCM cipher initialised without an explicit GCMParameterSpec
+      on the decryption side. On encryption this is correct and desirable — the
+      provider generates a fresh nonce. On decryption you must supply the nonce
+      and the expected tag length, otherwise you are relying on provider defaults
+      that are not guaranteed across API levels. Verify which side this is.
+    severity: INFO
+    languages: [java, kotlin]
+    metadata:
+      finding-id: F-12
+      masvs: MASVS-CRYPTO-1
+    patterns:
+      - pattern: |
+          $C = Cipher.getInstance("AES/GCM/NoPadding");
+          ...
+          $C.init(Cipher.DECRYPT_MODE, $K);
+
+  # ------------------------------------------------------------------ F-05 ---
+  - id: android-pbkdf2-low-iterations
+    message: >-
+      F-05 (MEDIUM–HIGH): PBKDF2 with too few iterations. The iteration count is
+      the only thing standing between a stolen record and an offline brute force.
+      Current guidance (OWASP Password Storage Cheat Sheet) is 600,000 for
+      PBKDF2-HMAC-SHA256; a count in the low thousands, which was normal in 2010
+      code and is still the default in many tutorials, buys almost nothing against
+      a GPU. Calibrate on the slowest device you support, store the count inside
+      the record so it can be raised later without invalidating existing data, and
+      authenticate the stored count as associated data so an attacker cannot edit
+      it downwards before asking you to decrypt.
+    severity: WARNING
+    languages: [java, kotlin]
+    metadata:
+      finding-id: F-05
+      masvs: MASVS-CRYPTO-2
+      cwe: "CWE-916"
+      references:
+        - https://www.rfc-editor.org/rfc/rfc8018
+        - https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html
+    patterns:
+      - pattern-either:
+          - pattern-regex: 'PBEKeySpec\s*\([^)]*?,\s*(?:[1-9]\d{0,4})\s*,'
+          - pattern-regex: 'iterationCount\s*=\s*(?:[1-9]\d{0,4})\b'
+
+  - id: android-pbe-no-salt
+    message: >-
+      F-05 (HIGH): PBEKeySpec constructed without a salt, or with a constant salt.
+      Without a per-record random salt the same password derives the same key on
+      every device, precomputation applies, and identical passwords are visible as
+      identical keys. RFC 8018 requires a salt of at least 8 bytes; use 16 random
+      bytes and store them with the record.
+    severity: ERROR
+    languages: [java, kotlin]
+    metadata:
+      finding-id: F-05
+      masvs: MASVS-CRYPTO-2
+      cwe: "CWE-759: Use of a One-Way Hash without a Salt"
+    patterns:
+      - pattern-either:
+          - pattern: new PBEKeySpec($PW)
+          - pattern: new PBEKeySpec($PW, "...".getBytes(...), ...)
+          - pattern: new PBEKeySpec($PW, new byte[$N], ...)
+          - pattern: PBEKeySpec($PW, "...".toByteArray(...), ...)
+
+  # ------------------------------------------------------------------ F-14 ---
+  - id: android-rsa-no-oaep
+    message: >-
+      F-14 (MEDIUM–HIGH): RSA encryption without OAEP. "RSA/ECB/NoPadding" is
+      textbook RSA — deterministic, malleable, and recoverable by integer root
+      extraction when the plaintext is small. "RSA/ECB/PKCS1Padding" is the
+      Bleichenbacher / ROBOT oracle class: if any error path distinguishes bad
+      padding from other failures, the private-key operation becomes a decryption
+      oracle. Note that the "ECB" token here is a JCA naming artefact; RSA has no
+      mode. Fix: RSA/ECB/OAEPWithSHA-256AndMGF1Padding with an explicit
+      OAEPParameterSpec, because the default MGF1 digest differs between providers.
+    severity: ERROR
+    languages: [java, kotlin]
+    metadata:
+      finding-id: F-14
+      masvs: MASVS-CRYPTO-1
+      cwe: "CWE-780: Use of RSA Algorithm without OAEP"
+    patterns:
+      - pattern-either:
+          - pattern: Cipher.getInstance("RSA")
+          - pattern: Cipher.getInstance("RSA/ECB/NoPadding")
+          - pattern: Cipher.getInstance("RSA/None/NoPadding")
+          - pattern: Cipher.getInstance("RSA/ECB/PKCS1Padding")
+          - pattern: Cipher.getInstance("RSA/None/PKCS1Padding")
+          - pattern: javax.crypto.Cipher.getInstance("RSA/ECB/PKCS1Padding")
+
+  # ------------------------------------------------------------------ F-15 ---
+  - id: android-non-constant-time-mac-compare
+    message: >-
+      F-15 (LOW–HIGH): a MAC, tag, digest or token compared with Arrays.equals or
+      String.equals. Both return at the first differing byte, so the time taken
+      leaks how many leading bytes the attacker guessed correctly, permitting
+      byte-at-a-time forgery. On-device timing is usually too noisy to exploit, so
+      report it as Low unless the comparison happens server-side or over a channel
+      the attacker can time precisely — but it is free to fix.
+      Fix: MessageDigest.isEqual(a, b), which is constant-time.
+    severity: WARNING
+    languages: [java, kotlin]
+    metadata:
+      finding-id: F-15
+      masvs: MASVS-AUTH-2
+      cwe: "CWE-208: Observable Timing Discrepancy"
+    patterns:
+      - pattern-either:
+          - pattern: |
+              $MAC = $M.doFinal(...);
+              ...
+              java.util.Arrays.equals($MAC, $EXPECTED)
+          - pattern: |
+              $MAC = $M.doFinal(...);
+              ...
+              Arrays.equals($MAC, $EXPECTED)
+          - pattern-regex: '\.equals\s*\(\s*(?:expected|received)?(?:Mac|MAC|Hmac|Tag|Signature|Digest|Hash)\w*\s*\)'
+
+  # ------------------------------------------------------------------ F-05 ---
+  - id: android-key-from-device-identifier
+    message: >-
+      F-05 (HIGH): key material derived from a device identifier. ANDROID_ID, the
+      build serial, the IMEI and the advertising id are not secrets — they are
+      readable by the platform, appear in support logs and backups, and are
+      predictable to any code already running on the device. A key derived from
+      one is recoverable by anyone who can read that identifier, which includes
+      the attacker you are trying to keep out.
+      Fix: AndroidKeyStore, where the key is generated by the keystore daemon and
+      never enters the app process at all.
+    severity: ERROR
+    languages: [java, kotlin]
+    metadata:
+      finding-id: F-05
+      masvs: MASVS-CRYPTO-2
+      cwe: "CWE-330: Use of Insufficiently Random Values"
+    patterns:
+      - pattern-either:
+          - pattern: |
+              $ID = Settings.Secure.getString(..., Settings.Secure.ANDROID_ID);
+              ...
+              new SecretKeySpec($ID.getBytes(...), ...)
+          - pattern: |
+              $ID = Settings.Secure.getString(..., Settings.Secure.ANDROID_ID);
+              ...
+              $D.digest($ID.getBytes(...))
+          - pattern: |
+              $ID = Build.SERIAL;
+              ...
+              new SecretKeySpec(...)
+          - pattern: |
+              $ID = $TM.getDeviceId();
+              ...
+              new SecretKeySpec(...)
+
+  # ------------------------------------------------------------------ F-12 ---
+  - id: android-unauthenticated-cbc-or-ctr
+    message: >-
+      F-12 (MEDIUM–HIGH): an unauthenticated cipher mode. CBC and CTR provide
+      confidentiality only. CTR is bit-for-bit malleable: flip a ciphertext bit
+      and the corresponding plaintext bit flips, with no other effect, so
+      {"admin":false} becomes {"admin":true } if the attacker knows the offset.
+      CBC decryption that reports padding failures distinguishably is a padding
+      oracle and yields full plaintext recovery at about 128 requests per byte.
+      Fix: AES/GCM/NoPadding. If the format cannot change, apply encrypt-then-MAC
+      — HMAC-SHA256 over iv || ciphertext, verified with a constant-time
+      comparison BEFORE the cipher is invoked at all.
+    severity: WARNING
+    languages: [java, kotlin]
+    metadata:
+      finding-id: F-12
+      masvs: MASVS-CRYPTO-1
+      cwe: "CWE-353: Missing Support for Integrity Check"
+    patterns:
+      - pattern-either:
+          - pattern: Cipher.getInstance("AES/CBC/PKCS5Padding")
+          - pattern: Cipher.getInstance("AES/CBC/PKCS7Padding")
+          - pattern: Cipher.getInstance("AES/CBC/NoPadding")
+          - pattern: Cipher.getInstance("AES/CTR/NoPadding")
+          - pattern: javax.crypto.Cipher.getInstance("AES/CBC/PKCS5Padding")
+
+  # ------------------------------------------------------------------ F-11 ---
+  - id: android-obsolete-cipher
+    message: >-
+      F-07 (HIGH): an obsolete cipher. DES has a 56-bit key and falls to brute
+      force. 3DES and Blowfish have 64-bit blocks and are birthday-bound at about
+      2^32 blocks (Sweet32). RC4 has practical keystream biases. None of these
+      should appear in code written this decade; their presence usually means the
+      file was copied from a tutorial older than the developer's career.
+      Fix: AES-256-GCM, or ChaCha20-Poly1305 on API 28+.
+    severity: ERROR
+    languages: [java, kotlin]
+    metadata:
+      finding-id: F-07
+      masvs: MASVS-CRYPTO-1
+      cwe: "CWE-327"
+    patterns:
+      - pattern-regex: 'getInstance\s*\(\s*"(DES|DESede|TripleDES|RC2|RC4|ARCFOUR|Blowfish)(/[^"]*)?"'
+
+  # ------------------------------------------------------------------ F-16 ---
+  - id: android-decrypt-then-load-code
+    message: >-
+      F-16 (CRITICAL if reachable): a ClassLoader is constructed in the same scope
+      as a Cipher operation. Decrypting a DEX or JAR and loading it means the
+      integrity of executing code rests entirely on the secrecy of a key that
+      ships inside the APK. Anyone who recovers the key can substitute their own
+      payload; anyone who can write to the file the payload is read from can do it
+      without the key at all if the check is only a hash.
+      Fix: verify a signature over the payload with a public key pinned in the
+      app, and prefer not to load code dynamically at all.
+    severity: ERROR
+    languages: [java, kotlin]
+    metadata:
+      finding-id: F-16
+      masvs: MASVS-CODE-4
+      cwe: "CWE-494: Download of Code Without Integrity Check"
+    patterns:
+      - pattern-either:
+          - pattern: |
+              $B = $C.doFinal(...);
+              ...
+              new DexClassLoader(...)
+          - pattern: |
+              $B = $C.doFinal(...);
+              ...
+              new InMemoryDexClassLoader(...)
+          - pattern: |
+              $B = $C.doFinal(...);
+              ...
+              new PathClassLoader(...)
+
+  # ------------------------------------------------------------------ F-10 ---
+  - id: android-base64-as-encryption
+    message: >-
+      F-10 (context-dependent): a method named like encryption that only Base64
+      encodes. Base64 is a transport encoding; it provides no confidentiality and
+      anyone can reverse it. The finding is not "Base64 is weak" — it is that data
+      the app documents or presents as encrypted is stored in cleartext. Verify
+      what the value contains before assigning severity.
+    severity: WARNING
+    languages: [java, kotlin]
+    metadata:
+      finding-id: F-10
+      masvs: MASVS-STORAGE-1
+      cwe: "CWE-311: Missing Encryption of Sensitive Data"
+    patterns:
+      - pattern-either:
+          - pattern: |
+              $TYPE encrypt(...) {
+                ...
+                return android.util.Base64.encodeToString(...);
+              }
+          - pattern: |
+              $TYPE encrypt(...) {
+                ...
+                return Base64.encodeToString(...);
+              }
+          - pattern: |
+              fun encrypt(...): $T {
+                ...
+                return Base64.encodeToString(...)
+              }

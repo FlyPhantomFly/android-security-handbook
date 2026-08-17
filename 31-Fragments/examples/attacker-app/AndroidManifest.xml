@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    examples/attacker-app/AndroidManifest.xml
+
+    AUTHORISED TESTING ONLY. This application exists to attack the chapter 31
+    victim app on a device you own. It attacks nothing else, and every target
+    package name is hard coded to com.pentest.ch31.victim.
+
+    It requests ZERO permissions. That is the point worth noticing: fragment
+    injection needs no permission, no root, and no user consent. It needs an
+    Intent.
+
+    The queries element is required from API 30 onward. Without it, package
+    visibility hides the victim from this app and the attack looks like it
+    failed for the wrong reason. Chapter 30 section 7.5 covers that trap.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.pentest.ch31.attacker">
+
+    <queries>
+        <package android:name="com.pentest.ch31.victim" />
+    </queries>
+
+    <application
+        android:label="CH31 Attacker"
+        android:allowBackup="false">
+
+        <activity
+            android:name=".InjectActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>

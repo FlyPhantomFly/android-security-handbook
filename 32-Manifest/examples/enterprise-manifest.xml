@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  examples/enterprise-manifest.xml
+  ===============================
+
+  An MDM-managed enterprise application, corresponding to README section 9.5.
+
+  WHY THIS FILE IS SEPARATE
+  =========================
+  Enterprise apps carry manifest surface that consumer apps do not, and it is
+  high value. They also contain several constructs that LOOK like findings and
+  are not — recognising those is a hallmark of an experienced auditor, and
+  reporting them is the fastest way to have the rest of your report discounted.
+
+  This file is mostly CORRECT. Three things in it are deliberate hardening you
+  should call out as positives, two are correct-but-must-be-verified, and one is
+  a genuine finding. Work out which is which before reading the notes at the
+  bottom.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!--
+      BIND_DEVICE_ADMIN is requested so that the <receiver> below can declare it
+      as its android:permission. Note the direction: the app does not HOLD this
+      permission, the SYSTEM does. Declaring it on the receiver is what stops
+      any other app binding as a device administrator.
+    -->
+    <uses-permission android:name="android.permission.BIND_DEVICE_ADMIN" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <!--
+      Cross-profile visibility of the companion app. Narrow, and it names the
+      package rather than reaching for QUERY_ALL_PACKAGES.
+    -->
+    <queries>
+        <package android:name="com.enterprise.companion" />
+        <provider android:authorities="com.enterprise.companion.policy" />
+    </queries>
+
+    <!--
+      Signature-level permissions shared with the companion app. This only works
+      if both APKs really are signed by the same key — verify it, do not assume:
+
+          # host
+          Run apksigner with the print-certs flag on BOTH apks and compare
+          the SHA-256 digest lines. The exact command is in
+          ../labs/lab-03-proving-reachability.md (XML comments cannot contain
+          a double hyphen, which is why the flag is spelled out here).
+
+      If the two digests differ, these permissions can never be granted and the
+      cross-app feature is broken — or, worse, someone "fixed" it by lowering
+      the level and this file is out of date.
+    -->
+    <permission android:name="com.enterprise.permission.READ_POLICY"
+        android:protectionLevel="signature"
+        android:label="@string/perm_read_policy"
+        android:description="@string/perm_read_policy_desc" />
+    <permission android:name="com.enterprise.permission.WRITE_POLICY"
+        android:protectionLevel="signature"
+        android:label="@string/perm_write_policy"
+        android:description="@string/perm_write_policy_desc" />
+
+    <application
+        android:name=".EnterpriseApp"
+        android:label="@string/app_name"
+        android:icon="@mipmap/ic_launcher"
+        android:theme="@style/Theme.Enterprise"
+        android:allowBackup="false"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:usesCleartextTraffic="false"
+        android:networkSecurityConfig="@xml/nsc_pinned"
+        android:taskAffinity=""
+        android:directBootAware="false">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:taskAffinity=""
+            android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!--
+          Enrolment screen. FLAG_SECURE belongs in the code; excludeFromRecents
+          and noHistory are the manifest half of keeping enrolment material off
+          the Overview screen.
+        -->
+        <activity
+            android:name=".EnrolActivity"
+            android:exported="false"
+            android:noHistory="true"
+            android:excludeFromRecents="true" />
+
+        <!--
+          DEVICE ADMIN RECEIVER
+          =====================
+          exported="true" here is CORRECT and is NOT a finding. The system binds
+          to this component, so it must be exported, and the BIND_DEVICE_ADMIN
+          permission is what makes that safe: only the platform holds it.
+
+          The finding would be the ABSENCE of the BIND_ permission, because then
+          any app could bind.
+
+          The real audit work is the referenced @xml/device_admin, which lists
+          the policies the app requests. Each one has genuine user impact and
+          each should be justified:
+              <wipe-data/>       remote wipe
+              <reset-password/>  set or clear the device password
+              <force-lock/>      lock the device
+              <disable-camera/>  disable the camera device-wide
+              <encrypted-storage/>, <expire-password/>, <limit-password/>
+        -->
+        <receiver
+            android:name=".AdminReceiver"
+            android:exported="true"
+            android:permission="android.permission.BIND_DEVICE_ADMIN">
+            <meta-data android:name="android.app.device_admin"
+                android:resource="@xml/device_admin" />
+            <intent-filter>
+                <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
+                <action android:name="android.app.action.PROFILE_PROVISIONING_COMPLETE" />
+            </intent-filter>
+        </receiver>
+
+        <!--
+          MANAGED CONFIGURATION
+          =====================
+          The EMM administrator writes these restrictions; the app reads them via
+          RestrictionsManager. Read @xml/app_restrictions and ask: are any
+          SECURITY-relevant settings exposed as restrictions?
+
+          A serverUrl restriction means the EMM console can repoint the app's
+          backend. A "disableCertificatePinning" or "allowDebugMode" restriction
+          means the EMM console can turn off a security control. Where that is
+          true, THE EMM BECOMES PART OF THE ATTACK SURFACE, and an attacker who
+          compromises an administrator account inherits those capabilities.
+          That belongs in the threat model and in the report.
+        -->
+        <meta-data android:name="android.content.APP_RESTRICTIONS"
+            android:resource="@xml/app_restrictions" />
+
+        <!--
+          CROSS-PROFILE POLICY PROVIDER
+          =============================
+          Correct posture: separate read and write permissions, both at signature
+          level, no grantUriPermissions, no <path-permission>.
+
+          Still audit the implementation. The manifest says the door is locked;
+          it says nothing about call(), which is an untyped RPC entry point that
+          the read/write permissions only gate if the code checks them.
+        -->
+        <provider
+            android:name=".PolicyProvider"
+            android:authorities="${applicationId}.policy"
+            android:exported="true"
+            android:readPermission="com.enterprise.permission.READ_POLICY"
+            android:writePermission="com.enterprise.permission.WRITE_POLICY"
+            android:grantUriPermissions="false"
+            android:forceUriPermissions="true" />
+
+        <!--
+          THE GENUINE FINDING IN THIS FILE.
+
+          A directBootAware service can run BEFORE THE USER HAS EVER UNLOCKED THE
+          DEVICE, when only device-encrypted storage is available and the lock
+          screen is not yet an obstacle. That is a legitimate design for a
+          compliance heartbeat — but it widens the attack surface into the
+          pre-unlock window, and such a component must never touch
+          credential-encrypted storage.
+
+          Audit questions:
+            - What does it do before first unlock?
+            - Which storage does it use? (Context.createDeviceProtectedStorageContext)
+            - Does anything it reads or writes before unlock end up trusted later?
+            - Correlate with boot timestamps in a forensic context.
+        -->
+        <service
+            android:name=".ComplianceService"
+            android:exported="false"
+            android:directBootAware="true"
+            android:foregroundServiceType="dataSync" />
+
+        <!--
+          Untrusted-document rendering in an isolated process. Positive finding:
+          call it out.
+        -->
+        <service
+            android:name=".DocumentRenderService"
+            android:exported="false"
+            android:isolatedProcess="true"
+            android:process=":render" />
+
+    </application>
+
+</manifest>
+
+<!--
+  WHAT TO AUDIT HERE THAT YOU WOULD NOT ON A CONSUMER APP
+  ======================================================
+
+  | Item                        | Question                                        |
+  |=============================|=================================================|
+  | @xml/device_admin           | Which policies are requested? Each of wipe-data, |
+  |                             | reset-password, force-lock, disable-camera has   |
+  |                             | real user impact and needs a justification.      |
+  | @xml/app_restrictions       | Are security-relevant settings (server URL,      |
+  |                             | pinning toggle, root-detection toggle) exposed   |
+  |                             | as EMM-controlled restrictions? If so the EMM is |
+  |                             | part of the attack surface.                      |
+  | @xml/nsc_pinned             | Enterprise apps often pin. Does the pin set have |
+  |                             | an expiry? Did <debug-overrides> ship?           |
+  | Signature permissions       | Verify both APKs really share a signing key.     |
+  | Work-profile behaviour      | Cross-profile intent behaviour differs and is    |
+  |                             | frequently untested by the developer:            |
+  |                             |   create a managed profile with pm create-user   |
+  |                             |   (profileOf 0, managed Work) and retest         |
+  | directBootAware components  | What runs before first unlock, and on what data? |
+
+  NOT FINDINGS IN THIS FILE — and saying so explicitly is worth doing
+  ==================================================================
+    - AdminReceiver exported="true" with BIND_DEVICE_ADMIN. Correct by design.
+      The same reasoning covers BIND_ACCESSIBILITY_SERVICE,
+      BIND_NOTIFICATION_LISTENER_SERVICE, BIND_JOB_SERVICE, BIND_INPUT_METHOD,
+      BIND_VPN_SERVICE, BIND_WALLPAPER, BIND_QUICK_SETTINGS_TILE and
+      BIND_AUTOFILL_SERVICE.
+    - MainActivity exported="true". The launcher must be launchable.
+    - PolicyProvider exported="true". Gated by two signature permissions, which
+      for a third-party attacker means unreachable.
+
+  AND THE STANDING RULE
+  =====================
+  None of the "exported" observations above is a finding until you have reached
+  the component FROM AN UNPRIVILEGED APP. `adb shell` runs as UID 2000 and holds
+  privileges an ordinary application does not. On a managed device this matters
+  even more than usual, because a work profile changes which components are
+  reachable from where. See ../labs/lab-03-proving-reachability.md.
+-->

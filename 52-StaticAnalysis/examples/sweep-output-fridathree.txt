@@ -1,0 +1,240 @@
+# Real, unedited output of scripts/static-sweep.py against
+# com.mobilehackinglab.FridaThree (public training APK), pulled from a
+# Redmi M2101K6P running Android 11 / API 30 on 2026-08-12.
+#
+# APK sha256 37299c1488934e53e316a57bd0a0d9ea8145598888c193ebdfa77971eb611d49
+# Tree produced by: jadx 1.5.3 -d out base.apk  (2,783 classes, 17 errors)
+# Command:          python3 -B static-sweep.py ./out --show-suppressed
+#
+# The only edit is the substitution of the absolute scratch path with ./out.
+# Nothing else has been reordered, trimmed or tidied -- see ../examples/
+# triage-worksheet.md for what a human then did with it.
+
+
+==============================================================================
+ static-sweep 1.0 -- LEADS, NOT FINDINGS
+==============================================================================
+  trees scanned      ./out
+  app package        com.mobilehackinglab.FridaThree
+  files scanned      3655   (0 unreadable or over the size cap)
+      app            3
+      third-party    2759
+      generated      42
+      resource       850
+      unknown        1
+  raw hits           7346
+  killed by a rule's own validator  3591   (right shape, wrong thing:
+                     identifiers that look like base64, package names that
+                     look like hostnames)
+  distinct leads     9
+  shown here         9   (min-confidence 0.00)
+  demoted as noise   4   (--show-suppressed to see them)
+  blind-spot notices 2
+
+  Aggregation ratio: 7346 raw hits collapsed to 9 leads (816.2x).
+  That ratio is the entire argument for not pasting grep output
+  into a report.
+
+==============================================================================
+ THE QUEUE -- work it top down
+==============================================================================
+
+------------------------------------------------------------------------------
+L001  [HIGH 0.90]  DBG-01  (debug)
+  what      debuggable flag in a manifest
+  value     android:debuggable="true"
+  sites     1 occurrence(s) in 1 file(s); 1 in app code
+            resources/AndroidManifest.xml:21  [app]
+  score     rule DBG-01 precision (+0.55); in the app's own package (+0.25); single site, in app code (+0.10)
+  NEXT STEP android:debuggable="true" in a shipped build lets any user with
+            adb attach a debugger to the process and read its memory.
+            Confirm the manifest came from the SHIPPED artefact and not from
+            a debug build you compiled yourself -- that mistake has been
+            published more than once. Then check `dumpsys package <pkg> |
+            grep flags` on the device.
+
+------------------------------------------------------------------------------
+L002  [HIGH 0.65]  CRED-09  (credential)
+  what      long base64-looking literal
+  value     TUhMe01PRElGSUVEX1ZBUklBQkxFfQ==
+  sites     1 occurrence(s) in 1 file(s); 1 in app code
+            sources/com/mobilehackinglab/FridaThree/MainActivity.java:50  [app]
+  score     rule CRED-09 precision (+0.30); in the app's own package (+0.25); single site, in app code (+0.10)
+  NEXT STEP Decode it. If it decodes to readable text the obfuscation is
+            already defeated and you know what it is. If it decodes to
+            bytes, note the length -- 16 or 32 bytes next to a Cipher call
+            is a key, and that is a different finding. Encoding is not
+            encryption.
+
+------------------------------------------------------------------------------
+L003  [LOW 0.30]  NET-01  (endpoint)
+  what      cleartext http:// URL
+  value     http://schemas.android.com/apk/res/android
+  sites     627 occurrence(s) in 627 file(s); 1 in app code
+            resources/AndroidManifest.xml:2  [app]
+            resources/res/anim/abc_fade_in.xml:2  [resource]
+            resources/res/anim/abc_fade_out.xml:2  [resource]
+            resources/res/anim/abc_grow_fade_in_from_bottom.xml:2  [resource]
+            resources/res/anim/abc_popup_enter.xml:2  [resource]
+            resources/res/anim/abc_popup_exit.xml:2  [resource]
+            ... and 621 more
+  score     rule NET-01 precision (+0.75); in the app's own package (+0.25); value appears in 627 distinct files -- that is a shared constant, not a secret (-0.25); known-noise: matches the known-constant list (schemas.android.com) (-0.45)
+  NEXT STEP Cleartext is only a finding if it is used. Check whether the
+            host is reachable, whether cleartextTrafficPermitted allows it
+            (chapter 44), and whether the string is a namespace URI rather
+            than an endpoint -- http://schemas.android.com is in every APK
+            ever built.
+  demoted   matches the known-constant list (schemas.android.com)
+
+------------------------------------------------------------------------------
+L004  [LOW 0.10]  STO-02  (storage)
+  what      legacy external storage path
+  value     <legacy external storage path>
+  sites     2 occurrence(s) in 2 file(s); 0 in app code
+            sources/androidx/core/content/FileProvider.java:235  [third-party]
+            sources/androidx/core/os/EnvironmentCompat.java:24  [third-party]
+  score     rule STO-02 precision (+0.55); in a third-party or framework package (-0.30); no site in app code -- this is library behaviour until proven otherwise (-0.15)
+  NEXT STEP External storage is world-visible to any app holding
+            READ_EXTERNAL on old targets, and scoped on new ones. What
+            matters is WHAT is written there. Follow the stream, not the
+            path.
+
+------------------------------------------------------------------------------
+L005  [LOW 0.05]  DBG-02  (debug)
+  what      log call whose message is a variable
+  value     <log call whose message is a variable>
+  sites     18 occurrence(s) in 12 file(s); 0 in app code
+            sources/androidx/appcompat/app/AppLocalesStorageHelper.java:104  [third-party]
+            sources/androidx/constraintlayout/helper/widget/MotionEffect.java:126  [third-party]
+            sources/androidx/constraintlayout/motion/widget/Debug.java:23  [third-party]
+            sources/androidx/constraintlayout/motion/widget/Debug.java:95  [third-party]
+            sources/androidx/constraintlayout/motion/widget/MotionLayout.java:608  [third-party]
+            sources/androidx/constraintlayout/utils/widget/MotionLabel.java:413  [third-party]
+            ... and 12 more
+  score     rule DBG-02 precision (+0.30); in a third-party or framework package (-0.30); no site in app code -- this is library behaviour until proven otherwise (-0.15)
+  NEXT STEP A logged variable might be a token. On API 26 and above ordinary
+            apps cannot read another app's logcat, which caps severity hard
+            -- but anyone with adb can, and so can anything with READ_LOGS.
+            Confirm what the variable holds at runtime; this is a dynamic
+            question.
+
+------------------------------------------------------------------------------
+L006  [LOW 0.05]  DBG-04  (debug)
+  what      stack trace printed
+  value     <stack trace printed>
+  sites     36 occurrence(s) in 15 file(s); 0 in app code
+            sources/androidx/appcompat/widget/DropDownListView.java:513  [third-party]
+            sources/androidx/appcompat/widget/DropDownListView.java:530  [third-party]
+            sources/androidx/appcompat/widget/DropDownListView.java:532  [third-party]
+            sources/androidx/appcompat/widget/DropDownListView.java:555  [third-party]
+            sources/androidx/appcompat/widget/DropDownListView.java:569  [third-party]
+            sources/androidx/appcompat/widget/DropDownListView.java:582  [third-party]
+            ... and 30 more
+  score     rule DBG-04 precision (+0.15); in a third-party or framework package (-0.30); no site in app code -- this is library behaviour until proven otherwise (-0.15)
+  NEXT STEP Noise in almost every app. Worth a line in the report only when
+            the trace reaches a user-visible surface or a remote crash
+            reporter that the client has not accounted for.
+
+------------------------------------------------------------------------------
+L007  [LOW 0.05]  NET-01  (endpoint)
+  what      cleartext http:// URL
+  value     http://schemas.android.com/aapt
+  sites     60 occurrence(s) in 60 file(s); 0 in app code
+            resources/res/drawable/avd_hide_password.xml:2  [resource]
+            resources/res/drawable/avd_show_password.xml:2  [resource]
+            resources/res/drawable/ic_launcher_foreground.xml:2  [resource]
+            resources/res/drawable/m3_avd_hide_password.xml:2  [resource]
+            resources/res/drawable/m3_avd_show_password.xml:2  [resource]
+            resources/res/drawable/mtrl_checkbox_button_checked_unchecked.xml:2  [resource]
+            ... and 54 more
+  score     rule NET-01 precision (+0.75); in resources rather than code (-0.10); value appears in 60 distinct files -- that is a shared constant, not a secret (-0.25); known-noise: matches the known-constant list (schemas.android.com) (-0.45)
+  NEXT STEP Cleartext is only a finding if it is used. Check whether the
+            host is reachable, whether cleartextTrafficPermitted allows it
+            (chapter 44), and whether the string is a namespace URI rather
+            than an endpoint -- http://schemas.android.com is in every APK
+            ever built.
+  demoted   matches the known-constant list (schemas.android.com)
+
+------------------------------------------------------------------------------
+L008  [LOW 0.05]  NET-01  (endpoint)
+  what      cleartext http:// URL
+  value     http://schemas.android.com/apk/res-auto
+  sites     40 occurrence(s) in 40 file(s); 0 in app code
+            resources/res/animator/design_appbar_state_list_animator.xml:2  [resource]
+            resources/res/animator/m3_appbar_state_list_animator.xml:2  [resource]
+            resources/res/animator/m3_card_elevated_state_list_anim.xml:2  [resource]
+            resources/res/animator/m3_card_state_list_anim.xml:2  [resource]
+            resources/res/animator/mtrl_card_state_list_anim.xml:2  [resource]
+            resources/res/color/m3_card_foreground_color.xml:2  [resource]
+            ... and 34 more
+  score     rule NET-01 precision (+0.75); in resources rather than code (-0.10); value appears in 40 distinct files -- that is a shared constant, not a secret (-0.25); known-noise: matches the known-constant list (schemas.android.com) (-0.45)
+  NEXT STEP Cleartext is only a finding if it is used. Check whether the
+            host is reachable, whether cleartextTrafficPermitted allows it
+            (chapter 44), and whether the string is a namespace URI rather
+            than an endpoint -- http://schemas.android.com is in every APK
+            ever built.
+  demoted   matches the known-constant list (schemas.android.com)
+
+------------------------------------------------------------------------------
+L009  [LOW 0.05]  NET-03  (endpoint)
+  what      hardcoded IP address literal
+  value     127.0.0.1
+  sites     1 occurrence(s) in 1 file(s); 0 in app code
+            sources/androidx/constraintlayout/core/motion/utils/Utils.java:25  [third-party]
+  score     rule NET-03 precision (+0.30); in a third-party or framework package (-0.30); known-noise: matches the known-constant list (127.0.0.1) (-0.45)
+  NEXT STEP 10.0.2.2 is the emulator's view of the host machine and means
+            debug configuration shipped to production. A private RFC1918
+            address means an internal service the app expects to reach. A
+            public address means DNS was skipped, and certificate validation
+            often was too.
+  demoted   matches the known-constant list (127.0.0.1)
+
+==============================================================================
+ BLIND SPOTS -- what this sweep could not see
+==============================================================================
+
+  These are not leads. They are places where the file on disk
+  stops describing the running program, so a clean result above
+  does not extend past this point.
+
+  BLIND-01  receiver registered at runtime
+    12 occurrence(s) across 3 file(s); none in app code
+    Chapter 29 parsed a live device: 299 of 431 distinct broadcast actions
+    registered by third-party processes had NO manifest-declared receiver
+    anywhere -- 69% of the surface. Every APK-based tool, including this
+    one, is blind to it. Enumerate the live table with `dumpsys activity
+    broadcasts` while the app runs.
+
+  BLIND-02  reflective dispatch
+    2957 occurrence(s) across 313 file(s); none in app code
+    A reflective call has no static edge. Your call graph, your IDE's 'find
+    usages', and every reachability claim you make stop here. Hook
+    Method.invoke at runtime and log the target, or read the string
+    arguments if they are literals.
+
+==============================================================================
+ DEMOTED AS NOISE -- shown so you can audit the filter
+==============================================================================
+  NET-01    http://schemas.android.com/apk/res/android         matches the known-constant list (schemas.android.com)
+  NET-01    http://schemas.android.com/aapt                    matches the known-constant list (schemas.android.com)
+  NET-01    http://schemas.android.com/apk/res-auto            matches the known-constant list (schemas.android.com)
+  NET-03    127.0.0.1                                          matches the known-constant list (127.0.0.1)
+
+==============================================================================
+ Everything above is a LEAD.
+==============================================================================
+
+  A lead becomes a finding when you can answer all four:
+
+    1. Is the construct really there?      (read the code, not the grep)
+    2. Is it reachable?                    (./validate-lead.sh --reach)
+    3. Who can reach it?                   (another app? the network? only
+                                            the app itself?)
+    4. What does reaching it get them?     (that answer is the severity)
+
+  Chapter 33's leak hunter returned 132 high-confidence hits against a real
+  browser install and all 132 were false positives. Chapter 36 found 12 of
+  14 apps presenting a pinning surface and only 4 actually pinning. Assume
+  you are in those numbers until you have done the work above.
+
+  This script has no severity column and will not be given one.

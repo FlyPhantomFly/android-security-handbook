@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    examples/repack-detector/AndroidManifest.xml
+
+    The manifest for the chapter 38 self-integrity demonstration app.
+
+    Two things here matter to the chapter and nothing else does.
+
+    android:debuggable is deliberately ABSENT. It is not set to "false" and it is
+    not set to "true". A release build simply does not carry the attribute, and
+    ApplicationInfo.FLAG_DEBUGGABLE is therefore clear. Lab 01 asks you to add
+    android:debuggable="true" here, rebuild, and watch check D2 fire - which is
+    the whole point of that check: it detects a repackager who added the flag in
+    order to attach a Java debugger.
+
+    android:extractNativeLibs and android:hasCode are left at their defaults.
+    This app has no native code; the native tier lives in
+    examples/tamper_check.c and lab-02 builds it separately, so that the Java
+    tier can be studied without an NDK on the machine.
+
+    NOTE an XML rule that bites here: an XML comment must not contain a double
+    hyphen. aapt2 rejects the whole file if one appears, so this file writes
+    ranges as "21 to 33" rather than with a dash pair. Five files in this
+    repository were malformed this way before an XML well-formedness sweep
+    found them.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.pentest.ch38.integrity">
+
+    <uses-sdk android:minSdkVersion="21" android:targetSdkVersion="33" />
+
+    <!--
+        INTERNET is requested only so that lab 03's server-verified variant can
+        actually talk to the toy verifier described in
+        examples/ServerVerifiedIntegrity.java. The local-only build never uses
+        it. It is listed here so that the reader can compare the manifest of a
+        client-only design with the manifest of a design that has somewhere to
+        appeal to.
+    -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:label="CH38 Integrity"
+        android:allowBackup="false">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+    </application>
+
+</manifest>

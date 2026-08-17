@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    examples/vault-target/AndroidManifest.xml
+
+    The TARGET application for chapter 66. It is deliberately ordinary: it is not
+    a "vulnerable app" in the usual sense, it is just an app that keeps a secret,
+    because the point of the chapter is that the test instrumentation framework
+    reaches into an ordinary app without needing it to be vulnerable at all.
+
+    android:debuggable is NOT declared here. build-instrumentation-fixtures.sh
+    builds this manifest twice: once plain, and once with aapt2 link's
+    debug-mode flag, which injects android:debuggable="true". That is the only
+    difference between the two builds, which is what makes the debuggable gate
+    measurable rather than arguable.
+
+    (An XML comment may not contain a double hyphen, so aapt2 flags are named
+    here without their leading dashes. aapt2 rejects the file outright otherwise,
+    and the error it prints names the line, not the reason.)
+
+    AUTHORISED TESTING ONLY. Install on a device you own.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.pentest.ch66.vault"
+    android:versionCode="1"
+    android:versionName="1.0">
+
+    <uses-sdk android:minSdkVersion="24" android:targetSdkVersion="35" />
+
+    <application
+        android:name="com.pentest.ch66.vault.VaultApp"
+        android:label="ch66 vault"
+        android:allowBackup="false">
+
+        <activity
+            android:name="com.pentest.ch66.vault.MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!--
+            SeedProvider exists for one reason: to prove where in the startup
+            order a ContentProvider runs relative to Instrumentation.onCreate().
+            Real apps use this slot for exactly the initialisation an attacker
+            most wants to pre-empt (androidx-startup, crash reporters, packers).
+        -->
+        <provider
+            android:name="com.pentest.ch66.vault.SeedProvider"
+            android:authorities="com.pentest.ch66.vault.seed"
+            android:exported="false"
+            android:initOrder="100" />
+    </application>
+</manifest>

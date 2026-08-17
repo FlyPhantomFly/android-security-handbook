@@ -1,0 +1,132 @@
+/*
+ * build.gradle — 24-IPC / examples/attacker-app
+ *
+ * WHAT IT DOES
+ *     Builds the unprivileged IPC reachability probe as a single-module Android
+ *     application, with the sources laid out FLAT in this directory rather than
+ *     under src/main/java/com/attacker/poc/. Five readable files beats a
+ *     twelve-directory skeleton for something you are meant to read, edit and
+ *     rebuild in thirty seconds per target.
+ *
+ * HOW TO RUN
+ *     # host — from the repository root
+ *     gradle -p 24-IPC/examples/attacker-app assembleDebug
+ *     # or, if you generated a wrapper here:
+ *     ./gradlew -p 24-IPC/examples/attacker-app assembleDebug
+ *
+ *     adb install -r 24-IPC/examples/attacker-app/build/outputs/apk/debug/attacker-app-debug.apk
+ *
+ * REQUIREMENTS
+ *     - JDK 11 or 17, and either a local Gradle 7.5+ or Android Studio.
+ *     - Android SDK with the compileSdk below installed; ANDROID_HOME set, or a
+ *       local.properties containing sdk.dir=/path/to/Android/sdk.
+ *     - No wrapper JAR is committed to this repository. Generate one with
+ *       `gradle wrapper` in this directory if you want ./gradlew to work.
+ *
+ * AGP VERSION NOTE — READ THIS IF THE BUILD FAILS
+ *     This file pins Android Gradle Plugin 7.4.2 deliberately. AGP 8.0 removed
+ *     support for declaring the package name via the `package` attribute in
+ *     AndroidManifest.xml and requires `namespace` in this file instead. The
+ *     manifest here keeps `package="com.attacker.poc"` because that is what the
+ *     chapter text shows and what every published example looks like.
+ *
+ *     If you would rather use AGP 8:
+ *       1. bump the classpath version below;
+ *       2. add   namespace 'com.attacker.poc'   inside the android { } block;
+ *       3. delete the package="..." attribute from AndroidManifest.xml.
+ *     Nothing else changes.
+ */
+
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:7.4.2'
+    }
+}
+
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 33
+    buildToolsVersion '33.0.2'
+
+    defaultConfig {
+        applicationId 'com.attacker.poc'
+
+        // minSdk 21 so the same APK installs on everything from Android 5.0.
+        // You WILL need to test across versions: clipboard access, scoped
+        // storage, implicit broadcasts, package visibility and PendingIntent
+        // mutability all changed behaviour between 21 and 34, and a finding
+        // that reproduces on one release may be impossible on another.
+        minSdkVersion 21
+
+        // targetSdk 33 keeps the probe subject to modern platform rules,
+        // including package visibility filtering. That is deliberate: a probe
+        // that opts OUT of the restrictions a real attacker faces would give
+        // you optimistic results. If you want to model an old malicious app,
+        // drop this to 29 and re-run — the difference is instructive.
+        targetSdkVersion 33
+
+        versionCode 1
+        versionName '1.0-probe'
+    }
+
+    /*
+     * Flat source layout. Everything the probe needs lives in this directory.
+     *
+     * The exclude keeps Gradle from re-compiling generated sources under
+     * build/ (BuildConfig.java and friends), which would otherwise produce
+     * duplicate-class errors because srcDirs is '.'.
+     *
+     * If your Gradle version dislikes this block, delete it and move the files
+     * to the conventional locations instead:
+     *     AndroidManifest.xml   -> src/main/AndroidManifest.xml
+     *     *.java                -> src/main/java/com/attacker/poc/
+     */
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+            java.srcDirs = ['.']
+            java.filter.exclude '**/build/**'
+            res.srcDirs = []
+            assets.srcDirs = []
+            jniLibs.srcDirs = []
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    buildTypes {
+        debug {
+            // No shrinking, no obfuscation. You want the probe's own stack
+            // traces to be readable when a target throws something odd back.
+            minifyEnabled false
+            debuggable true
+        }
+    }
+
+    lintOptions {
+        // The probe deliberately does things lint dislikes — exported
+        // components with no permission, a maximum-priority receiver, an
+        // unguarded startActivity loop. That is the whole point of the app.
+        abortOnError false
+        checkReleaseBuilds false
+    }
+}
+
+/*
+ * No dependencies at all. Not AndroidX, not a support library, nothing.
+ *
+ * That is a deliberate property, not laziness. This APK is evidence: a client
+ * engineer will install it and read its output. The fewer third-party classes
+ * it contains, the less anyone can argue that the result came from something
+ * other than the platform APIs any app can call.
+ */
+dependencies {
+}

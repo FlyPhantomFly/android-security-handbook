@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  examples/probe-app/AndroidManifest.xml
+  =====================================
+  The unprivileged probe's manifest.
+
+  READ THE THREE DELIBERATE CHOICES BELOW BEFORE YOU USE THIS APP. Each one is
+  there to stop a specific wrong conclusion.
+
+  1. NO PERMISSIONS ARE REQUESTED BY DEFAULT.
+     Not even INTERNET. That is on purpose: the probe must be a plain, boring,
+     unprivileged app so that anything it reaches is something an attacker's app
+     reaches. Every permission you add to this file weakens the claim your
+     transcript makes. When you DO need one to test a specific gate, add it,
+     and say in the report that you added it.
+
+  2. THE <queries> BLOCK MUST NAME YOUR TARGET.
+     From targetSdk 30 an app cannot see a package it has not declared an
+     interest in. A probe that cannot see the target fails in ways that look
+     exactly like a permission denial - ActivityNotFoundException, a null
+     resolver result, an empty package list. That is the single most common
+     reason a home-made test app reports a false negative.
+
+     ADD YOUR TARGET PACKAGE TO THE BLOCK BELOW AND REBUILD. The placeholder
+     entries are examples.
+
+  3. targetSdk IS SET HIGH ON PURPOSE.
+     It would be easy to set targetSdkVersion below 30 and get package
+     visibility for free. Do not. A probe with a low targetSdk is not a
+     realistic attacker - it gets defaults that a store-published app cannot
+     get, and it will over-report reachability. Keep the probe modern and
+     declare what it needs.
+
+  AUTHORISED TESTING ONLY.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.probe.unprivileged">
+
+    <uses-sdk android:minSdkVersion="23" android:targetSdkVersion="33" />
+
+    <!--
+      EDIT THIS. One <package> entry per target you intend to probe.
+
+      If you genuinely need to enumerate rather than name, QUERY_ALL_PACKAGES is
+      normal-level and will be granted on request - but note that it makes the
+      probe less representative of a store-published app, because Play policy
+      restricts that permission heavily. Prefer naming your targets.
+    -->
+    <queries>
+        <package android:name="com.victim.suite" />
+        <package android:name="com.victim.notes" />
+        <package android:name="com.example.weakperms" />
+
+        <!--
+          Providers are matched by AUTHORITY, not by package. If you are probing
+          a content:// URI whose owning package you do not know, this is the
+          form to use.
+        -->
+        <provider android:authorities="com.victim.suite.notes" />
+    </queries>
+
+    <application
+        android:label="@string/app_name"
+        android:allowBackup="false">
+
+        <activity
+            android:name=".ProbeActivity"
+            android:exported="true"
+            android:label="@string/app_name">
+            <!--
+              Exported so that `adb shell am start` can drive it. That is safe
+              here: the activity performs only the probes named in its extras
+              and holds no permissions worth borrowing. Do not copy this
+              pattern into anything real.
+
+              The LAUNCHER filter is present only so the app is visible in the
+              drawer and easy to remove.
+            -->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+    </application>
+
+</manifest>

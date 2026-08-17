@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  examples/signature-guarded-AndroidManifest.xml
+  =============================================
+  The manifest half of SignatureGuardedService.java.
+
+  Read the two together. This file provides layers 1 and 2 of the four-layer
+  scheme; the Java file provides layers 3 and 4.
+
+  Run the chapter's auditor against this file and every row should come back
+  ENFORCEABLE. Run it against weak-permissions-AndroidManifest.xml for the
+  opposite result, and against squat-pair/victim-suite-AndroidManifest.xml for
+  the UNOWNED case. The exact command lines are in examples/README.md.
+
+  AUTHORISED TESTING ONLY.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.vault">
+
+    <uses-sdk android:minSdkVersion="24" android:targetSdkVersion="34" />
+
+    <!--
+      LAYER 1 and LAYER 2.
+
+      protectionLevel="signature" is the only base level whose grant condition
+      is outside an attacker's control: it requires the private key that signed
+      this APK. normal grants itself; dangerous costs one dialog the attacker
+      chooses the timing of.
+
+      Note what is NOT here: no flags. Every '|' in a protectionLevel is an OR
+      that ADDS an independent population. signature|privileged would also
+      admit every allow-listed app in /system/priv-app, which on a vendor build
+      is a large set written by several contractors. If you do not need the
+      wider population, do not name it.
+
+      LAYER 2 is a convention this single file cannot show: EVERY app in the
+      suite carries this exact <permission> element, identically. Same signing
+      key means the duplicate declaration does not conflict, and no install
+      order can leave the name unowned. An app that USES a permission its
+      sibling declares is squattable on any device where the sibling is absent.
+      See README.md section 3.6 and ./squat-pair/.
+    -->
+    <permission
+        android:name="com.example.vault.permission.READ_VAULT"
+        android:protectionLevel="signature"
+        android:label="@string/perm_vault_label"
+        android:description="@string/perm_vault_desc" />
+
+    <!--
+      Package visibility. Even a same-signature sibling is invisible from
+      targetSdk 30 unless declared. Omitting this block is a common reason a
+      suite "stops working" after a targetSdk bump, and a common reason a test
+      harness silently reports a component unreachable.
+    -->
+    <queries>
+        <package android:name="com.example.vault.reader" />
+        <package android:name="com.example.vault.launcher" />
+    </queries>
+
+    <application android:label="@string/app_name">
+
+        <!--
+          exported="true" is CORRECT here and is not the finding a scanner will
+          say it is. The service exists to be bound by a sibling app, which is
+          a different UID, so it must be exported. What makes that safe is the
+          permission on the next line, and the in-code check in
+          SignatureGuardedService.java.
+
+          The wrong fix, seen constantly, is exported="false" plus
+          sharedUserId. That dissolves the UID boundary between the two apps
+          entirely, which is a strictly worse outcome than an exported service
+          behind a signature permission. See 21-App-Sandbox.
+        -->
+        <service
+            android:name=".SignatureGuardedService"
+            android:exported="true"
+            android:permission="com.example.vault.permission.READ_VAULT" />
+
+        <!--
+          The internal counterpart. Nothing outside this app binds it, so it is
+          not exported and needs no permission at all. exported="false" is a
+          stronger statement than any permission: checkComponentPermission
+          denies a different UID before it looks at the permission string.
+          See README.md section 4.4.
+        -->
+        <service
+            android:name=".InternalCacheService"
+            android:exported="false" />
+
+    </application>
+
+</manifest>

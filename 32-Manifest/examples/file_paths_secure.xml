@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  examples/file_paths_secure.xml
+  =============================
+
+  res/xml/file_paths_secure.xml — the corrected counterpart to
+  file_paths_insecure.xml.
+
+  Referenced by:
+
+      <provider android:name="androidx.core.content.FileProvider"
+                android:authorities="${applicationId}.fileprovider"
+                android:exported="false"
+                android:grantUriPermissions="true">
+          <meta-data android:name="android.support.FILE_PROVIDER_PATHS"
+                     android:resource="@xml/file_paths_secure" />
+      </provider>
+
+  THE TWO RULES
+  =============
+
+  RULE 1 — the provider is exported="false", grantUriPermissions="true".
+      FileProvider is the one provider designed to work this way. The component
+      is closed to everyone; access comes exclusively from a per-URI grant
+      attached to a specific Intent, to a specific recipient, for a specific
+      duration. exported="true" on a FileProvider is always wrong and is almost
+      always a copy-paste from a tutorial that predates grant semantics.
+
+  RULE 2 — every <paths> entry names the NARROWEST directory that works.
+      A share feature needs one subdirectory. Give it one subdirectory. Never
+      the filesystem root, never getFilesDir() itself, never path="." and never
+      path="".
+
+  WHAT EACH TAG RESOLVES TO
+  =========================
+  Knowing the base directory is what lets you judge whether a path is narrow.
+
+      <files-path>          Context.getFilesDir()                <data>/files
+      <cache-path>          Context.getCacheDir()                <data>/cache
+      <external-path>       Environment.getExternalStorageDirectory()
+      <external-files-path> Context.getExternalFilesDir(null)
+      <external-cache-path> Context.getExternalCacheDir()
+      <external-media-path> Context.getExternalMediaDirs()[0]
+      <root-path>           the filesystem root — there is essentially never a
+                            legitimate reason for this in an app
+
+  The `path` attribute is a subdirectory RELATIVE to that base, and `name` is
+  the segment that appears in the generated content:// URI. The two are
+  deliberately different so the URI never leaks the real filesystem layout.
+-->
+<paths>
+
+    <!--
+      Outbound sharing: files the app has deliberately prepared for another app
+      to read. Nothing else is written here.
+
+          content://com.example.app.fileprovider/shared/report-2026-01.pdf
+                                                ^^^^^^ the `name`, not the path
+    -->
+    <files-path name="shared" path="outbound/" />
+
+    <!--
+      Camera capture handoff. The app writes the photo here, grants the camera
+      app write access to that ONE uri, and revokes it afterwards.
+    -->
+    <external-files-path name="captures" path="captures/" />
+
+    <!--
+      Attachments the user chose to export. Separate from `shared` so a bug in
+      one feature cannot expose the other.
+    -->
+    <cache-path name="exports" path="exports/" />
+
+    <!--
+      DELIBERATELY ABSENT:
+        <root-path>            — no app needs the filesystem root
+        path="" or path="."    — these mean "the whole base directory"
+        anything reaching ../  — upward traversal in a declaration is a smell
+        <external-path>        — shared storage is readable by more than you think
+    -->
+
+</paths>
+
+<!--
+  THE CODE HALF
+  =============
+  A correct <paths> file is necessary and not sufficient. The grant is issued in
+  code, and that is where the remaining mistakes live.
+
+      // Correct: grant ONE uri, to ONE recipient, read-only, and revoke after.
+      File f = new File(new File(getFilesDir(), "outbound"), "report.pdf");
+      Uri uri = FileProvider.getUriForFile(this, getPackageName() + ".fileprovider", f);
+
+      Intent share = new Intent(Intent.ACTION_SEND)
+              .setType("application/pdf")
+              .putExtra(Intent.EXTRA_STREAM, uri)
+              .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);   // READ only
+
+      startActivity(Intent.createChooser(share, getString(R.string.share)));
+      // …and when the operation is finished:
+      revokeUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+  Four mistakes to look for in the code even when this file is perfect:
+
+    1. FLAG_GRANT_WRITE_URI_PERMISSION added "just in case". A share needs read.
+    2. The grant never revoked, so it survives until the process dies.
+    3. A broadcast or an implicit Intent carrying the grant, which hands it to
+       every app that matches the filter rather than to the one the user chose.
+    4. A MUTABLE PendingIntent carrying the URI. Below targetSdk 31 mutability
+       is unchecked, and the recipient can rewrite the target — see
+       ../README.md section 3.4.
+
+  AND FOR HAND-ROLLED PROVIDERS
+  =============================
+  If the app implements openFile() itself rather than using FileProvider — which
+  is extremely common — none of the above applies and the whole burden is on the
+  code. The mandatory pattern:
+
+      @Override
+      public ParcelFileDescriptor openFile(Uri uri, String mode) throws FileNotFoundException {
+          File base = new File(getContext().getFilesDir(), "outbound");
+          File target = new File(base, uri.getLastPathSegment());
+
+          // uri.getPath() is NOT normalised by the platform: a path beginning
+          // "/outbound/" still matches a pathPrefix rule even when it continues
+          // "../../databases/app.db". Canonicalise, then verify containment.
+          try {
+              String canonicalBase   = base.getCanonicalPath();
+              String canonicalTarget = target.getCanonicalPath();
+              if (!canonicalTarget.startsWith(canonicalBase + File.separator)) {
+                  throw new SecurityException("path traversal: " + uri);
+              }
+          } catch (IOException e) {
+              throw new FileNotFoundException("cannot canonicalise");
+          }
+
+          if (!"r".equals(mode)) {
+              throw new SecurityException("read-only provider");
+          }
+          return ParcelFileDescriptor.open(target, ParcelFileDescriptor.MODE_READ_ONLY);
+      }
+
+  Note `canonicalBase + File.separator` rather than a bare startsWith: without
+  the separator, a sibling directory named "outbound-backup" also passes.
+
+  See ../labs/lab-04-provider-surgery.md to exploit the broken version, and
+  ../../27-ContentProviders/labs/lab-03-path-traversal.md for the full treatment.
+-->

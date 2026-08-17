@@ -1,0 +1,5 @@
+# build-probe.sh writes here. Nothing in this directory belongs in the
+# repository: .apk and .jks are on this project's artefact blocklist, and a
+# signing key in version control is worse than an APK. Ship the sources plus
+# the script; the reader produces the binary in one command.
+out/

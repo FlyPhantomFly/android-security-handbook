@@ -1,0 +1,135 @@
+# Captured output: manifest-corpus-sweep.py
+#
+# This is the output behind every number in chapter 72 section 3.5. It is
+# committed so that a reader can check the prose against the tool rather than
+# taking the prose on trust.
+#
+# EVERY MEASUREMENT IS UNEDITED. The only substitution made before committing is
+# to package NAMES: the one assessed commercial application in this corpus is
+# written `com.vendor.learning`, per ../references/README.md section 4. Platform
+# packages, the Magisk package and the public training app keep their real names,
+# because those are the operating system, a published tool and a target that
+# exists to be named. If you re-run the sweep, re-apply that substitution before
+# committing over this file.
+#
+#   command : python3 -B ../scripts/manifest-corpus-sweep.py #                 --manifest-dir ./manifests #                 --third-party org.android.cmpen #                 --third-party com.topjohnwu.magisk #                 --third-party com.vendor.learning #                 --third-party com.devuser.helloworld
+#   date    : 2026-08-16
+#   device  : AVD sdk_gphone16k_x86_64 (emulator-5554), Android 15 / API 35,
+#             x86_64, rooted with Magisk 30.7, Zygisk off. The only device
+#             attached at the time; the two physical phones were not connected.
+#   corpus  : all 243 installed packages; manifests streamed off the device with
+#             `adb exec-out unzip -p`. Nothing was written to the device.
+#
+# READ THE DENOMINATOR FIRST. Four of the 243 packages are third-party. This is a
+# PLATFORM corpus. It supports statements about how Android and its bundled
+# applications are built, and nothing about the applications a commercial
+# assessment targets.
+#
+# The `android:debuggable=true` row names a locally built test app belonging to
+# this machine's owner. It is the tester's own artefact, not a finding, and it is
+# left visible on purpose: your own instrumentation showing up in your own sweep
+# is a failure mode worth seeing once.
+#
+# ----------------------------------------------------------------------------
+
+[*] device reported protection levels for 1437 permissions
+
+--------------------------------------------------------------------------
+CORPUS
+--------------------------------------------------------------------------
+  applications analysed                  243
+  of which THIRD-PARTY                   4
+  >> every conclusion below is bounded by that ratio. A corpus
+     dominated by platform packages says how the PLATFORM is
+     built and nothing about commercially assessed apps.
+
+  declared components                    6465
+  components declared exported           2674  ( 41.4% of components)
+  apps with >=1 exported component       137  of 243
+
+--------------------------------------------------------------------------
+ADJUDICATION STEP 1 -- what guards the export?
+--------------------------------------------------------------------------
+  no guard at all                               1951   73.0%
+  signature                                      640   23.9%
+  dangerous                                       39    1.5%
+  normal                                          26    1.0%
+  guard named but unresolvable on this device     13    0.5%
+  internal                                         5    0.2%
+
+  unresolvable guard names (9 distinct) -- a component
+  guarded by a permission no installed package declares is, on THIS
+  device, effectively unguarded:
+        3  com.android.car.ui.READ_SEARCH_RESULTS
+        2  com.google.android.setupwizard.SETUP_PROGRESS_SERVICE
+        2  com.google.android.wildlife.permission.VPN_APP_EXCLUSION_LAUNCH
+        1  com.google.pixel.livewallpaper.permission.DOWNLOAD_LIVE_WALLPAPER
+        1  com.google.android.permission.INSTALL_WEARABLE_PACKAGES
+        1  android.permission.START_WIDGET_PICKER_ACTIVITY
+        1  com.google.android.wildlife.permission.ADVANCED_VPN_CONFIG
+        1  com.google.android.setupwizard.SETUP_BTS
+
+--------------------------------------------------------------------------
+CROSS-CHECK -- two independent readings of every guard
+--------------------------------------------------------------------------
+  distinct guard permissions referenced  244
+    resolved by BOTH, agreeing           228
+    resolved by BOTH, DIFFERING          7
+    resolved by one reading only         0
+    resolved by neither                  9
+      manifest=signatureOrSystem  device=signature    com.android.chrome.permission.SHOW_COMPLIANCE_SCREEN
+      manifest=signatureOrSystem  device=signature    com.google.android.partnersetup.permission.UPDATE_CLIENT_ID
+      manifest=signatureOrSystem  device=signature    com.google.android.apps.nexuslauncher.permission.QSB
+      manifest=signatureOrSystem  device=signature    com.google.android.c2dm.permission.SEND
+      manifest=signatureOrSystem  device=signature    com.google.android.apps.nexuslauncher.permission.READ_SETTINGS
+      manifest=signatureOrSystem  device=signature    com.google.android.apps.nexuslauncher.permission.HOTSEAT_EDU
+      manifest=signatureOrSystem  device=signature    com.google.android.apps.now.OPT_IN_WIZARD
+  >> Chase every one. In this chapter's reference run all 11
+     differences were defects in the STATIC reader, not the apps.
+     The device wins: it reports what PackageManagerService stored.
+
+--------------------------------------------------------------------------
+THE FUNNEL -- mechanical steps only, no judgement applied
+--------------------------------------------------------------------------
+  stage                                        components   apps
+  1. declared exported                               2674    137
+  2. ...and not strongly guarded                     1990    116
+  3. ...and carrying no <intent-filter>               410     67
+  4. ...and being a ContentProvider                    83     38
+
+  steps 2-3 shed  84.7% of the class without a single judgement call.
+  Survivors by kind: activity=141, service=118, provider=83, activity-alias=63, receiver=5
+  Of the step-4 providers, 12 declare grantUriPermissions -- a path to
+  the data that does not require the guard permission at all.
+
+  NOTE: step 4 is where the human work BEGINS. These are leads.
+
+--------------------------------------------------------------------------
+APPLICATION-LEVEL CLASSES -- and the default that adjudicates them
+--------------------------------------------------------------------------
+  usesCleartextTraffic  true=27  false=20  ABSENT=196  (of 243)
+      of the 196 absent, 195 target API 28+ where the default is
+      ALREADY false. A 'cleartext not disabled' check fires 196 times
+      and is wrong 195 of them --  99.5% false positive.
+
+  allowBackup           true=29  false=38  ABSENT=176  (of 243)
+      counting the default as a finding reports 205 of 243 apps.
+      dataExtractionRules (API 31+) declared by 5; fullBackupContent by 7
+
+  networkSecurityConfig declared           10  of 243
+  sharedUserId declared                    44  of 243
+  android:debuggable=true                   1  of 243
+      com.devuser.helloworld
+      >> check this list against what YOU installed before counting it.
+  android:testOnly=true                     1  of 243
+
+--------------------------------------------------------------------------
+IMPLICIT EXPORT -- the classic class, measured
+--------------------------------------------------------------------------
+  components with android:exported ABSENT        313  of 6465
+    ...of those, carrying an <intent-filter>     0
+  apps targeting API 31+                         237  of 243
+  >> ZERO. Android 12 made an intent-filter without an explicit
+     android:exported a BUILD ERROR. On a modern-targetSdk corpus this
+     finding class -- the defining Android finding of the 2010s -- has
+     been engineered out of existence. Delete the check.

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  examples/vulnerable-webview/AndroidManifest.xml
+
+  Deliberately vulnerable lab app. Build with ../build.sh.
+
+  Two things here matter to this chapter:
+
+  1. The Activity is exported and carries a BROWSABLE deep link on the scheme
+     `ch43vuln`. That is the entry point: any web page, any installed app and
+     `adb shell am start` can choose the URL the WebView loads. Chapter 26 owns
+     Intent resolution, chapter 30 owns the exported Activity. This chapter owns
+     what happens after the URL lands in loadUrl.
+
+  2. android:networkSecurityConfig points at a config that permits cleartext to
+     127.0.0.1 only. That is not a defect; it is how the lab serves its attack
+     page over adb reverse. It is here because it demonstrates a boundary: the
+     network security config DOES govern cleartext inside a WebView. Remove the
+     attribute and the same page fails to load with ERR_CLEARTEXT_NOT_PERMITTED,
+     which is chapter 44's mechanism working correctly. The same file has no
+     effect whatsoever on the onReceivedSslError override in the Activity.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.pentest.ch43.vuln">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:label="CH43 Vulnerable WebView"
+        android:networkSecurityConfig="@xml/network_security_config">
+
+        <activity
+            android:name="com.pentest.ch43.vuln.VulnerableWebViewActivity"
+            android:exported="true">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="ch43vuln" />
+            </intent-filter>
+        </activity>
+
+        <provider
+            android:name="com.pentest.ch43.vuln.NotesProvider"
+            android:authorities="com.pentest.ch43.vuln.notes"
+            android:exported="false" />
+    </application>
+</manifest>

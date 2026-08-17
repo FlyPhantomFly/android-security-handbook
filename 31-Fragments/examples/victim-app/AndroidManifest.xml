@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    examples/victim-app/AndroidManifest.xml
+
+    AUTHORISED TESTING ONLY. This application is deliberately vulnerable.
+    Install it on a device you own, and uninstall it when you are finished.
+
+    Chapter 31 lab victim. Three entry points matter:
+
+      SettingsActivity        [V1] android.preference.PreferenceActivity whose
+                                   isValidFragment() returns true. The classic
+                                   fragment injection shape.
+      FragmentHostActivity    [V2] a plain Activity that reflectively loads a
+                                   Fragment named by an Intent extra. The same
+                                   bug class with no PreferenceActivity in sight.
+      SettingsHardenedActivity and FragmentHostHardened are the fixed
+                                   counterparts. Same reachability, allowlisted
+                                   destinations.
+
+    LoginActivity is the intended, non exported route to AdminFragment. It is
+    what both vulnerable entry points let an attacker skip.
+
+    Note on theme: PreferenceActivity needs a device default theme to inflate
+    its internal layout. The APK is built without resources, so the platform
+    theme is named directly.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.pentest.ch31.victim">
+
+    <application
+        android:label="CH31 Victim"
+        android:allowBackup="false"
+        android:theme="@android:style/Theme.DeviceDefault.Light">
+
+        <!-- The launcher. Non sensitive, shows the app is alive. -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!--
+            [V1] Exported so a launcher shortcut and the OEM settings search can
+            reach it. That is the real world reason these are exported, and it
+            is also why the injection is reachable by any installed app.
+        -->
+        <activity
+            android:name=".SettingsActivity"
+            android:exported="true" />
+
+        <!-- [H1] The hardened counterpart. Same export, real allowlist. -->
+        <activity
+            android:name=".SettingsHardenedActivity"
+            android:exported="true" />
+
+        <!--
+            [V3] The 2013 shape: a PreferenceActivity subclass with no
+            isValidFragment override at all. What it does depends on the APK's
+            targetSdkVersion, which is why build.sh accepts TARGET_SDK.
+        -->
+        <activity
+            android:name=".LegacySettingsActivity"
+            android:exported="true" />
+
+        <!--
+            [V2] Reflective Fragment host. Exported because a deep link and a
+            notification both target it. Accepts a fully qualified class name in
+            an Intent extra.
+        -->
+        <activity
+            android:name=".FragmentHostActivity"
+            android:exported="true">
+            <intent-filter android:autoVerify="false">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="ch31victim" android:host="screen" />
+            </intent-filter>
+        </activity>
+
+        <!-- [H2] The hardened counterpart: a closed key to factory map. -->
+        <activity
+            android:name=".FragmentHostHardened"
+            android:exported="true" />
+
+        <!--
+            The intended route to AdminFragment. NOT exported. An attacker
+            cannot start this Activity, which is exactly why the two entry
+            points above matter.
+        -->
+        <activity
+            android:name=".LoginActivity"
+            android:exported="false" />
+    </application>
+</manifest>

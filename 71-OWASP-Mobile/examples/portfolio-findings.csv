@@ -1,0 +1,48 @@
+# ILLUSTRATIVE FIXTURE -- three-app portfolio result set for scripts/mas-coverage.py --heatmap
+#
+# TEACHING EXAMPLE. These states are invented to exercise the tool and to make the
+# systemic-theme discussion in labs/lab-04-portfolio-heatmap.md concrete. They are NOT
+# assessments of any published build of OVAA, InsecureBankv2 or DIVA.
+#
+# Subset: nine controls, chosen per lab-04 Step 1. Three apps. 27 rows exactly --
+# apps x controls, with no pair omitted. That invariant is the point of the format.
+#
+# TWO ROWS ARE DELIBERATELY DEFECTIVE, so you can watch the tool catch them:
+#   1. diva / MASVS-CODE-1 is recorded with the RETIRED v1 identifier MSTG-CODE-1,
+#      as if carried over from an older assessment. mas-coverage.py flags it as
+#      retired and refuses to count it, which leaves a hole in the heatmap -- exactly
+#      what happens in real life when an old identifier is copied forward.
+#   2. androgoat-substitute rows are absent on purpose: only three apps are present.
+#      If you add a fourth app, every control must gain a row for it.
+#
+# Systemic signal planted in this fixture: NETWORK-1 fails on all three, and two of the
+# three notes point at the same third-party component. That is the pattern lab-04 Step 6
+# asks you to turn into a cause.
+app,control,state,evidence,finding,severity,note
+ovaa,MASVS-STORAGE-1,FAIL,evidence/ovaa-datadir-diff.txt,F-01,High,Session identifier in plaintext shared_prefs
+ovaa,MASVS-STORAGE-2,FAIL,evidence/ovaa-logcat.txt,F-02,Medium,Credential-shaped value in the system log
+ovaa,MASVS-CRYPTO-1,FAIL,evidence/ovaa-jca.log,F-03,Medium,Unauthenticated block cipher mode with constant IV
+ovaa,MASVS-CRYPTO-2,FAIL,evidence/ovaa-jca.log,F-03,Medium,Key is a constant byte array in DEX
+ovaa,MASVS-NETWORK-1,FAIL,evidence/ovaa-cert-matrix.md,F-04,High,Connects with an untrusted self-signed certificate; trust manager from bundled helper component
+ovaa,MASVS-PLATFORM-1,FAIL,evidence/ovaa-probe.txt,F-05,High,Exported component forwards an externally supplied target
+ovaa,MASVS-CODE-1,FAIL,evidence/ovaa-manifest-audit.md,F-07,Low,targetSdk predates mandatory explicit export
+ovaa,MASVS-CODE-3,PARTIAL,evidence/ovaa-deps.txt,,,Inventory produced; two native libraries unversioned
+ovaa,MASVS-PRIVACY-1,FAIL,evidence/ovaa-manifest-audit.md,F-09,Low,Permissions requested with no corresponding use
+insecurebankv2,MASVS-STORAGE-1,FAIL,evidence/ib2-datadir-diff.txt,F-11,High,Credentials recoverable from an unencrypted database
+insecurebankv2,MASVS-STORAGE-2,FAIL,evidence/ib2-logcat.txt,F-12,Medium,Authentication parameters written to the system log
+insecurebankv2,MASVS-CRYPTO-1,FAIL,evidence/ib2-jca.log,F-13,High,Reversible transformation used where encryption was intended
+insecurebankv2,MASVS-CRYPTO-2,FAIL,evidence/ib2-jca.log,F-13,High,Key derived from a constant; KeyStore not used
+insecurebankv2,MASVS-NETWORK-1,FAIL,evidence/ib2-cert-matrix.md,F-14,High,Cleartext endpoint in use; same bundled helper component as OVAA
+insecurebankv2,MASVS-PLATFORM-1,FAIL,evidence/ib2-probe.txt,F-15,Medium,Exported receiver performs a state change from an unprivileged caller
+insecurebankv2,MASVS-CODE-1,FAIL,evidence/ib2-manifest-audit.md,F-16,Medium,Debuggable flag present in the shipped artefact
+insecurebankv2,MASVS-CODE-3,PARTIAL,evidence/ib2-deps.txt,,,Backend dependencies out of scope for this subset
+insecurebankv2,MASVS-PRIVACY-1,PARTIAL,evidence/ib2-manifest-audit.md,,,Permission use confirmed for three of five requested permissions
+diva,MASVS-STORAGE-1,FAIL,evidence/diva-datadir-diff.txt,F-21,High,Credentials in shared_prefs and in an application database
+diva,MASVS-STORAGE-2,FAIL,evidence/diva-logcat.txt,F-22,Medium,Input values echoed to the system log
+diva,MASVS-CRYPTO-1,FAIL,evidence/diva-jca.log,F-23,Medium,Hardcoded transformation with no integrity protection
+diva,MASVS-CRYPTO-2,FAIL,evidence/diva-jca.log,F-23,Medium,Key present as a literal in the decompiled sources
+diva,MASVS-NETWORK-1,FAIL,evidence/diva-cert-matrix.md,F-24,Medium,Cleartext permitted by targetSdk default; no network security config
+diva,MASVS-PLATFORM-1,PARTIAL,evidence/diva-probe.txt,,,Exported surface enumerated; two components not reachable from the probe app
+diva,MSTG-CODE-1,FAIL,evidence/diva-manifest-audit.md,F-26,Low,Carried over verbatim from a 2021 assessment -- identifier never re-mapped
+diva,MASVS-CODE-3,N/A,,,,No third-party dependencies of consequence in this target
+diva,MASVS-PRIVACY-1,FAIL,evidence/diva-manifest-audit.md,F-27,Low,Storage permission requested with no corresponding use

@@ -1,0 +1,328 @@
+{
+  "_fixture": {
+    "WHAT_THIS_IS": "The second of two hand-built fixtures in the SHAPE of a MobSF Android report. MobSF was NOT run to produce it.",
+    "WHY_TWO": "A ranking of one application is a number, not a ranking. This is the SAME application family one version earlier, which makes the pair a controlled comparison: v1.0 ships unobfuscated, v1.2 is R8-processed. Both configure an OkHttp certificate pin. A class-name-based pinning detector finds it in v1.0 and misses it in v1.2. That is the whole of README section 5.2.",
+    "WHAT_IS_REAL": "Every value is a measurement of CMPen-Android-App v1.0 taken on 2026-08-12 with aapt2 (build-tools 35.0.1), jadx 1.5.3 CLI, apksigner 35.0.1, unzip and grep. jadx reported 1,757 classes and 'finished with errors, count: 8'; the decompiled tree holds 1,995 .java files.",
+    "WHAT_IS_NOT_REAL": "Report structure, rule identifiers, severity strings, cvss numbers and the security_score are reconstructions of MobSF's documented shape. Do not cite them as MobSF's.",
+    "TARGET": "CMPen-Android-App v1.0 (org.android.cmpen) - a public, deliberately-vulnerable training application.",
+    "APK_SHA256": "f7daada6c5c24f47120c21096003c84607cd25ca8d0b1d723d58248020f501ff",
+    "APK_SIZE_BYTES": 5646105
+  },
+
+  "version": "v4.x (fixture)",
+  "title": "Static Analysis Report",
+  "file_name": "CMPen-Android-App-v1.0.apk",
+  "app_name": "CMPen - Android",
+  "app_type": "apk",
+  "size": "5.38MB",
+  "md5": "FIXTURE-NOT-MEASURED",
+  "sha1": "FIXTURE-NOT-MEASURED",
+  "sha256": "f7daada6c5c24f47120c21096003c84607cd25ca8d0b1d723d58248020f501ff",
+  "package_name": "org.android.cmpen",
+  "main_activity": "org.android.cmpen.MainActivity",
+  "target_sdk": "33",
+  "max_sdk": "",
+  "min_sdk": "20",
+  "version_name": "1.0",
+  "version_code": "1",
+
+  "exported_count": {
+    "exported_activities": 2,
+    "exported_services": 0,
+    "exported_receivers": 0,
+    "exported_providers": 0
+  },
+
+  "activities": [
+    "org.android.cmpen.FlagActivity",
+    "org.android.cmpen.MainActivity"
+  ],
+  "exported_activities": [
+    "org.android.cmpen.FlagActivity",
+    "org.android.cmpen.MainActivity"
+  ],
+  "browsable_activities": {},
+  "services": [],
+  "receivers": [],
+  "providers": ["androidx.startup.InitializationProvider"],
+  "libraries": [],
+
+  "permissions": {
+    "android.permission.INTERNET": {
+      "status": "normal",
+      "info": "full Internet access",
+      "description": "Allows an application to create network sockets."
+    },
+    "android.permission.READ_EXTERNAL_STORAGE": {
+      "status": "dangerous",
+      "info": "read external storage contents",
+      "description": "Allows an application to read from external storage."
+    },
+    "android.permission.WRITE_EXTERNAL_STORAGE": {
+      "status": "dangerous",
+      "info": "read/modify/delete external storage contents",
+      "description": "Allows an application to write to external storage."
+    }
+  },
+
+  "certificate_analysis": {
+    "certificate_info": "APK is signed\nX.509 Subject: C=US, O=Android, CN=Android Debug\nsha256: 045bc19b2cf671b149c70c6c1d2f48226c3095f82e54d4c61be0adadf1d8b7f5\nPublicKey Algorithm: rsa\nBit Size: 2048",
+    "certificate_findings": [
+      [
+        "high",
+        "Application signed with a debug certificate. Production application must not be shipped with a debug certificate.",
+        "Application signed with debug certificate"
+      ]
+    ],
+    "certificate_summary": { "high": 1, "warning": 0, "info": 0 }
+  },
+
+  "manifest_analysis": {
+    "manifest_summary": { "high": 3, "warning": 3, "info": 0, "suppressed": 0 },
+    "manifest_anal": [
+      {
+        "rule": "app_is_debuggable",
+        "title": "Debug Enabled For App [android:debuggable=true]",
+        "severity": "high",
+        "description": "Debugging was enabled on the app which makes it easier for reverse engineers to hook a debugger to it. This allows dumping a stack trace and accessing debugging helper classes.",
+        "name": "Debug Enabled For App",
+        "component": ["debuggable"]
+      },
+      {
+        "rule": "clear_text_traffic",
+        "title": "Clear text traffic is Enabled For App [android:usesCleartextTraffic=true]",
+        "severity": "high",
+        "description": "The app intends to use cleartext network traffic.",
+        "name": "Clear text traffic is Enabled For App",
+        "component": ["usesCleartextTraffic"]
+      },
+      {
+        "rule": "app_allowbackup",
+        "title": "Application Data can be Backed up [android:allowBackup=true]",
+        "severity": "warning",
+        "description": "This flag allows anyone to backup your application data via adb.",
+        "name": "Application Data can be Backed up",
+        "component": ["allowBackup"]
+      },
+      {
+        "rule": "exported_activity",
+        "title": "Activity (org.android.cmpen.FlagActivity) is not Protected. [android:exported=true]",
+        "severity": "warning",
+        "description": "An Activity is found to be shared with other apps on the device.",
+        "name": "Activity is not Protected",
+        "component": ["org.android.cmpen.FlagActivity"]
+      },
+      {
+        "rule": "exported_activity",
+        "title": "Activity (org.android.cmpen.MainActivity) is not Protected. An intent-filter exists.",
+        "severity": "warning",
+        "description": "An Activity is found to be shared with other apps on the device.",
+        "name": "Activity is not Protected. An intent-filter exists",
+        "component": ["org.android.cmpen.MainActivity"]
+      },
+      {
+        "rule": "vulnerable_os_version",
+        "title": "App can be installed on a vulnerable Android version. [minSdk=20]",
+        "severity": "warning",
+        "description": "This application can be installed on an older version of Android.",
+        "name": "App can be installed on a vulnerable Android version",
+        "component": ["minSdk=20"]
+      }
+    ]
+  },
+
+  "network_security": {
+    "network_findings": [],
+    "network_summary": { "high": 0, "warning": 0, "info": 0, "secure": 0 }
+  },
+
+  "code_analysis": {
+    "summary": { "high": 2, "warning": 3, "info": 1, "secure": 1, "suppressed": 0 },
+    "findings": {
+      "The App uses the DES encryption algorithm. DES is a weak algorithm with a 56-bit effective key length.": {
+        "files": { "org/android/cmpen/MainActivity.java": "218,219" },
+        "metadata": {
+          "cvss": 7.4,
+          "cwe": "CWE-327 Use of a Broken or Risky Cryptographic Algorithm",
+          "owasp-mobile": "M5: Insufficient Cryptography",
+          "masvs": "MSTG-CRYPTO-4",
+          "reference": "https://mas.owasp.org/MASVS/",
+          "description": "The App uses the DES encryption algorithm.",
+          "severity": "high"
+        }
+      },
+      "Files may contain hardcoded sensitive information like usernames, passwords, keys etc.": {
+        "files": { "org/android/cmpen/Util.java": "11" },
+        "metadata": {
+          "cvss": 7.4,
+          "cwe": "CWE-312 Cleartext Storage of Sensitive Information",
+          "owasp-mobile": "M9: Reverse Engineering",
+          "masvs": "MSTG-STORAGE-14",
+          "reference": "https://mas.owasp.org/MASVS/",
+          "description": "Files may contain hardcoded sensitive information.",
+          "severity": "high"
+        }
+      },
+      "The App logs information. Sensitive information should never be logged.": {
+        "files": { "org/android/cmpen/MainActivity.java": "91,110,129,149,166,184,200,217,223" },
+        "metadata": {
+          "cvss": 0.0,
+          "cwe": "CWE-532 Insertion of Sensitive Information into Log File",
+          "owasp-mobile": "M2: Insecure Data Storage",
+          "masvs": "MSTG-STORAGE-3",
+          "reference": "https://mas.owasp.org/MASVS/",
+          "description": "The App logs information.",
+          "severity": "info"
+        }
+      },
+      "This App may have root detection capabilities.": {
+        "files": { "org/android/cmpen/Util.java": "19,23,35" },
+        "metadata": {
+          "cvss": 0.0,
+          "cwe": "",
+          "owasp-mobile": "M8: Code Tampering",
+          "masvs": "MSTG-RESILIENCE-1",
+          "reference": "https://mas.owasp.org/MASVS/",
+          "description": "This App may have root detection capabilities.",
+          "severity": "secure"
+        }
+      },
+      "The App may use packages with known vulnerabilities or execute OS commands.": {
+        "files": { "org/android/cmpen/Util.java": "35" },
+        "metadata": {
+          "cvss": 5.3,
+          "cwe": "CWE-78 Improper Neutralization of Special Elements used in an OS Command",
+          "owasp-mobile": "M8: Code Tampering",
+          "masvs": "MSTG-PLATFORM-2",
+          "reference": "https://mas.owasp.org/MASVS/",
+          "description": "Runtime.getRuntime().exec() is called.",
+          "severity": "warning"
+        }
+      },
+      "The App uses Base64 encoding/decoding.": {
+        "files": { "org/android/cmpen/MainActivity.java": "220" },
+        "metadata": {
+          "cvss": 0.0,
+          "cwe": "",
+          "owasp-mobile": "",
+          "masvs": "MSTG-CRYPTO-1",
+          "reference": "https://mas.owasp.org/MASVS/",
+          "description": "Base64 encoding/decoding is used.",
+          "severity": "info"
+        }
+      }
+    }
+  },
+
+  "binary_analysis": [],
+  "file_analysis": [],
+
+  "android_api": {
+    "api_crypto": {
+      "files": { "org/android/cmpen/MainActivity.java": "218,219,220" },
+      "metadata": { "description": "Crypto", "severity": "info" }
+    },
+    "api_network": {
+      "files": { "org/android/cmpen/RetrofitClient.java": "16,21,23" },
+      "metadata": { "description": "HTTP Requests, Connections and Sessions", "severity": "info" }
+    },
+    "api_get_system_service": {
+      "files": { "org/android/cmpen/Util.java": "35" },
+      "metadata": { "description": "Get System Service", "severity": "info" }
+    }
+  },
+
+  "urls": [
+    { "urls": ["https://ninja.secops.group/"], "path": "org/android/cmpen/RetrofitClient.java:23" }
+  ],
+  "domains": {
+    "ninja.secops.group": { "bad": "no", "geolocation": {}, "ofac": false }
+  },
+  "emails": [],
+  "firebase_urls": [],
+  "trackers": { "detected_trackers": 0, "total_trackers": 400, "trackers": [] },
+
+  "secrets": [
+    "\"sha256/jWseeY2GFCMiPCL39cf2IabLpYKO4uIBxLEHs7iE+00=\"",
+    "\"sha256/jQJTbIh0grw0/1TkHSumWb+Fs0Ggogr621gT3PvPKG0=\"",
+    "\"sha256/C5+lpZ7tcVwmwQIMcRtPbsQtWLABXhQzejna0wHFr8M=\"",
+    "\"RaND0mFl4g\"",
+    "\"MyS3cReT\"",
+    "\"0/zuN6HaWAf03GJHq6qs/w==\""
+  ],
+
+  "apkid": {},
+  "behaviour": {},
+  "niap_analysis": {},
+  "playstore_details": {},
+  "average_cvss": 5.0,
+
+  "appsec": {
+    "security_score": 34,
+    "app_name": "CMPen - Android",
+    "file_name": "CMPen-Android-App-v1.0.apk",
+    "hash": "f7daada6c5c24f47120c21096003c84607cd25ca8d0b1d723d58248020f501ff",
+    "average_cvss": 5.0,
+    "total_trackers": 400,
+    "trackers": 0,
+    "high": [
+      {
+        "title": "Debug Enabled For App",
+        "description": "android:debuggable=true in the shipped manifest.",
+        "section": "manifest"
+      },
+      {
+        "title": "Application signed with debug certificate",
+        "description": "CN=Android Debug.",
+        "section": "certificate"
+      },
+      {
+        "title": "Clear text traffic is enabled for the app",
+        "description": "android:usesCleartextTraffic=true.",
+        "section": "manifest"
+      },
+      {
+        "title": "The App uses the DES encryption algorithm",
+        "description": "DES has a 56-bit effective key length.",
+        "section": "code"
+      }
+    ],
+    "warning": [
+      {
+        "title": "Application data can be backed up",
+        "description": "android:allowBackup is true.",
+        "section": "manifest"
+      },
+      {
+        "title": "Activities are not protected",
+        "description": "2 activities are exported without permission.",
+        "section": "manifest"
+      },
+      {
+        "title": "App can be installed on a vulnerable Android version",
+        "description": "minSdk 20.",
+        "section": "manifest"
+      }
+    ],
+    "info": [
+      {
+        "title": "The App logs information",
+        "description": "9 logging sites in MainActivity.",
+        "section": "code"
+      }
+    ],
+    "secure": [
+      {
+        "title": "This application implements certificate pinning",
+        "description": "okhttp3.CertificatePinner was detected in the application code.",
+        "section": "network"
+      },
+      {
+        "title": "This App may have root detection capabilities",
+        "description": "Root-detection patterns were found.",
+        "section": "code"
+      }
+    ],
+    "hotspot": []
+  }
+}

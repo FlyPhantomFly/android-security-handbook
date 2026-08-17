@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  examples/leaky-vault/AndroidManifest.xml
+
+  The DELIBERATELY VULNERABLE half of chapter 33's example pair. Everything in
+  this file that looks wrong is wrong on purpose; examples/fixed-vault/ is the
+  same app with each decision reversed, and examples/README.md walks the diff.
+
+  Four storage-relevant decisions are made here, and only one of them is
+  obviously a mistake to a reader skimming the manifest:
+
+    android:allowBackup="true"
+        This is the DEFAULT. Omitting the attribute entirely gives you the same
+        behaviour, which is why "allowBackup is not set" is not a defence. It
+        makes the app's credential-encrypted directory eligible for Auto Backup
+        to the user's Google Drive and, on platforms that still support it, for
+        extraction over USB with adb backup. On its own this is a CANDIDATE,
+        not a proven leak — see README section 5.6 for what turns it into one.
+
+    no android:dataExtractionRules / android:fullBackupContent
+        With no rules file, everything in the CE directory except cache/,
+        code_cache/ and no_backup/ is in scope. The fixed app ships a rules
+        file that excludes the two files that matter.
+
+    no android:directBootAware
+        Correct here, and worth stating: this app has no business running
+        before first unlock. The vulnerability in the fixed/leaky pair is NOT
+        about Direct Boot — but the leaky app still writes to device-encrypted
+        storage in Vault.java, which is the actual DE mistake, and a manifest
+        audit cannot see it. See README section 3.3.
+
+    no FLAG_SECURE anywhere
+        FLAG_SECURE is a window flag, not a manifest attribute, so a manifest
+        audit can never find its absence. VaultActivity sets it in the fixed
+        app and not here. The consequence is a recents-thumbnail file written
+        by the system, outside this app's control and outside its sandbox.
+        See README section 3.9.
+
+  AUTHORISED TESTING ONLY. Build with examples/build.sh, install on a device you
+  own, and uninstall when you are done.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.pentest.ch33.vault">
+
+    <!--
+      Note what is NOT here: no READ_EXTERNAL_STORAGE, no WRITE_EXTERNAL_STORAGE,
+      no MANAGE_EXTERNAL_STORAGE. The app writes outside its sandbox anyway,
+      because getExternalFilesDir() has needed no permission since API 19. A
+      permission audit of this manifest reports a clean app. That is the single
+      most useful thing this file teaches.
+    -->
+
+    <application
+        android:label="CH33 Leaky Vault"
+        android:allowBackup="true"
+        android:debuggable="true"
+        android:theme="@android:style/Theme.Material.Light">
+
+        <!--
+          launchMode="singleTop" is here for a TESTING reason, not a security
+          one, and it is worth knowing because it bit this chapter.
+
+          `am start` sets FLAG_ACTIVITY_NEW_TASK. With the default "standard"
+          launch mode, sending a second `am start` for an activity that is
+          already the top of its task does NOT deliver a new Intent: the system
+          brings the existing task forward and onNewIntent is never called. adb
+          prints "Activity not started, intent has been delivered to currently
+          running top-most instance", which reads like success and is not.
+
+          The consequence, if you leave this out: a lab that drives four actions
+          in sequence runs only the first one, the filesystem diff shows a third
+          of the expected files, and you conclude the app behaves differently
+          from its source. singleTop makes onNewIntent fire every time.
+        -->
+        <activity
+            android:name=".VaultActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:label="CH33 Leaky Vault">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!--
+          A second activity that exists purely so labs/lab-02 has a second,
+          distinct "feature exercise" to snapshot around. Exported so a lab can
+          drive it with `am start` without touching the UI.
+        -->
+        <activity
+            android:name=".ExportActivity"
+            android:exported="true"
+            android:label="CH33 Export" />
+    </application>
+</manifest>

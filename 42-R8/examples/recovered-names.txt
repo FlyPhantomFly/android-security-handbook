@@ -1,0 +1,121 @@
+# Recovered names from the R8 builds described in this directory.
+#
+# Reproduce with build-r8-demo.sh, then:
+#   python3 -B ../scripts/kotlin-metadata-recover.py out/<build>/classes.dex --members
+#
+# Toolchain actually used, 2026-08-12:
+#   R8 8.6.2-dev  (Android SDK build-tools 35.0.1, lib/d8.jar)
+#   Kotlin 2.0.21 (kotlin-compiler-embeddable), --jvm-target 1.8
+#   R8 flags: --release --min-api 33 --lib android-35/android.jar
+#   Source:   LicenceVault.kt (this directory)
+#
+# ===========================================================================
+# BUILD 1 -- rules-baseline.pro, R8 FULL mode (the r8 CLI default)
+# ===========================================================================
+No @kotlin.Metadata annotations found in out/full/classes.dex.
+Either the app has no Kotlin, or R8 stripped the annotation (full mode does this by default).
+
+# ===========================================================================
+# BUILD 2 -- rules-keep-metadata.pro, R8 COMPAT mode (--pg-compat)
+#   -keep class kotlin.Metadata { *; }
+#   -keep,allowobfuscation class com.pentest.ch42.vault.** { *; }
+#
+# Read the 'val' lines. The Kotlin PROPERTY names are the originals
+# (subscriberId, hardwareId, auditTrail, PEPPER) while the JVM field and
+# getter beside each one have been renamed to a/b/c and f/g/h. That pairing
+# IS a member-level mapping table, obtained without any mapping.txt.
+# ===========================================================================
+# out/meta2-compat/classes.dex
+# 13 classes carry @kotlin.Metadata; 13 decoded, 0 failed
+# verdict: rewritten -- 82% of recovered simple names are 1-2 characters. R8 kept kotlin.Metadata and rewrote its payload to match the renamed program, so class, function and enum-entry names are NOT the originals. Kotlin PROPERTY names are rewritten far less reliably -- 18 were recovered here; read them with --members before concluding nothing leaked.
+
+com.pentest.ch42.vault.VaultEntryPoint         -> com.pentest.ch42.vault.VaultEntryPoint   [k=1 class]
+      SourceFile: SourceFile
+      fun    main [jvm ?([Ljava/lang/String;)V]
+      ctor   <init>()V
+com.pentest.ch42.vault.a                       -> com.pentest.ch42.vault.a   [k=1 class]
+      SourceFile: SourceFile
+      fun    a [jvm a()Ljava/lang/String;]
+      fun    b [jvm b()Lcom/pentest/ch42/vault/b;]
+      fun    c [jvm c()J]
+      fun    d [jvm d(Ljava/lang/String;Lcom/pentest/ch42/vault/b;J)Lcom/pentest/ch42/vault/a;]
+      fun    toString [jvm toString()Ljava/lang/String;]
+      fun    hashCode [jvm hashCode()I]
+      fun    equals [jvm equals(Ljava/lang/Object;)Z]
+      val    subscriberId  [field aLjava/lang/String;; getter g()Ljava/lang/String;]
+      val    tier  [field bLcom/pentest/ch42/vault/b;; getter h()Lcom/pentest/ch42/vault/b;]
+      val    expiryEpochDay  [field cJ; getter f()J]
+      ctor   <init>(Ljava/lang/String;Lcom/pentest/ch42/vault/b;J)V
+com.pentest.ch42.vault.b                       -> com.pentest.ch42.vault.b   [k=1 class]
+      SourceFile: SourceFile
+      enum   a
+      enum   b
+      enum   c
+      ctor   <init>(Ljava/lang/String;I)V
+com.pentest.ch42.vault.e                       -> com.pentest.ch42.vault.e   [k=1 class]
+      SourceFile: SourceFile
+      fun    a [jvm a()Lcom/pentest/ch42/vault/h;]
+      val    VAULT_FORMAT_VERSION  [field VAULT_FORMAT_VERSIONI]
+      val    PEPPER  [field PEPPERLjava/lang/String;]
+      ctor   <init>()V
+com.pentest.ch42.vault.f                       -> com.pentest.ch42.vault.f   [k=1 class]
+      SourceFile: SourceFile
+      fun    a [jvm a()I]
+      fun    b [jvm b()I]
+      ctor   <init>(Lcom/pentest/ch42/vault/h;)V
+com.pentest.ch42.vault.g                       -> <no d1 payload>   [k=3 synthetic-class]
+      SourceFile: SourceFile
+com.pentest.ch42.vault.h                       -> com.pentest.ch42.vault.h   [k=1 class]
+      SourceFile: SourceFile
+      fun    l [jvm l(Ljava/lang/String;)I]
+      fun    p [jvm p(Lcom/pentest/ch42/vault/b;)I]
+      fun    k [jvm k(Ljava/lang/String;Lcom/pentest/ch42/vault/b;J)Lcom/pentest/ch42/vault/a;]
+      fun    h [jvm h(Lcom/pentest/ch42/vault/a;)I]
+      fun    q [jvm q(Lcom/pentest/ch42/vault/a;J)Lcom/pentest/ch42/vault/m;]
+      fun    m [jvm m()Ljava/util/List;]
+      fun    e [jvm e(J)Ljava/util/List;]
+      fun    g [jvm g()I]
+      fun    j [jvm j()Lcom/pentest/ch42/vault/f;]
+      val    hardwareId  [field aLjava/lang/String;]
+      val    issuedRecords  [field bLjava/util/List;]
+      val    auditTrail  [field cLjava/util/List;]
+      ctor   <init>(Ljava/lang/String;)V
+      companion d
+com.pentest.ch42.vault.i                       -> <file facade>   [k=2 file-facade]
+      SourceFile: SourceFile
+      fun    a [jvm a(Lcom/pentest/ch42/vault/h;)Ljava/lang/Void;]
+com.pentest.ch42.vault.m                       -> com.pentest.ch42.vault.m   [k=1 class]
+      SourceFile: SourceFile
+      ctor   <init>()V
+kotlin.Metadata                                -> kotlin.Metadata   [k=1 class]
+      SourceFile: SourceFile
+      val    bytecodeVersion  [getter bv()[I]
+      val    data1  [getter d1()[Ljava/lang/String;]
+      val    data2  [getter d2()[Ljava/lang/String;]
+      val    extraInt  [getter xi()I]
+      val    extraString  [getter xs()Ljava/lang/String;]
+      val    kind  [getter k()I]
+      val    metadataVersion  [getter mv()[I]
+      val    packageName  [getter pn()Ljava/lang/String;]
+      module kotlin-stdlib
+com.pentest.ch42.vault.j                       -> com.pentest.ch42.vault.j   [k=1 class]
+      SourceFile: SourceFile
+      fun    a [jvm a()Ljava/lang/String;]
+      fun    b [jvm b(Ljava/lang/String;)Lcom/pentest/ch42/vault/j;]
+      fun    toString [jvm toString()Ljava/lang/String;]
+      fun    hashCode [jvm hashCode()I]
+      fun    equals [jvm equals(Ljava/lang/Object;)Z]
+      val    reason  [field aLjava/lang/String;; getter d()Ljava/lang/String;]
+      ctor   <init>(Ljava/lang/String;)V
+com.pentest.ch42.vault.k                       -> com.pentest.ch42.vault.k   [k=1 class]
+      SourceFile: SourceFile
+      fun    a [jvm a()Lcom/pentest/ch42/vault/a;]
+      fun    b [jvm b(Lcom/pentest/ch42/vault/a;)Lcom/pentest/ch42/vault/k;]
+      fun    toString [jvm toString()Ljava/lang/String;]
+      fun    hashCode [jvm hashCode()I]
+      fun    equals [jvm equals(Ljava/lang/Object;)Z]
+      val    record  [field aLcom/pentest/ch42/vault/a;; getter d()Lcom/pentest/ch42/vault/a;]
+      ctor   <init>(Lcom/pentest/ch42/vault/a;)V
+com.pentest.ch42.vault.l                       -> com.pentest.ch42.vault.l   [k=1 class]
+      SourceFile: SourceFile
+      ctor   <init>()V

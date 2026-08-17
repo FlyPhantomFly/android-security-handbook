@@ -1,0 +1,6 @@
+# build-squat-pair.sh writes everything here. None of it belongs in the
+# repository: .apk, .jks and the intermediate .zip are all on this project's
+# artefact blocklist, and a signing key in version control is worse than an
+# APK. The sources plus the script are the deliverable; the binaries are the
+# reader's to produce in one command.
+out/

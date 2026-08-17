@@ -1,0 +1,529 @@
+# compiler: R8
+# compiler_version: 8.6.2-dev
+# min_api: 33
+# compiler_hash: abaab469b5ebd4dd2bb91ba0ed6f45277faae4ca
+# common_typos_disable
+# {"id":"com.android.tools.r8.mapping","version":"2.2"}
+# pg_map_id: 8b3880b
+# pg_map_hash: SHA-256 8b3880ba7107a419366c2b0c20d50a99273c28b9697c04849803e48b0d9695a4
+com.pentest.ch42.vault.LicenceRecord -> com.pentest.ch42.vault.a:
+# {"id":"sourceFile","fileName":"LicenceVault.kt"}
+    java.lang.String subscriberId -> a
+    com.pentest.ch42.vault.LicenceTier tier -> b
+      # {"id":"com.android.tools.r8.residualsignature","signature":"Lcom/pentest/ch42/vault/b;"}
+    long expiryEpochDay -> c
+    10:12:void <init>(java.lang.String,com.pentest.ch42.vault.LicenceTier,long):19:19 -> <init>
+      # {"id":"com.android.tools.r8.residualsignature","signature":"(Ljava/lang/String;Lcom/pentest/ch42/vault/b;J)V"}
+    13:14:void <init>(java.lang.String,com.pentest.ch42.vault.LicenceTier,long):20:20 -> <init>
+    15:16:void <init>(java.lang.String,com.pentest.ch42.vault.LicenceTier,long):21:21 -> <init>
+    17:19:void <init>(java.lang.String,com.pentest.ch42.vault.LicenceTier,long):22:22 -> <init>
+    0:2:java.lang.String component1():0:0 -> a
+    0:2:com.pentest.ch42.vault.LicenceTier component2():0:0 -> b
+      # {"id":"com.android.tools.r8.residualsignature","signature":"()Lcom/pentest/ch42/vault/b;"}
+    0:2:long component3():0:0 -> c
+    0:15:com.pentest.ch42.vault.LicenceRecord copy(java.lang.String,com.pentest.ch42.vault.LicenceTier,long):0:0 -> d
+      # {"id":"com.android.tools.r8.residualsignature","signature":"(Ljava/lang/String;Lcom/pentest/ch42/vault/b;J)Lcom/pentest/ch42/vault/a;"}
+    0:22:com.pentest.ch42.vault.LicenceRecord copy$default(com.pentest.ch42.vault.LicenceRecord,java.lang.String,com.pentest.ch42.vault.LicenceTier,long,int,java.lang.Object):0:0 -> e
+      # {"id":"com.android.tools.r8.residualsignature","signature":"(Lcom/pentest/ch42/vault/a;Ljava/lang/String;Lcom/pentest/ch42/vault/b;JILjava/lang/Object;)Lcom/pentest/ch42/vault/a;"}
+    0:2:long getExpiryEpochDay():22:22 -> f
+    0:2:java.lang.String getSubscriberId():20:20 -> g
+    0:2:com.pentest.ch42.vault.LicenceTier getTier():21:21 -> h
+      # {"id":"com.android.tools.r8.residualsignature","signature":"()Lcom/pentest/ch42/vault/b;"}
+com.pentest.ch42.vault.LicenceTier -> com.pentest.ch42.vault.b:
+# {"id":"sourceFile","fileName":"LicenceVault.kt"}
+    com.pentest.ch42.vault.LicenceTier FREE -> a
+      # {"id":"com.android.tools.r8.residualsignature","signature":"Lcom/pentest/ch42/vault/b;"}
+    com.pentest.ch42.vault.LicenceTier PRO -> b
+      # {"id":"com.android.tools.r8.residualsignature","signature":"Lcom/pentest/ch42/vault/b;"}
+    com.pentest.ch42.vault.LicenceTier ENTERPRISE -> c
+      # {"id":"com.android.tools.r8.residualsignature","signature":"Lcom/pentest/ch42/vault/b;"}
+    com.pentest.ch42.vault.LicenceTier[] $VALUES -> d
+      # {"id":"com.android.tools.r8.residualsignature","signature":"[Lcom/pentest/ch42/vault/b;"}
+    kotlin.enums.EnumEntries $ENTRIES -> e
+      # {"id":"com.android.tools.r8.residualsignature","signature":"Lc/a;"}
+    0:9:void <clinit>():14:14 -> <clinit>
+    10:19:void <clinit>():15:15 -> <clinit>
+    20:42:void <clinit>():16:16 -> <clinit>
+    0:3:void <init>(java.lang.String,int):13:13 -> <init>
+    0:10:com.pentest.ch42.vault.LicenceTier[] $values():0:0 -> a
+      # {"id":"com.android.tools.r8.residualsignature","signature":"()[Lcom/pentest/ch42/vault/b;"}
+    0:2:c.EnumEntries getEntries():0:0 -> b
+      # {"id":"com.android.tools.r8.synthesized"}
+      # {"id":"com.android.tools.r8.residualsignature","signature":"()Lc/a;"}
+    6:8:com.pentest.ch42.vault.LicenceTier valueOf(java.lang.String):17:17 -> c
+      # {"id":"com.android.tools.r8.residualsignature","signature":"(Ljava/lang/String;)Lcom/pentest/ch42/vault/b;"}
+    6:8:com.pentest.ch42.vault.LicenceTier[] values():17:17 -> values
+      # {"id":"com.android.tools.r8.residualsignature","signature":"()[Lcom/pentest/ch42/vault/b;"}
+com.pentest.ch42.vault.LicenceVault -> com.pentest.ch42.vault.h:
+# {"id":"sourceFile","fileName":"LicenceVault.kt"}
+    java.lang.String hardwareId -> a
+    java.util.List issuedRecords -> b
+    java.util.List auditTrail -> c
+    com.pentest.ch42.vault.LicenceVault$Companion Companion -> d
+      # {"id":"com.android.tools.r8.residualsignature","signature":"Lcom/pentest/ch42/vault/e;"}
+    int VAULT_FORMAT_VERSION -> e
+    java.lang.String PEPPER -> f
+    5:9:java.util.List access$getIssuedRecords$p(com.pentest.ch42.vault.LicenceVault):31:31 -> <init>
+    5:9:void <init>(java.lang.String):31 -> <init>
+    10:16:void <init>(java.lang.String):33:33 -> <init>
+    17:24:void <init>(java.lang.String):100:100 -> <init>
+    0:4:int $r8$lambda$O3sRM_2HXN_apQf0lq4lkYJtNB0(com.pentest.ch42.vault.LicenceVault$$ExternalSyntheticLambda0,java.lang.Object,java.lang.Object):0:0 -> a
+      # {"id":"com.android.tools.r8.synthesized"}
+      # {"id":"com.android.tools.r8.residualsignature","signature":"(Lcom/pentest/ch42/vault/c;Ljava/lang/Object;Ljava/lang/Object;)I"}
+    0:2:java.util.List access$getIssuedRecords$p(com.pentest.ch42.vault.LicenceVault):31:31 -> b
+    0:2:java.lang.String access$getHardwareId$p(com.pentest.ch42.vault.LicenceVault):31 -> b
+      # {"id":"com.android.tools.r8.residualsignature","signature":"(Lcom/pentest/ch42/vault/h;)Ljava/lang/String;"}
+    0:2:java.util.List access$getIssuedRecords$p(com.pentest.ch42.vault.LicenceVault):31:31 -> c
+      # {"id":"com.android.tools.r8.residualsignature","signature":"(Lcom/pentest/ch42/vault/h;)Ljava/util/List;"}
+    0:4:java.util.List access$getIssuedRecords$p(com.pentest.ch42.vault.LicenceVault):31:31 -> d
+    0:4:int access$mixSubscriberSalt(com.pentest.ch42.vault.LicenceVault,java.lang.String):31 -> d
+      # {"id":"com.android.tools.r8.residualsignature","signature":"(Lcom/pentest/ch42/vault/h;Ljava/lang/String;)I"}
+    0:2:java.util.List activeTierNames(long):94:94 -> e
+    3:4:java.util.List activeTierNames(long):95:95 -> e
+    5:9:java.util.List kotlin.collections.CollectionsKt___CollectionsKt.filter(java.lang.Iterable,kotlin.jvm.functions.Function1):774:774 -> e
+    5:9:java.util.List activeTierNames(long):96 -> e
+    10:26:java.util.Collection kotlin.collections.CollectionsKt___CollectionsKt.filterTo(java.lang.Iterable,java.util.Collection,kotlin.jvm.functions.Function1):865:865 -> e
+    10:26:java.util.List activeTierNames(long):96 -> e
+    27:34:java.util.List activeTierNames(long):96:96 -> e
+    35:38:java.util.Collection kotlin.collections.CollectionsKt___CollectionsKt.filterTo(java.lang.Iterable,java.util.Collection,kotlin.jvm.functions.Function1):865:865 -> e
+    35:38:java.util.List activeTierNames(long):96 -> e
+    39:40:java.util.List kotlin.collections.CollectionsKt___CollectionsKt.map(java.lang.Iterable,kotlin.jvm.functions.Function1):1557:1557 -> e
+    39:40:java.util.List activeTierNames(long):97 -> e
+    41:44:int kotlin.collections.CollectionsKt__IterablesKt.collectionSizeOrDefault(java.lang.Iterable,int):39:39 -> e
+    41:44:java.util.List activeTierNames(long):139 -> e
+    45:47:java.util.List kotlin.collections.CollectionsKt___CollectionsKt.map(java.lang.Iterable,kotlin.jvm.functions.Function1):1557:1557 -> e
+    45:47:java.util.List activeTierNames(long):97 -> e
+    48:61:java.util.Collection kotlin.collections.CollectionsKt___CollectionsKt.mapTo(java.lang.Iterable,java.util.Collection,kotlin.jvm.functions.Function1):1628:1628 -> e
+    48:61:java.util.List activeTierNames(long):97 -> e
+    62:63:java.util.Collection kotlin.collections.CollectionsKt___CollectionsKt.mapTo(java.lang.Iterable,java.util.Collection,kotlin.jvm.functions.Function1):1629:1629 -> e
+    62:63:java.util.List activeTierNames(long):97 -> e
+    64:71:java.util.List activeTierNames(long):97:97 -> e
+    72:76:java.util.Collection kotlin.collections.CollectionsKt___CollectionsKt.mapTo(java.lang.Iterable,java.util.Collection,kotlin.jvm.functions.Function1):1629:1629 -> e
+    72:76:java.util.List activeTierNames(long):97 -> e
+    0:19:void activeTierNames$lambda$2(com.pentest.ch42.vault.LicenceVault,long):93:93 -> f
+      # {"id":"com.android.tools.r8.residualsignature","signature":"(Lcom/pentest/ch42/vault/h;J)V"}
+    0:6:int auditSize():102:102 -> g
+    5:12:int computeActivationCode(com.pentest.ch42.vault.LicenceRecord):69:69 -> h
+      # {"id":"com.android.tools.r8.residualsignature","signature":"(Lcom/pentest/ch42/vault/a;)I"}
+    13:20:int computeActivationCode(com.pentest.ch42.vault.LicenceRecord):70:70 -> h
+    21:29:int computeActivationCode(com.pentest.ch42.vault.LicenceRecord):71:71 -> h
+    0:6:com.pentest.ch42.vault.LicenceVault defaultVault():0:0 -> i
+      # {"id":"com.android.tools.r8.residualsignature","signature":"()Lcom/pentest/ch42/vault/h;"}
+    0:5:com.pentest.ch42.vault.LicenceVault$Diagnostics diagnostics():111:111 -> j
+      # {"id":"com.android.tools.r8.residualsignature","signature":"()Lcom/pentest/ch42/vault/f;"}
+    10:14:com.pentest.ch42.vault.LicenceRecord issueLicence(java.lang.String,com.pentest.ch42.vault.LicenceTier,long):63:63 -> k
+      # {"id":"com.android.tools.r8.residualsignature","signature":"(Ljava/lang/String;Lcom/pentest/ch42/vault/b;J)Lcom/pentest/ch42/vault/a;"}
+    15:20:com.pentest.ch42.vault.LicenceRecord issueLicence(java.lang.String,com.pentest.ch42.vault.LicenceTier,long):64:64 -> k
+    0:23:int mixSubscriberSalt(java.lang.String):47:47 -> l
+    24:36:int mixSubscriberSalt(java.lang.String):50:50 -> l
+    0:6:java.util.List sortedBySubscriber():87:87 -> m
+    7:20:int sortedBySubscriber$lambda$1(kotlin.jvm.functions.Function2,java.lang.Object,java.lang.Object):88:88 -> m
+    7:20:java.util.List sortedBySubscriber():88 -> m
+    0:12:int sortedBySubscriber$lambda$1(kotlin.jvm.functions.Function2,java.lang.Object,java.lang.Object):88:88 -> n
+    0:12:int sortedBySubscriber$lambda$0(com.pentest.ch42.vault.LicenceRecord,com.pentest.ch42.vault.LicenceRecord):88 -> n
+      # {"id":"com.android.tools.r8.residualsignature","signature":"(Lcom/pentest/ch42/vault/a;Lcom/pentest/ch42/vault/a;)I"}
+    0:21:int sortedBySubscriber$lambda$1(kotlin.jvm.functions.Function2,java.lang.Object,java.lang.Object):88:88 -> o
+      # {"id":"com.android.tools.r8.residualsignature","signature":"(Ld/a;Ljava/lang/Object;Ljava/lang/Object;)I"}
+    0:21:int tierWeight(com.pentest.ch42.vault.LicenceTier):56:56 -> p
+      # {"id":"com.android.tools.r8.residualsignature","signature":"(Lcom/pentest/ch42/vault/b;)I"}
+    22:24:void kotlin.NoWhenBranchMatchedException.<init>():9:9 -> p
+    22:24:int tierWeight(com.pentest.ch42.vault.LicenceTier):56 -> p
+    25:30:int tierWeight(com.pentest.ch42.vault.LicenceTier):56:56 -> p
+    5:12:com.pentest.ch42.vault.VerificationOutcome verify(com.pentest.ch42.vault.LicenceRecord,long):75:75 -> q
+      # {"id":"com.android.tools.r8.residualsignature","signature":"(Lcom/pentest/ch42/vault/a;J)Lcom/pentest/ch42/vault/m;"}
+    13:20:com.pentest.ch42.vault.VerificationOutcome verify(com.pentest.ch42.vault.LicenceRecord,long):76:76 -> q
+    21:40:com.pentest.ch42.vault.VerificationOutcome verify(com.pentest.ch42.vault.LicenceRecord,long):78:78 -> q
+    41:43:com.pentest.ch42.vault.VerificationOutcome verify(com.pentest.ch42.vault.LicenceRecord,long):79:79 -> q
+    44:49:com.pentest.ch42.vault.VerificationOutcome verify(com.pentest.ch42.vault.LicenceRecord,long):81:81 -> q
+com.pentest.ch42.vault.LicenceVault$$ExternalSyntheticLambda0 -> com.pentest.ch42.vault.c:
+# {"id":"sourceFile","fileName":"R8$$SyntheticClass"}
+# {"id":"com.android.tools.r8.synthesized"}
+com.pentest.ch42.vault.LicenceVault$$ExternalSyntheticLambda1 -> com.pentest.ch42.vault.d:
+# {"id":"sourceFile","fileName":"R8$$SyntheticClass"}
+# {"id":"com.android.tools.r8.synthesized"}
+    kotlin.jvm.functions.Function2 com.pentest.ch42.vault.LicenceVault$$InternalSyntheticLambda$1$1b5c58694e2ad21a64a0e1586651874577a7fec664bc478afa19ff3d47a646a4$1.f$0 -> a
+      # {"id":"com.android.tools.r8.residualsignature","signature":"Ld/a;"}
+      # {"id":"com.android.tools.r8.synthesized"}
+    0:5:void <init>(com.pentest.ch42.vault.LicenceVault$$ExternalSyntheticLambda0):0:0 -> <init>
+      # {"id":"com.android.tools.r8.synthesized"}
+      # {"id":"com.android.tools.r8.residualsignature","signature":"(Lcom/pentest/ch42/vault/c;)V"}
+    0:8:int compare(java.lang.Object,java.lang.Object):0:0 -> compare
+      # {"id":"com.android.tools.r8.synthesized"}
+com.pentest.ch42.vault.LicenceVault$Companion -> com.pentest.ch42.vault.e:
+# {"id":"sourceFile","fileName":"LicenceVault.kt"}
+    1:1:void <init>():0:0 -> <init>
+    2:2:void <init>(kotlin.jvm.internal.DefaultConstructorMarker):0:0 -> <init>
+      # {"id":"com.android.tools.r8.residualsignature","signature":"(Le/b;)V"}
+    0:7:com.pentest.ch42.vault.LicenceVault defaultVault():40:40 -> a
+      # {"id":"com.android.tools.r8.residualsignature","signature":"()Lcom/pentest/ch42/vault/h;"}
+com.pentest.ch42.vault.LicenceVault$Diagnostics -> com.pentest.ch42.vault.f:
+# {"id":"sourceFile","fileName":"LicenceVault.kt"}
+    com.pentest.ch42.vault.LicenceVault this$0 -> a
+      # {"id":"com.android.tools.r8.residualsignature","signature":"Lcom/pentest/ch42/vault/h;"}
+    0:5:void <init>(com.pentest.ch42.vault.LicenceVault):106:106 -> <init>
+      # {"id":"com.android.tools.r8.residualsignature","signature":"(Lcom/pentest/ch42/vault/h;)V"}
+    0:10:int hardwareFingerprint():107:107 -> a
+    0:10:int recordCount():108:108 -> b
+com.pentest.ch42.vault.LicenceVault$WhenMappings -> com.pentest.ch42.vault.g:
+# {"id":"sourceFile","fileName":"LicenceVault.kt"}
+    int[] $EnumSwitchMapping$0 -> a
+com.pentest.ch42.vault.LicenceVaultKt -> com.pentest.ch42.vault.i:
+# {"id":"sourceFile","fileName":"LicenceVault.kt"}
+    5:12:java.lang.Void detonate(com.pentest.ch42.vault.LicenceVault):134:134 -> a
+      # {"id":"com.android.tools.r8.residualsignature","signature":"(Lcom/pentest/ch42/vault/h;)Ljava/lang/Void;"}
+com.pentest.ch42.vault.VaultEntryPoint -> com.pentest.ch42.vault.VaultEntryPoint:
+# {"id":"sourceFile","fileName":"LicenceVault.kt"}
+    com.pentest.ch42.vault.VaultEntryPoint INSTANCE -> a
+    5:11:void main(java.lang.String[]):117:117 -> main
+    12:21:void main(java.lang.String[]):118:118 -> main
+    22:44:void main(java.lang.String[]):119:119 -> main
+    45:67:void main(java.lang.String[]):120:120 -> main
+    68:92:void main(java.lang.String[]):121:121 -> main
+    93:113:void main(java.lang.String[]):122:122 -> main
+    114:138:void main(java.lang.String[]):123:123 -> main
+    139:159:void main(java.lang.String[]):124:124 -> main
+    160:181:void main(java.lang.String[]):127:127 -> main
+    182:186:void main(java.lang.String[]):128:128 -> main
+    187:189:void kotlin.KotlinNothingValueException.<init>():121:121 -> main
+    187:189:void main(java.lang.String[]):128 -> main
+    190:191:void main(java.lang.String[]):128:128 -> main
+com.pentest.ch42.vault.VerificationOutcome -> com.pentest.ch42.vault.m:
+# {"id":"sourceFile","fileName":"LicenceVault.kt"}
+    1:1:void <init>():0:0 -> <init>
+    2:2:void <init>(kotlin.jvm.internal.DefaultConstructorMarker):0:0 -> <init>
+      # {"id":"com.android.tools.r8.residualsignature","signature":"(Le/b;)V"}
+com.pentest.ch42.vault.VerificationOutcome$Denied -> com.pentest.ch42.vault.j:
+# {"id":"sourceFile","fileName":"LicenceVault.kt"}
+    java.lang.String reason -> a
+    6:11:void <init>(java.lang.String):27:27 -> <init>
+    0:2:java.lang.String component1():0:0 -> a
+    0:10:com.pentest.ch42.vault.VerificationOutcome$Denied copy(java.lang.String):0:0 -> b
+      # {"id":"com.android.tools.r8.residualsignature","signature":"(Ljava/lang/String;)Lcom/pentest/ch42/vault/j;"}
+    0:10:com.pentest.ch42.vault.VerificationOutcome$Denied copy$default(com.pentest.ch42.vault.VerificationOutcome$Denied,java.lang.String,int,java.lang.Object):0:0 -> c
+      # {"id":"com.android.tools.r8.residualsignature","signature":"(Lcom/pentest/ch42/vault/j;Ljava/lang/String;ILjava/lang/Object;)Lcom/pentest/ch42/vault/j;"}
+    0:2:java.lang.String getReason():27:27 -> d
+com.pentest.ch42.vault.VerificationOutcome$Granted -> com.pentest.ch42.vault.k:
+# {"id":"sourceFile","fileName":"LicenceVault.kt"}
+    com.pentest.ch42.vault.LicenceRecord record -> a
+      # {"id":"com.android.tools.r8.residualsignature","signature":"Lcom/pentest/ch42/vault/a;"}
+    6:11:void <init>(com.pentest.ch42.vault.LicenceRecord):26:26 -> <init>
+      # {"id":"com.android.tools.r8.residualsignature","signature":"(Lcom/pentest/ch42/vault/a;)V"}
+    0:2:com.pentest.ch42.vault.LicenceRecord component1():0:0 -> a
+      # {"id":"com.android.tools.r8.residualsignature","signature":"()Lcom/pentest/ch42/vault/a;"}
+    0:10:com.pentest.ch42.vault.VerificationOutcome$Granted copy(com.pentest.ch42.vault.LicenceRecord):0:0 -> b
+      # {"id":"com.android.tools.r8.residualsignature","signature":"(Lcom/pentest/ch42/vault/a;)Lcom/pentest/ch42/vault/k;"}
+    0:10:com.pentest.ch42.vault.VerificationOutcome$Granted copy$default(com.pentest.ch42.vault.VerificationOutcome$Granted,com.pentest.ch42.vault.LicenceRecord,int,java.lang.Object):0:0 -> c
+      # {"id":"com.android.tools.r8.residualsignature","signature":"(Lcom/pentest/ch42/vault/k;Lcom/pentest/ch42/vault/a;ILjava/lang/Object;)Lcom/pentest/ch42/vault/k;"}
+    0:2:com.pentest.ch42.vault.LicenceRecord getRecord():26:26 -> d
+      # {"id":"com.android.tools.r8.residualsignature","signature":"()Lcom/pentest/ch42/vault/a;"}
+com.pentest.ch42.vault.VerificationOutcome$Indeterminate -> com.pentest.ch42.vault.l:
+# {"id":"sourceFile","fileName":"LicenceVault.kt"}
+    com.pentest.ch42.vault.VerificationOutcome$Indeterminate INSTANCE -> a
+      # {"id":"com.android.tools.r8.residualsignature","signature":"Lcom/pentest/ch42/vault/l;"}
+    1:4:void <init>():28:28 -> <init>
+kotlin.KotlinNothingValueException -> a.a:
+# {"id":"sourceFile","fileName":"ExceptionsH.kt"}
+kotlin.Metadata -> kotlin.Metadata:
+# {"id":"sourceFile","fileName":"Metadata.kt"}
+kotlin.collections.AbstractCollection$toString$1 -> R8$$REMOVED$$CLASS$$0:
+# {"id":"sourceFile","fileName":"AbstractCollection.kt"}
+kotlin.collections.AbstractList -> b.d:
+# {"id":"sourceFile","fileName":"AbstractList.kt"}
+    0:3:void kotlin.collections.AbstractCollection.<init>():14:14 -> <init>
+    0:3:void <init>():21 -> <init>
+    int kotlin.collections.AbstractCollection.getSize() -> a
+    1:1:void add(int,java.lang.Object):0:0 -> add
+    2:2:boolean kotlin.collections.AbstractCollection.add(java.lang.Object):0:0 -> add
+    1:1:boolean addAll(int,java.util.Collection):0:0 -> addAll
+    2:2:boolean kotlin.collections.AbstractCollection.addAll(java.util.Collection):0:0 -> addAll
+    0:7:void kotlin.collections.AbstractCollection.clear():0:0 -> clear
+    0:7:boolean kotlin.collections.AbstractCollection.contains(java.lang.Object):51:51 -> contains
+    8:21:boolean kotlin.collections.AbstractCollection.contains(java.lang.Object):52:52 -> contains
+    22:29:boolean kotlin.collections.AbstractCollection.contains(java.lang.Object):19:19 -> contains
+    5:12:boolean kotlin.collections.AbstractCollection.containsAll(java.util.Collection):54:54 -> containsAll
+    13:26:boolean kotlin.collections.AbstractCollection.containsAll(java.util.Collection):55:55 -> containsAll
+    27:34:boolean kotlin.collections.AbstractCollection.containsAll(java.util.Collection):22:22 -> containsAll
+    4:9:boolean equals(java.lang.Object):66:66 -> equals
+    10:11:boolean equals(java.lang.Object):68:68 -> equals
+    12:16:boolean kotlin.collections.AbstractList$Companion.orderedEquals$kotlin_stdlib(java.util.Collection,java.util.Collection):0:0 -> equals
+    12:16:boolean equals(java.lang.Object):68 -> equals
+    17:28:boolean kotlin.collections.AbstractList$Companion.orderedEquals$kotlin_stdlib(java.util.Collection,java.util.Collection):163:163 -> equals
+    17:28:boolean equals(java.lang.Object):68 -> equals
+    29:32:boolean kotlin.collections.AbstractList$Companion.orderedEquals$kotlin_stdlib(java.util.Collection,java.util.Collection):165:165 -> equals
+    29:32:boolean equals(java.lang.Object):68 -> equals
+    33:46:boolean kotlin.collections.AbstractList$Companion.orderedEquals$kotlin_stdlib(java.util.Collection,java.util.Collection):166:166 -> equals
+    33:46:boolean equals(java.lang.Object):68 -> equals
+    47:50:boolean kotlin.collections.AbstractList$Companion.orderedEquals$kotlin_stdlib(java.util.Collection,java.util.Collection):167:167 -> equals
+    47:50:boolean equals(java.lang.Object):68 -> equals
+    51:58:boolean kotlin.collections.AbstractList$Companion.orderedEquals$kotlin_stdlib(java.util.Collection,java.util.Collection):168:168 -> equals
+    51:58:boolean equals(java.lang.Object):68 -> equals
+    0:18:int kotlin.collections.AbstractList$Companion.orderedHashCode$kotlin_stdlib(java.util.Collection):156:156 -> hashCode
+    0:18:int hashCode():74 -> hashCode
+    19:27:int kotlin.collections.AbstractList$Companion.orderedHashCode$kotlin_stdlib(java.util.Collection):157:157 -> hashCode
+    19:27:int hashCode():74 -> hashCode
+    0:14:int indexOf(java.lang.Object):177:177 -> indexOf
+    15:26:int indexOf(java.lang.Object):27:27 -> indexOf
+    0:9:int kotlin.collections.AbstractCollection.size():14:14 -> isEmpty
+    0:9:boolean kotlin.collections.AbstractCollection.isEmpty():24 -> isEmpty
+    0:5:java.util.Iterator iterator():25:25 -> iterator
+    0:7:int lastIndexOf(java.lang.Object):183:183 -> lastIndexOf
+    8:13:int lastIndexOf(java.lang.Object):184:184 -> lastIndexOf
+    14:17:int lastIndexOf(java.lang.Object):185:185 -> lastIndexOf
+    18:23:int lastIndexOf(java.lang.Object):29:29 -> lastIndexOf
+    24:30:int lastIndexOf(java.lang.Object):186:186 -> lastIndexOf
+    1:1:java.util.ListIterator listIterator():31:31 -> listIterator
+    2:2:java.util.ListIterator listIterator(int):33:33 -> listIterator
+    1:1:java.lang.Object remove(int):0:0 -> remove
+    2:2:boolean kotlin.collections.AbstractCollection.remove(java.lang.Object):0:0 -> remove
+    0:7:boolean kotlin.collections.AbstractCollection.removeAll(java.util.Collection):0:0 -> removeAll
+    0:7:boolean kotlin.collections.AbstractCollection.retainAll(java.util.Collection):0:0 -> retainAll
+    0:7:java.lang.Object set(int,java.lang.Object):0:0 -> set
+    0:4:int kotlin.collections.AbstractCollection.size():14:14 -> size
+    0:5:java.util.List subList(int,int):35:35 -> subList
+    1:1:int kotlin.collections.AbstractCollection.size():14:14 -> toArray
+    1:1:java.lang.Object[] kotlin.jvm.internal.CollectionToArray.toArray(java.util.Collection,java.lang.Object[]):111 -> toArray
+    1:1:java.lang.Object[] kotlin.collections.AbstractCollection.toArray(java.lang.Object[]):48 -> toArray
+    2:2:java.lang.Object[] kotlin.jvm.internal.CollectionToArray.toArray(java.util.Collection,java.lang.Object[]):40:40 -> toArray
+    2:2:java.lang.Object[] kotlin.collections.AbstractCollection.toArray(java.lang.Object[]):48 -> toArray
+    3:3:java.util.Iterator iterator():25:25 -> toArray
+    3:3:java.lang.Object[] kotlin.jvm.internal.CollectionToArray.toArray(java.util.Collection,java.lang.Object[]):113 -> toArray
+    3:3:java.lang.Object[] kotlin.collections.AbstractCollection.toArray(java.lang.Object[]):48 -> toArray
+    4:4:java.lang.Object[] kotlin.jvm.internal.CollectionToArray.toArray(java.util.Collection,java.lang.Object[]):114:114 -> toArray
+    4:4:java.lang.Object[] kotlin.collections.AbstractCollection.toArray(java.lang.Object[]):48 -> toArray
+    5:5:java.lang.Object[] kotlin.jvm.internal.CollectionToArray.toArray(java.util.Collection,java.lang.Object[]):40:40 -> toArray
+    5:5:java.lang.Object[] kotlin.collections.AbstractCollection.toArray(java.lang.Object[]):48 -> toArray
+    6:6:java.lang.Object[] kotlin.jvm.internal.CollectionToArray.toArray(java.util.Collection,java.lang.Object[]):45:45 -> toArray
+    6:6:java.lang.Object[] kotlin.collections.AbstractCollection.toArray(java.lang.Object[]):48 -> toArray
+    7:9:java.lang.Object[] kotlin.jvm.internal.CollectionToArray.toArray(java.util.Collection,java.lang.Object[]):119:121 -> toArray
+    7:9:java.lang.Object[] kotlin.collections.AbstractCollection.toArray(java.lang.Object[]):48 -> toArray
+    10:10:java.lang.Object[] kotlin.jvm.internal.CollectionToArray.toArray(java.util.Collection,java.lang.Object[]):127:127 -> toArray
+    10:10:java.lang.Object[] kotlin.collections.AbstractCollection.toArray(java.lang.Object[]):48 -> toArray
+    11:11:java.lang.Object[] kotlin.jvm.internal.CollectionToArray.toArray(java.util.Collection,java.lang.Object[]):130:130 -> toArray
+    11:11:java.lang.Object[] kotlin.collections.AbstractCollection.toArray(java.lang.Object[]):48 -> toArray
+    12:12:java.lang.Object[] kotlin.jvm.internal.CollectionToArray.toArray(java.util.Collection,java.lang.Object[]):132:132 -> toArray
+    12:12:java.lang.Object[] kotlin.collections.AbstractCollection.toArray(java.lang.Object[]):48 -> toArray
+    13:13:java.lang.Object[] kotlin.jvm.internal.CollectionToArray.toArray(java.util.Collection,java.lang.Object[]):49:49 -> toArray
+    13:13:java.lang.Object[] kotlin.collections.AbstractCollection.toArray(java.lang.Object[]):48 -> toArray
+    14:14:java.lang.Object[] kotlin.jvm.internal.CollectionToArray.toArray(java.util.Collection,java.lang.Object[]):52:52 -> toArray
+    14:14:java.lang.Object[] kotlin.collections.AbstractCollection.toArray(java.lang.Object[]):48 -> toArray
+    15:15:java.lang.Object[] kotlin.collections.AbstractCollection.toArray():34:34 -> toArray
+    0:4:java.lang.String kotlin.collections.CollectionsKt___CollectionsKt.joinToString(java.lang.Iterable,java.lang.CharSequence,java.lang.CharSequence,java.lang.CharSequence,int,java.lang.CharSequence,kotlin.jvm.functions.Function1):3510:3510 -> toString
+    0:4:java.lang.String kotlin.collections.CollectionsKt___CollectionsKt.joinToString$default(java.lang.Iterable,java.lang.CharSequence,java.lang.CharSequence,java.lang.CharSequence,int,java.lang.CharSequence,kotlin.jvm.functions.Function1,int,java.lang.Object):3509 -> toString
+    0:4:java.lang.String kotlin.collections.AbstractCollection.toString():26 -> toString
+    5:9:java.lang.Appendable kotlin.collections.CollectionsKt___CollectionsKt.joinTo(java.lang.Iterable,java.lang.Appendable,java.lang.CharSequence,java.lang.CharSequence,java.lang.CharSequence,int,java.lang.CharSequence,kotlin.jvm.functions.Function1):3488:3488 -> toString
+    5:9:java.lang.String kotlin.collections.CollectionsKt___CollectionsKt.joinToString(java.lang.Iterable,java.lang.CharSequence,java.lang.CharSequence,java.lang.CharSequence,int,java.lang.CharSequence,kotlin.jvm.functions.Function1):3510 -> toString
+    5:9:java.lang.String kotlin.collections.CollectionsKt___CollectionsKt.joinToString$default(java.lang.Iterable,java.lang.CharSequence,java.lang.CharSequence,java.lang.CharSequence,int,java.lang.CharSequence,kotlin.jvm.functions.Function1,int,java.lang.Object):3509 -> toString
+    5:9:java.lang.String kotlin.collections.AbstractCollection.toString():26 -> toString
+    10:15:java.util.Iterator iterator():25:25 -> toString
+    10:15:java.lang.Appendable kotlin.collections.CollectionsKt___CollectionsKt.joinTo(java.lang.Iterable,java.lang.Appendable,java.lang.CharSequence,java.lang.CharSequence,java.lang.CharSequence,int,java.lang.CharSequence,kotlin.jvm.functions.Function1):3490 -> toString
+    10:15:java.lang.String kotlin.collections.CollectionsKt___CollectionsKt.joinToString(java.lang.Iterable,java.lang.CharSequence,java.lang.CharSequence,java.lang.CharSequence,int,java.lang.CharSequence,kotlin.jvm.functions.Function1):3510 -> toString
+    10:15:java.lang.String kotlin.collections.CollectionsKt___CollectionsKt.joinToString$default(java.lang.Iterable,java.lang.CharSequence,java.lang.CharSequence,java.lang.CharSequence,int,java.lang.CharSequence,kotlin.jvm.functions.Function1,int,java.lang.Object):3509 -> toString
+    10:15:java.lang.String kotlin.collections.AbstractCollection.toString():26 -> toString
+    16:29:java.lang.Appendable kotlin.collections.CollectionsKt___CollectionsKt.joinTo(java.lang.Iterable,java.lang.Appendable,java.lang.CharSequence,java.lang.CharSequence,java.lang.CharSequence,int,java.lang.CharSequence,kotlin.jvm.functions.Function1):3490:3490 -> toString
+    16:29:java.lang.String kotlin.collections.CollectionsKt___CollectionsKt.joinToString(java.lang.Iterable,java.lang.CharSequence,java.lang.CharSequence,java.lang.CharSequence,int,java.lang.CharSequence,kotlin.jvm.functions.Function1):3510 -> toString
+    16:29:java.lang.String kotlin.collections.CollectionsKt___CollectionsKt.joinToString$default(java.lang.Iterable,java.lang.CharSequence,java.lang.CharSequence,java.lang.CharSequence,int,java.lang.CharSequence,kotlin.jvm.functions.Function1,int,java.lang.Object):3509 -> toString
+    16:29:java.lang.String kotlin.collections.AbstractCollection.toString():26 -> toString
+    30:36:java.lang.Appendable kotlin.collections.CollectionsKt___CollectionsKt.joinTo(java.lang.Iterable,java.lang.Appendable,java.lang.CharSequence,java.lang.CharSequence,java.lang.CharSequence,int,java.lang.CharSequence,kotlin.jvm.functions.Function1):3491:3491 -> toString
+    30:36:java.lang.String kotlin.collections.CollectionsKt___CollectionsKt.joinToString(java.lang.Iterable,java.lang.CharSequence,java.lang.CharSequence,java.lang.CharSequence,int,java.lang.CharSequence,kotlin.jvm.functions.Function1):3510 -> toString
+    30:36:java.lang.String kotlin.collections.CollectionsKt___CollectionsKt.joinToString$default(java.lang.Iterable,java.lang.CharSequence,java.lang.CharSequence,java.lang.CharSequence,int,java.lang.CharSequence,kotlin.jvm.functions.Function1,int,java.lang.Object):3509 -> toString
+    30:36:java.lang.String kotlin.collections.AbstractCollection.toString():26 -> toString
+    37:43:java.lang.CharSequence kotlin.collections.AbstractCollection$toString$1.invoke(java.lang.Object):27:27 -> toString
+    37:43:java.lang.Object kotlin.collections.AbstractCollection$toString$1.invoke(java.lang.Object):26 -> toString
+    37:43:void kotlin.text.StringsKt__AppendableKt.appendElement(java.lang.Appendable,java.lang.Object,kotlin.jvm.functions.Function1):84 -> toString
+    37:43:java.lang.Appendable kotlin.collections.CollectionsKt___CollectionsKt.joinTo(java.lang.Iterable,java.lang.Appendable,java.lang.CharSequence,java.lang.CharSequence,java.lang.CharSequence,int,java.lang.CharSequence,kotlin.jvm.functions.Function1):3493 -> toString
+    37:43:java.lang.String kotlin.collections.CollectionsKt___CollectionsKt.joinToString(java.lang.Iterable,java.lang.CharSequence,java.lang.CharSequence,java.lang.CharSequence,int,java.lang.CharSequence,kotlin.jvm.functions.Function1):3510 -> toString
+    37:43:java.lang.String kotlin.collections.CollectionsKt___CollectionsKt.joinToString$default(java.lang.Iterable,java.lang.CharSequence,java.lang.CharSequence,java.lang.CharSequence,int,java.lang.CharSequence,kotlin.jvm.functions.Function1,int,java.lang.Object):3509 -> toString
+    37:43:java.lang.String kotlin.collections.AbstractCollection.toString():26 -> toString
+    44:47:void kotlin.text.StringsKt__AppendableKt.appendElement(java.lang.Appendable,java.lang.Object,kotlin.jvm.functions.Function1):84:84 -> toString
+    44:47:java.lang.Appendable kotlin.collections.CollectionsKt___CollectionsKt.joinTo(java.lang.Iterable,java.lang.Appendable,java.lang.CharSequence,java.lang.CharSequence,java.lang.CharSequence,int,java.lang.CharSequence,kotlin.jvm.functions.Function1):3493 -> toString
+    44:47:java.lang.String kotlin.collections.CollectionsKt___CollectionsKt.joinToString(java.lang.Iterable,java.lang.CharSequence,java.lang.CharSequence,java.lang.CharSequence,int,java.lang.CharSequence,kotlin.jvm.functions.Function1):3510 -> toString
+    44:47:java.lang.String kotlin.collections.CollectionsKt___CollectionsKt.joinToString$default(java.lang.Iterable,java.lang.CharSequence,java.lang.CharSequence,java.lang.CharSequence,int,java.lang.CharSequence,kotlin.jvm.functions.Function1,int,java.lang.Object):3509 -> toString
+    44:47:java.lang.String kotlin.collections.AbstractCollection.toString():26 -> toString
+    48:52:java.lang.Appendable kotlin.collections.CollectionsKt___CollectionsKt.joinTo(java.lang.Iterable,java.lang.Appendable,java.lang.CharSequence,java.lang.CharSequence,java.lang.CharSequence,int,java.lang.CharSequence,kotlin.jvm.functions.Function1):3497:3497 -> toString
+    48:52:java.lang.String kotlin.collections.CollectionsKt___CollectionsKt.joinToString(java.lang.Iterable,java.lang.CharSequence,java.lang.CharSequence,java.lang.CharSequence,int,java.lang.CharSequence,kotlin.jvm.functions.Function1):3510 -> toString
+    48:52:java.lang.String kotlin.collections.CollectionsKt___CollectionsKt.joinToString$default(java.lang.Iterable,java.lang.CharSequence,java.lang.CharSequence,java.lang.CharSequence,int,java.lang.CharSequence,kotlin.jvm.functions.Function1,int,java.lang.Object):3509 -> toString
+    48:52:java.lang.String kotlin.collections.AbstractCollection.toString():26 -> toString
+    53:62:java.lang.String kotlin.collections.CollectionsKt___CollectionsKt.joinToString(java.lang.Iterable,java.lang.CharSequence,java.lang.CharSequence,java.lang.CharSequence,int,java.lang.CharSequence,kotlin.jvm.functions.Function1):3510:3510 -> toString
+    53:62:java.lang.String kotlin.collections.CollectionsKt___CollectionsKt.joinToString$default(java.lang.Iterable,java.lang.CharSequence,java.lang.CharSequence,java.lang.CharSequence,int,java.lang.CharSequence,kotlin.jvm.functions.Function1,int,java.lang.Object):3509 -> toString
+    53:62:java.lang.String kotlin.collections.AbstractCollection.toString():26 -> toString
+kotlin.collections.AbstractList$Companion -> R8$$REMOVED$$CLASS$$1:
+# {"id":"sourceFile","fileName":"AbstractList.kt"}
+kotlin.collections.AbstractList$IteratorImpl -> b.a:
+# {"id":"sourceFile","fileName":"AbstractList.kt"}
+    int index -> a
+    kotlin.collections.AbstractList this$0 -> b
+      # {"id":"com.android.tools.r8.residualsignature","signature":"Lb/d;"}
+    0:5:void <init>(kotlin.collections.AbstractList):76:76 -> <init>
+      # {"id":"com.android.tools.r8.residualsignature","signature":"(Lb/d;)V"}
+    0:2:int getIndex():78:78 -> a
+    0:2:void setIndex(int):78:78 -> b
+    0:1:boolean hasNext():80:80 -> hasNext
+    2:13:int kotlin.collections.AbstractCollection.size():14:14 -> hasNext
+    2:13:boolean hasNext():80 -> hasNext
+      # {"id":"com.android.tools.r8.rewriteFrame","conditions":["throws(Ljava/lang/NullPointerException;)"],"actions":["removeInnerFrames(1)"]}
+    0:5:java.lang.Object next():83:83 -> next
+    6:18:java.lang.Object next():84:84 -> next
+    19:24:java.lang.Object next():83:83 -> next
+    0:4:int kotlin.collections.AbstractList$ListIteratorImpl.nextIndex():100:100 -> nextIndex
+    0:7:void remove():0:0 -> remove
+kotlin.collections.AbstractList$ListIteratorImpl -> b.b:
+# {"id":"sourceFile","fileName":"AbstractList.kt"}
+    kotlin.collections.AbstractList this$0 -> c
+      # {"id":"com.android.tools.r8.residualsignature","signature":"Lb/d;"}
+    0:4:void <init>(kotlin.collections.AbstractList,int):91:91 -> <init>
+      # {"id":"com.android.tools.r8.residualsignature","signature":"(Lb/d;I)V"}
+    5:12:int kotlin.collections.AbstractCollection.size():14:14 -> <init>
+    5:12:void <init>(kotlin.collections.AbstractList,int):94 -> <init>
+      # {"id":"com.android.tools.r8.rewriteFrame","conditions":["throws(Ljava/lang/NullPointerException;)"],"actions":["removeInnerFrames(1)"]}
+    13:16:void <init>(kotlin.collections.AbstractList,int):95:95 -> <init>
+    17:44:void kotlin.collections.AbstractList$Companion.checkPositionIndex$kotlin_stdlib(int,int):119:119 -> <init>
+    17:44:void <init>(kotlin.collections.AbstractList,int):94 -> <init>
+    0:7:void add(java.lang.Object):0:0 -> add
+    0:9:boolean hasPrevious():98:98 -> hasPrevious
+    0:5:java.lang.Object previous():103:103 -> previous
+    6:25:java.lang.Object previous():104:104 -> previous
+    26:31:java.lang.Object previous():103:103 -> previous
+    0:6:int previousIndex():107:107 -> previousIndex
+    0:7:void set(java.lang.Object):0:0 -> set
+kotlin.collections.AbstractList$SubList -> b.c:
+# {"id":"sourceFile","fileName":"AbstractList.kt"}
+    kotlin.collections.AbstractList list -> a
+      # {"id":"com.android.tools.r8.residualsignature","signature":"Lb/d;"}
+    int fromIndex -> b
+    int _size -> c
+    5:11:void <init>(kotlin.collections.AbstractList,int,int):37:37 -> <init>
+      # {"id":"com.android.tools.r8.residualsignature","signature":"(Lb/d;II)V"}
+    12:15:int kotlin.collections.AbstractCollection.size():14:14 -> <init>
+    12:15:void <init>(kotlin.collections.AbstractList,int,int):41 -> <init>
+      # {"id":"com.android.tools.r8.rewriteFrame","conditions":["throws(Ljava/lang/NullPointerException;)"],"actions":["removeInnerFrames(1)"]}
+    16:24:void kotlin.collections.AbstractList$Companion.checkRangeIndexes$kotlin_stdlib(int,int,int):124:124 -> <init>
+    16:24:void <init>(kotlin.collections.AbstractList,int,int):41 -> <init>
+    25:27:void <init>(kotlin.collections.AbstractList,int,int):42:42 -> <init>
+    28:53:void kotlin.collections.AbstractList$Companion.checkRangeIndexes$kotlin_stdlib(int,int,int):128:128 -> <init>
+    28:53:void <init>(kotlin.collections.AbstractList,int,int):41 -> <init>
+    54:87:void kotlin.collections.AbstractList$Companion.checkRangeIndexes$kotlin_stdlib(int,int,int):125:125 -> <init>
+    54:87:void <init>(kotlin.collections.AbstractList,int,int):41 -> <init>
+    0:2:int getSize():51:51 -> a
+    0:5:void kotlin.collections.AbstractList$Companion.checkElementIndex$kotlin_stdlib(int,int):112:112 -> get
+    0:5:java.lang.Object get(int):46 -> get
+    6:15:java.lang.Object get(int):48:48 -> get
+    16:43:void kotlin.collections.AbstractList$Companion.checkElementIndex$kotlin_stdlib(int,int):113:113 -> get
+    16:43:java.lang.Object get(int):46 -> get
+kotlin.collections.ArraysKt___ArraysKt -> R8$$REMOVED$$CLASS$$2:
+# {"id":"sourceFile","fileName":"_Arrays.kt"}
+kotlin.collections.CollectionsKt__IterablesKt -> R8$$REMOVED$$CLASS$$3:
+# {"id":"sourceFile","fileName":"Iterables.kt"}
+kotlin.collections.CollectionsKt___CollectionsKt -> R8$$REMOVED$$CLASS$$4:
+# {"id":"sourceFile","fileName":"_Collections.kt"}
+kotlin.enums.EnumEntries -> c.a:
+# {"id":"sourceFile","fileName":"EnumEntries.kt"}
+kotlin.enums.EnumEntriesKt -> c.b:
+# {"id":"sourceFile","fileName":"EnumEntries.kt"}
+    5:10:kotlin.enums.EnumEntries enumEntries(java.lang.Enum[]):43:43 -> a
+      # {"id":"com.android.tools.r8.residualsignature","signature":"([Ljava/lang/Enum;)Lc/a;"}
+kotlin.enums.EnumEntriesList -> c.c:
+# {"id":"sourceFile","fileName":"EnumEntries.kt"}
+    java.lang.Enum[] entries -> a
+    5:10:void <init>(java.lang.Enum[]):46:46 -> <init>
+    0:3:int getSize():53:53 -> a
+    0:7:boolean contains(java.lang.Object):45:45 -> contains
+    8:12:boolean contains(java.lang.Enum):0:0 -> contains
+    8:12:boolean contains(java.lang.Object):45 -> contains
+    13:25:boolean contains(java.lang.Enum):67:67 -> contains
+    13:25:boolean contains(java.lang.Object):45 -> contains
+    26:36:java.lang.Object kotlin.collections.ArraysKt___ArraysKt.getOrNull(java.lang.Object[],int):1483:1483 -> contains
+    26:36:boolean contains(java.lang.Enum):67 -> contains
+    26:36:boolean contains(java.lang.Object):45 -> contains
+    0:6:java.lang.Enum get(int):56:56 -> get
+    0:6:java.lang.Object get(int):45 -> get
+    7:9:java.lang.Enum get(int):57:57 -> get
+    7:9:java.lang.Object get(int):45 -> get
+    10:37:void kotlin.collections.AbstractList$Companion.checkElementIndex$kotlin_stdlib(int,int):113:113 -> get
+    10:37:java.lang.Enum get(int):56 -> get
+    10:37:java.lang.Object get(int):45 -> get
+    0:7:int indexOf(java.lang.Object):45:45 -> indexOf
+    8:12:int indexOf(java.lang.Enum):0:0 -> indexOf
+    8:12:int indexOf(java.lang.Object):45 -> indexOf
+    13:16:int indexOf(java.lang.Enum):75:75 -> indexOf
+    13:16:int indexOf(java.lang.Object):45 -> indexOf
+    17:25:int indexOf(java.lang.Enum):76:76 -> indexOf
+    17:25:int indexOf(java.lang.Object):45 -> indexOf
+    26:36:java.lang.Object kotlin.collections.ArraysKt___ArraysKt.getOrNull(java.lang.Object[],int):1483:1483 -> indexOf
+    26:36:int indexOf(java.lang.Enum):76 -> indexOf
+    26:36:int indexOf(java.lang.Object):45 -> indexOf
+    0:7:int lastIndexOf(java.lang.Object):45:45 -> lastIndexOf
+    8:12:int lastIndexOf(java.lang.Enum):0:0 -> lastIndexOf
+    8:12:int lastIndexOf(java.lang.Object):45 -> lastIndexOf
+    13:17:int lastIndexOf(java.lang.Enum):80:80 -> lastIndexOf
+    13:17:int lastIndexOf(java.lang.Object):45 -> lastIndexOf
+kotlin.jvm.functions.Function2 -> d.a:
+# {"id":"sourceFile","fileName":"Functions.kt"}
+kotlin.jvm.internal.CollectionToArray -> e.a:
+# {"id":"sourceFile","fileName":"CollectionToArray.kt"}
+    java.lang.Object[] EMPTY -> a
+    1:5:void <clinit>():14:14 -> <clinit>
+    5:8:java.lang.Object[] toArray(java.util.Collection):89:89 -> a
+    9:13:java.lang.Object[] toArray(java.util.Collection):90:90 -> a
+    14:17:java.lang.Object[] toArray(java.util.Collection):91:91 -> a
+    18:24:java.lang.Object[] toArray(java.util.Collection):92:92 -> a
+    25:32:java.lang.Object[] toArray(java.util.Collection):25:25 -> a
+    33:38:java.lang.Object[] toArray(java.util.Collection):97:97 -> a
+    39:43:java.lang.Object[] toArray(java.util.Collection):98:98 -> a
+    44:64:java.lang.Object[] toArray(java.util.Collection):99:99 -> a
+    65:70:java.lang.Object[] toArray(java.util.Collection):105:105 -> a
+    71:79:java.lang.Object[] toArray(java.util.Collection):108:108 -> a
+    80:85:java.lang.Object[] toArray(java.util.Collection):110:110 -> a
+    86:93:java.lang.Object[] toArray(java.util.Collection):26:26 -> a
+kotlin.jvm.internal.DefaultConstructorMarker -> e.b:
+# {"id":"sourceFile","fileName":"DefaultConstructorMarker.java"}
+kotlin.jvm.internal.Intrinsics -> e.c:
+# {"id":"sourceFile","fileName":"Intrinsics.java"}
+    0:3:void <init>():16:16 -> <init>
+    8:12:boolean areEqual(java.lang.Object,java.lang.Object):169:169 -> a
+    3:13:void throwJavaNpe(java.lang.String):50:50 -> b
+    3:13:void checkNotNull(java.lang.Object,java.lang.String):31 -> b
+      # {"id":"com.android.tools.r8.residualsignature","signature":"(Ljava/lang/Object;)V"}
+    3:17:void checkNotNullExpressionValue(java.lang.Object,java.lang.String):93:93 -> c
+      # {"id":"com.android.tools.r8.residualsignature","signature":"(Ljava/io/Serializable;Ljava/lang/String;)V"}
+    2:3:void throwParameterIsNullNPE(java.lang.String):140:140 -> d
+    2:3:void checkNotNullParameter(java.lang.Object,java.lang.String):131 -> d
+    4:11:java.lang.String createParameterIsNullExceptionMessage(java.lang.String):144:144 -> d
+    4:11:void throwParameterIsNullNPE(java.lang.String):140 -> d
+    4:11:void checkNotNullParameter(java.lang.Object,java.lang.String):131 -> d
+    12:18:java.lang.String createParameterIsNullExceptionMessage(java.lang.String):146:146 -> d
+    12:18:void throwParameterIsNullNPE(java.lang.String):140 -> d
+    12:18:void checkNotNullParameter(java.lang.Object,java.lang.String):131 -> d
+    19:33:java.lang.String createParameterIsNullExceptionMessage(java.lang.String):149:149 -> d
+    19:33:void throwParameterIsNullNPE(java.lang.String):140 -> d
+    19:33:void checkNotNullParameter(java.lang.Object,java.lang.String):131 -> d
+    34:48:java.lang.String createParameterIsNullExceptionMessage(java.lang.String):151:151 -> d
+    34:48:void throwParameterIsNullNPE(java.lang.String):140 -> d
+    34:48:void checkNotNullParameter(java.lang.Object,java.lang.String):131 -> d
+    49:50:java.lang.String createParameterIsNullExceptionMessage(java.lang.String):153:153 -> d
+    49:50:void throwParameterIsNullNPE(java.lang.String):140 -> d
+    49:50:void checkNotNullParameter(java.lang.Object,java.lang.String):131 -> d
+    51:54:java.lang.String createParameterIsNullExceptionMessage(java.lang.String):154:154 -> d
+    51:54:void throwParameterIsNullNPE(java.lang.String):140 -> d
+    51:54:void checkNotNullParameter(java.lang.Object,java.lang.String):131 -> d
+    55:58:java.lang.String createParameterIsNullExceptionMessage(java.lang.String):155:155 -> d
+    55:58:void throwParameterIsNullNPE(java.lang.String):140 -> d
+    55:58:void checkNotNullParameter(java.lang.Object,java.lang.String):131 -> d
+    59:88:java.lang.String createParameterIsNullExceptionMessage(java.lang.String):157:157 -> d
+    59:88:void throwParameterIsNullNPE(java.lang.String):140 -> d
+    59:88:void checkNotNullParameter(java.lang.Object,java.lang.String):131 -> d
+    89:96:void throwParameterIsNullNPE(java.lang.String):140:140 -> d
+    89:96:void checkNotNullParameter(java.lang.Object,java.lang.String):131 -> d
+    0:5:java.lang.Throwable sanitizeStackTrace(java.lang.Throwable):253:253 -> e
+      # {"id":"com.android.tools.r8.residualsignature","signature":"(Ljava/lang/NullPointerException;)V"}
+    6:9:java.lang.Throwable sanitizeStackTrace(java.lang.Throwable,java.lang.String):257:257 -> e
+    6:9:java.lang.Throwable sanitizeStackTrace(java.lang.Throwable):253 -> e
+    10:14:java.lang.Throwable sanitizeStackTrace(java.lang.Throwable,java.lang.String):258:258 -> e
+    10:14:java.lang.Throwable sanitizeStackTrace(java.lang.Throwable):253 -> e
+    15:32:java.lang.Throwable sanitizeStackTrace(java.lang.Throwable,java.lang.String):262:262 -> e
+    15:32:java.lang.Throwable sanitizeStackTrace(java.lang.Throwable):253 -> e
+    33:38:java.lang.Throwable sanitizeStackTrace(java.lang.Throwable,java.lang.String):267:267 -> e
+    33:38:java.lang.Throwable sanitizeStackTrace(java.lang.Throwable):253 -> e
+    39:42:java.lang.Throwable sanitizeStackTrace(java.lang.Throwable,java.lang.String):268:268 -> e
+    39:42:java.lang.Throwable sanitizeStackTrace(java.lang.Throwable):253 -> e
+kotlin.text.StringsKt__AppendableKt -> R8$$REMOVED$$CLASS$$5:
+# {"id":"sourceFile","fileName":"Appendable.kt"}

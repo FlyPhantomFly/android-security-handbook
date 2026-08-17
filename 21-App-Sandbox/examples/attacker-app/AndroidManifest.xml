@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    21-App-Sandbox / examples/attacker-app / AndroidManifest.xml
+
+    WHAT THIS IS
+        The manifest of a deliberately nosy but completely ordinary third-party
+        application. Its only job is to answer one question honestly:
+
+            "What can an ORDINARY app, with no dangerous permissions, actually
+             reach of ANOTHER app on this device?"
+
+    WHY IT MATTERS
+        `adb shell` runs as UID 2000 in the SELinux domain `shell`, with no
+        seccomp filter, a non-empty capability bounding set, and supplementary
+        groups no application holds. It is not an app. A file you read or a
+        provider you queried from `adb shell` is NOT thereby proven reachable by
+        an attacker.
+
+        This APK is installed like any other app. It receives an ordinary UID in
+        the 10000+ range, runs in the `untrusted_app` SELinux domain with its own
+        MCS categories, gets `Seccomp: 2` and an empty capability set, and
+        declares exactly one permission — INTERNET, which is protectionLevel
+        "normal", granted silently at install on every Android version, and never
+        shown to the user.
+
+        So what it can do, a malicious app can do. That is the entire value of
+        the file you are reading.
+
+        See ../../README.md sections 3.14 and 5.8, and
+        ../../labs/lab-03-attacker-app.md.
+
+    NOTE ON THE PROJECT LAYOUT
+        Sources sit directly in this directory rather than under
+        src/main/java/..., and build.gradle points the Android sourceSets here.
+        That keeps the proof-of-concept to four readable files. If you prefer the
+        conventional layout, move AndroidManifest.xml to src/main/ and the .java
+        files to src/main/java/com/attacker/sandboxprobe/ and delete the
+        sourceSets block.
+
+    RELATED
+        ../../../24-IPC/examples/attacker-app/  — the same idea aimed at the IPC
+        surface specifically (activities, services, receivers, providers,
+        abstract sockets, localhost, confused deputy). This one aims at the
+        SANDBOX: private data, shipped code, shared storage, the clipboard,
+        /proc, and package visibility. Use both.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.attacker.sandboxprobe">
+
+    <!--
+        THE ONLY PERMISSION WE DECLARE.
+
+        INTERNET is protectionLevel="normal": granted automatically at install,
+        never shown to the user, held by essentially every app on every device.
+        It exists here purely so the probe can demonstrate that it is present as
+        GID 3003 in /proc/self/status — see section 0 of the output.
+
+        Everything else this app does — reading another app's APK, querying
+        exported providers, listing shared storage, reading the clipboard,
+        enumerating /proc — requires NO permission whatsoever. That is the point.
+
+        Two optional permissions are commented out below. Uncomment them ONLY
+        deliberately, and say in the report which of them you used, because each
+        one changes the attacker's cost and therefore the severity of anything it
+        finds.
+    -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!--
+        Storage. `dangerous` on API <= 32; replaced by READ_MEDIA_* on 33+. Each
+        requires a user prompt. If a finding only reproduces with one of these
+        granted, that prompt IS part of the finding and must be stated.
+    -->
+    <!-- <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+                          android:maxSdkVersion="32" /> -->
+    <!-- <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" /> -->
+
+    <!--
+        =====================================================================
+        THE <queries> ELEMENT — DO NOT DELETE THIS
+        =====================================================================
+
+        From targetSdk 30 (Android 11) Android applies *package visibility
+        filtering*. An app can no longer see every installed package by default.
+        The consequences for a probe are silent and brutal:
+
+          * PackageManager.getPackageInfo(target, ...) throws
+            NameNotFoundException — exactly as if the app were not installed.
+          * getInstalledApplications() returns a short, filtered list.
+          * resolveActivity() returns null for components that genuinely exist
+            and are genuinely exported.
+          * ContentResolver.query() throws
+            IllegalArgumentException: Unknown URL for a provider that is there.
+
+        None of those look like "filtered". They all look like "not there". A
+        tester who forgets this block concludes the target is unreachable and
+        writes "no exported components are reachable from a third-party app".
+        That is a false negative produced by their own manifest, and it is
+        common enough that section 0 of this probe checks for it FIRST and tells
+        you plainly which explanation applies.
+
+        Package visibility filtering is a PRIVACY control, not a security
+        boundary. It never makes an exported component unreachable — a real
+        attacker simply declares the target here, or holds QUERY_ALL_PACKAGES.
+
+        Edit these entries for each engagement.
+    -->
+    <queries>
+        <!-- 1. The target package, by name. The most reliable form. -->
+        <package android:name="com.example.target" />
+
+        <!-- Add every package in scope, INCLUDING any that shares a signing key
+             or a sharedUserId with the target. A shared UID group is analysed as
+             one unit: the weakest member defines the security of all of them. -->
+        <!-- <package android:name="com.example.target.updater" /> -->
+
+        <!-- 2. Providers must ALSO be named by AUTHORITY. Declaring the package
+                alone is not enough to resolve a content:// URI.
+                Harvest the real ones:
+                  # host
+                  apktool d -f target.apk -o work/ >/dev/null
+                  grep -oE 'android:authorities="[^"]*"' work/AndroidManifest.xml -->
+        <provider android:authorities="com.example.target.provider" />
+        <provider android:authorities="com.example.target.fileprovider" />
+
+        <!-- 3. Intent-shaped visibility, so we can see who handles what. -->
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="https" />
+        </intent>
+
+        <!--
+            4. Last resort. QUERY_ALL_PACKAGES makes the whole device visible.
+               It is a restricted permission on Google Play (a declared, approved
+               use case is required), which is why real malware usually prefers
+               the targeted forms above. On a test device it is harmless and
+               convenient — but say in the report which form you used, because
+               "we needed QUERY_ALL_PACKAGES" changes the attacker's cost.
+
+               Uncomment BOTH lines together.
+        -->
+        <!-- </queries>
+        <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
+        <queries> -->
+    </queries>
+
+    <application
+        android:allowBackup="false"
+        android:label="Flashlight"
+        android:icon="@android:drawable/ic_menu_compass"
+        android:theme="@android:style/Theme.Material.Light">
+
+        <!--
+            The probe. Exported with a LAUNCHER filter purely so you can tap it,
+            or start it with:
+                adb shell am start -n com.attacker.sandboxprobe/.ProbeActivity
+
+            The probe must be in the FOREGROUND for the clipboard section to
+            return anything: since Android 10 an app may only read the clipboard
+            while it holds input focus or is the default IME. If you read the
+            clipboard from a background component and get null, that is the
+            platform working, not the target being safe.
+        -->
+        <activity
+            android:name=".ProbeActivity"
+            android:exported="true"
+            android:label="Flashlight">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  examples/hardened-webview/AndroidManifest.xml
+
+  The hardened counterpart to ../vulnerable-webview/AndroidManifest.xml. Build
+  with ../build.sh.
+
+  Note what did NOT change: the Activity is still exported and still carries a
+  BROWSABLE deep-link filter. Removing the deep link would "fix" the finding by
+  deleting the feature. The fix is in HardenedWebViewActivity.isAllowed(), which
+  treats the incoming URI as a request to be validated rather than as an
+  instruction to be obeyed.
+
+  Two manifest-level WebView controls are worth knowing about and are shown here
+  as comments rather than as settings, because both are usually wrong to change:
+
+    - android.webkit.WebView.EnableSafeBrowsing
+        <meta-data android:name="android.webkit.WebView.EnableSafeBrowsing"
+                   android:value="false" />
+      Turns Google Safe Browsing OFF for every WebView in the app. It is a real
+      thing apps do, usually for privacy reasons, and it is worth reporting as an
+      observation: the app has opted out of the malicious-URL check. Absent, the
+      feature is on; measured true at every targetSdkVersion on this device.
+
+    - android.webkit.WebView.MetricsOptOut
+        <meta-data android:name="android.webkit.WebView.MetricsOptOut"
+                   android:value="true" />
+      Opts the app's WebView out of UMA metrics upload. Privacy-relevant, not
+      security-relevant.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.pentest.ch43.safe">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:label="CH43 Hardened WebView"
+        android:networkSecurityConfig="@xml/network_security_config">
+
+        <activity
+            android:name="com.pentest.ch43.safe.HardenedWebViewActivity"
+            android:exported="true">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="ch43safe" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>

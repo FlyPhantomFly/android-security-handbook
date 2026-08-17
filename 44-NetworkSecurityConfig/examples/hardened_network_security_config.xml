@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    examples/hardened_network_security_config.xml
+
+    The counterpart to examples/permissive_network_security_config.xml. Same
+    imaginary application, same three hosts, every defect closed. Read them side
+    by side. The security difference is enormous and the textual difference is
+    about fifteen tokens, which is the honest lesson of this whole subsystem:
+    the file is short, nobody reviews it, and a single attribute inverts it.
+
+    In a project this file lives at:
+        app/src/main/res/xml/network_security_config.xml
+    referenced from the manifest's application element by the
+    android:networkSecurityConfig attribute.
+
+    THE MOST IMPORTANT LINE IN THIS FILE IS THE ONE THAT IS NOT HERE.
+    There is no <certificates src="user"/> outside <debug-overrides>, and there
+    is no cleartextTrafficPermitted="true" anywhere. Everything else is detail.
+
+    The command lines that audit and verify this file are in examples/README.md
+    rather than in this comment, because they carry long-form flags and the XML
+    specification forbids a double hyphen inside a comment. Every dash below is
+    deliberately single.
+
+    THE PIN VALUES BELOW ARE PLACEHOLDERS, and are labelled as such where they
+    appear. They are correctly formed - 32 bytes, base64, which is what a
+    SHA-256 SubjectPublicKeyInfo digest is - so that tooling parses the file, but
+    they correspond to no real key. Never copy a pin from an example. Compute it
+    from the certificate you actually intend to trust; the command is in
+    examples/README.md. This repository ships no certificates and no keys.
+-->
+<network-security-config>
+
+    <!--
+        <base-config> sets the policy for every hostname that no <domain-config>
+        below matches. Writing it out explicitly, even where it restates the
+        platform default, is worth the four lines: it makes the intent reviewable
+        and it survives a future change to targetSdkVersion that would otherwise
+        silently change behaviour.
+
+        cleartextTrafficPermitted="false"
+            No plaintext HTTP anywhere, for any host, unless a domain-config
+            below re-permits it. None does.
+
+            This is the platform default at targetSdk 28 and above, so on a
+            modern app it changes nothing today. It changes something the day
+            somebody lowers targetSdkVersion to work around a behaviour change,
+            which happens more often than it should.
+
+        <trust-anchors> with only the system store
+            The default since API 24. Stated explicitly for the same reason.
+    -->
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+
+    <!--
+        The API host, pinned properly.
+
+        includeSubdomains="true"
+            Matches api.example.com and everything under it. Without it, the
+            entry covers api.example.com and NOT v2.api.example.com, which is
+            the commonest way a policy ends up with a hole in it: the app moves
+            an endpoint to a subdomain and the domain-config quietly stops
+            applying.
+
+        WHAT INHERITANCE DOES HERE, AND WHY IT IS SAFE
+            This block declares no cleartextTrafficPermitted, so it inherits
+            "false" from <base-config>. It declares no <trust-anchors>, so it
+            inherits the system store. Inheritance is per property, not per
+            block: declaring a <pin-set> does not stop the other two being
+            inherited. That is what makes this block readable - it says only the
+            thing that is different about this host.
+
+            The same mechanism is what makes the permissive example dangerous:
+            there, inheriting from a permissive base is how an endpoint that
+            looks HTTPS-only ends up permitting cleartext.
+    -->
+    <domain-config>
+        <domain includeSubdomains="true">api.example.com</domain>
+
+        <!--
+            THE PIN SET.
+
+            expiration
+                Present, and in the future. This is a judgement call with a real
+                cost on both sides, and the chapter argues it through in section
+                3.6. In short:
+
+                WITH an expiration, pinning stops on that date, silently, and
+                the app carries on working with ordinary CA validation. You have
+                bounded the damage a forgotten pin can do. You have also set a
+                date on which your control disappears without telling anyone.
+
+                WITHOUT one, the pins never lapse. If every pinned key has to be
+                replaced faster than users update, the installed base cannot
+                reach this host and no server change can rescue it.
+
+                The defensible position is: keep an expiration, set it a little
+                beyond your certificate rotation window, and put the date in the
+                release calendar. The indefensible position is the common one -
+                set a date, ship, and never look at the file again. The social-media app and
+                The marketplace app both shipped past their own dates and were still shipping
+                past them years later, measured on a phone in 2026. See the
+                chapter README section 5.5.
+
+            TWO PINS, NOT ONE
+                RFC 7469 section 4.3. The second pin is over a key pair that has
+                been generated, kept offline, and never used. Its whole purpose
+                is to already be trusted by the installed base on the day the
+                first key has to be destroyed.
+
+                Pin the INTERMEDIATE or a long-lived key, not the leaf, unless
+                you control the leaf rotation completely. A pin over a
+                ninety-day leaf certificate is a scheduled outage.
+
+            WHAT A PIN ACTUALLY IS
+                The base64 of SHA-256 over the DER SubjectPublicKeyInfo - the
+                public key plus its algorithm identifier - not over the
+                certificate. Pinning the whole certificate would break on every
+                renewal even when the key is unchanged. People get this wrong
+                and produce a pin of the right length that matches nothing;
+                ../scripts/nsc-audit.py checks the length and, where the
+                certificate is bundled in the APK, recomputes the digest and
+                tells you whether the pin matches it.
+        -->
+        <pin-set expiration="2027-06-30">
+            <!-- PLACEHOLDER: current intermediate. Recompute for your own PKI. -->
+            <pin digest="SHA-256">AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</pin>
+            <!-- PLACEHOLDER: backup key, generated and held offline, unused. -->
+            <pin digest="SHA-256">BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBA=</pin>
+        </pin-set>
+    </domain-config>
+
+    <!--
+        The analytics host.
+
+        In the permissive example this block carried
+        cleartextTrafficPermitted="true" and was defended as "it is only
+        telemetry". Here it carries nothing at all, so it inherits "false", and
+        the block exists purely to document that the host was considered.
+
+        THE FIX FOR A VENDOR SDK THAT INSISTS ON HTTP is not to permit
+        cleartext for it. It is, in order of preference:
+          1. Update the SDK. Almost every one of them has had an HTTPS endpoint
+             for years and the app is pinned to an old version.
+          2. Ask the vendor for the HTTPS endpoint. They usually have one.
+          3. Remove the SDK. Ask what it is for. A surprising number of these
+             are analytics nobody reads.
+          4. If none of that is possible, scope the permit to exactly this host,
+             write down what travels over it, and put a date on removing it.
+             Then it is a documented accepted risk instead of an accident.
+    -->
+    <domain-config>
+        <domain includeSubdomains="true">metrics.example-analytics.com</domain>
+    </domain-config>
+
+    <!--
+        The local development server, and the one place cleartext is defensible.
+
+        10.0.2.2 is the host machine as seen from the Android emulator.
+        localhost and 127.0.0.1 are the device itself.
+
+        This entry is scoped to addresses that cannot exist on a user's network
+        path in any meaningful sense, so permitting cleartext to them costs
+        nothing. It is also the honest alternative to the two things developers
+        do instead: setting cleartextTrafficPermitted="true" globally, or
+        maintaining a separate debug config that drifts out of sync.
+
+        NOTE FOR TESTERS: domain matching is on the hostname STRING. An entry
+        for 10.0.2.2 applies when the app connects to the literal address
+        10.0.2.2. It does not apply when a name resolves to that address. If you
+        are proxying by DNS redirection, this entry never fires.
+    -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="false">localhost</domain>
+        <domain includeSubdomains="false">127.0.0.1</domain>
+        <domain includeSubdomains="false">10.0.2.2</domain>
+    </domain-config>
+
+    <!--
+        <debug-overrides> and why it is safe to write it here.
+
+        This block applies only when the running application's ApplicationInfo
+        carries FLAG_DEBUGGABLE. In a release build it does not, so the platform
+        parses this and builds nothing from it.
+
+        overridePins is not written, and inside <debug-overrides> it DEFAULTS TO
+        TRUE. That is deliberate on the platform's part: the point of the block
+        is to let a developer proxy their own build, and a pin set would defeat
+        that. It is also why this block is worth understanding rather than
+        pattern-matching: in a debuggable build it does not merely add a trust
+        anchor, it disables pinning as well.
+
+        The right place for this content is arguably app/src/debug/res/xml/,
+        where the manifest merger keeps it out of the release APK entirely.
+        Keeping it here is a deliberate second choice with a real advantage: one
+        file, one policy, no chance of the debug and release versions diverging
+        without anyone noticing. Both are defensible. Shipping a permissive
+        <base-config> because the debug source set was too much trouble is not.
+
+        IF YOU ARE TESTING AND YOU CONTROL THE BUILD, this block plus
+        `debuggable true` in the debug build type is the entire recipe. Chapter
+        README section 7.3 walks it through, and labs/lab-02 builds it.
+    -->
+    <debug-overrides>
+        <trust-anchors>
+            <certificates src="user" />
+            <certificates src="system" />
+        </trust-anchors>
+    </debug-overrides>
+
+</network-security-config>

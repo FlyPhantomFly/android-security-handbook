@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  examples/file_paths_insecure.xml
+  ===============================
+
+  res/xml/file_paths_insecure.xml
+
+  This is the file referenced by:
+
+      <provider android:name="androidx.core.content.FileProvider"
+                android:authorities="files"
+                android:exported="true"
+                android:grantUriPermissions="true">
+          <meta-data android:name="android.support.FILE_PROVIDER_PATHS"
+                     android:resource="@xml/file_paths_insecure" />
+      </provider>
+
+  The manifest line is a POINTER. This is where the actual defect lives, and it
+  is why README checklist row E7 says the referenced XML must be opened on every
+  engagement. An auditor who reads the manifest and stops has not audited the
+  provider.
+
+  WHY DEVELOPERS WRITE THIS FILE
+  ==============================
+  A share or attach feature fails with
+
+      java.lang.IllegalArgumentException: Failed to find configured root that
+      contains /data/user/0/com.example/files/report.pdf
+
+  The first search result says "add a root-path". It works immediately. Nobody
+  comes back to narrow it, because there is nothing left to fix — the feature
+  works.
+
+  HOW TO EXTRACT IT
+  =================
+      # host
+      apktool d -f target.apk -o work/
+      cat work/res/xml/file_paths*.xml
+
+      # host — dump every referenced res/xml file at once
+      for f in work/res/xml/*.xml; do echo "== $f"; cat "$f"; done
+
+  DO NOT SHIP THIS FILE. See file_paths_secure.xml for the corrected form.
+-->
+<paths>
+
+    <!--
+      DEFECT 1 — root-path with path="/"
+      ==================================
+      Maps content://<authority>/root/<anything> onto the device filesystem root.
+      Everything the app's UID can read is now reachable through a URI, which
+      means: the app's own private directory, /sdcard, world-readable parts of
+      /system and /proc, and any file another component hands out a grant for.
+
+      Combined with android:exported="true" on the provider — as in
+      vulnerable-manifest.xml — no grant is even required.
+
+          # adb shell — use the "content read" command against, for example:
+              content://files/root/data/data/com.example.vulnerable/shared_prefs/session.xml
+              content://files/root/proc/self/maps
+          The exact invocations are in ../labs/lab-04-provider-surgery.md.
+          (An XML comment cannot contain a double hyphen, so the flags are not
+           written out here.)
+
+      Severity: High, and Critical once you read a credential with it.
+    -->
+    <root-path name="root" path="/" />
+
+    <!--
+      DEFECT 2 — external-path with path="."
+      ======================================
+      "." resolves to the whole of getExternalFilesDir()'s parent tree, i.e. the
+      entire shared external volume the app can see. On a device where the app
+      has legacy storage access this reaches other apps' leftovers, camera
+      photos, and downloads.
+    -->
+    <external-path name="external" path="." />
+
+    <!--
+      DEFECT 3 — files-path with path=""
+      ==================================
+      An empty path is not "nothing"; it is the ROOT of getFilesDir(). Every file
+      the app writes privately is exposed, including token caches, offline
+      databases and downloaded documents.
+
+      This is the most common of the three because it looks harmless.
+    -->
+    <files-path name="files" path="" />
+
+    <!--
+      DEFECT 4 — a path that reaches the databases directory
+      =====================================================
+      getFilesDir() is <data-dir>/files, so "../databases" escapes upward into
+      <data-dir>/databases. FileProvider itself canonicalises, so this specific
+      form is usually rejected by modern androidx — but hand-rolled
+      "FileProvider-like" providers, which are extremely common, do not
+      canonicalise at all, and this is exactly the shape their <paths> take.
+    -->
+    <files-path name="db" path="../databases/" />
+
+    <!--
+      DEFECT 5 — cache-path over the whole cache directory
+      ===================================================
+      Lower impact than the above, but caches routinely contain decrypted copies
+      of content the app is careful about elsewhere: rendered documents,
+      thumbnails of sensitive images, HTTP response bodies including bearer
+      tokens in headers-turned-bodies.
+    -->
+    <cache-path name="cache" path="" />
+
+</paths>
+
+<!--
+  WHAT TO DO WITH THIS FINDING
+  ============================
+
+  1. Prove it. A <paths> file is a declaration; the finding is a file you read
+     that you should not have been able to read.
+
+         # adb shell — from the shell first, to confirm the mechanism.
+         #   "content read" against:
+             content://files/root/data/data/<pkg>/shared_prefs/session.xml
+
+  2. Then prove it AGAIN from an unprivileged app, because `adb shell` is UID
+     2000 and is not an attacker:
+
+         Uri u = Uri.parse("content://files/root/data/data/<pkg>/shared_prefs/session.xml");
+         try (InputStream in = getContentResolver().openInputStream(u)) { … }
+
+     If that throws SecurityException from the app but worked from the shell,
+     you have an observation, not a finding. See
+     ../labs/lab-03-proving-reachability.md and
+     ../labs/lab-04-provider-surgery.md.
+
+  3. Write the fix as code, not as advice. See file_paths_secure.xml.
+-->

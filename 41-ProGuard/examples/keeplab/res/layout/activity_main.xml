@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    examples/keeplab/res/layout/activity_main.xml
+
+    The view id below is compiled to an integer constant in R.java, but the
+    NAME "status_text" is retained in resources.arsc so that getIdentifier()
+    and every tool from aapt2 to jadx can resolve it.
+
+    A pentester reads layout and id names FIRST on an obfuscated app, because
+    they are the one naming layer no keep rule and no obfuscation setting in a
+    stock AGP build affects.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/status_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/status_ready" />
+
+    <EditText
+        android:id="@+id/pin_entry"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="numberPassword"
+        android:hint="@string/pin_entry_hint" />
+
+</LinearLayout>

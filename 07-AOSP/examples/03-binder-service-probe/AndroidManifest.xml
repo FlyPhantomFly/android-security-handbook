@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  examples/03-binder-service-probe/AndroidManifest.xml
+  ==========================================================================
+  The manifest for BinderProbe.kt.
+
+  THE POINT OF THIS FILE IS WHAT IS NOT IN IT.
+
+  There is no <uses-permission> element. Not one. This application requests
+  nothing, is granted nothing, and runs as an ordinary untrusted_app in its own
+  UID sandbox with the default SELinux domain.
+
+  Everything the app can reach with this manifest, ANY application on the
+  device can reach. That is exactly what makes a vendor service with no
+  permission enforcement a local privilege escalation rather than a curiosity:
+  the attacker needs no user consent, no prompt, no install-time permission
+  screen, and nothing that would appear on a Play listing.
+
+  When you write the finding up, include this manifest. A reviewer who sees an
+  empty permission list understands the severity immediately, and it forecloses
+  the "but the attacker would need permission X" response.
+
+  SEE
+      BinderProbe.kt
+      ../../README.md sections 5.3.1, 9.4
+  ==========================================================================
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!--
+      No <uses-permission>. Deliberately. Do not add any.
+
+      If a probe fails, the correct diagnosis is one of:
+        - the service enforced a permission (the GOOD outcome — record which)
+        - SELinux denied `find` on the service (check: adb shell dmesg | grep avc)
+        - the hidden-API blocklist denied ServiceManager (see README 3.8)
+      Adding a permission here to "make it work" destroys the demonstration.
+    -->
+
+    <application
+        android:allowBackup="false"
+        android:label="Binder Probe"
+        android:supportsRtl="true"
+        android:theme="@android:style/Theme.Material.Light">
+
+        <!--
+          exported="true" so you can launch it with `am start` and pass the
+          probe parameters as intent extras. In a real engagement artefact you
+          would set this to false and drive the app from a test runner, but for
+          a lab tool the adb-driven form is far more convenient.
+        -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:label="Binder Probe">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+    </application>
+</manifest>

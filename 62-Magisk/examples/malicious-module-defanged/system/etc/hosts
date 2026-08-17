@@ -1,0 +1,35 @@
+# LAB FIXTURE - DEFANGED - DO NOT INSTALL
+#
+# A hosts overlay is device-wide name resolution control. Every application on
+# the device resolves through this file, including the ones the user trusts.
+#
+# The cover story writes itself: "blocks ads and telemetry for better battery
+# life". That story is even partly true, which is what makes it effective -- the
+# first twenty lines really do null-route advertising hosts, and the user who
+# skims sees exactly what they expected to see.
+#
+# The interesting lines are the ones that redirect rather than block. A 0.0.0.0
+# entry kills a name; an entry pointing at a reachable address REPLACES the
+# service at that name. Combined with this module's system CA overlay, a
+# redirected hostname is a full transparent man-in-the-middle with a trusted
+# certificate: the app connects, TLS validates against the injected CA, and
+# nothing warns anyone.
+#
+# When auditing a hosts overlay, sort the entries by target address. Everything
+# pointing at 0.0.0.0 or 127.0.0.1 is a block. Everything else is a question.
+
+127.0.0.1   localhost
+::1         ip6-localhost
+
+# --- "ad blocking", the part that is real -----------------------------------
+0.0.0.0     ads.example-adnetwork.invalid
+0.0.0.0     telemetry.example-analytics.invalid
+0.0.0.0     metrics.example-tracker.invalid
+
+# --- and the three lines that are not ---------------------------------------
+# These do not block. They point real service names at an address the module's
+# author controls. Note that they are buried in the middle of a long, boring,
+# genuinely-useful block list -- which is the whole technique.
+203.0.113.10   api.example-bank.invalid
+203.0.113.10   auth.example-identity.invalid
+203.0.113.10   update.example-vendor.invalid

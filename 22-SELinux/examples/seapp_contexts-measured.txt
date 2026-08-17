@@ -1,0 +1,251 @@
+# =============================================================================
+# seapp_contexts-measured.txt
+#
+# WHAT THIS IS
+#   The complete, unedited /system/etc/selinux/plat_seapp_contexts and
+#   /vendor/etc/selinux/vendor_seapp_contexts from a physical arm64 device
+#   running Android 13 (API 33), MediaTek platform, stock `user` build,
+#   SELinux Enforcing, not rooted. Pulled with:
+#
+#       adb shell cat /system/etc/selinux/plat_seapp_contexts
+#       adb shell cat /vendor/etc/selinux/vendor_seapp_contexts
+#
+#   Nothing has been reordered, reworded, or added. The annotations are in
+#   comment blocks BETWEEN the rules, so the rules themselves remain
+#   byte-identical to the device and you can diff this file against your own
+#   target.
+#
+#   AOSP source for the platform half: system/sepolicy/private/seapp_contexts
+#
+# WHY THIS FILE MATTERS MORE THAN ANY OTHER SINGLE FILE IN THE CHAPTER
+#   This is where an app's SELinux domain is DECIDED. Not in the policy, not
+#   in the manifest, not in PackageManager -- here. Zygote forks, and then
+#   libselinux reads this file, matches the app against it, computes a
+#   context string, and writes that string to /proc/self/attr/current. If you
+#   want to know why an app is `untrusted_app` rather than `priv_app`, or why
+#   it carries four MCS categories rather than two, the answer is a line in
+#   this file.
+#
+# HOW MATCHING WORKS -- read this before reading the rules
+#   Matching is by SPECIFICITY, not by file order. libselinux parses every
+#   line, sorts them, and the most specific match wins. The input keys are:
+#
+#     input key            meaning
+#     -------------------  ----------------------------------------------
+#     isSystemServer=      true only for the system_server fork
+#     isEphemeralApp=      an instant app
+#     user=                _app | _isolated | _sdksandbox | a named AID
+#     seinfo=              a string from mac_permissions.xml, keyed on the
+#                          APK's SIGNING CERTIFICATE. "platform" means
+#                          signed with the platform key.
+#     name=               package name; * is a wildcard suffix
+#     isPrivApp=          installed under a priv-app/ directory
+#     minTargetSdkVersion= the app's targetSdkVersion is >= this
+#     fromRunAs=          this process was created by run-as
+#
+#   The output keys are:
+#
+#     domain=             the PROCESS type. This is the thing policy rules
+#                         are written about.
+#     type=               the FILE type applied to the app's data directory.
+#     levelFrom=          which MCS categories to compute: none | app |
+#                         user | all
+#     level=              a fixed level, used instead of levelFrom
+#
+# WHAT THIS FILE WILL *NOT* TELL YOU
+#   - What any of these domains is ALLOWED to do. That is the policy, which
+#     is compiled and lives in plat_sepolicy.cil. seapp_contexts only assigns.
+#   - Which line matched for a given app. Specificity sorting is done inside
+#     libselinux and is not observable from userspace; the only ground truth
+#     is the resulting context in /proc/<pid>/attr/current. Always check the
+#     result, do not reason forward from the file alone.
+#   - Anything about a different device. Vendor lines differ per OEM and are
+#     one of the more interesting things to diff between builds.
+# =============================================================================
+
+
+# ############################################################################
+# PART 1 -- /system/etc/selinux/plat_seapp_contexts  (measured, verbatim)
+# ############################################################################
+
+# --- The system_server fork. Not an app at all; listed here because the same
+# --- lookup code runs for it. It gets a startup domain and then transitions.
+isSystemServer=true domain=system_server_startup
+
+# --- Named-package platform apps. `seinfo=platform` means the APK is signed
+# --- with the platform certificate, so this cannot be claimed by a
+# --- third-party app: the signature check happens before the lookup.
+# --- Note levelFrom=all on traceur -- even a platform-signed, named app is
+# --- given per-app MCS categories here.
+user=_app seinfo=platform name=com.android.traceur domain=traceur_app type=app_data_file levelFrom=all
+user=_app isPrivApp=true name=com.android.remoteprovisioner domain=remote_prov_app type=app_data_file levelFrom=all
+
+# --- Non-app AIDs. `user=system` matches uid 1000 exactly. These processes
+# --- are apps in the framework sense but run under a fixed system AID.
+# --- system_app has NO levelFrom at all, so its context is a bare s0 with no
+# --- categories -- which is exactly what `ps -A -Z` shows on the device:
+# ---     u:r:system_app:s0    system   com.android.keychain
+user=system seinfo=platform domain=system_app type=system_app_data_file
+user=bluetooth seinfo=bluetooth domain=bluetooth type=bluetooth_data_file
+user=network_stack seinfo=network_stack domain=network_stack type=radio_data_file
+user=nfc seinfo=platform domain=nfc type=nfc_data_file
+
+# --- secure_element gets levelFrom=all despite being a fixed AID (1068).
+# --- The measured context on the device was:
+# ---     u:r:secure_element:s0:c44,c260,c512,c768
+# --- and 1068 = 4*256 + 44, so c44 = 1068 & 0xff and c260 = 256 + (1068 >> 8).
+# --- This one line is the best available proof of the MCS arithmetic,
+# --- because 1068 is larger than 255 and therefore exercises the shift.
+user=secure_element seinfo=platform domain=secure_element levelFrom=all
+
+user=radio seinfo=platform domain=radio type=radio_data_file
+user=shared_relro domain=shared_relro levelFrom=all
+user=shell seinfo=platform domain=shell name=com.android.shell type=shell_data_file
+user=webview_zygote seinfo=webview_zygote domain=webview_zygote
+
+# --- Isolated processes. levelFrom=user only, so isolated_app processes on
+# --- the same Android user share a level. Their separation comes from the
+# --- isolated_app DOMAIN being drastically restricted, not from MCS.
+user=_isolated domain=isolated_app levelFrom=user
+
+# --- The SDK Runtime (Privacy Sandbox). levelFrom=all, so each sdk_sandbox
+# --- process IS category-separated from every other.
+user=_sdksandbox domain=sdk_sandbox type=sdk_sandbox_data_file levelFrom=all
+
+user=_app seinfo=app_zygote domain=app_zygote levelFrom=user
+user=_app seinfo=media domain=mediaprovider type=app_data_file levelFrom=user
+
+# --- platform_app: any app signed with the platform key that is NOT
+# --- privileged. levelFrom=user, so ALL platform_app processes on user 0
+# --- share s0:c512,c768. Measured on the device:
+# ---     u:r:platform_app:s0:c512,c768   com.android.systemui
+# ---     u:r:platform_app:s0:c512,c768   com.android.documentsui
+# --- Two DIFFERENT apps, identical context. MCS does not separate them at
+# --- all; only DAC does. That is a real and frequently-missed asymmetry
+# --- between third-party and platform apps.
+user=_app seinfo=platform domain=platform_app type=app_data_file levelFrom=user
+
+user=_app isEphemeralApp=true domain=ephemeral_app type=app_data_file levelFrom=all
+
+# --- priv_app: privileged (installed in a priv-app/ directory). Also
+# --- levelFrom=user. Measured:
+# ---     u:r:priv_app:s0:c512,c768   com.android.vending
+# ---     u:r:priv_app:s0:c512,c768   com.android.launcher3
+# --- Same story. Note `type=privapp_data_file`, a DIFFERENT file type from
+# --- app_data_file -- so priv_app data is separated from ordinary app data
+# --- by TYPE, which is what makes the missing MCS survivable.
+user=_app isPrivApp=true domain=priv_app type=privapp_data_file levelFrom=user
+
+# --- Named privileged apps carved out into their own domains. Each of these
+# --- exists because that app needed a permission set that would have been
+# --- unacceptable to grant to all of priv_app. This is the standard way to
+# --- tighten a domain: split it.
+user=_app isPrivApp=true name=com.google.android.permissioncontroller domain=permissioncontroller_app type=privapp_data_file levelFrom=all
+user=_app seinfo=media isPrivApp=true name=com.android.providers.media.module domain=mediaprovider_app type=privapp_data_file levelFrom=all
+user=_app isPrivApp=true name=com.google.android.providers.media.module domain=mediaprovider_app type=privapp_data_file levelFrom=all
+user=_app seinfo=platform isPrivApp=true name=com.android.permissioncontroller domain=permissioncontroller_app type=privapp_data_file levelFrom=all
+user=_app isPrivApp=true name=com.android.vzwomatrigger domain=vzwomatrigger_app type=privapp_data_file levelFrom=all
+
+# --- GMS Core, and note the three wildcard forms: exact, `.` suffix for
+# --- related packages, and `:` suffix for named sub-processes. levelFrom=user
+# --- again -- so gmscore_app carries only s0:c512,c768, which matches every
+# --- gmscore_app avc record measured on the device.
+user=_app isPrivApp=true name=com.google.android.gms domain=gmscore_app type=privapp_data_file levelFrom=user
+user=_app isPrivApp=true name=com.google.android.gms.* domain=gmscore_app type=privapp_data_file levelFrom=user
+user=_app isPrivApp=true name=com.google.android.gms:* domain=gmscore_app type=privapp_data_file levelFrom=user
+user=_app isPrivApp=true name=com.google.android.gsf domain=gmscore_app type=privapp_data_file levelFrom=user
+
+# ############################################################################
+# THE FOUR LINES THAT DECIDE WHAT MOST APPS GET
+#
+# Read these as a ladder. An app matches the HIGHEST minTargetSdkVersion that
+# is less than or equal to its own targetSdkVersion.
+#
+#   targetSdk >= 30   ->  untrusted_app       levelFrom=all
+#   targetSdk == 29   ->  untrusted_app_29    levelFrom=all
+#   targetSdk == 28   ->  untrusted_app_27    levelFrom=all
+#   targetSdk 26-27   ->  untrusted_app_27    levelFrom=user   <-- note the drop
+#   targetSdk <= 25   ->  untrusted_app_25    levelFrom=user   <-- and again
+#
+# TWO THINGS TO NOTICE, BOTH OF THEM SECURITY-RELEVANT.
+#
+# First: on THIS device there is no `untrusted_app_30` or `untrusted_app_32`
+# domain. minTargetSdkVersion=30 maps straight to `untrusted_app`. Domain
+# names vary by release; never assume a versioned domain exists without
+# checking the device.
+#
+# Second, and much more important: an app targeting API 26 or 27 gets
+# levelFrom=USER, not ALL. It therefore carries only s0:c512,c768 and has NO
+# per-app categories. Two such apps have IDENTICAL contexts, and the MLS
+# constraint that separates modern apps from each other does not separate
+# them. They are still separated by DAC (different uids), but one whole layer
+# is gone. A legacy app with a low targetSdk is measurably less isolated, and
+# this is the line that proves it.
+# ############################################################################
+user=_app minTargetSdkVersion=30 domain=untrusted_app type=app_data_file levelFrom=all
+user=_app minTargetSdkVersion=29 domain=untrusted_app_29 type=app_data_file levelFrom=all
+user=_app minTargetSdkVersion=28 domain=untrusted_app_27 type=app_data_file levelFrom=all
+user=_app minTargetSdkVersion=26 domain=untrusted_app_27 type=app_data_file levelFrom=user
+user=_app domain=untrusted_app_25 type=app_data_file levelFrom=user
+
+# --- run-as. A separate domain, so `run-as` on a debuggable app does NOT
+# --- give you the app's own domain -- it gives you `runas_app`, which policy
+# --- treats differently. This is why a command that works under run-as may
+# --- fail in the app and vice versa, and it is a methodological trap: a
+# --- run-as shell is not the app.
+user=_app minTargetSdkVersion=28 fromRunAs=true domain=runas_app levelFrom=all
+user=_app fromRunAs=true domain=runas_app levelFrom=user
+
+
+# ############################################################################
+# PART 2 -- /vendor/etc/selinux/vendor_seapp_contexts  (measured, verbatim)
+#
+# Vendor lines are appended to the platform set and take part in the same
+# specificity sort. They are worth reading on every engagement, because a
+# vendor can put a named app into a domain of its own invention with
+# permissions the platform would never grant to untrusted_app.
+#
+# All four lines here require seinfo=platform, i.e. the app must be signed
+# with THIS DEVICE's platform key. A third-party app cannot claim any of
+# them. That is the right shape; a vendor line that matched on `name=` alone
+# would be the interesting one.
+#
+# Each of these also creates a domain (mobicore_app, emcamera_app,
+# sensorhub_app, simulate_app) whose rules are in vendor_sepolicy.cil and
+# which have had no AOSP review. Vendor domains are where local privilege
+# escalation on OEM builds tends to live.
+# ############################################################################
+
+user=_app seinfo=platform name=com.trustonic.tuiservice domain=mobicore_app type=app_data_file levelFrom=user
+user=_app seinfo=platform name=com.mediatek.emcamera domain=emcamera_app type=app_data_file levelFrom=user
+user=_app seinfo=platform name=com.mediatek.sensorhub.ui domain=sensorhub_app type=app_data_file levelFrom=user
+user=_app seinfo=platform name=com.android.simulate.printer.server domain=simulate_app type=simulate_app_data_file levelFrom=user
+
+
+# ############################################################################
+# CROSS-CHECK: what actually ran on the device
+#
+# `adb shell ps -A -Z`, filtered to app domains. Compare each context against
+# the rule above that produced it. This is the only honest way to use this
+# file -- predict, then measure.
+#
+#   u:r:untrusted_app:s0:c107,c256,c512,c768     u0_a107  com.android.chrome
+#   u:r:untrusted_app:s0:c150,c256,c512,c768     u0_a150  com.synergyenfmanager
+#   u:r:untrusted_app:s0:c156,c256,c512,c768     u0_a156  com.synergyenf
+#   u:r:gmscore_app:s0:c512,c768                 u0_a96   com.google.android.gms
+#   u:r:priv_app:s0:c512,c768                    u0_a95   com.android.vending
+#   u:r:platform_app:s0:c512,c768                u0_a119  com.android.systemui
+#   u:r:system_app:s0                            system   com.android.keychain
+#   u:r:traceur_app:s0:c77,c256,c512,c768        u0_a77   com.android.traceur
+#   u:r:mediaprovider_app:s0:c132,c256,c512,c768 u0_a132  com.android.providers.media.module
+#   u:r:permissioncontroller_app:s0:c130,c256,c512,c768 u0_a130 com.android.permissioncontroller
+#   u:r:simulate_app:s0:c512,c768                u0_a62   com.android.simulate.printer.server
+#
+# Every one of those eleven contexts is predicted exactly by a rule above.
+# The three untrusted_app entries show the per-app pair changing with the
+# appId (107, 150, 156) while the user pair stays c512,c768 -- because all
+# three are Android user 0. The gmscore_app, priv_app, platform_app and
+# simulate_app entries show levelFrom=user producing an identical context for
+# apps with different uids. system_app shows no levelFrom producing no
+# categories at all.
+# ############################################################################

@@ -1,0 +1,52 @@
+{
+  "_readme": [
+    "App profile for scripts/scope-checklist.py. Corresponds to Scenario A in",
+    "labs/lab-01-build-the-checklist.md: an internal expense-reporting app on",
+    "corporate-owned, MDM-managed devices, backend reachable only over the corporate VPN.",
+    "",
+    "A profile is a set of ASSERTIONS ABOUT THE APP AND THE ENGAGEMENT. The script turns",
+    "them into a scope. It cannot check any of them, so an inaccurate profile produces a",
+    "confidently wrong scope. Verify every field against the artefact and the client before",
+    "using the output for anything.",
+    "",
+    "Run: python3 scripts/scope-checklist.py examples/profile-internal-tool.json",
+    "Schema: python3 scripts/scope-checklist.py --print-schema"
+  ],
+
+  "app": "com.acme.expenses",
+  "name": "Acme Expenses",
+  "version": "2.4.0 (2400)",
+  "engagement_days": 3,
+  "standard_version": "MASVS v2.x -- resolve and record the exact version at mas.owasp.org",
+
+  "threat_model": {
+    "hostile_device_owner": false,
+    "hostile_device_owner_adversary": null,
+    "sensitive_data": ["employee_pii"],
+    "distribution": "managed",
+    "managed_devices": true,
+    "backend_in_scope": false,
+    "backend_reachability": "internal"
+  },
+
+  "app_traits": {
+    "has_accounts": true,
+    "has_local_auth": false,
+    "has_sensitive_operations": false,
+    "uses_webview": false,
+    "uses_cryptography": false,
+    "stores_data_locally": true,
+    "has_backend": true,
+    "has_update_mechanism": false,
+    "third_party_sdks": 0,
+    "collects_personal_data": true,
+    "child_users": false
+  },
+
+  "constraints": {
+    "rooted_device_available": false,
+    "second_account_available": true,
+    "source_code_available": true,
+    "privacy_policy_available": true
+  }
+}

@@ -1,0 +1,62 @@
+<!--
+  examples/vulnerable-webview/home.html
+  Packaged into the lab APK as assets/home.html by ../build.sh, and loaded from
+  file:///android_asset/home.html when the Activity is started with no URL.
+
+  This is the app's OWN page. It is benign. It exists so that the WebView has
+  something to show, and so that the lab can demonstrate the difference between
+  "the page the developer shipped" and "the page an attacker supplied", which is
+  the only difference between a WebView that is fine and one that is not.
+-->
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>CH43 lab home</title>
+    <style>
+        body { font-family: sans-serif; padding: 12px; }
+        pre  { background: #eee; padding: 8px; white-space: pre-wrap; }
+        button { display: block; margin: 6px 0; padding: 8px; }
+    </style>
+</head>
+<body>
+
+<h3>CH43 vulnerable WebView</h3>
+
+<p>This is the app's own asset page. The buttons below call the Java bridge the
+   app registered as <code>AndroidBridge</code>. That is the intended use: the
+   developer wrote this page and this bridge together.</p>
+
+<button onclick="show(AndroidBridge.deviceInfo())">deviceInfo()</button>
+<button onclick="show(AndroidBridge.getSessionToken())">getSessionToken()</button>
+<button onclick="probe()">is notExposed() reachable?</button>
+
+<pre id="out">(no output yet)</pre>
+
+<script>
+function show(v) {
+    document.getElementById('out').textContent = String(v);
+}
+
+// Proves the API 17 annotation gate to yourself rather than taking it on trust.
+// notExposed() is public on the Java object and carries no @JavascriptInterface,
+// so on API 17+ it is not a property of the bridge at all: `typeof` is
+// "undefined" and calling it throws a TypeError.
+function probe() {
+    var lines = [];
+    lines.push('typeof AndroidBridge          = ' + typeof AndroidBridge);
+    lines.push('typeof AndroidBridge.deviceInfo = ' + typeof AndroidBridge.deviceInfo);
+    lines.push('typeof AndroidBridge.notExposed = ' + typeof AndroidBridge.notExposed);
+    lines.push('typeof AndroidBridge.getClass   = ' + typeof AndroidBridge.getClass);
+    try {
+        lines.push('notExposed() -> ' + AndroidBridge.notExposed());
+    } catch (e) {
+        lines.push('notExposed() threw: ' + e);
+    }
+    show(lines.join('\n'));
+}
+</script>
+
+</body>
+</html>

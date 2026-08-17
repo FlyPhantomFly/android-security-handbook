@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='utf-8' standalone='yes' ?>
+<!--
+  47-Authentication/labs/ctf/vault_prefs.xml
+
+  A faithful capture of what VaultClient.java's VaultStore.rememberVault()
+  writes to disk, as it would be found at:
+
+      /data/data/com.pentest.ch47.vault/shared_prefs/vault_prefs.xml
+
+  It ships so that FLAG 1 of lab-04 is solvable without building and installing
+  the client. If you DO build the client, delete this file and read the real one
+  off the device with `run-as`, `adb backup` or root - the exercise is better
+  that way, and the file you produce should look exactly like this.
+
+  Nothing here is a real credential. Every value was generated for this lab.
+-->
+<map>
+    <boolean name="is_unlocked" value="true" />
+    <string name="username">player@vault.invalid</string>
+    <string name="session_token">wS3nQ9xK-tL7pR2vB8dY4mF6hJ0cE1gA</string>
+    <string name="vault_passphrase">CH47{the_client_was_never_the_gate}</string>
+    <long name="last_unlock_ms" value="1786610168000" />
+    <int name="unlock_count" value="47" />
+</map>

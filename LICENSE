@@ -1,0 +1,251 @@
+Android Pentesting Notes — Licensing
+====================================
+
+Copyright (c) 2025-2026 Harsh Dhamaniya and contributors.
+
+This repository is a documentation-plus-code work, and it is licensed as two
+things, because it is two things:
+
+  * THE CONTENT — prose, chapters, diagrams, tables, cheat sheets, glossaries,
+    lab write-ups, FAQs and every other .md file — is licensed under the
+    Creative Commons Attribution 4.0 International licence (CC BY 4.0).
+
+  * THE CODE — every script and source file, whatever its extension: .py, .sh,
+    .js, .mjs, .java, .kt, .kts, .c, .h, .cpp, .s, .smali, .aidl, .xml,
+    .gradle, .pro, .yml, .json, and the fenced code blocks embedded inside the
+    markdown — is licensed under the MIT licence.
+
+  * A SMALL, NAMED SET OF THIRD-PARTY FILES is licensed by its own authors, not
+    by this project. Section 3 lists every one of them. Nothing in sections 1
+    or 2 applies to those files.
+
+Where the split is unclear for a particular file, the more permissive licence
+(MIT) applies. A code block quoted inside a chapter is code; the paragraph
+explaining it is content.
+
+If you are just here to use the material: read the chapters, run the scripts,
+teach from them, quote them. Keep the attribution, and do not claim you wrote
+it. That is the whole of it.
+
+--------------------------------------------------------------------------
+LICENCE STATUS: CONFIRMED BY THE REPOSITORY OWNER
+--------------------------------------------------------------------------
+The CC BY 4.0 (content) + MIT (code) split below was reviewed and confirmed
+before first publication. It is the conventional shape for a repository that
+is part prose and part tooling.
+
+Two properties of that choice, stated plainly because they are not reversible
+in the ordinary way:
+
+  * A CC licence, once granted, cannot be revoked for copies already
+    distributed. Re-licensing affects future versions only.
+  * Changing the terms becomes materially harder the moment an external
+    contribution is merged, because that contributor's work arrives under
+    these terms.
+
+Section 3 carves out third-party material that neither licence covers.
+Section 4 lists the remaining items to keep an eye on over time.
+--------------------------------------------------------------------------
+
+
+==========================================================================
+1. CONTENT LICENCE — Creative Commons Attribution 4.0 International
+==========================================================================
+
+The content of this repository is licensed under the Creative Commons
+Attribution 4.0 International License.
+
+The full legal code is the authoritative text and governs this grant. It is
+published at:
+
+    https://creativecommons.org/licenses/by/4.0/legalcode
+
+A plain-language summary is at:
+
+    https://creativecommons.org/licenses/by/4.0/
+
+SPDX-License-Identifier: CC-BY-4.0
+
+In short, and without replacing the legal code above, you are free to:
+
+  * SHARE — copy and redistribute the material in any medium or format.
+  * ADAPT — remix, transform, and build upon the material, for any purpose,
+    including commercially.
+
+under one condition:
+
+  * ATTRIBUTION — you must give appropriate credit, provide a link to the
+    licence, and indicate if changes were made. You may do so in any reasonable
+    manner, but not in any way that suggests the licensor endorses you or your
+    use.
+
+You may not apply legal terms or technological measures that legally restrict
+others from doing anything the licence permits.
+
+A specimen attribution that satisfies the condition:
+
+    "Android Pentesting Notes" by Harsh Dhamaniya, used under CC BY 4.0.
+    Source: <repository URL>. Changes were made.
+
+(Drop the final sentence if you made none.)
+
+TWO THINGS THE LICENCE DOES NOT COVER, AND ONE THAT MATTERS MORE HERE THAN
+USUAL:
+
+  * It grants no trademark rights and no right to imply endorsement.
+  * It grants no permission to do anything unlawful. This repository documents
+    offensive security techniques. The licence permits you to COPY and ADAPT
+    that documentation; it does not authorise you to USE the techniques against
+    any system. That authorisation comes from the system's owner, in writing,
+    and from nowhere else. See SECURITY.md.
+  * The measurements in this repository are anonymised on purpose. If you adapt
+    the material, you inherit that obligation as a matter of ethics if not of
+    copyright: do not attempt to resolve a `com.vendor.*` pseudonym to a real
+    vendor, and do not republish it if you do.
+
+
+==========================================================================
+2. CODE LICENCE — MIT
+==========================================================================
+
+SPDX-License-Identifier: MIT
+
+Copyright (c) 2025-2026 Harsh Dhamaniya and contributors.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+READ THE WARRANTY DISCLAIMER ABOVE LITERALLY. Some of this "software" is
+deliberately vulnerable by design, and some of it modifies a device's running
+state, its bootloader, or its trust store. It is furnished as teaching
+material. Running it on a device you care about, or on a device you do not own,
+is your decision and your liability.
+
+
+==========================================================================
+3. THIRD-PARTY MATERIAL — NOT COVERED BY SECTIONS 1 AND 2
+==========================================================================
+
+This repository is original work with three documented exceptions. Each is a
+file captured from a real device for study, committed unmodified so that the
+chapter's claims can be checked against it. This project asserts no copyright
+over any of them, and neither CC BY 4.0 nor MIT is applied to them.
+
+There is no verbatim reproduction of AOSP SOURCE CODE anywhere in this
+repository. The style guide requires short illustrative excerpts only, and that
+rule held: the material below is device configuration and policy, not code.
+
+3.1  25-Binder/examples/fixture-device-snapshot/
+
+     A snapshot captured from a physical Xiaomi device. The directory's own
+     README.md records how each file was obtained.
+
+     plat_service_contexts.txt
+         Derived from AOSP  system/sepolicy/private/service_contexts
+         Licence: Apache License 2.0, (c) The Android Open Source Project.
+         The build strips the copyright header; line 1 retains the
+         "#line 1" provenance marker naming the source file.
+
+     system_ext_service_contexts.txt
+         Two parts, two provenances:
+           - MIUI/Xiaomi OEM service labels (proprietary, unlicensed).
+           - device/qcom/sepolicy/generic/private/service_contexts,
+             BSD 3-Clause, (c) 2018 The Linux Foundation. THE COMPLETE
+             BSD-3-CLAUSE NOTICE TRAVELS WITH THE FILE AND IS RETAINED
+             VERBATIM, as clause 1 of that licence requires.
+
+     product_service_contexts.txt
+         device/qcom/sepolicy/qva/product/private/service_contexts,
+         BSD 3-Clause, (c) 2018-2020 The Linux Foundation. The complete
+         notice is retained verbatim.
+
+     vnd_service_contexts.txt, service_list.txt, ps.txt, getprop.txt
+         Runtime output from a device (process table, property dump, service
+         list). Factual machine output, no licence header. Third-party
+         application names in ps.txt were pseudonymised — see
+         72-RealWorldFindings/references/README.md section 4.
+
+3.2  22-SELinux/examples/policy-rules-measured.cil
+
+     65 policy rule lines quoted verbatim from /system/etc/selinux/
+     plat_sepolicy.cil on a physical arm64 device, extracted from a 1.98 MB
+     file. Derived from AOSP system/sepolicy/, Apache License 2.0,
+     (c) The Android Open Source Project. The file's own header states which
+     lines are verbatim: every line beginning with "(" is byte-identical to
+     the device. The surrounding commentary is original and is CC BY 4.0.
+
+3.3  22-SELinux/examples/seapp_contexts-measured.txt
+
+     39 rule lines, unedited, from /system/etc/selinux/plat_seapp_contexts
+     (AOSP system/sepolicy/private/seapp_contexts, Apache License 2.0) and
+     /vendor/etc/selinux/vendor_seapp_contexts (MediaTek OEM, proprietary).
+     The file's own header names both sources. The commentary is original.
+
+3.4  A note on ABI declarations
+
+     25-Binder/examples/binder-probe.c declares the Linux Binder UAPI
+     structures and ioctl macros (binder_write_read, binder_transaction_data,
+     flat_binder_object, BINDER_*/BC_*/BR_*), transcribed rather than included
+     so the file compiles standalone. These are a functional interface: the
+     names and values are necessarily identical to
+     include/uapi/linux/android/binder.h because that is what an ABI is. All
+     comments and all code around them are original. Linux UAPI headers carry
+     the syscall-note exception; no copyright is asserted over the
+     declarations themselves.
+
+3.5  Named tools, apps and standards
+
+     Frida, Magisk, JADX, apktool, Ghidra, IDA, radare2, objection, MobSF,
+     LSPosed, Xposed, RootBeer, OWASP MASVS/MASTG and the deliberately
+     vulnerable training apps (DIVA, OVAA, InsecureBankv2, CMPen, the
+     MobileHackingLab targets) are DISCUSSED and CITED here. None of their
+     source is vendored into this repository. Each remains under its own
+     licence and its own trademarks belong to its own owners. Where a chapter
+     shows a script that drives one of these tools, the script is original and
+     is MIT.
+
+     OWASP MASVS/MASTG control text is not reproduced. The chapters use the
+     control IDENTIFIERS (MASVS-STORAGE, MASVS-CRYPTO, and so on) and then
+     paraphrase under this repository's own headings.
+
+
+==========================================================================
+4. IF YOU CHANGE THIS LICENCE
+==========================================================================
+
+Section 3 is the part that must survive any relicensing. It is not a courtesy;
+the BSD-3-Clause notices in 3.1 are retained because that licence requires it,
+and removing them while redistributing the files would be a breach.
+
+Confirmed at first publication, and worth re-checking over time:
+
+  * [CONFIRMED] CC BY 4.0 + MIT is the intended split — not a single licence,
+    not share-alike (CC BY-SA 4.0), and not non-commercial. CC BY-NC was
+    considered and rejected: it would make the material unusable in paid
+    training, which is a legitimate use of a teaching repository.
+  * [CONFIRMED] The copyright holder name and year line at the top of this
+    file. Note this is an authorship assertion and is deliberately public; it
+    is distinct from the anonymisation pass, which removed account, device and
+    third-party application identifiers from the chapters.
+  * Whether to vendor the full CC BY 4.0 legal code into this file rather than
+    incorporating it by reference. Referencing the canonical URL is valid and
+    is what Creative Commons recommends; vendoring it makes the repository
+    self-contained offline. Do not retype it — copy it from the canonical
+    source.
+  * That no later contribution has added third-party material without adding a
+    row to section 3.

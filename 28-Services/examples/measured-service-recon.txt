@@ -1,0 +1,143 @@
+Output of scripts/service-recon.py, captured on a physical device.
+
+Every measurement below is verbatim. The one edit made before committing is to
+package NAMES: assessed third-party applications are written
+`com.vendor.<category>`, per 72-RealWorldFindings/references/README.md section 4.
+Platform and OEM system packages keep their real names.
+
+  Device      Redmi M2101K6P (sweetin), MIUI 12.5, kernel 4.14.180
+  Release     Android 11, API 30, arm64-v8a
+  Ran as      the shell user (uid 2000). No root needed for any of it.
+  Command     python3 service-recon.py
+              python3 service-recon.py --weak
+
+The full table is 839 rows and is not reproduced here. What follows is the
+summary, the whole of the WEAK-PERM / DANGEROUS / UNKNOWN-PERM sets -- which is
+where the interesting work is -- and one --explain.
+
+================================================================================
+$ python3 service-recon.py
+Service Resolver Table: 826 queryable actions
+device: M2101K6P  Android 11 (API 30)  arm64-v8a
+
+SUMMARY
+  services seen via an intent action : 839
+  OPEN                              : 325
+  WEAK-PERM                         : 16
+  DANGEROUS                         : 1
+  UNKNOWN-PERM                      : 2
+  SIGNATURE                         : 108
+  SYSTEM-BIND                       : 76
+  NOT-EXPORTED                      : 287
+  DISABLED                          : 24
+  distinct packages with an OPEN one : 94
+
+  OPEN is a WORK QUEUE, not a finding. Bind each one, read the
+  descriptor off the binder, and show what a method actually does.
+  An exported service with an inert interface is not a bug.
+================================================================================
+
+READ THE NUMBERS PROPERLY
+-------------------------
+
+325 OPEN services across 94 packages on a stock, unmodified consumer phone is
+NOT a claim that this device has 325 vulnerabilities. It is a claim that 325
+services on this device will accept a bind from an app that asked for no
+permissions at all. Most of them will hand back an interface that does nothing
+useful to an attacker. A few will not. Finding out which is the job, and there
+is no shortcut: you bind, you read the descriptor, you look at what the methods
+do. README section 5.7 is the rubric.
+
+The counts that actually mean something to a defender:
+
+  SYSTEM-BIND 76   Correct use of the platform's own pattern: exported=true so
+                   the system can bind, guarded by a BIND_* permission only the
+                   system holds. Every one of these is a control observed, not a
+                   finding. 9 of them are accessibility services.
+
+  SIGNATURE   108  Exported behind a signature-level permission. You need the
+                   vendor's key. Also correct.
+
+  NOT-EXPORTED 287 Not reachable from another uid at all.
+
+  DISABLED    24   enabled=false. Note that the owning app can re-enable any of
+                   these at runtime with setComponentEnabledSetting, so a
+                   manifest-only or dumpsys-only review can be wrong about them.
+
+THE WEAK-PERM SET -- WHERE THE DEVELOPER TRIED AND MISSED
+---------------------------------------------------------
+
+These are the highest-value rows in the whole table, because in every one of
+them somebody DID write a permission and it does not do what they think.
+
+$ python3 service-recon.py --weak     (WEAK-PERM rows only)
+
+  com.vendor.officesuite/...work.exportpdf...          com.vendor.officesuite.permission.BIND_CONVERT_SERVICE   [normal]
+  com.vendor.officesuite/...work.snapshot...           com.vendor.officesuite.permission.BIND_SNAPSHOT_SERVICE  [normal]
+  com.vendor.officesuite/...work.snapshot.actionv2     com.vendor.officesuite.permission.BIND_SNAPSHOT_SERVICE  [normal]
+  com.android.vending/...appdiscoveryservice...           com.android.vending.appdiscoveryservice.permission.ACCESS_APP_DISCOVERY_SERVICE [normal]
+  com.android.vending/...licensingservice.backup...       com.android.vending.CHECK_LICENSE                     [normal|instant]
+  com.android.vending/...services.LicensingService        com.android.vending.CHECK_LICENSE                     [normal|instant]
+  com.android.vending/...setup.PlaySetupService...        com.android.vending.setup.PLAY_SETUP_SERVICE          [normal]
+  com.android.vending/...setup.dse.impl.DseService        com.google.android.finsky.permission.DSE              [normal]
+  com.android.vending/...setup.p2p.PlayP2pRestore...      com.android.vending.setup.PLAY_SETUP_SERVICE          [normal]
+  com.google.android.gms/...analytics.service.Analytics   android.permission.INTERNET                           [normal|instant]
+  com.miui.backup/midrop.service.transmitter...DeviceMan  android.permission.INTERNET                           [normal|instant]
+  com.xiaomi.account/com.xiaomi.account.XiaomiAuthService com.xiaomi.permission.AUTH_SERVICE                    [normal]
+  com.xiaomi.midrop/...receiver.service.ReceiverService   android.permission.INTERNET                           [normal|instant]
+  com.xiaomi.midrop/...transmitter.fileserver.FileServer  android.permission.INTERNET                           [normal|instant]
+  com.xiaomi.midrop/...transmitter.manipulator.DeviceMan  android.permission.INTERNET                           [normal|instant]
+  com.xiaomi.mipicks/com.xiaomi.market.MarketExternalSer  com.xiaomi.market.permission.EXTERNAL_QUERY           [normal]
+
+DANGEROUS (1)
+  com.android.soundrecorder/...RecorderService            android.permission.RECORD_AUDIO       [dangerous|instant]
+
+UNKNOWN-PERM (2)   -- the permission is not declared by anything installed here,
+                      so on THIS device nobody can hold it and nobody can bind.
+                      On a device where the declaring app IS installed, re-run.
+  com.miui.notes/com.xiaomi.dist.handoff.sdk.HandoffClientService  com.xiaomi.dist.permission.ACCESS_HANDOFF_CLIENT
+  com.qti.service.colorservice/...ColorService                     com.qti.snapdragon.sdk.permission.DISPLAY_SETTINGS
+
+Five of the sixteen are guarded by android.permission.INTERNET. INTERNET is
+protectionLevel=normal and is held by essentially every app on the device, so as
+a service guard it is exactly equivalent to no guard at all. It is not a
+mistake anyone makes on purpose; it happens when a developer copies
+android:permission from a <uses-permission> line. README section 5.3.3.
+
+The others are custom permissions declared at `normal`, which is the same
+mistake with the app's own name on it: any app can hold
+com.android.vending.CHECK_LICENSE by adding one <uses-permission> line.
+
+ONE --explain
+-------------
+
+$ python3 service-recon.py --explain com.android.keychain/com.android.keychain.KeyChainService
+
+COMPONENT     com.android.keychain/com.android.keychain.KeyChainService
+VERDICT       OPEN
+WHY           exported with no permission -- any app can bind
+EXPORTED      true
+ENABLED       true
+PERMISSION    (none)
+PROTECTION    -
+PROCESS       (app main process)
+FLAGS         -
+ACTIONS       android.security.IKeyChainService
+
+AND WHY THAT ONE IS *NOT* A FINDING -- MEASURED
+-----------------------------------------------
+
+KeyChainService looks alarming in the table: OPEN, no permission, and it is the
+system credential store. So it was bound from an unprivileged app (uid 10291):
+
+    BIND-RETURN com.android.keychain/com.android.keychain.KeyChainService => true
+    ... and onServiceConnected NEVER FIRED.
+
+bindService returned true and the connection was never established, because
+KeyChainService.onBind returns a binder only for the action it recognises and
+null for anything else. A tester who recorded the `true` and moved on would have
+filed a critical finding against a service they could not actually reach.
+
+This is the single most useful row in the whole capture, and it is why the
+script's own summary says OPEN is a work queue. The table gets you to the door.
+Only onServiceConnected tells you the door opened.

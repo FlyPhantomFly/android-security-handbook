@@ -1,0 +1,53 @@
+{
+  "_readme": [
+    "App profile for scripts/scope-checklist.py. Corresponds to Scenario B in",
+    "labs/lab-01-build-the-checklist.md: a consumer retail banking app, public Play",
+    "distribution, public API, with two named incidents in the last year.",
+    "",
+    "Note the field that does the most work in this file:",
+    "threat_model.hostile_device_owner_adversary. The script will place MASVS-RESILIENCE",
+    "in scope because hostile_device_owner is true, and it will QUOTE THE NAMED ADVERSARY",
+    "in the justification. If you set hostile_device_owner true and leave the adversary",
+    "null, the script warns you -- because resilience recommended without a named",
+    "adversary is the most expensive bad advice in mobile security.",
+    "",
+    "Run: python3 scripts/scope-checklist.py examples/profile-banking.json --markdown"
+  ],
+
+  "app": "com.regionalbank.mobile",
+  "name": "Regional Bank Mobile",
+  "version": "7.11.2 (71102)",
+  "engagement_days": 10,
+  "standard_version": "MASVS v2.x -- resolve and record the exact version at mas.owasp.org",
+
+  "threat_model": {
+    "hostile_device_owner": true,
+    "hostile_device_owner_adversary": "fraud rings automating onboarding from emulator farms, and account-takeover actors following SIM-swap",
+    "sensitive_data": ["financial", "identity", "credentials"],
+    "distribution": "public",
+    "managed_devices": false,
+    "backend_in_scope": true,
+    "backend_reachability": "public"
+  },
+
+  "app_traits": {
+    "has_accounts": true,
+    "has_local_auth": true,
+    "has_sensitive_operations": true,
+    "uses_webview": true,
+    "uses_cryptography": true,
+    "stores_data_locally": true,
+    "has_backend": true,
+    "has_update_mechanism": true,
+    "third_party_sdks": 12,
+    "collects_personal_data": true,
+    "child_users": false
+  },
+
+  "constraints": {
+    "rooted_device_available": true,
+    "second_account_available": false,
+    "source_code_available": false,
+    "privacy_policy_available": true
+  }
+}

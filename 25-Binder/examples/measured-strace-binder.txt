@@ -1,0 +1,94 @@
+# measured-strace-binder.txt
+#
+# One Binder call, seen as raw syscalls. Captured on a physical device:
+#   Xiaomi M2101K6P (sweetin), Android 11 / API 30, arm64-v8a, kernel 4.14.180
+#   caller: adb shell, uid 2000, SELinux u:r:shell:s0, NO root
+#
+# Reproduce:
+#   adb shell strace -f -s 80 service call activity 1598968902 2> st.txt
+#   adb shell grep -n 'dev/binder\|ioctl(3\|mmap(NULL, 1040384' st.txt
+#
+# 1598968902 is 0x5f4e5446, the four ASCII bytes '_NTF' -- INTERFACE_TRANSACTION,
+# the code every IBinder answers with its own interface descriptor.
+#
+# The `service` binary is 1,157 syscalls long from exec to exit. Eight of them
+# are the whole of Binder. Those eight are below, with their line numbers in the
+# full trace so you can see how late in the process they occur -- everything
+# before line 1013 is the dynamic linker.
+
+=== the eight lines that are Binder ===
+
+1013:openat(AT_FDCWD, "/dev/binder", O_RDWR|O_CLOEXEC) = 3
+1014:ioctl(3, BINDER_VERSION, 0x7fdcc57744)  = 0
+1015:ioctl(3, BINDER_SET_MAX_THREADS, 0x7fdcc57738) = 0
+1017:mmap(NULL, 1040384, PROT_READ, MAP_PRIVATE|MAP_NORESERVE, 3, 0) = 0x6f98ec5000
+1020:ioctl(3, BINDER_WRITE_READ, 0x7fdcc574f0) = 0
+1022:ioctl(3, BINDER_WRITE_READ, 0x7fdcc57460) = 0
+1023:ioctl(3, BINDER_WRITE_READ, 0x7fdcc57500) = 0
+1024:ioctl(3, BINDER_WRITE_READ, 0x7fdcc57630) = 0
+
+=== and the result the call produced ===
+
+Result: Parcel(
+  0x00000000: 0000001c 006e0061 00720064 0069006f '....a.n.d.r.o.i.'
+  0x00000010: 002e0064 00700061 002e0070 00410049 'd...a.p.p...I.A.'
+  0x00000020: 00740063 00760069 00740069 004d0079 'c.t.i.v.i.t.y.M.'
+  0x00000030: 006e0061 00670061 00720065 00000000 'a.n.a.g.e.r.....')
+
+64 bytes exactly, and every one of them accounted for:
+  0x1c        = 28, the CHARACTER count of "android.app.IActivityManager"
+  28 x 2      = 56 bytes of UTF-16LE
+  + 2         = the UTF-16 NUL terminator
+  = 58, padded up to 60 for 4-byte alignment
+  + 4         = the length field itself
+  = 64
+
+That is the entire String16 wire format, visible in one dump.
+
+=== line by line ===
+
+1013  openat("/dev/binder", O_RDWR|O_CLOEXEC) = 3
+      A character device. Not a socket, not a pipe, not a file. From here on,
+      every framework call in this process is an ioctl on descriptor 3.
+      ProcessState::ProcessState() does this exactly once per process; the fd
+      is a process-wide singleton and every thread shares it.
+
+1014  ioctl(3, BINDER_VERSION, ...) = 0
+      "Are we speaking the same protocol?" The driver reports 8 for a 64-bit
+      build, 7 for 32-bit. A mismatch aborts the process immediately, because
+      a struct-layout disagreement between userspace and the driver would
+      corrupt every transaction silently.
+
+1015  ioctl(3, BINDER_SET_MAX_THREADS, ...) = 0
+      How many threads the driver may ask this process to spawn to serve
+      incoming transactions. libbinder's default is 15, giving a pool of 16.
+
+1017  mmap(NULL, 1040384, PROT_READ, MAP_PRIVATE|MAP_NORESERVE, 3, 0)
+      THE NUMBER. 1040384 bytes = 1016 KiB = 1 MiB minus two 4 KiB pages.
+      This is BINDER_VM_SIZE from ProcessState.cpp and it is the entire
+      per-process budget for incoming transaction data.
+      PROT_READ, with no PROT_WRITE: the kernel writes parcels into this
+      region and the process only ever reads them.
+      Every TransactionTooLargeException you have ever seen is this number.
+
+1020  ioctl(3, BINDER_WRITE_READ, ...) = 0
+1022  ioctl(3, BINDER_WRITE_READ, ...) = 0
+1023  ioctl(3, BINDER_WRITE_READ, ...) = 0
+1024  ioctl(3, BINDER_WRITE_READ, ...) = 0
+      Four of them for one visible call, which surprises people. They are:
+        - resolve "activity" through servicemanager (a transaction of its own)
+        - send our transaction and collect BR_TRANSACTION_COMPLETE
+        - collect BR_REPLY
+        - return the reply buffer with BC_FREE_BUFFER
+      strace shows only the pointer, never the contents, because the payload
+      lives behind struct binder_write_read. Chapter 25 section 7.4 shows how
+      to decode it with Frida, and examples/binder-probe.c builds it by hand.
+
+=== what strace CANNOT show you ===
+
+The transaction code, the interface token, the parcel bytes, the target
+handle, and the caller uid the kernel stamped -- none of it. All of it is
+inside the buffers that binder_write_read points at, and strace does not
+follow those pointers. This is exactly why the chapter ships a raw client
+(examples/binder-probe.c) and a Frida tracer
+(scripts/trace-binder-transactions.js) rather than telling you to use strace.

@@ -1,0 +1,68 @@
+# =============================================================================
+# avc.log  --  CTF ARTEFACT, SYNTHETIC
+#
+# *** CONSTRUCTED FOR labs/lab-05-ctf-the-quiet-domain.md ***
+#
+# Not from any real device. Format-correct audit records for the invented
+# "Aurora Mobile AM-7". Real measured records are in
+#   ../../examples/avc-denials-measured.log
+#
+# This is one uptime's worth of avc records, filtered and deduplicated the way
+# `avc-decode.py --group` would leave them. Everything here is present for a
+# reason: some records are noise, some are evidence, and one domain is
+# conspicuous by its ABSENCE from this file.
+#
+# Decode with:
+#   python3 ../../scripts/avc-decode.py avc.log --group
+#   python3 ../../scripts/avc-decode.py avc.log --rules-only
+# =============================================================================
+
+# --- Ordinary platform noise. Present so the file looks like a real one.
+04-11 09:02:14.118  2201  2201 I auditd  : type=1400 audit(0.0:112): avc: denied { write } for comm="ThreadPoolForeg" name="traced_producer" dev="tmpfs" ino=10442 scontext=u:r:gmscore_app:s0:c512,c768 tcontext=u:object_r:traced_producer_socket:s0 tclass=sock_file permissive=0 app=com.google.android.gms
+04-11 09:02:44.221  2201  2201 I auditd  : type=1400 audit(0.0:113): avc: denied { write } for comm="ThreadPoolForeg" name="traced_producer" dev="tmpfs" ino=10442 scontext=u:r:gmscore_app:s0:c512,c768 tcontext=u:object_r:traced_producer_socket:s0 tclass=sock_file permissive=0 app=com.google.android.gms
+04-11 09:03:01.554   611   611 I auditd  : type=1400 audit(0.0:114): avc: denied { read } for comm="binder:611_2" name="wakeup42" dev="sysfs" ino=88211 scontext=u:r:system_suspend:s0 tcontext=u:object_r:sysfs:s0 tclass=dir permissive=0
+04-11 09:03:02.010   482   482 I auditd  : type=1400 audit(0.0:115): avc: denied { read } for comm="binder:482_1" name="/" dev="mmcblk0p14" ino=2 scontext=u:r:vold:s0 tcontext=u:object_r:persist_data_file:s0 tclass=dir permissive=0
+04-11 09:03:07.702  1188  1188 I auditd  : type=1400 audit(0.0:116): avc: denied { search } for comm="main" name="com.android.vending" dev="dm-9" ino=443221 scontext=u:r:dexoptanalyzer:s0 tcontext=u:object_r:privapp_data_file:s0:c512,c768 tclass=dir permissive=0 app=com.android.vending
+
+# --- The shell, doing what a tester does.
+04-11 09:05:11.004  4410  4410 I auditd  : type=1400 audit(0.0:117): avc: denied { read } for comm="cat" name="kptr_restrict" dev="proc" ino=1830022 scontext=u:r:shell:s0 tcontext=u:object_r:proc_security:s0 tclass=file permissive=0
+04-11 09:05:11.028  4411  4411 I auditd  : type=1400 audit(0.0:118): avc: denied { read_policy } for comm="cat" scontext=u:r:shell:s0 tcontext=u:object_r:kernel:s0 tclass=security permissive=0
+
+# --- The sensor daemon, probing something it is not allowed to reach.
+#     Benign: it handles the failure and continues.
+04-11 09:06:40.331  1502  1502 I auditd  : type=1400 audit(0.0:119): avc: denied { getattr } for comm="vnd_sensord" path="/sys/class/thermal" dev="sysfs" ino=91002 scontext=u:r:vnd_sensord:s0 tcontext=u:object_r:sysfs_thermal:s0 tclass=dir permissive=0
+04-11 09:06:40.334  1502  1502 I auditd  : type=1400 audit(0.0:120): avc: denied { search } for comm="vnd_sensord" name="com.aurora.diag" dev="dm-9" ino=443990 scontext=u:r:vnd_sensord:s0 tcontext=u:object_r:diag_app_data_file:s0:c512,c768 tclass=dir permissive=0 app=com.aurora.diag
+
+# --- The audio effects daemon. Also benign probing.
+04-11 09:07:12.887  1610  1610 I auditd  : type=1400 audit(0.0:121): avc: denied { read } for comm="vnd_audiofx" name="u:object_r:vendor_default_prop:s0" dev="tmpfs" ino=10990 scontext=u:r:vnd_audiofx:s0 tcontext=u:object_r:vendor_default_prop:s0 tclass=file permissive=0
+
+# --- The OTA daemon. Note the target here -- it is being refused something.
+04-11 09:09:55.201  1701  1701 I auditd  : type=1400 audit(0.0:122): avc: denied { setenforce } for comm="vnd_otad" scontext=u:r:vnd_otad:s0 tcontext=u:object_r:kernel:s0 tclass=security permissive=0
+
+# --- The factory test app. READ THE permissive FIELD ON THESE THREE.
+04-11 09:12:03.440  5502  5502 I auditd  : type=1400 audit(0.0:123): avc: denied { open } for comm="factorytest" path="/data/user/0/com.aurora.wallet/databases/keys.db" dev="dm-9" ino=447701 scontext=u:r:vnd_factory_app:s0:c512,c768 tcontext=u:object_r:app_data_file:s0:c188,c256,c512,c768 tclass=file permissive=1 app=com.aurora.factorytest
+04-11 09:12:03.442  5502  5502 I auditd  : type=1400 audit(0.0:124): avc: denied { read } for comm="factorytest" path="/data/user/0/com.aurora.wallet/databases/keys.db" dev="dm-9" ino=447701 scontext=u:r:vnd_factory_app:s0:c512,c768 tcontext=u:object_r:app_data_file:s0:c188,c256,c512,c768 tclass=file permissive=1 app=com.aurora.factorytest
+04-11 09:12:03.451  5502  5502 I auditd  : type=1400 audit(0.0:125): avc: denied { search } for comm="factorytest" name="com.aurora.wallet" dev="dm-9" ino=447700 scontext=u:r:vnd_factory_app:s0:c512,c768 tcontext=u:object_r:app_data_file:s0:c188,c256,c512,c768 tclass=dir permissive=1 app=com.aurora.factorytest
+
+# --- An ordinary third-party app, being refused normally.
+04-11 09:14:22.900  5610  5610 I auditd  : type=1400 audit(0.0:126): avc: denied { search } for comm="reader" name="com.aurora.wallet" dev="dm-9" ino=447700 scontext=u:r:untrusted_app:s0:c201,c256,c512,c768 tcontext=u:object_r:app_data_file:s0:c188,c256,c512,c768 tclass=dir permissive=0 app=com.reader.free
+04-11 09:14:23.011  5610  5610 I auditd  : type=1400 audit(0.0:127): avc: denied { connectto } for comm="reader" path=00766E645F6469616700 scontext=u:r:untrusted_app:s0:c201,c256,c512,c768 tcontext=u:r:vnd_diagd:s0 tclass=unix_stream_socket permissive=0 app=com.reader.free
+
+# --- A granted record, logged because the rule carries auditallow.
+#     grep denied will not find this line.
+04-11 09:16:40.775  1701  1701 I auditd  : type=1400 audit(0.0:128): avc: granted { set } for comm="vnd_otad" property=vnd.ota.stage scontext=u:r:vnd_otad:s0 tcontext=u:object_r:vnd_ota_prop:s0 tclass=property_service
+
+# --- An init-wrapped property denial.
+04-11 09:18:02.113     1     1 I auditd  : type=1107 audit(0.0:129): uid=0 auid=4294967295 ses=4294967295 subj=u:r:init:s0 msg='avc: denied { set } for property=vnd.diag.level pid=5701 uid=10201 gid=10201 scontext=u:r:untrusted_app:s0:c201,c256,c512,c768 tcontext=u:object_r:vnd_diag_prop:s0 tclass=property_service permissive=0'
+
+# --- More platform noise, to pad the file out the way a real one is padded.
+04-11 09:19:14.221  2201  2201 I auditd  : type=1400 audit(0.0:130): avc: denied { write } for comm="ThreadPoolForeg" name="traced_producer" dev="tmpfs" ino=10442 scontext=u:r:gmscore_app:s0:c512,c768 tcontext=u:object_r:traced_producer_socket:s0 tclass=sock_file permissive=0 app=com.google.android.gms
+04-11 09:20:44.891   611   611 I auditd  : type=1400 audit(0.0:131): avc: denied { read } for comm="binder:611_4" name="wakeup51" dev="sysfs" ino=88240 scontext=u:r:system_suspend:s0 tcontext=u:object_r:sysfs:s0 tclass=dir permissive=0
+04-11 09:21:02.014   482   482 I auditd  : type=1400 audit(0.0:132): avc: denied { read } for comm="binder:482_1" name="/" dev="mmcblk0p14" ino=2 scontext=u:r:vold:s0 tcontext=u:object_r:persist_data_file:s0 tclass=dir permissive=0
+04-11 09:22:31.556  1188  1188 I auditd  : type=1400 audit(0.0:133): avc: denied { search } for comm="main" name="com.google.android.gms" dev="dm-9" ino=443230 scontext=u:r:dexoptanalyzer:s0 tcontext=u:object_r:privapp_data_file:s0:c512,c768 tclass=dir permissive=0 app=com.google.android.gms
+
+# --- And an ioctl denial, for the allowxperm question.
+04-11 09:24:10.702  1201  1201 I auditd  : type=1400 audit(0.0:134): avc: denied { ioctl } for comm="PackageManagerB" path="/system/priv-app/AuroraDialer/AuroraDialer.apk" dev="dm-4" ino=5188 ioctlcmd=0x6686 scontext=u:r:system_server:s0 tcontext=u:object_r:system_file:s0 tclass=file permissive=0
+
+# --- A hex-encoded comm, because the process name contains a space.
+04-11 09:26:55.100   744   744 I auditd  : type=1400 audit(0.0:135): avc: denied { search } for comm=73796E6320737663203331 name="oem" dev="dm-4" ino=51 scontext=u:r:adbd:s0 tcontext=u:object_r:oemfs:s0 tclass=dir permissive=0

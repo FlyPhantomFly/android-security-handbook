@@ -1,0 +1,474 @@
+;; ============================================================================
+;; policy-rules-measured.cil
+;;
+;; WHAT THIS IS
+;;   Rules quoted VERBATIM from /system/etc/selinux/plat_sepolicy.cil on a
+;;   physical arm64 device running Android 13 (API 33), stock user build,
+;;   SELinux Enforcing. That file is 1,981,460 bytes; this is a curated
+;;   extract of the ~40 rules that carry the arguments this chapter makes.
+;;
+;;   Every line beginning with ( is byte-identical to the device. Line
+;;   numbers are the line number in the device's own plat_sepolicy.cil, given
+;;   so you can go and check. They are NOT AOSP source line numbers -- CIL is
+;;   generated at build time and its line numbering means nothing outside
+;;   this one build.
+;;
+;;   Pulled with:
+;;       adb pull /system/etc/selinux/plat_sepolicy.cil
+;;       grep -n '<pattern>' plat_sepolicy.cil
+;;
+;; WHY CIL AND NOT .te
+;;   You write policy in the `.te` language under system/sepolicy/. The build
+;;   converts it to CIL (Common Intermediate Language), and CIL is what ships
+;;   on the device. The two say the same things in different syntax:
+;;
+;;       .te   allow untrusted_app app_data_file:file { read write };
+;;       CIL   (allow untrusted_app app_data_file (file (read write)))
+;;
+;;   If you want to know what a device's policy actually says, you read the
+;;   CIL, because that is what is on the device. If you want to know what
+;;   AOSP intended, you read the .te. They can differ -- vendors add rules.
+;;
+;; HOW TO USE
+;;   Read it top to bottom once; then use it as a lookup while reading the
+;;   README sections named in each block header.
+;;
+;; WHAT THIS FILE WILL *NOT* TELL YOU
+;;   - What YOUR target device's policy says. Vendor policy differs. Pull
+;;     your own and grep it; the commands are in the README section 8.
+;;   - The full rule set for any domain. These are excerpts chosen to make
+;;     specific points, and a domain's real permission set is hundreds of
+;;     rules plus everything it inherits through attributes.
+;;   - Whether a rule is reachable. A rule can exist and never fire.
+;;   - Anything about neverallow enforcement timing. neverallow is a
+;;     COMPILE-TIME assertion: it is checked when the policy is built and
+;;     when CTS runs, and it is not consulted at runtime at all. A neverallow
+;;     in the shipped CIL is a record of an assertion that passed, not a
+;;     runtime control.
+;; ============================================================================
+
+
+;; ---------------------------------------------------------------------------
+;; BLOCK 1 -- THE ZYGOTE DOMAIN TRANSITION.  README section 3.5
+;;
+;; This is the single most important pair of rules in the file, and the one
+;; that makes Android's model different from desktop SELinux.
+;;
+;; On a normal Linux system a process changes domain by EXECUTING a file:
+;; the kernel sees an execve of a binary labelled with an `entrypoint` type
+;; and applies a `type_transition`. Android's zygote does not execve. It
+;; fork()s, and the child -- which is already a complete, warmed-up ART
+;; runtime -- changes its own domain by WRITING a context string to
+;; /proc/self/attr/current.
+;;
+;; Two permissions are needed for that, and both are here:
+;;   process:setcurrent   -- may write to /proc/self/attr/current at all
+;;   process:dyntransition -- may end up in that specific target domain
+;;
+;; `appdomain` is an attribute covering every app domain on the device, so
+;; the second rule is what lets zygote become untrusted_app, priv_app,
+;; platform_app, isolated_app and the rest.
+;; ---------------------------------------------------------------------------
+
+;; line 28381
+(allow zygote self (process (setcurrent)))
+;; line 28383
+(allow zygote appdomain (process (dyntransition)))
+
+;; The same pattern for the two other zygotes.
+;; line 18243
+(allow app_zygote self (process (setcurrent)))
+;; line 28181
+(allow webview_zygote self (process (setcurrent)))
+
+;; And the MLS constraint that governs any transition. Note `(eq l1 l2)`:
+;; a transition may not change the level unless the subject is
+;; mlstrustedsubject. zygote is, which is what lets it hand the child a level
+;; it does not itself have.
+;; line 483
+(mlsconstrain (process (transition dyntransition)) (or (and (eq h1 h2) (eq l1 l2)) (eq t1 mlstrustedsubject)))
+
+
+;; ---------------------------------------------------------------------------
+;; BLOCK 2 -- THE MLS CONSTRAINTS THAT MAKE MCS WORK.  README section 3.7
+;;
+;; These are NOT allow rules. A constraint is a separate mechanism: even when
+;; an allow rule matches, the operation is refused unless every applicable
+;; constraint also evaluates true. This is why two apps in the SAME domain,
+;; both covered by the same allow rule, still cannot read each other's files.
+;;
+;; Read the operators:
+;;   l1, l2   the subject's and object's low level
+;;   h1, h2   the subject's and object's high level
+;;   eq       equal
+;;   dom      "dominates": same or higher sensitivity AND a superset of
+;;            categories
+;;   t1, t2   the subject's and object's type
+;;
+;; The file/read rule below says, in English: reading a file is permitted if
+;; the target is NOT an app data file, OR the subject's level dominates the
+;; object's, OR the subject is mlstrustedsubject, OR the object is
+;; mlstrustedobject. For one untrusted_app reading another's app_data_file,
+;; the first clause is false, the second is false (c107,c256 does not contain
+;; c150,c256), and neither trusted attribute applies -- so it is refused.
+;;
+;; NOTE the asymmetry between the write family and the read family: writes
+;; require `eq l1 l2` (exact equality), reads require only `dom l1 l2`
+;; (containment). A subject with MORE categories may read down but may not
+;; write down. That is the classic MLS "no write down" rule, and it is why a
+;; process holding many categories is not automatically able to corrupt an
+;; app's files.
+;; ---------------------------------------------------------------------------
+
+;; line 490
+(mlsconstrain (file (write setattr append unlink link rename)) (or (or (or (or (eq t2 app_data_file_type) (eq t2 appdomain_tmpfs)) (eq l1 l2)) (eq t1 mlstrustedsubject)) (eq t2 mlstrustedobject)))
+;; line 491
+(mlsconstrain (file (read getattr execute)) (or (or (or (or (eq t2 app_data_file_type) (eq t2 appdomain_tmpfs)) (dom l1 l2)) (eq t1 mlstrustedsubject)) (eq t2 mlstrustedobject)))
+;; line 492
+(mlsconstrain (file (setattr unlink link rename open)) (or (or (and (neq t2 app_data_file_type) (neq t2 appdomain_tmpfs)) (dom l1 l2)) (eq t1 mlstrustedsubject)))
+
+;; The directory equivalents. The `search` one is the load-bearing rule for
+;; app-vs-app isolation, because you cannot reach a file without traversing
+;; its directory. It is also the rule that produced the measured
+;; dexoptanalyzer denial in avc-denials-measured.log.
+;; line 500
+(mlsconstrain (dir (read getattr search)) (or (or (or (or (eq t2 app_data_file_type) (dom l1 l2)) (eq t1 mlstrustedsubject)) (eq t2 mlstrustedobject)) (and (eq t1 mlsvendorcompat) (or (eq t2 system_data_file) (eq t2 user_profile_root_file)))))
+;; line 501
+(mlsconstrain (dir (getattr setattr rename open add_name remove_name reparent search rmdir)) (or (or (neq t2 app_data_file_type) (dom l1 l2)) (eq t1 mlstrustedsubject)))
+
+;; Process signalling and ptrace. `eq l1 l2` for the kill family: you may not
+;; SIGKILL a process whose categories differ from yours even if type
+;; enforcement would allow it.
+;; line 481
+(mlsconstrain (process (sigkill sigstop signal ptrace setsched setpgid setcap share setrlimit)) (or (eq l1 l2) (eq t1 mlstrustedsubject)))
+;; line 482
+(mlsconstrain (process (ptrace getsched getsession getpgid getcap share getattr)) (or (dom l1 l2) (eq t1 mlstrustedsubject)))
+
+
+;; ---------------------------------------------------------------------------
+;; BLOCK 3 -- CODE EXECUTION.  README section 3.10
+;;
+;; 40-Obfuscation cites this chapter for the claim that SELinux shaped the
+;; move to InMemoryDexClassLoader. Here is what the policy actually says, so
+;; the claim can be made precisely rather than approximately.
+;;
+;; FIRST, the thing people get wrong: apps DO have execmem. Every app domain
+;; is a member of the `appdomain` attribute, and appdomain is granted
+;; process:execmem. Anonymous writable-executable memory is available to any
+;; app, and it has to be -- ART's JIT compiler writes machine code into
+;; anonymous memory and jumps to it on every warm method. If execmem were
+;; denied to apps, Android would not have a JIT.
+;; ---------------------------------------------------------------------------
+
+;; line 16858
+(allow appdomain self (process (execmem)))
+;; line 28435
+(allow zygote self (process (execmem)))
+;; line 18245
+(allow app_zygote self (process (execmem)))
+;; line 28189
+(allow webview_zygote self (process (execmem)))
+
+;; And the domains explicitly FORBIDDEN it, which shows what the permission
+;; is really for -- keeping it away from privileged, network-facing or
+;; parsing-heavy processes where a memory bug would otherwise become code
+;; execution directly.
+;; line 26890
+(neverallow system_server self (process (execmem)))
+;; line 23262
+(neverallow perfetto self (process (execmem)))
+;; line 27215
+(neverallow traced self (process (execmem)))
+;; line 27398
+(neverallow traced_probes self (process (execmem)))
+
+;; SECOND, the thing that actually changed. Compare these two carefully.
+;;
+;; `untrusted_app_all` is an attribute covering untrusted_app,
+;; untrusted_app_25, untrusted_app_27, untrusted_app_29, runas_app and
+;; simpleperf. Its grant on app_data_file includes `execute` but NOT
+;; `execute_no_trans`:
+;; line 27666
+(allow untrusted_app_all app_data_file (file (ioctl read getattr lock map execute open watch watch_reads)))
+
+;; The LEGACY domains -- and only the legacy domains -- get the two extra
+;; permissions on top:
+;; line 27580
+(allow untrusted_app_25 app_data_file (file (execute_no_trans)))
+;; line 27578
+(allow untrusted_app_25 app_data_file (file (execmod)))
+;; line 27623
+(allow untrusted_app_27 app_data_file (file (execute_no_trans)))
+;; line 27621
+(allow untrusted_app_27 app_data_file (file (execmod)))
+
+;; THE DIFFERENCE, IN ONE PARAGRAPH.
+;;   file:execute           = may mmap this file PROT_EXEC. This is what
+;;                            dlopen / System.load needs, and what ART needs
+;;                            to map a .odex. Modern apps HAVE it.
+;;   file:execute_no_trans  = may execve() this file and keep running in the
+;;                            same domain. Modern apps do NOT have it.
+;;   file:execmod           = may execute a PRIVATE, MODIFIED mapping of this
+;;                            file, i.e. one the dynamic linker had to write
+;;                            to because the library contains text
+;;                            relocations. Modern apps do NOT have it.
+;;
+;; So a modern app can still load a shared library from its own data
+;; directory, and can still run a JIT, but it cannot drop a binary and
+;; execve it, and it cannot load a library that needs TEXTRELs. The first of
+;; those is why "chmod +x ./payload && ./payload" fails from an app on a
+;; modern targetSdk and works on targetSdk 25; the second is why the NDK made
+;; text relocations a build error.
+;;
+;; The pressure on dynamic code loading is real but it is not "execmem was
+;; taken away". It is the combination of: no execve from the data directory,
+;; no execmod, W^X neverallows on writable file types, and -- outside
+;; SELinux entirely -- the framework's own refusal to dexopt an app-writable
+;; file. Loading DEX from memory sidesteps the whole file-labelling question,
+;; and that is the honest causal statement.
+
+;; The corresponding neverallow, showing the platform's intent as an
+;; assertion rather than a grant:
+;; line 17182
+(neverallow base_typeattr_578 app_data_file (file (execute_no_trans)))
+;; line 20326
+(neverallow ephemeral_app app_data_file (file (execute_no_trans)))
+;; line 23809
+(neverallow priv_app app_data_file (file (execute execute_no_trans)))
+
+
+;; ---------------------------------------------------------------------------
+;; BLOCK 4 -- dex2oat AS A TRUST BOUNDARY.  README section 3.12
+;;
+;; dex2oat is the ahead-of-time compiler. It is handed DEX bytecode that came
+;; from an APK, i.e. from an untrusted source, and it is a large C++ program.
+;; If it ran inside installd or system_server, a malformed DEX that corrupted
+;; memory would yield those domains.
+;;
+;; It does not. It has its own domain, and the policy is unusually explicit
+;; about what that domain may touch. Read these three rules together:
+;; ---------------------------------------------------------------------------
+
+;; It may READ and WRITE app data files ...
+;; line 19563
+(allow dex2oat app_data_file (file (read write getattr lock map)))
+;; line 19564
+(allow dex2oat privapp_data_file (file (read write getattr lock map)))
+
+;; ... but it may NOT OPEN them. Ever. This is a neverallow, so it is
+;; asserted at build time and CTS re-checks it.
+;; line 19591
+(neverallow dex2oat app_data_file (file (open)))
+;; line 19595
+(neverallow dex2oat privapp_data_file (file (open)))
+
+;; The way those two coexist is the whole point: `read` and `write` apply to
+;; a descriptor you ALREADY HAVE; `open` is how you get one by naming a path.
+;; dex2oat can therefore only touch an app data file whose descriptor was
+;; handed to it by installd across the exec:
+;; line 19554
+(allow dex2oat installd (fd (use)))
+
+;; A compromised dex2oat cannot go looking. It cannot enumerate app data
+;; directories, cannot open another app's database, cannot open the file it
+;; was NOT given. It can only act on the exact descriptors installd chose to
+;; pass. That is a genuine capability-style confinement expressed in a MAC
+;; policy, and it is the cleanest example in AOSP of a domain being useful
+;; precisely because of what it is denied.
+;;
+;; It is also why "dex2oat runs in its own domain" is a real trust property
+;; and not a slogan: the property is checkable, it is asserted by a
+;; neverallow, and you can see the mechanism (fd passing) that makes the
+;; restriction workable rather than crippling.
+
+
+;; ---------------------------------------------------------------------------
+;; BLOCK 5 -- keystore_key AND keystore2_key.  README section 3.13
+;;
+;; 49-KeyStore cites this chapter for the object class. Both classes exist on
+;; this device -- `keystore_key` is the legacy Keystore class and
+;; `keystore2_key` is Keystore 2.0. The OBJECT is a key NAMESPACE, not a
+;; file: the namespaces and their labels are defined in
+;; system/sepolicy/private/keystore2_key_contexts, which ships at
+;; /system/etc/selinux/plat_keystore2_key_contexts and reads, verbatim from
+;; the device:
+;;
+;;     0    u:object_r:su_key:s0
+;;     1    u:object_r:shell_key:s0
+;;     100  u:object_r:vold_key:s0
+;;     101  u:object_r:odsign_key:s0
+;;     102  u:object_r:wifi_key:s0
+;;     103  u:object_r:locksettings_key:s0
+;;     120  u:object_r:resume_on_reboot_key:s0
+;;
+;; An ordinary app's keys are NOT in one of those namespaces. They live in
+;; the per-uid namespace reached through the `keystore` type, and the app's
+;; access to its own keys is mediated by uid inside keystored, not by a
+;; per-app SELinux type. SELinux governs the SYSTEM namespaces and the
+;; privileged operations; it does not give each app its own key type.
+;; ---------------------------------------------------------------------------
+
+;; Ordinary Binder services may operate on keys in the default namespace.
+;; line 18654
+(allow binderservicedomain keystore (keystore2_key (delete get_info rebind use)))
+
+;; The privileged namespaces, each reachable by exactly the domain that owns
+;; it. Read this as a capability list.
+;; line 28053
+(allow vold vold_key (keystore2_key (convert_storage_key_to_ephemeral delete get_info manage_blob rebind req_forced_op update use)))
+;; line 23076
+(allow odsign odsign_key (keystore2_key (delete get_info rebind use)))
+;; line 16381
+(allow wificond wifi_key (keystore2_key (get_info use)))
+;; line 11899
+(allow hal_wifi_supplicant wifi_key (keystore2_key (get_info use)))
+;; line 26695
+(allow system_server locksettings_key (keystore2_key (delete get_info rebind update use)))
+;; line 26694
+(allow system_server resume_on_reboot_key (keystore2_key (delete get_info rebind update use)))
+;; line 25232
+(allow shell shell_key (keystore2_key (delete get_info rebind update use)))
+
+;; THE TWO MOST INTERESTING PERMISSIONS IN THE CLASS, and who has them.
+;;
+;; `use_dev_id` permits an attestation to include the device's IMEI, MEID and
+;; serial number. Exactly one domain has it:
+;; line 26692
+(allow system_server keystore (keystore2_key (delete get_info grant rebind update use use_dev_id)))
+
+;; `gen_unique_id` permits requesting the attestation "unique ID", a
+;; rotating, app-and-device-specific identifier. Exactly one domain has it,
+;; and it is not system_server:
+;; line 20628
+(allow gmscore_app keystore (keystore2_key (gen_unique_id)))
+
+;; That is the answer to "why can't my app request device ID attestation" at
+;; the level of the mechanism. It is not a permission check in the framework
+;; that you could hook; it is a MAC rule, and there is no app-side bypass.
+;; A Frida hook that forces the framework call to be attempted still produces
+;; an avc denial with tclass=keystore2_key.
+
+
+;; ---------------------------------------------------------------------------
+;; BLOCK 6 -- SOCKETS THAT DAC CANNOT PROTECT.  README section 3.14
+;;
+;; 24-IPC cites this chapter for abstract-namespace UNIX sockets. An abstract
+;; socket has a name beginning with a NUL byte and NO filesystem entry at
+;; all: no inode, no owner, no mode bits. There is therefore NOTHING for DAC
+;; to check. Any process that knows the name can connect, unless MAC stops
+;; it. SELinux is the only control.
+;;
+;; The permission is `connectto` on the LISTENER's domain -- note the target
+;; is a process type (u:r:...), not an object type (u:object_r:...), because
+;; the thing you are reaching is the listening process itself.
+;; ---------------------------------------------------------------------------
+
+;; line 16920
+(allow appdomain tombstoned (unix_stream_socket (connectto)))
+;; line 16974
+(allow appdomain logd (unix_stream_socket (connectto)))
+;; line 16997
+(allow appdomain adbd (unix_stream_socket (connectto)))
+;; line 27726
+(allow untrusted_app_all traced (unix_stream_socket (connectto)))
+;; line 27730
+(allow untrusted_app_all heapprofd (unix_stream_socket (connectto)))
+;; line 27740
+(allow untrusted_app_all traced_perf (unix_stream_socket (connectto)))
+;; line 27713
+(allow untrusted_app_all runas_app (unix_stream_socket (connectto)))
+
+;; Datagram equivalents.
+;; line 16931
+(allow appdomain statsd (unix_dgram_socket (sendto)))
+;; line 16975
+(allow appdomain zygote (unix_dgram_socket (write)))
+
+;; That list is SHORT, and its shortness is the point. An app may connect to
+;; six or seven named listeners and nothing else. If a vendor daemon opens an
+;; abstract socket and forgets to constrain who may reach it, the ONLY thing
+;; between that daemon and every app on the device is whether policy happens
+;; to contain a connectto rule. Find the abstract sockets with:
+;;     adb shell cat /proc/net/unix | grep '^.*@'
+;; and then check whether a rule exists. This is a productive place to look
+;; on OEM builds.
+
+
+;; ---------------------------------------------------------------------------
+;; BLOCK 7 -- BINDER AND SERVICE MANAGER.  README section 3.15
+;;
+;; Reaching a Binder service is a two-stage MAC decision, and the two stages
+;; use different classes. Missing this is a common analysis error.
+;;
+;; Stage 1: ask servicemanager for the handle. Class service_manager,
+;;          permission find, target is the SERVICE's type.
+;; Stage 2: make the call on the handle. Class binder, permission call,
+;;          target is the SERVER PROCESS's domain.
+;;
+;; Both must pass. A denial at stage 1 looks completely different from a
+;; denial at stage 2, and only stage 1 names the service.
+;; ---------------------------------------------------------------------------
+
+;; line 16938
+(allow appdomain servicemanager (binder (call transfer)))
+;; line 16943
+(allow appdomain binderservicedomain (binder (call transfer)))
+;; line 16946
+(allow appdomain appdomain (binder (call transfer)))
+;; line 16786
+(allow appdomain sdk_sandbox (binder (call transfer)))
+
+;; And the lookups. `list` lets an app enumerate registered names at all;
+;; `find` is per-service.
+;; line 27700
+(allow untrusted_app_all servicemanager (service_manager (list)))
+;; line 27701
+(allow untrusted_app_all audioserver_service (service_manager (find)))
+;; line 27702
+(allow untrusted_app_all cameraserver_service (service_manager (find)))
+;; line 27703
+(allow untrusted_app_all drmserver_service (service_manager (find)))
+;; line 27704
+(allow untrusted_app_all mediaserver_service (service_manager (find)))
+
+;; A service that policy does NOT give untrusted_app a find rule for is
+;; unreachable from an app no matter what its Binder-level permission checks
+;; say. That is the useful half of the property: MAC is a coarse gate in
+;; front of a fine-grained permission model, and it fails closed. The
+;; measured denial in avc-denials-measured.log --
+;;     avc: denied { find } for name=USDKPlus
+;;         scontext=u:r:priv_app:s0:c512,c768
+;;         tcontext=u:object_r:default_android_service:s0
+;;         tclass=service_manager
+;; is exactly this: a vendor service registered under no specific label
+;; falls back to `default_android_service`, for which no find rule exists,
+;; so even a PRIVILEGED app cannot reach it.
+
+
+;; ---------------------------------------------------------------------------
+;; BLOCK 8 -- THE CLASS AND PERMISSION DECLARATIONS THEMSELVES
+;;
+;; Quoted so the permission names used throughout the chapter can be checked
+;; against the device rather than taken on trust. `common file` is inherited
+;; by file, dir, lnk_file, chr_file, blk_file, sock_file and fifo_file, which
+;; is why `execmod` appears on classes where it looks surprising.
+;; ---------------------------------------------------------------------------
+
+;; line 476
+(common file (ioctl read write create getattr setattr lock relabelfrom relabelto append map unlink link rename execute quotaon mounton audit_access open execmod watch watch_mount watch_sb watch_with_perm watch_reads ))
+;; line 480
+(class process (fork transition sigchld sigkill sigstop signull signal ptrace getsched setsched getsession getpgid setpgid getcap setcap share getattr setexec setfscreate noatsecure siginh setrlimit rlimitinh dyntransition setcurrent execmem execstack execheap setkeycreate setsockcreate getrlimit ))
+
+;; The two app-domain attribute sets, quoted because they answer "which
+;; domains does a rule about `appdomain` actually reach". Measured verbatim.
+;; line 864
+(typeattributeset appdomain (bluetooth ephemeral_app gmscore_app isolated_app mediaprovider network_stack nfc platform_app priv_app radio runas_app secure_element shared_relro shell simpleperf system_app traceur_app untrusted_app untrusted_app_29 untrusted_app_27 untrusted_app_25 mediaprovider_app permissioncontroller_app remote_prov_app sdk_sandbox vzwomatrigger_app ))
+;; line 866
+(typeattributeset untrusted_app_all (runas_app simpleperf untrusted_app untrusted_app_29 untrusted_app_27 untrusted_app_25 ))
+
+;; NOTE that `shell` is a member of `appdomain`. Every rule written about
+;; appdomain therefore also applies to your adb shell -- which is one reason
+;; an adb shell resembles an app closely enough to be misleading, and not
+;; closely enough to be a valid test of app behaviour. `shell` is NOT a
+;; member of untrusted_app_all, so rules written about untrusted_app_all do
+;; not apply to it.

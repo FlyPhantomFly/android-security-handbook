@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    labs/ctf-app/AndroidManifest.xml
+
+    CH38 CTF target.
+
+    The only interesting line is the provider. ContentProvider.onCreate runs
+    BEFORE Application.onCreate, so declaring an inert provider is the cheapest
+    way for a library to run code at the earliest possible Java-tier moment
+    without asking the host app to change anything.
+
+    android:exported="false" because it serves nothing and must not be
+    reachable by other apps. android:authorities must be unique on the device.
+
+    Note there is no android:debuggable attribute. Adding one is part of the
+    challenge, and adding one has consequences the solver has to work out.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.pentest.ch38.ctf">
+
+    <uses-sdk android:minSdkVersion="21" android:targetSdkVersion="33" />
+
+    <application
+        android:label="CH38 Vault"
+        android:allowBackup="false">
+
+        <provider
+            android:name=".EarlyProvider"
+            android:authorities="com.pentest.ch38.ctf.early"
+            android:exported="false"
+            android:enabled="true" />
+
+        <activity
+            android:name=".VaultActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+    </application>
+
+</manifest>

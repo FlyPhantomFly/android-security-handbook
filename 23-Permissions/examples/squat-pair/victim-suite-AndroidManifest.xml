@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  examples/squat-pair/victim-suite-AndroidManifest.xml
+  ===================================================
+  THE VICTIM THAT STILL LOSES - the case that works on Android 13.
+
+  This is the multi-app suite pattern, and it is not contrived. It is how
+  vendors ship:
+
+    com.vendor.core    DECLARES com.vendor.permission.SYNC at signature
+    com.vendor.reader  USES it to guard a provider, and does not declare it,
+                       because its sibling already does
+
+  Now put that on a device where the user installed the reader from the store
+  and never installed core. Nobody owns the permission name. The reader's
+  provider is guarded by a permission that does not exist - which means, today,
+  that it is unreachable, and, tomorrow, that whoever declares the name owns
+  the rule.
+
+  This manifest is that reader. It USES the permission and never DECLARES it,
+  so there is no duplicate declaration and INSTALL_FAILED_DUPLICATE_PERMISSION
+  never fires. It installs happily alongside the squatter.
+
+  MEASURED on Android 13 / API 33, in this order:
+
+    $ adb install -r squatter.apk        # attacker first, defines at normal
+    Success
+    $ adb install -r suite.apk           # victim installs FINE
+    Success
+    $ adb shell dumpsys package permission com.victim.notes.permission.READ_NOTES
+      Permission [com.victim.notes.permission.READ_NOTES] (8b8d463):
+        sourcePackage=com.squat.first
+        uid=10139 gids=[] type=0 prot=normal
+
+  And then, to close the loop, an entirely unrelated app signed with a THIRD
+  key, containing nothing but a <uses-permission> line (probe-AndroidManifest.xml):
+
+    $ adb install -r probe.apk
+    Success
+    $ adb shell dumpsys package com.third.probe
+        signatures=PackageSignatures{... signatures:[dc86461d] ...}
+        requested permissions:
+          com.victim.notes.permission.READ_NOTES
+        install permissions:
+          com.victim.notes.permission.READ_NOTES: granted=true
+
+  granted=true. No prompt. No signature relationship with anybody. That is the
+  whole of README.md section 1.3, demonstrated on a current device.
+
+  THE FIX, and it is not "namespace it properly" - the attacker can type your
+  namespace too:
+
+    1. EVERY app in the suite declares the permission identically, at
+       protectionLevel="signature". Same key, so the duplicate declaration does
+       not conflict, and no install order leaves the name unowned.
+    2. Re-check the caller IN CODE with
+       PackageManager.checkSignatures(Process.myUid(), Binder.getCallingUid()),
+       which consults the signing certificates directly and cannot be squatted
+       at all. See ../SignatureGuardedService.java.
+
+  AUTHORISED TESTING ONLY.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.victim.suite">
+
+    <uses-sdk android:minSdkVersion="21" android:targetSdkVersion="33" />
+
+    <!--
+      NOTE WHAT IS ABSENT.
+
+      There is no <permission> element in this file. The sibling app that
+      declares com.victim.notes.permission.READ_NOTES is not installed, and
+      nothing here creates it. The name below is a reference to a definition
+      that may or may not exist, owned by whichever package claimed it first.
+    -->
+
+    <queries>
+        <package android:name="com.victim.notes" />
+    </queries>
+
+    <application
+        android:hasCode="false"
+        android:label="VictimSuite">
+
+        <!--
+          Exported, and guarded by a permission this app does not own.
+
+          Run ../../scripts/permission-audit.py against this file and it will
+          return UNOWNED for this permission without a device capture, and
+          SQUATTED once you feed it `pm list permissions -f -g` taken from a
+          device where the squatter is installed.
+        -->
+        <provider
+            android:name="com.victim.suite.NotesProvider"
+            android:authorities="com.victim.suite.notes"
+            android:exported="true"
+            android:readPermission="com.victim.notes.permission.READ_NOTES"
+            android:writePermission="com.victim.notes.permission.READ_NOTES" />
+
+    </application>
+
+</manifest>

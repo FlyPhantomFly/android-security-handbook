@@ -1,0 +1,207 @@
+# compiler: R8
+# compiler_version: 8.6.2-dev
+# min_api: 33
+# compiler_hash: abaab469b5ebd4dd2bb91ba0ed6f45277faae4ca
+# common_typos_disable
+# {"id":"com.android.tools.r8.mapping","version":"2.2"}
+# pg_map_id: 6627817
+# pg_map_hash: SHA-256 66278173357afa3906c831220aa08c81e3ab920d09df0d6eb3a05b1fdf398185
+com.pentest.ch42.vault.LicenceRecord -> a.a:
+# {"id":"sourceFile","fileName":"LicenceVault.kt"}
+    java.lang.String subscriberId -> a
+    com.pentest.ch42.vault.LicenceTier tier -> b
+      # {"id":"com.android.tools.r8.residualsignature","signature":"I"}
+    long expiryEpochDay -> c
+    1:3:void <init>(java.lang.String,com.pentest.ch42.vault.LicenceTier,long):19:19 -> <init>
+      # {"id":"com.android.tools.r8.residualsignature","signature":"()V"}
+    4:7:void <init>(java.lang.String,com.pentest.ch42.vault.LicenceTier,long):20:20 -> <init>
+    8:11:void <init>(java.lang.String,com.pentest.ch42.vault.LicenceTier,long):21:21 -> <init>
+    12:14:void <init>(java.lang.String,com.pentest.ch42.vault.LicenceTier,long):22:22 -> <init>
+    4:39:boolean equals(java.lang.Object):0:0 -> equals
+    0:24:int hashCode():0:0 -> hashCode
+    0:61:java.lang.String toString():0:0 -> toString
+com.pentest.ch42.vault.LicenceTier$EnumUnboxingSharedUtility -> a.b:
+# {"id":"sourceFile","fileName":"R8$$SyntheticClass"}
+# {"id":"com.android.tools.r8.synthesized"}
+    0:0:void a.LicenceTier$EnumUnboxingSharedUtility.<clinit>() -> <clinit>
+      # {"id":"com.android.tools.r8.synthesized"}
+    0:6:int a.LicenceTier$EnumUnboxingSharedUtility.ordinal(int):0:0 -> a
+      # {"id":"com.android.tools.r8.synthesized"}
+com.pentest.ch42.vault.LicenceVault$$ExternalSyntheticLambda0 -> a.c:
+# {"id":"sourceFile","fileName":"R8$$SyntheticClass"}
+# {"id":"com.android.tools.r8.synthesized"}
+com.pentest.ch42.vault.LicenceVault$$ExternalSyntheticLambda1 -> a.d:
+# {"id":"sourceFile","fileName":"R8$$SyntheticClass"}
+# {"id":"com.android.tools.r8.synthesized"}
+    kotlin.jvm.functions.Function2 com.pentest.ch42.vault.LicenceVault$$InternalSyntheticLambda$1$1b5c58694e2ad21a64a0e1586651874577a7fec664bc478afa19ff3d47a646a4$1.f$0 -> a
+      # {"id":"com.android.tools.r8.residualsignature","signature":"La/c;"}
+      # {"id":"com.android.tools.r8.synthesized"}
+    0:5:void a.LicenceVault$$ExternalSyntheticLambda1.<init>(a.LicenceVault$$ExternalSyntheticLambda0):0:0 -> <init>
+      # {"id":"com.android.tools.r8.synthesized"}
+      # {"id":"com.android.tools.r8.residualsignature","signature":"(La/c;)V"}
+    0:8:int com.pentest.ch42.vault.LicenceVault.sortedBySubscriber$lambda$1(kotlin.jvm.functions.Function2,java.lang.Object,java.lang.Object):88:88 -> compare
+      # {"id":"com.android.tools.r8.residualsignature","signature":"(Ljava/lang/Object;Ljava/lang/Object;)I"}
+    9:12:java.lang.String com.pentest.ch42.vault.LicenceRecord.getSubscriberId():20:20 -> compare
+    9:12:int com.pentest.ch42.vault.LicenceVault.sortedBySubscriber$lambda$0(com.pentest.ch42.vault.LicenceRecord,com.pentest.ch42.vault.LicenceRecord):88 -> compare
+      # {"id":"com.android.tools.r8.rewriteFrame","conditions":["throws(Ljava/lang/NullPointerException;)"],"actions":["removeInnerFrames(1)"]}
+    9:12:int com.pentest.ch42.vault.LicenceVault.sortedBySubscriber$lambda$1(kotlin.jvm.functions.Function2,java.lang.Object,java.lang.Object):88 -> compare
+    13:17:int com.pentest.ch42.vault.LicenceVault.sortedBySubscriber$lambda$0(com.pentest.ch42.vault.LicenceRecord,com.pentest.ch42.vault.LicenceRecord):88:88 -> compare
+    13:17:int com.pentest.ch42.vault.LicenceVault.sortedBySubscriber$lambda$1(kotlin.jvm.functions.Function2,java.lang.Object,java.lang.Object):88 -> compare
+com.pentest.ch42.vault.LicenceVault$Diagnostics -> R8$$REMOVED$$CLASS$$0:
+# {"id":"sourceFile","fileName":"LicenceVault.kt"}
+com.pentest.ch42.vault.LicenceVaultKt -> R8$$REMOVED$$CLASS$$1:
+# {"id":"sourceFile","fileName":"LicenceVault.kt"}
+com.pentest.ch42.vault.VaultEntryPoint -> com.pentest.ch42.vault.VaultEntryPoint:
+# {"id":"sourceFile","fileName":"LicenceVault.kt"}
+    4:5:void kotlin.jvm.internal.Intrinsics.throwParameterIsNullNPE(java.lang.String):140:140 -> main
+    4:5:void kotlin.jvm.internal.Intrinsics.checkNotNullParameter(java.lang.Object,java.lang.String):131 -> main
+    4:5:void main(java.lang.String[]):0 -> main
+    6:13:java.lang.String kotlin.jvm.internal.Intrinsics.createParameterIsNullExceptionMessage(java.lang.String):144:144 -> main
+    6:13:void kotlin.jvm.internal.Intrinsics.throwParameterIsNullNPE(java.lang.String):140 -> main
+    6:13:void kotlin.jvm.internal.Intrinsics.checkNotNullParameter(java.lang.Object,java.lang.String):131 -> main
+    6:13:void main(java.lang.String[]):0 -> main
+    14:20:java.lang.String kotlin.jvm.internal.Intrinsics.createParameterIsNullExceptionMessage(java.lang.String):146:146 -> main
+    14:20:void kotlin.jvm.internal.Intrinsics.throwParameterIsNullNPE(java.lang.String):140 -> main
+    14:20:void kotlin.jvm.internal.Intrinsics.checkNotNullParameter(java.lang.Object,java.lang.String):131 -> main
+    14:20:void main(java.lang.String[]):0 -> main
+    21:35:java.lang.String kotlin.jvm.internal.Intrinsics.createParameterIsNullExceptionMessage(java.lang.String):149:149 -> main
+    21:35:void kotlin.jvm.internal.Intrinsics.throwParameterIsNullNPE(java.lang.String):140 -> main
+    21:35:void kotlin.jvm.internal.Intrinsics.checkNotNullParameter(java.lang.Object,java.lang.String):131 -> main
+    21:35:void main(java.lang.String[]):0 -> main
+    36:50:java.lang.String kotlin.jvm.internal.Intrinsics.createParameterIsNullExceptionMessage(java.lang.String):151:151 -> main
+    36:50:void kotlin.jvm.internal.Intrinsics.throwParameterIsNullNPE(java.lang.String):140 -> main
+    36:50:void kotlin.jvm.internal.Intrinsics.checkNotNullParameter(java.lang.Object,java.lang.String):131 -> main
+    36:50:void main(java.lang.String[]):0 -> main
+    51:52:java.lang.String kotlin.jvm.internal.Intrinsics.createParameterIsNullExceptionMessage(java.lang.String):153:153 -> main
+    51:52:void kotlin.jvm.internal.Intrinsics.throwParameterIsNullNPE(java.lang.String):140 -> main
+    51:52:void kotlin.jvm.internal.Intrinsics.checkNotNullParameter(java.lang.Object,java.lang.String):131 -> main
+    51:52:void main(java.lang.String[]):0 -> main
+    53:56:java.lang.String kotlin.jvm.internal.Intrinsics.createParameterIsNullExceptionMessage(java.lang.String):154:154 -> main
+    53:56:void kotlin.jvm.internal.Intrinsics.throwParameterIsNullNPE(java.lang.String):140 -> main
+    53:56:void kotlin.jvm.internal.Intrinsics.checkNotNullParameter(java.lang.Object,java.lang.String):131 -> main
+    53:56:void main(java.lang.String[]):0 -> main
+    57:60:java.lang.String kotlin.jvm.internal.Intrinsics.createParameterIsNullExceptionMessage(java.lang.String):155:155 -> main
+    57:60:void kotlin.jvm.internal.Intrinsics.throwParameterIsNullNPE(java.lang.String):140 -> main
+    57:60:void kotlin.jvm.internal.Intrinsics.checkNotNullParameter(java.lang.Object,java.lang.String):131 -> main
+    57:60:void main(java.lang.String[]):0 -> main
+    61:90:java.lang.String kotlin.jvm.internal.Intrinsics.createParameterIsNullExceptionMessage(java.lang.String):157:157 -> main
+    61:90:void kotlin.jvm.internal.Intrinsics.throwParameterIsNullNPE(java.lang.String):140 -> main
+    61:90:void kotlin.jvm.internal.Intrinsics.checkNotNullParameter(java.lang.Object,java.lang.String):131 -> main
+    61:90:void main(java.lang.String[]):0 -> main
+    91:97:void kotlin.jvm.internal.Intrinsics.throwParameterIsNullNPE(java.lang.String):140:140 -> main
+    91:97:void kotlin.jvm.internal.Intrinsics.checkNotNullParameter(java.lang.Object,java.lang.String):131 -> main
+    91:97:void main(java.lang.String[]):0 -> main
+    98:102:void com.pentest.ch42.vault.LicenceVault.<init>(java.lang.String):33:33 -> main
+    98:102:void main(java.lang.String[]):117 -> main
+    103:107:void com.pentest.ch42.vault.LicenceVault.<init>(java.lang.String):100:100 -> main
+    103:107:void main(java.lang.String[]):117 -> main
+    108:112:com.pentest.ch42.vault.LicenceRecord com.pentest.ch42.vault.LicenceVault.issueLicence(java.lang.String,com.pentest.ch42.vault.LicenceTier,long):63:63 -> main
+    108:112:void main(java.lang.String[]):118 -> main
+    113:115:com.pentest.ch42.vault.LicenceRecord com.pentest.ch42.vault.LicenceVault.issueLicence(java.lang.String,com.pentest.ch42.vault.LicenceTier,long):64:64 -> main
+    113:115:void main(java.lang.String[]):118 -> main
+    116:122:void main(java.lang.String[]):119:119 -> main
+    123:129:int com.pentest.ch42.vault.LicenceVault.computeActivationCode(com.pentest.ch42.vault.LicenceRecord):69:69 -> main
+    123:129:void main(java.lang.String[]):119 -> main
+    130:146:int com.pentest.ch42.vault.LicenceVault.tierWeight(com.pentest.ch42.vault.LicenceTier):56:56 -> main
+    130:146:int com.pentest.ch42.vault.LicenceVault.computeActivationCode(com.pentest.ch42.vault.LicenceRecord):70 -> main
+    130:146:void main(java.lang.String[]):119 -> main
+    147:149:void kotlin.NoWhenBranchMatchedException.<init>():9:9 -> main
+    147:149:int com.pentest.ch42.vault.LicenceVault.tierWeight(com.pentest.ch42.vault.LicenceTier):56 -> main
+    147:149:int com.pentest.ch42.vault.LicenceVault.computeActivationCode(com.pentest.ch42.vault.LicenceRecord):70 -> main
+    147:149:void main(java.lang.String[]):119 -> main
+    150:159:int com.pentest.ch42.vault.LicenceVault.tierWeight(com.pentest.ch42.vault.LicenceTier):56:56 -> main
+    150:159:int com.pentest.ch42.vault.LicenceVault.computeActivationCode(com.pentest.ch42.vault.LicenceRecord):70 -> main
+    150:159:void main(java.lang.String[]):119 -> main
+    160:171:void main(java.lang.String[]):119:119 -> main
+    172:178:void main(java.lang.String[]):120:120 -> main
+    179:183:com.pentest.ch42.vault.VerificationOutcome com.pentest.ch42.vault.LicenceVault.verify(com.pentest.ch42.vault.LicenceRecord,long):81:81 -> main
+    179:183:void main(java.lang.String[]):120 -> main
+    184:193:void main(java.lang.String[]):120:120 -> main
+    194:200:void main(java.lang.String[]):121:121 -> main
+    201:205:java.util.List com.pentest.ch42.vault.LicenceVault.sortedBySubscriber():87:87 -> main
+    201:205:void main(java.lang.String[]):121 -> main
+    206:218:java.util.List com.pentest.ch42.vault.LicenceVault.sortedBySubscriber():88:88 -> main
+    206:218:void main(java.lang.String[]):121 -> main
+    219:232:void main(java.lang.String[]):121:121 -> main
+    233:239:void main(java.lang.String[]):122:122 -> main
+    240:244:void com.pentest.ch42.vault.LicenceVault.activeTierNames$lambda$2(com.pentest.ch42.vault.LicenceVault,long):93:93 -> main
+    240:244:java.util.List com.pentest.ch42.vault.LicenceVault.activeTierNames(long):94 -> main
+    240:244:void main(java.lang.String[]):122 -> main
+    245:249:java.util.List com.pentest.ch42.vault.LicenceVault.activeTierNames(long):136:136 -> main
+    245:249:void main(java.lang.String[]):122 -> main
+    250:266:java.util.List com.pentest.ch42.vault.LicenceVault.activeTierNames(long):137:137 -> main
+    250:266:void main(java.lang.String[]):122 -> main
+    267:274:long com.pentest.ch42.vault.LicenceRecord.getExpiryEpochDay():22:22 -> main
+    267:274:java.util.List com.pentest.ch42.vault.LicenceVault.activeTierNames(long):96 -> main
+      # {"id":"com.android.tools.r8.rewriteFrame","conditions":["throws(Ljava/lang/NullPointerException;)"],"actions":["removeInnerFrames(1)"]}
+    267:274:void main(java.lang.String[]):122 -> main
+    275:278:java.util.List com.pentest.ch42.vault.LicenceVault.activeTierNames(long):137:137 -> main
+    275:278:void main(java.lang.String[]):122 -> main
+    279:280:java.util.List com.pentest.ch42.vault.LicenceVault.activeTierNames(long):139:139 -> main
+    279:280:void main(java.lang.String[]):122 -> main
+    281:284:int kotlin.collections.CollectionsKt__IterablesKt.collectionSizeOrDefault(java.lang.Iterable,int):39:39 -> main
+    281:284:java.util.List com.pentest.ch42.vault.LicenceVault.activeTierNames(long):139 -> main
+    281:284:void main(java.lang.String[]):122 -> main
+    285:287:java.util.List com.pentest.ch42.vault.LicenceVault.activeTierNames(long):139:139 -> main
+    285:287:void main(java.lang.String[]):122 -> main
+    288:301:java.util.List com.pentest.ch42.vault.LicenceVault.activeTierNames(long):140:140 -> main
+    288:301:void main(java.lang.String[]):122 -> main
+    302:303:java.util.List com.pentest.ch42.vault.LicenceVault.activeTierNames(long):141:141 -> main
+    302:303:void main(java.lang.String[]):122 -> main
+    304:314:com.pentest.ch42.vault.LicenceTier com.pentest.ch42.vault.LicenceRecord.getTier():21:21 -> main
+    304:314:java.util.List com.pentest.ch42.vault.LicenceVault.activeTierNames(long):97 -> main
+      # {"id":"com.android.tools.r8.rewriteFrame","conditions":["throws(Ljava/lang/NullPointerException;)"],"actions":["removeInnerFrames(1)"]}
+    304:314:void main(java.lang.String[]):122 -> main
+    315:324:java.util.List com.pentest.ch42.vault.LicenceVault.activeTierNames(long):97:97 -> main
+    315:324:void main(java.lang.String[]):122 -> main
+    325:328:java.util.List com.pentest.ch42.vault.LicenceVault.activeTierNames(long):141:141 -> main
+    325:328:void main(java.lang.String[]):122 -> main
+    329:340:void main(java.lang.String[]):122:122 -> main
+    341:347:void main(java.lang.String[]):123:123 -> main
+    348:353:int com.pentest.ch42.vault.LicenceVault.access$mixSubscriberSalt(com.pentest.ch42.vault.LicenceVault,java.lang.String):31:31 -> main
+    348:353:int com.pentest.ch42.vault.LicenceVault$Diagnostics.hardwareFingerprint():107 -> main
+    348:353:void main(java.lang.String[]):123 -> main
+    354:363:void main(java.lang.String[]):123:123 -> main
+    364:370:void main(java.lang.String[]):124:124 -> main
+    371:374:int com.pentest.ch42.vault.LicenceVault.auditSize():102:102 -> main
+    371:374:void main(java.lang.String[]):124 -> main
+    375:384:void main(java.lang.String[]):124:124 -> main
+    385:404:void main(java.lang.String[]):127:127 -> main
+    405:413:java.lang.Void com.pentest.ch42.vault.LicenceVaultKt.detonate(com.pentest.ch42.vault.LicenceVault):134:134 -> main
+    405:413:void main(java.lang.String[]):128 -> main
+com.pentest.ch42.vault.VerificationOutcome$Granted -> a.e:
+# {"id":"sourceFile","fileName":"LicenceVault.kt"}
+    com.pentest.ch42.vault.LicenceRecord record -> a
+      # {"id":"com.android.tools.r8.residualsignature","signature":"La/a;"}
+    0:2:void com.pentest.ch42.vault.VerificationOutcome.<init>():0:0 -> <init>
+    0:2:void com.pentest.ch42.vault.VerificationOutcome.<init>(kotlin.jvm.internal.DefaultConstructorMarker):0 -> <init>
+    0:2:void <init>(com.pentest.ch42.vault.LicenceRecord):26 -> <init>
+      # {"id":"com.android.tools.r8.residualsignature","signature":"(La/a;)V"}
+    3:5:void <init>(com.pentest.ch42.vault.LicenceRecord):26:26 -> <init>
+    4:23:boolean equals(java.lang.Object):0:0 -> equals
+    0:6:int hashCode():0:0 -> hashCode
+    0:21:java.lang.String toString():0:0 -> toString
+kotlin.NoWhenBranchMatchedException -> b.a:
+# {"id":"sourceFile","fileName":"NoWhenBranchMatchedException.kt"}
+kotlin.collections.CollectionsKt__IterablesKt -> R8$$REMOVED$$CLASS$$2:
+# {"id":"sourceFile","fileName":"Iterables.kt"}
+kotlin.jvm.internal.Intrinsics -> c.b:
+# {"id":"sourceFile","fileName":"Intrinsics.java"}
+    8:12:boolean areEqual(java.lang.Object,java.lang.Object):169:169 -> a
+    0:23:int com.pentest.ch42.vault.LicenceVault.mixSubscriberSalt(java.lang.String):47:47 -> b
+    24:36:int com.pentest.ch42.vault.LicenceVault.mixSubscriberSalt(java.lang.String):50:50 -> b
+    0:5:java.lang.Throwable sanitizeStackTrace(java.lang.Throwable):253:253 -> c
+      # {"id":"com.android.tools.r8.residualsignature","signature":"(Ljava/lang/NullPointerException;)V"}
+    6:9:java.lang.Throwable sanitizeStackTrace(java.lang.Throwable,java.lang.String):257:257 -> c
+    6:9:java.lang.Throwable sanitizeStackTrace(java.lang.Throwable):253 -> c
+    10:14:java.lang.Throwable sanitizeStackTrace(java.lang.Throwable,java.lang.String):258:258 -> c
+    10:14:java.lang.Throwable sanitizeStackTrace(java.lang.Throwable):253 -> c
+    15:32:java.lang.Throwable sanitizeStackTrace(java.lang.Throwable,java.lang.String):262:262 -> c
+    15:32:java.lang.Throwable sanitizeStackTrace(java.lang.Throwable):253 -> c
+    33:38:java.lang.Throwable sanitizeStackTrace(java.lang.Throwable,java.lang.String):267:267 -> c
+    33:38:java.lang.Throwable sanitizeStackTrace(java.lang.Throwable):253 -> c
+    39:42:java.lang.Throwable sanitizeStackTrace(java.lang.Throwable,java.lang.String):268:268 -> c
+    39:42:java.lang.Throwable sanitizeStackTrace(java.lang.Throwable):253 -> c
+kotlin.jvm.internal.Intrinsics$$ExternalSyntheticCheckNotZero0 -> c.a:
+# {"id":"sourceFile","fileName":"R8$$SyntheticClass"}
+# {"id":"com.android.tools.r8.synthesized"}

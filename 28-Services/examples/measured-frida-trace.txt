@@ -1,0 +1,143 @@
+Verbatim output of scripts/trace-service-lifecycle.js, captured on a physical device.
+
+  Device      Redmi M2101K6P (sweetin), MIUI 12.5, kernel 4.14.180
+  Release     Android 11, API 30, arm64
+  Frida       16.1.6 host / frida-server 16.1.6 on device (Magisk root)
+  Runtime     V8. See the note at the end -- the default QuickJS runtime did not
+              run the agent's timers in this environment, so setInterval never
+              fired and the deferred uid resolution never ran.
+
+  Traced      com.example.notesvault (uid 10310), the VULNERABLE build of
+              examples/VaultService-vulnerable.java
+  Attacker    com.pentest.ch28probe (uid 10291), examples/attacker-app/,
+              an ordinary third-party app with no permissions except
+              QUERY_ALL_PACKAGES
+
+Reproduce with:
+
+    # host -- start the target so a process exists, then attach
+    adb shell am start -n com.pentest.ch28probe/.ProbeActivity \
+        --es targets 'com.example.notesvault/com.example.notesvault.VaultService'
+    frida -U -n com.example.notesvault -l scripts/trace-service-lifecycle.js --runtime=v8
+
+    # then, in another shell, drive the attack
+    adb shell am start -n com.pentest.ch28probe/.ProbeActivity \
+        --es targets 'com.example.notesvault/com.example.notesvault.VaultService' \
+        --es tokencodes '1+2+3'
+
+================================================================================
+=== trace-service-lifecycle.js ===
+this process uid = 10310
+any callback reporting uid=10310 is NOT telling you who called.
+scope: every non-framework class (SKIP_PREFIXES applies). Pass a
+       "prefix" parameter to narrow it.
+
+[+] hooking Service subclass com.example.notesvault.VaultService
+[+] hooked android.os.Binder.execTransact
+[+] hooked android.os.Handler$MessengerImpl.send
+[+] ready. Bind or start the service now.
+
+[BINDER]    execTransact       uid=1000    pid=0      (system)  code=39  on android.app.ActivityThread$ApplicationThread
+[BINDER]    execTransact       uid=1000    pid=0      (system)  code=2  on android.app.ActivityThread$ApplicationThread
+[BINDER]    execTransact       uid=1000    pid=0      (system)  code=10  on android.app.ActivityThread$ApplicationThread
+[LIFECYCLE] onCreate           uid=10310   pid=27413  (SELF -- no transaction in flight, a check here does NOTHING)  com.example.notesvault.VaultService
+[LIFECYCLE] onBind             uid=10310   pid=27413  (SELF -- no transaction in flight, a check here does NOTHING)  com.example.notesvault.VaultService
+            intent=Intent { cmp=com.example.notesvault/.VaultService }
+            returned binder descriptor='com.example.notesvault.IVaultService'
+[BINDER]    execTransact       uid=10291   pid=27858  (resolving...)  code=1598968902  on com.example.notesvault.VaultService$1
+[BINDER]    execTransact       uid=10291   pid=27858  (resolving...)  code=1  on com.example.notesvault.VaultService$1
+[BINDER]    execTransact       uid=10291   pid=27858  (resolving...)  code=2  on com.example.notesvault.VaultService$1
+[BINDER]    execTransact       uid=1000    pid=0      (system)  code=39  on android.app.ActivityThread$ApplicationThread
+[BINDER]    execTransact       uid=10291   pid=27858  (resolving...)  code=3  on com.example.notesvault.VaultService$1
+[BINDER]    execTransact       uid=10291   pid=27858  (resolving...)  code=1  on com.example.notesvault.VaultService$1
+[BINDER]    execTransact       uid=10291   pid=27858  (resolving...)  code=2  on com.example.notesvault.VaultService$1
+[BINDER]    execTransact       uid=10291   pid=27858  (resolving...)  code=3  on com.example.notesvault.VaultService$1
+[uid]       10291 = com.pentest.ch28probe
+[BINDER]    execTransact       uid=1000    pid=0      (system)  code=39  on android.app.ActivityThread$ApplicationThread
+[BINDER]    execTransact       uid=1000    pid=0      (system)  code=39  on android.app.ActivityThread$ApplicationThread
+[BINDER]    execTransact       uid=1000    pid=0      (system)  code=11  on android.app.ActivityThread$ApplicationThread
+[BINDER]    execTransact       uid=1000    pid=0      (system)  code=3  on android.app.ActivityThread$ApplicationThread
+[LIFECYCLE] onUnbind           uid=10310   pid=27413  (SELF -- no transaction in flight, a check here does NOTHING)  com.example.notesvault.VaultService  returned false
+[LIFECYCLE] onDestroy          uid=10310   pid=27413  (SELF -- no transaction in flight, a check here does NOTHING)  com.example.notesvault.VaultService
+================================================================================
+
+WHAT TO READ IN IT
+------------------
+
+1.  THE WHOLE POINT OF THE CHAPTER IS THE TWO uid COLUMNS.
+
+        [LIFECYCLE] onBind        uid=10310 (SELF)
+        [BINDER]    execTransact  uid=10291 (com.pentest.ch28probe)
+
+    Same connection, one millisecond apart. onBind saw the service's OWN uid;
+    the transaction that followed saw the attacker's. Any identity check written
+    in onBind compares 10310 with 10310 and passes. The check has to be inside
+    the Stub method, which is what execTransact dispatches into.
+
+2.  code=1598968902 IS THE FIRST THING THE ATTACKER SENT.
+    That is INTERFACE_TRANSACTION, the ASCII bytes '_NTF'. It is
+    IBinder.getInterfaceDescriptor() -- the attacker asking the object to name
+    its own AIDL interface, which it does, for free, to anyone holding a handle.
+    The reply was 'com.example.notesvault.IVaultService'. That string is the
+    interface token the attacker then wrote in order to be allowed past
+    enforceInterface. See README 5.2.
+
+3.  CODES 1, 2, 3 APPEAR TWICE.
+    The first pass is the blind probe with an EMPTY parcel: each one came back
+    as SecurityException "Binder invocation to an incorrect interface", because
+    no interface token was written. The second pass is after writing the correct
+    token, and code 1 (getAuthToken) returned the secret. Both passes reached
+    onTransact -- the token check is inside the generated Stub, not in the
+    kernel and not in system_server.
+
+4.  THE OBJECT IS VaultService$1, NOT VaultService.
+    The anonymous inner class is the IVaultService.Stub instance. This is how
+    you find the real Binder object in a decompiled app: it is almost never the
+    Service class itself.
+
+5.  uid=1000 pid=0 ON ApplicationThread IS THE FRAMEWORK TALKING TO THE APP.
+    Codes 39, 2, 10, 11, 3 on android.app.ActivityThread$ApplicationThread are
+    system_server calling scheduleCreateService, scheduleBindService,
+    scheduleUnbindService and so on -- the calls traced in README 4.2. pid=0
+    because Binder.getCallingPid() is not populated for one-way transactions.
+
+6.  onUnbind RETURNED false, SO onRebind WILL NOT BE USED.
+    onDestroy followed immediately, because nothing had startService()'d this
+    service -- the bind claim was the only claim on its lifetime. README 2.3.
+
+TWO THINGS THAT WENT WRONG WHILE BUILDING THIS, RECORDED BECAUSE THEY WILL
+HAPPEN TO YOU
+-------------------------------------------------------------------------
+
+A.  HOOKING android.os.Handler.dispatchMessage KILLED THE TARGET.
+    The first version of the script traced Messenger traffic by replacing
+    Handler.dispatchMessage. That method runs for every message on every looper
+    in the process, and routing all of it through a Java replacement produced:
+
+        F libc: Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR),
+                fault addr 0x32c07000 in tid 25428 (mple.notesvault)
+        I ActivityManager: Process com.example.notesvault (pid 25428) has died
+
+    The fix is to hook android.os.Handler$MessengerImpl.send instead: it is the
+    single entry point for cross-process Messenger traffic and it fires only
+    when a Messenger is actually used.
+
+B.  RESOLVING uid -> PACKAGE FROM INSIDE execTransact HUNG THE SERVICE.
+    getPackagesForUid() is itself a Binder call. Making it while handling an
+    inbound transaction, on a Binder pool thread, is exactly the reentrancy
+    described in README 3.5.1 -- and the observed symptom was not an error but
+    SILENCE: the client's onServiceConnected never fired and the trace produced
+    no output at all. The script now prints the bare uid on the hot path and
+    resolves names on a timer, which is why '(resolving...)' appears above and
+    the '[uid] 10291 = com.pentest.ch28probe' line arrives later.
+
+    This is worth internalising beyond Frida. It is the same mistake a developer
+    makes when they call into system_server from inside their own AIDL method
+    while holding a lock.
+
+C.  THE DEFAULT QuickJS RUNTIME DID NOT RUN TIMERS HERE.
+    With `frida -U -l script.js` (QuickJS, Frida 16.1.6, Windows host), the
+    agent's setInterval callbacks never fired and no asynchronous console.log
+    output was delivered -- only the synchronous startup lines appeared. Adding
+    --runtime=v8 fixed it completely. If this script prints its banner and then
+    nothing, that is the first thing to change.

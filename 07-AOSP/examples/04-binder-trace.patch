@@ -1,0 +1,250 @@
+From: Android Security Research
+Subject: [PATCH] research: log every incoming Java Binder transaction
+
+RESEARCH INSTRUMENTATION — NOT FOR PRODUCTION.
+
+This patch adds a build-time-gated trace to android.os.Binder.execTransact,
+which is the single funnel through which EVERY incoming Java Binder call passes
+in EVERY process on the device (see 07-AOSP/README.md section 4.1 step 8).
+
+Applied to a userdebug image and enabled at runtime, it produces a complete,
+system-wide record of framework IPC with the kernel-stamped caller identity —
+below anything a user-space application can hook, detect or disable.
+
+WHY THIS RATHER THAN FRIDA
+    Frida hooks the same method and is available anywhere, which makes it the
+    right tool when you cannot build an image. But a Frida hook lives in user
+    space inside the traced process, so an application with native anti-hook
+    logic can find it. This patch is in the platform, in a process the
+    application does not control, and it captures processes that started before
+    you attached.
+
+    Use Frida when you cannot build. Use this when you can.
+
+HOW TO APPLY
+    cd <aosp-tree>
+    git -C frameworks/base apply --check ../../path/to/04-binder-trace.patch
+    git -C frameworks/base apply       ../../path/to/04-binder-trace.patch
+
+    source build/envsetup.sh
+    lunch aosp_cf_x86_64_phone-trunk_staging-userdebug
+    m framework
+    m snod                        # repack system.img in under a minute
+    stop_cvd && launch_cvd --daemon
+
+HOW TO ENABLE AT RUNTIME
+    The trace is off by default so the image is usable normally. Turn it on
+    with a system property, which costs one boolean read per transaction when
+    off:
+
+    adb root
+    adb shell setprop persist.research.binder_trace 1
+    adb shell stop && adb shell start          # restart the framework
+    adb logcat -s BINDER_TRACE
+
+    # off again
+    adb shell setprop persist.research.binder_trace 0
+
+HOW TO ANALYSE
+    adb logcat -c
+    adb shell am start -n com.example.app/.MainActivity
+    sleep 5
+    adb logcat -d -s BINDER_TRACE > trace.txt
+
+    # which interfaces, how often
+    grep -oE 'iface=[^ ]+' trace.txt | sort | uniq -c | sort -rn | head -20
+
+    # everything one UID asked the system for
+    grep 'uid=10123' trace.txt
+
+    # every distinct (interface, code) pair — the app's real API surface usage
+    grep -oE 'iface=[^ ]+ code=[0-9]+' trace.txt | sort -u
+
+WARNING
+    A patched platform is a RESEARCH INSTRUMENT, not evidence. Reproduce every
+    finding on an unmodified image before it goes in a report, and state in the
+    report which image each piece of evidence came from. The failure mode is
+    embarrassing and common: a "vulnerability" that exists only because
+    something was changed three weeks earlier and forgotten.
+
+    Do not ship an image with this enabled. The log contains the full IPC
+    behaviour of every application on the device, including argument sizes and
+    timing, and logd is readable by more than you think.
+
+NOTE ON THIS PATCH FILE
+    AOSP moves. The exact signature of execTransact and the surrounding code
+    have changed across releases, so this patch is provided in a form you must
+    adapt rather than apply blindly. Find the current signature with:
+
+        cs.android.com   file:Binder.java function:execTransact
+
+    and place the instrumentation block at the top of the method body, before
+    any dispatch. The block itself is release-independent.
+
+---
+ core/java/android/os/Binder.java | 62 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 62 insertions(+)
+
+diff --git a/core/java/android/os/Binder.java b/core/java/android/os/Binder.java
+--- a/core/java/android/os/Binder.java
++++ b/core/java/android/os/Binder.java
+@@ -1,6 +1,7 @@
+ package android.os;
+
+ import android.annotation.NonNull;
++import android.util.Slog;
+
+ /**
+  * Base class for a remotable object, the core part of a lightweight
+@@ -60,6 +61,45 @@ public class Binder implements IBinder {
+
+     private static volatile String sProxyTransactListenerClassName = null;
+
++    // ================== RESEARCH INSTRUMENTATION ==========================
++    //
++    // Every incoming Java Binder transaction in this process passes through
++    // execTransact() below. Logging here therefore captures ALL framework IPC
++    // served by this process, with the caller identity that the KERNEL stamped
++    // into the transaction in binder_transaction() — an identity the caller
++    // cannot forge.
++    //
++    // Gated on a system property so an instrumented image remains usable:
++    //     adb shell setprop persist.research.binder_trace 1
++    //     adb shell stop && adb shell start
++    //
++    // See 07-AOSP/README.md sections 3.10, 4.1 and 9.3.
++    //
++    private static final String RESEARCH_TRACE_TAG = "BINDER_TRACE";
++    private static final boolean RESEARCH_TRACE_ENABLED =
++            SystemProperties.getBoolean("persist.research.binder_trace", false);
++
++    private void researchTrace(int code, int flags) {
++        // Everything here must be exception-safe. This runs on the hot path of
++        // every IPC on the device; a throw would take down system_server.
++        try {
++            String iface = null;
++            try {
++                iface = getInterfaceDescriptor();
++            } catch (Throwable ignored) {
++                // Some Binder subclasses have no descriptor. Not an error.
++            }
++            Slog.i(RESEARCH_TRACE_TAG,
++                    "impl=" + getClass().getName()
++                    + " iface=" + (iface == null ? "(none)" : iface)
++                    + " code=" + code
++                    + " flags=" + flags
++                    + " uid=" + getCallingUid()
++                    + " pid=" + getCallingPid()
++                    + " myPid=" + Process.myPid());
++        } catch (Throwable ignored) {
++            // Never let instrumentation break the platform.
++        }
++    }
++    // ================ END RESEARCH INSTRUMENTATION ========================
++
+     /**
+      * Return the ID of the process that sent you the current transaction
+      * that is being processed.
+@@ -1200,6 +1240,12 @@ public class Binder implements IBinder {
+     // Entry point from android_util_Binder.cpp's onTransact.
+     private boolean execTransact(int code, long dataObj, long replyObj,
+             int flags) {
++        // ---- RESEARCH INSTRUMENTATION ----
++        if (RESEARCH_TRACE_ENABLED) {
++            researchTrace(code, flags);
++        }
++        // ---- END RESEARCH INSTRUMENTATION ----
++
+         // At that point, the parcel request headers haven't been parsed so we do not know what
+         // WorkSource the caller has set. Use calling UID as the default.
+         final int callingUid = Binder.getCallingUid();
+--
+2.43.0
+
+
+================================================================================
+COMPANION PATCHES
+================================================================================
+
+The same technique applies at four other points. Keep each as a separate,
+reviewed patch file in a git repository, so every experiment can state exactly
+which instrumentation was active and a colleague can recreate your environment.
+
+--------------------------------------------------------------------------------
+1. NATIVE BINDER — frameworks/native/libs/binder/IPCThreadState.cpp
+--------------------------------------------------------------------------------
+Catches OUTBOUND transactions, including from native processes that have no Java
+at all (surfaceflinger, mediaserver, vendor daemons). The Java patch above sees
+only inbound Java calls; this one completes the picture.
+
+    status_t IPCThreadState::transact(int32_t handle, uint32_t code,
+                                      const Parcel& data, Parcel* reply,
+                                      uint32_t flags)
+    {
+    +   // ---- RESEARCH INSTRUMENTATION ----
+    +   if (__android_log_is_loggable(ANDROID_LOG_INFO, "BINDER_NATIVE", ANDROID_LOG_INFO)) {
+    +       ALOGI("BINDER_NATIVE pid=%d uid=%d handle=%d code=%u size=%zu flags=%u",
+    +             getpid(), getuid(), handle, code, data.dataSize(), flags);
+    +   }
+    +   // ---- END RESEARCH INSTRUMENTATION ----
+        // ... existing implementation
+
+--------------------------------------------------------------------------------
+2. PERMISSION DECISIONS
+   frameworks/base/services/core/java/com/android/server/pm/permission/
+--------------------------------------------------------------------------------
+The class and method names have moved between releases. Find the current one:
+
+    cs.android.com  path:services/core/java/com/android/server/pm/permission function:checkPermission
+
+Then log the final decision:
+
+    +   Slog.i("PERM_TRACE", "perm=" + permName
+    +           + " pkg=" + packageName
+    +           + " uid=" + Binder.getCallingUid()
+    +           + " pid=" + Binder.getCallingPid()
+    +           + " user=" + userId
+    +           + " result=" + (result == PackageManager.PERMISSION_GRANTED
+    +                              ? "GRANTED" : "DENIED"));
+
+This turns "which permission actually blocked this?" from a black-box question
+into a log line, and it is the fastest way to understand an unfamiliar OEM's
+permission customisations.
+
+--------------------------------------------------------------------------------
+3. LIBRARY LOADS — bionic/linker/linker.cpp
+--------------------------------------------------------------------------------
+Every dlopen on the device, including from native code that deliberately avoids
+System.loadLibrary. Useful for packers, protectors and injected libraries.
+
+    +   async_safe_format_log(ANDROID_LOG_INFO, "DLOPEN_TRACE",
+    +           "pid=%d name=%s flags=0x%x", getpid(), name, flags);
+
+--------------------------------------------------------------------------------
+4. KEYSTORE OPERATIONS — system/security/keystore2/
+--------------------------------------------------------------------------------
+Every key creation, use and deletion, with the calling UID and the key's
+purposes and authorisations. Answers "is this key really hardware-backed and
+really user-authentication-bound?" without trusting the app's own claims.
+See 49-KeyStore/README.md.
+
+================================================================================
+MANAGING A PATCH SERIES
+================================================================================
+
+    ~/aosp-research-patches/
+      README.md                          what each patch does and why
+      frameworks_base.binder-trace.patch
+      frameworks_base.perm-trace.patch
+      frameworks_native.binder-native.patch
+      bionic.dlopen-trace.patch
+      system_security.keystore-trace.patch
+
+Apply them with the loop in ../05-research-env/setup.sh, which names each patch
+file after the project it applies to. Keeping them in git means:
+
+  - every experiment records exactly which instrumentation was active;
+  - you can rebuild a CLEAN image on demand to reproduce a finding;
+  - a colleague can recreate your environment exactly;
+  - a patch that stops applying after a release bump is a visible, reviewable
+    event rather than a silent drift.

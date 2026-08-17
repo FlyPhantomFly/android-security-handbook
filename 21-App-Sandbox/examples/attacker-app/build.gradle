@@ -1,0 +1,141 @@
+/*
+ * build.gradle — 21-App-Sandbox / examples/attacker-app
+ *
+ * WHAT IT DOES
+ *     Builds the unprivileged sandbox reachability probe as a single-module
+ *     Android application, with the sources laid out FLAT in this directory
+ *     rather than under src/main/java/com/attacker/sandboxprobe/. Three readable
+ *     files beats a twelve-directory skeleton for something you are meant to
+ *     read, edit and rebuild in thirty seconds per target.
+ *
+ * WHY IT MATTERS
+ *     The APK this produces is the only experiment that answers "can an app the
+ *     user installs reach X". Everything about the build is chosen so that a
+ *     client engineer can install the same APK and see the same output, which is
+ *     what ends arguments about whether a finding is real.
+ *
+ * HOW TO RUN
+ *     # host — from the repository root
+ *     gradle -p 21-App-Sandbox/examples/attacker-app assembleDebug
+ *
+ *     # host — or from this directory
+ *     gradle assembleDebug
+ *
+ *     adb install -r build/outputs/apk/debug/attacker-app-debug.apk
+ *     adb shell am start -n com.attacker.sandboxprobe/.ProbeActivity \
+ *         --es target com.example.target
+ *
+ * REQUIREMENTS
+ *     - JDK 11 or 17, and either a local Gradle 7.5+ or Android Studio.
+ *     - Android SDK with the compileSdk below installed; ANDROID_HOME set, or a
+ *       local.properties here containing sdk.dir=/path/to/Android/sdk.
+ *     - No wrapper JAR is committed to this repository. If you want ./gradlew,
+ *       generate one once:   gradle wrapper --gradle-version 8.5
+ *
+ * AGP VERSION NOTE — READ THIS IF THE BUILD FAILS
+ *     This file pins Android Gradle Plugin 7.4.2 deliberately. AGP 8.0 removed
+ *     support for declaring the package name via the `package` attribute in
+ *     AndroidManifest.xml and requires `namespace` here instead. The manifest
+ *     keeps package="com.attacker.sandboxprobe" because that is what the chapter
+ *     text shows and what every published example looks like.
+ *
+ *     To use AGP 8:
+ *       1. bump the classpath version below;
+ *       2. add   namespace 'com.attacker.sandboxprobe'   inside android { };
+ *       3. delete the package="..." attribute from AndroidManifest.xml.
+ *     Nothing else changes.
+ */
+
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:7.4.2'
+    }
+}
+
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 33
+    buildToolsVersion '33.0.2'
+
+    defaultConfig {
+        applicationId 'com.attacker.sandboxprobe'
+
+        // minSdk 21 so one APK installs on everything from Android 5.0. You WILL
+        // need to test across versions: scoped storage, /proc hardening,
+        // clipboard access, package visibility and data-directory modes all
+        // changed behaviour between 21 and 34, and a result on one release says
+        // nothing about another.
+        minSdkVersion 21
+
+        // targetSdk 33 keeps the PROBE subject to modern platform rules,
+        // including package visibility filtering. That is deliberate: a probe
+        // that opts out of the restrictions a real attacker faces would give you
+        // optimistic results. To model a legacy malicious app, drop this to 29
+        // and re-run — the difference is instructive and belongs in the report.
+        targetSdkVersion 33
+
+        versionCode 1
+        versionName '1.0-sandbox-probe'
+    }
+
+    /*
+     * Flat source layout. Everything the probe needs is in this directory.
+     *
+     * The exclude keeps Gradle from re-compiling generated sources under build/
+     * (BuildConfig.java and friends), which would otherwise produce
+     * duplicate-class errors because srcDirs is '.'.
+     *
+     * If your Gradle version dislikes this block, delete it and move the files:
+     *     AndroidManifest.xml -> src/main/AndroidManifest.xml
+     *     *.java              -> src/main/java/com/attacker/sandboxprobe/
+     */
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+            java.srcDirs = ['.']
+            java.filter.exclude '**/build/**'
+            res.srcDirs = []
+            assets.srcDirs = []
+            jniLibs.srcDirs = []
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    buildTypes {
+        debug {
+            // No shrinking, no obfuscation. You want the probe's own stack
+            // traces readable when a target throws something odd back at you —
+            // an ERROR verdict is often the most interesting result in the run.
+            minifyEnabled false
+            debuggable true
+        }
+    }
+
+    lintOptions {
+        // The probe deliberately does things lint dislikes: an exported activity
+        // with no permission, reads of other packages' paths, a hardcoded
+        // package name. That is the whole point of the app.
+        abortOnError false
+        checkReleaseBuilds false
+    }
+}
+
+/*
+ * No dependencies at all. Not AndroidX, not a support library, nothing.
+ *
+ * That is a deliberate property, not laziness. This APK is EVIDENCE: a client
+ * engineer will install it and read its output. The fewer third-party classes it
+ * contains, the less room there is for anyone to argue that the result came from
+ * something other than the platform APIs any app can call.
+ */
+dependencies {
+}

@@ -1,0 +1,278 @@
+{
+  "_about": [
+    "Signal database for ../scripts/lib-fingerprint.py.",
+    "",
+    "Every entry here is a PACKAGE-NAME BOUNDARY: a point where a library",
+    "renamed or relocated its package, so that the name alone constrains the",
+    "version. README section 3.7 technique 2 rates this the strongest of the",
+    "class-set signals, because a rename is a hard boundary rather than a",
+    "similarity score, and because library packages survive R8 (the SDK's own",
+    "consumer-rules.pro keeps them).",
+    "",
+    "WHAT IS DELIBERATELY NOT IN HERE",
+    "  Exact version-to-class mappings. 'Class Foo was added in 4.7.2' is only",
+    "  worth writing down if you verified it against the artifacts, and a",
+    "  wrong entry here silently produces a wrong version number in somebody's",
+    "  report. Use --refs with real JARs downloaded from Maven for that: the",
+    "  script compares against the artifacts themselves, so it cannot be stale.",
+    "",
+    "  CVE data. This file says what a library IS, never whether it is",
+    "  vulnerable. See ../faq.md on why an outdated library is not a finding.",
+    "",
+    "HOW TO EXTEND IT",
+    "  Add entries as you work. README section 8.1 Phase 2 is right that this",
+    "  becomes one of your most valuable personal assets. Two rules:",
+    "    1. every rule carries a 'source' saying how you know it;",
+    "    2. if you cannot write that sentence, you do not know it yet.",
+    "",
+    "  kind: 'class_prefix'    classes exist directly under this package",
+    "  kind: 'class_relocated' the package appears as an inner segment of some",
+    "                          other package -- a shaded copy, which a prefix",
+    "                          search would never find",
+    "  bound: exact | min | max | presence",
+    "  confidence: high | medium | low"
+  ],
+
+  "libraries": [
+    {
+      "id": "okhttp",
+      "name": "OkHttp",
+      "rules": [
+        {
+          "kind": "class_prefix",
+          "value": "com/squareup/okhttp/",
+          "implies": "OkHttp 2.x",
+          "bound": "max",
+          "confidence": "high",
+          "source": "OkHttp 2.x lived under com.squareup.okhttp. Version 3 moved the whole library to the okhttp3 package precisely so both majors could coexist in one app. Seeing the old package is therefore an upper bound.",
+          "raises": "Confirm with --prefix com.squareup.okhttp --refs, using 2.x JARs from Maven Central."
+        },
+        {
+          "kind": "class_prefix",
+          "value": "okhttp3/",
+          "implies": "OkHttp 3.0 or later",
+          "bound": "min",
+          "confidence": "high",
+          "source": "The okhttp3 package name was introduced with the 3.0 release and is still used by 4.x and 5.x. It narrows the major, not the minor.",
+          "raises": "Grep the DEX for the okhttp/x.y.z User-Agent fragment (T1), then run --prefix okhttp3 --refs to bracket the minor."
+        },
+        {
+          "kind": "class_relocated",
+          "value": "okhttp3",
+          "implies": "a shaded copy of OkHttp",
+          "bound": "presence",
+          "confidence": "high",
+          "source": "Vendors that embed OkHttp routinely relocate it under their own namespace so that it cannot clash with the app's own copy. The relocated classes are byte-for-byte the same library.",
+          "raises": "Diff the relocated class set against real OkHttp releases; the shape will match even though the names do not."
+        }
+      ]
+    },
+    {
+      "id": "okio",
+      "name": "Okio",
+      "rules": [
+        {
+          "kind": "class_prefix",
+          "value": "okio/",
+          "implies": "Okio present",
+          "bound": "presence",
+          "confidence": "high",
+          "source": "Okio is OkHttp's I/O layer and is pulled in transitively by it, by Retrofit, and by Moshi. Its presence without okhttp3 means something else brought it.",
+          "raises": "Find what depends on it: ./gradlew dependencyInsight if you have the build, otherwise look at which packages reference okio classes."
+        },
+        {
+          "kind": "class_relocated",
+          "value": "okio",
+          "implies": "a shaded copy of Okio",
+          "bound": "presence",
+          "confidence": "medium",
+          "source": "Shaded alongside OkHttp by the same vendors, for the same reason.",
+          "raises": "Check whether the shaded copy and a non-shaded copy are BOTH present. Two copies of the same library at different versions is a real and reportable condition."
+        }
+      ]
+    },
+    {
+      "id": "androidx",
+      "name": "AndroidX (Jetpack)",
+      "rules": [
+        {
+          "kind": "class_prefix",
+          "value": "androidx/",
+          "implies": "post-AndroidX build",
+          "bound": "min",
+          "confidence": "high",
+          "source": "AndroidX replaced the android.support.* namespace as the support-library successor. A build using it is on the modern artifact line.",
+          "raises": "META-INF/androidx.*.version stamps (T5) give literal per-artifact versions and are usually present in the same APK."
+        },
+        {
+          "kind": "class_prefix",
+          "value": "android/support/",
+          "implies": "legacy Android Support Library",
+          "bound": "max",
+          "confidence": "high",
+          "source": "The android.support.* namespace was frozen when AndroidX took over; nothing new ships under it. Its presence dates the dependency set.",
+          "raises": "Both namespaces in one APK usually means Jetifier or an un-migrated third-party AAR. Worth reporting as a maintenance observation, not a vulnerability."
+        }
+      ]
+    },
+    {
+      "id": "crashlytics",
+      "name": "Crashlytics",
+      "rules": [
+        {
+          "kind": "class_prefix",
+          "value": "com/crashlytics/android/",
+          "implies": "Fabric-era Crashlytics",
+          "bound": "max",
+          "confidence": "high",
+          "source": "Crashlytics shipped under com.crashlytics.* in its Fabric incarnation, before the move to the Firebase artifact line.",
+          "raises": "Check the merged manifest for the matching initialisation provider; the authority names the era too."
+        },
+        {
+          "kind": "class_prefix",
+          "value": "com/google/firebase/crashlytics/",
+          "implies": "Firebase-era Crashlytics",
+          "bound": "min",
+          "confidence": "high",
+          "source": "The Firebase artifact uses the com.google.firebase.crashlytics package.",
+          "raises": "Look for the com.google.firebase.crashlytics.* version stamp in META-INF."
+        }
+      ]
+    },
+    {
+      "id": "braze",
+      "name": "Braze (formerly Appboy)",
+      "rules": [
+        {
+          "kind": "class_prefix",
+          "value": "com/appboy/",
+          "implies": "pre-rename Braze SDK",
+          "bound": "max",
+          "confidence": "high",
+          "source": "The vendor rebranded from Appboy to Braze and renamed the SDK package accordingly. Classes still under com.appboy predate that rename.",
+          "raises": "Both packages present at once is normal during a migration release; check which one the manifest's provider points at."
+        },
+        {
+          "kind": "class_prefix",
+          "value": "com/braze/",
+          "implies": "post-rename Braze SDK",
+          "bound": "min",
+          "confidence": "high",
+          "source": "The current package name.",
+          "raises": "Endpoint strings in the DEX corroborate the vendor independently of the package name."
+        }
+      ]
+    },
+    {
+      "id": "exoplayer",
+      "name": "ExoPlayer / Media3",
+      "rules": [
+        {
+          "kind": "class_prefix",
+          "value": "com/google/android/exoplayer2/",
+          "implies": "ExoPlayer 2.x artifact line",
+          "bound": "max",
+          "confidence": "high",
+          "source": "ExoPlayer 2 used com.google.android.exoplayer2. Its successor ships as AndroidX Media3 under androidx.media3.",
+          "raises": "ExoPlayer contains media parsers. Once identified, the question that matters is which extractors are reachable, not the version alone."
+        },
+        {
+          "kind": "class_prefix",
+          "value": "androidx/media3/",
+          "implies": "Media3 artifact line",
+          "bound": "min",
+          "confidence": "high",
+          "source": "Media3 is the AndroidX continuation of ExoPlayer.",
+          "raises": "META-INF/androidx.media3.*.version stamps give the literal version."
+        }
+      ]
+    },
+    {
+      "id": "bouncycastle",
+      "name": "BouncyCastle / SpongyCastle",
+      "rules": [
+        {
+          "kind": "class_prefix",
+          "value": "org/bouncycastle/",
+          "implies": "BouncyCastle bundled by the app",
+          "bound": "presence",
+          "confidence": "high",
+          "source": "Android ships a trimmed BouncyCastle inside the platform. A copy under the app's own classes is a SECOND, app-controlled crypto provider, and its version is the app's responsibility rather than the platform's.",
+          "raises": "Read chapter 34 on what the app does with it; a bundled provider is only interesting once you see it registered and used."
+        },
+        {
+          "kind": "class_prefix",
+          "value": "org/spongycastle/",
+          "implies": "SpongyCastle, the repackaged-for-Android BouncyCastle",
+          "bound": "presence",
+          "confidence": "high",
+          "source": "SpongyCastle exists purely to avoid a name clash with the platform's bundled BouncyCastle. It is the same codebase under a different package.",
+          "raises": "Treat it as BouncyCastle for vulnerability purposes; the rename does not change the code."
+        }
+      ]
+    },
+    {
+      "id": "coil",
+      "name": "Coil",
+      "rules": [
+        {
+          "kind": "class_prefix",
+          "value": "coil/",
+          "implies": "Coil 1.x or 2.x",
+          "bound": "max",
+          "confidence": "medium",
+          "source": "Coil 3 moved to the coil3 package so that it could coexist with earlier majors; the unsuffixed package is therefore the earlier line.",
+          "raises": "Confirm with --refs against Coil artifacts from Maven Central."
+        },
+        {
+          "kind": "class_prefix",
+          "value": "coil3/",
+          "implies": "Coil 3.x",
+          "bound": "min",
+          "confidence": "medium",
+          "source": "The coil3 package name marks the third major line.",
+          "raises": "Same as above."
+        }
+      ]
+    },
+    {
+      "id": "kotlin-stdlib",
+      "name": "Kotlin standard library",
+      "rules": [
+        {
+          "kind": "class_prefix",
+          "value": "kotlin/",
+          "implies": "Kotlin stdlib is bundled",
+          "bound": "presence",
+          "confidence": "high",
+          "source": "Kotlin has no platform runtime on Android; every Kotlin app carries the stdlib in its own DEX.",
+          "raises": "META-INF/*.kotlin_module and kotlin/*.kotlin_builtins carry metadata that narrows the compiler version. See README section 3.7 technique 5."
+        }
+      ]
+    },
+    {
+      "id": "protobuf",
+      "name": "Protocol Buffers (Java)",
+      "rules": [
+        {
+          "kind": "class_prefix",
+          "value": "com/google/protobuf/",
+          "implies": "protobuf-java or protobuf-javalite present",
+          "bound": "presence",
+          "confidence": "high",
+          "source": "Both the full and the 'lite' Android runtime use this package.",
+          "raises": "Lite and full are different artifacts with the same package. Check whether GeneratedMessageLite or GeneratedMessageV3 is the base class present; that tells you which one, and it changes what the wire format looks like when you get to lab 03."
+        },
+        {
+          "kind": "class_relocated",
+          "value": "com/google/protobuf",
+          "implies": "a shaded copy of protobuf",
+          "bound": "presence",
+          "confidence": "high",
+          "source": "Protobuf is the single most frequently shaded Java library, because two SDKs generated against different protobuf runtimes cannot share one.",
+          "raises": "Count the distinct copies. Three shaded protobuf runtimes in one APK is common and is worth a line in the report on its own."
+        }
+      ]
+    }
+  ]
+}

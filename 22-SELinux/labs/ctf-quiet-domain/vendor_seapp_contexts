@@ -1,0 +1,41 @@
+# =============================================================================
+# vendor_seapp_contexts  --  CTF ARTEFACT, SYNTHETIC
+#
+# *** CONSTRUCTED FOR labs/lab-05-ctf-the-quiet-domain.md ***
+#
+# Not from any real device. The format is exactly that of a real
+# /vendor/etc/selinux/vendor_seapp_contexts; the contents are invented.
+#
+# Device story: "Aurora Mobile AM-7", Android 13 / API 33.
+#
+# Remember while reading this file: matching is by SPECIFICITY, not by the
+# order the lines appear in. See README section 3.6.
+#
+# The real, measured equivalents are in
+#   ../../examples/seapp_contexts-measured.txt
+# =============================================================================
+
+# The vendor's audio effects configuration app. Platform-signed, so no
+# third-party app can claim it.
+user=_app seinfo=platform name=com.aurora.audiofx domain=vnd_audiofx type=app_data_file levelFrom=user
+
+# The sensor calibration UI. Privileged, so it must be in a priv-app
+# directory in the system image.
+user=_app isPrivApp=true name=com.aurora.sensorcal domain=vnd_sensord type=app_data_file levelFrom=all
+
+# The OTA companion. Platform-signed AND privileged. Belt and braces.
+user=_app seinfo=platform isPrivApp=true name=com.aurora.otaclient domain=vnd_otad type=app_data_file levelFrom=all
+
+# The factory test harness. Note the domain -- and note that this line was
+# supposed to be removed before the device shipped.
+user=_app seinfo=platform name=com.aurora.factorytest domain=vnd_factory_app type=vnd_factory_data_file levelFrom=user
+
+# The diagnostics companion app.
+user=_app name=com.aurora.diag domain=diag_app type=diag_app_data_file levelFrom=user
+
+# Anything else falls through to the platform rules in plat_seapp_contexts:
+#   user=_app minTargetSdkVersion=30 domain=untrusted_app type=app_data_file levelFrom=all
+#   user=_app minTargetSdkVersion=29 domain=untrusted_app_29 type=app_data_file levelFrom=all
+#   user=_app minTargetSdkVersion=28 domain=untrusted_app_27 type=app_data_file levelFrom=all
+#   user=_app minTargetSdkVersion=26 domain=untrusted_app_27 type=app_data_file levelFrom=user
+#   user=_app domain=untrusted_app_25 type=app_data_file levelFrom=user

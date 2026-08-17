@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  examples/AndroidManifest.xml
+
+  Chapter 63 - LSPosed.  The manifest half of what makes an APK a module.
+
+  In a real Android project this file lives at app/src/main/AndroidManifest.xml.
+  It is stored flat here because this repository keeps examples in one directory
+  per chapter; examples/README.md maps every file to the project path it would
+  occupy.
+
+  There are exactly four things in this file that matter to LSPosed, and they
+  are all <meta-data> elements inside <application>.  Everything else is an
+  ordinary APK.  That is the whole trick: a module is not a special artefact
+  type, it is a normal application that declares four strings and ships a text
+  file in assets/.
+
+  A note on the version numbers below.  "xposedminversion" is the minimum
+  XPOSED API version the module needs, NOT an Android version and NOT an
+  LSPosed version.  API 82 is the level the de.robv.android.xposed API has sat
+  at for years; a module asking for 82 runs on LSPosed, and on classic Xposed
+  builds that reached that API level.  Asking for a higher number than you
+  actually need is the most common reason a module silently refuses to load.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.pentest.ch63.module">
+
+    <!--
+      A module needs no permissions to hook.  It runs inside the target's
+      process with the TARGET's uid and the TARGET's permissions - it does not
+      carry its own.  If your module needs to write a file, it writes it as the
+      app you hooked, into that app's sandbox.
+
+      This is the single most important consequence of the Zygote injection
+      model and it is worth stating in the manifest as a comment, because the
+      empty permission list looks like an omission and is not.
+    -->
+
+    <application
+        android:label="CH63 Vault Unlock"
+        android:icon="@mipmap/ic_launcher"
+        android:allowBackup="false">
+
+        <!-- 1. REQUIRED.  Without this, LSPosed's manager will not list the
+                APK as a module at all. -->
+        <meta-data
+            android:name="xposedmodule"
+            android:value="true" />
+
+        <!-- 2. REQUIRED in practice.  Shown in the manager's module list.
+                Keep it to one line; the manager truncates. -->
+        <meta-data
+            android:name="xposeddescription"
+            android:value="Chapter 63 teaching module. Instruments the com.pentest.ch63.vault lab app only." />
+
+        <!-- 3. REQUIRED.  The minimum Xposed API version.  Note the value is a
+                STRING here, not an integer resource - a common source of
+                "module not detected" reports is writing android:value="82"
+                against an integer-typed resource and getting a type mismatch
+                the manager reads as absent. -->
+        <meta-data
+            android:name="xposedminversion"
+            android:value="82" />
+
+        <!-- 4. OPTIONAL but strongly recommended.  A comma-separated list of
+                the packages this module is intended for.  LSPosed's manager
+                pre-selects these when you enable the module, which means the
+                user does not have to guess the scope.
+
+                It is a HINT, not an enforcement boundary.  The module still
+                runs only in packages the user actually enables, and it can
+                still be enabled for packages not listed here.  The check in
+                VaultUnlockModule.handleLoadPackage is the enforcement. -->
+        <meta-data
+            android:name="xposedscope"
+            android:value="com.pentest.ch63.vault" />
+
+        <!--
+          There is deliberately NO <activity>, <service>, <receiver> or
+          <provider> here.  A module that only hooks needs no components at
+          all; the APK exists to be parsed and to have its DEX loaded by
+          somebody else's process.
+
+          A module that wants a settings screen adds an ordinary launcher
+          Activity, and then faces the classic Xposed problem: the settings
+          Activity runs in the MODULE's process, and the hooks run in the
+          TARGET's process, and the two share nothing.  The historical answer
+          was world-readable SharedPreferences (removed in Android 7 - see
+          chapter 33); the modern answer is LSPosed's remote-preferences
+          bridge, or shipping configuration inside the module APK so that
+          changing it means rebuilding.  This example takes the third option:
+          the OBSERVE flag is a compile-time constant.
+        -->
+
+    </application>
+</manifest>

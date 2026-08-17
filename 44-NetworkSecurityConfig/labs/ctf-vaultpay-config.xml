@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    labs/ctf-vaultpay-config.xml
+
+    The challenge artefact for labs/lab-04-ctf-the-config-that-lies.md.
+
+    This is the network security configuration of a fictional payments app,
+    com.vaultpay.wallet. It ships as text XML rather than inside an APK so that
+    the challenge needs no build and no device, and so that nothing in this
+    repository is a build artefact. Lab 04 tells you how to compile it into a
+    real APK if you want to confirm your answers on a device, which you should.
+
+    THE MANIFEST FACTS, which are half the challenge and are NOT in this file:
+
+        package                       com.vaultpay.wallet
+        android:targetSdkVersion      33
+        android:minSdkVersion         24
+        android:debuggable            false          (the release build)
+        android:usesCleartextTraffic  true
+        android:networkSecurityConfig @xml/network_security_config
+
+    They are reproduced in labs/ctf-vaultpay-manifest.xml so you can run the
+    auditor against something realistic.
+
+    NO SPOILERS BELOW. The comments in here describe the app's intent as its
+    developers understood it. Several of them are wrong, and working out which
+    is the challenge. Do not read lab-04's answer section first.
+
+    THE PIN VALUES ARE PLACEHOLDERS. They are correctly formed - 32 bytes,
+    base64 - so that tooling parses the document, and they correspond to no real
+    key. This repository ships no certificates and no private keys.
+
+    Every dash below is deliberately single: the XML specification forbids a
+    double hyphen inside a comment, and aapt2 rejects the whole resource if one
+    appears.
+-->
+<network-security-config>
+
+    <!--
+        Security review, 2025-11: "All traffic is HTTPS only. We trust the
+        platform CA store and nothing else. Signed off."
+    -->
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+
+    <!--
+        The image and asset CDN. Ticket VP-2291: "the CDN edge does not support
+        TLS for the legacy image path, and these are public marketing assets, so
+        permitting cleartext here is acceptable."
+    -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">cdn.vaultpay.io</domain>
+
+        <!--
+            Ticket VP-2417: "img.cdn.vaultpay.io serves user profile pictures,
+            which are not public, so we pin it."
+        -->
+        <domain-config>
+            <domain includeSubdomains="false">img.cdn.vaultpay.io</domain>
+            <pin-set expiration="2023-02-29">
+                <pin digest="SHA-256">SW1nQ2RuVmF1bHRQYXlQbGFjZWhvbGRlclBpbjAwMSE=</pin>
+                <pin digest="SHA-256">SW1nQ2RuVmF1bHRQYXlCYWNrdXBQaW5QbGFjZTAwMiE=</pin>
+            </pin-set>
+        </domain-config>
+    </domain-config>
+
+    <!--
+        The payments API. This is the one that matters.
+
+        Ticket VP-1804: "api.vaultpay.io is pinned to our issuing intermediate
+        and a backup key held offline. Expiry is 2031 so we are covered for the
+        life of the current PKI. We also trust the user store here because our
+        enterprise customers terminate TLS at their own appliance, and
+        overridePins lets that work."
+    -->
+    <domain-config>
+        <domain includeSubdomains="true">api.vaultpay.io</domain>
+        <trust-anchors>
+            <certificates src="system" />
+            <certificates src="user" overridePins="true" />
+        </trust-anchors>
+        <pin-set expiration="2031-01-01">
+            <pin digest="SHA-256">QXBpVmF1bHRQYXlJc3N1aW5nSW50ZXJtZWRpYXRlMDE=</pin>
+            <pin digest="SHA-256">QXBpVmF1bHRQYXlPZmZsaW5lQmFja3VwS2V5UGluMDI=</pin>
+        </pin-set>
+    </domain-config>
+
+    <!--
+        Third party analytics, added by the growth team.
+        Ticket VP-3102: "vendor SDK requires HTTP for the batch endpoint."
+    -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">telemetry-vaultpay.example</domain>
+    </domain-config>
+
+    <!--
+        Ticket VP-0904: "so the team can proxy their own builds."
+    -->
+    <debug-overrides>
+        <trust-anchors>
+            <certificates src="user" />
+            <certificates src="system" />
+        </trust-anchors>
+    </debug-overrides>
+
+</network-security-config>

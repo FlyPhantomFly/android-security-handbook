@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  examples/hardened-webview/network_security_config.xml
+  Compiled into the hardened lab APK as res/xml/network_security_config.xml.
+
+  No cleartext anywhere, system anchors only, no debug overrides. This is the
+  configuration a WebView-hosting app should ship, and chapter 44 explains every
+  element: ../../../44-NetworkSecurityConfig/README.md.
+
+  Read it together with HardenedWebViewActivity.java, because the pair is the
+  whole point of this chapter's boundary:
+
+    this file       decides WHOSE certificates count, and whether plaintext HTTP
+                    may leave the device at all. It reaches inside the WebView:
+                    Chromium consults NetworkSecurityPolicy through JNI and
+                    refuses an http:// load with ERR_CLEARTEXT_NOT_PERMITTED.
+
+    the Java file   decides what happens when validation FAILS. That decision is
+                    onReceivedSslError, it lives in code, and nothing in this
+                    file constrains it. An app can ship this exact config and
+                    still accept every forged certificate on the internet.
+
+  Which is why an audit that reads only one of the two is not an audit.
+-->
+<network-security-config>
+
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+
+</network-security-config>

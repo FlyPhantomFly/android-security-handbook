@@ -1,0 +1,205 @@
+# =============================================================================
+# avc-denials-measured.log
+#
+# WHAT THIS IS
+#   A corpus of `avc: denied` audit records for practising denial triage, and
+#   the input fixture for ../scripts/avc-decode.py.
+#
+# PROVENANCE  --  read this before you quote anything from this file.
+#
+#   Lines in the MEASURED sections below were captured from a physical arm64
+#   device running Android 13 (API 33), MediaTek platform, stock user build,
+#   SELinux Enforcing, NOT rooted, with:
+#
+#       adb logcat -d -b all | grep -i "avc:"
+#
+#   Nothing in those sections has been edited except:
+#     - the leading logcat timestamp/pid/tid columns are kept verbatim,
+#     - obvious duplicate repeats were collapsed (the device produced 6,101
+#       avc lines in one uptime; ~5,900 of them were three repeating shapes),
+#     - no field values were altered, invented, or renamed.
+#
+#   Lines in the SYNTHETIC section are hand-written to cover denial shapes the
+#   test device did not happen to produce. They are marked, individually, and
+#   they are constructed to be *format-correct*, not to assert that any real
+#   device emitted them. Do not cite a synthetic line as evidence of platform
+#   behaviour.
+#
+# HOW TO USE
+#   python3 ../scripts/avc-decode.py avc-denials-measured.log
+#   python3 ../scripts/avc-decode.py avc-denials-measured.log --rules-only
+#   python3 ../scripts/avc-decode.py avc-denials-measured.log --group
+#
+# WHAT THIS FILE WILL *NOT* TELL YOU
+#   Whether any of these denials is a security finding. Almost none of them
+#   are. See README section 5.9 -- "an avc denial is not a finding" -- before
+#   you put any line of this file into a report.
+# =============================================================================
+
+
+# -----------------------------------------------------------------------------
+# SECTION 1 -- MEASURED, and CAUSALLY LINKED to a command the author ran.
+#
+# These three are the most valuable records in the file, because for each one
+# the exact command that produced it is known. Lab 02 walks through deriving
+# the allow rule for each. All three were produced from `adb shell` on the
+# device described above, i.e. from scontext u:r:shell:s0.
+# -----------------------------------------------------------------------------
+
+# Command:  adb shell 'cat /proc/sys/kernel/kptr_restrict'
+# Visible:  cat: /proc/sys/kernel/kptr_restrict: Permission denied     (exit 1)
+08-06 05:34:14.904 17892 17892 I auditd  : type=1400 audit(0.0:7170): avc: denied { read } for comm="cat" name="kptr_restrict" dev="proc" ino=1872582 scontext=u:r:shell:s0 tcontext=u:object_r:proc_security:s0 tclass=file permissive=0
+08-06 05:34:14.904 17892 17892 W cat     : type=1400 audit(0.0:7170): avc: denied { read } for name="kptr_restrict" dev="proc" ino=1872582 scontext=u:r:shell:s0 tcontext=u:object_r:proc_security:s0 tclass=file permissive=0
+
+# Command:  adb shell 'ls -l /data/misc/keystore'
+# Visible:  ls: /data/misc/keystore: Permission denied
+08-06 05:34:14.928 17893 17893 I auditd  : type=1400 audit(0.0:7171): avc: denied { getattr } for comm="ls" path="/data/misc/keystore" dev="dm-7" ino=2342914 scontext=u:r:shell:s0 tcontext=u:object_r:keystore_data_file:s0 tclass=dir permissive=0
+08-06 05:34:14.928 17893 17893 W ls      : type=1400 audit(0.0:7171): avc: denied { getattr } for path="/data/misc/keystore" dev="dm-7" ino=2342914 scontext=u:r:shell:s0 tcontext=u:object_r:keystore_data_file:s0 tclass=dir permissive=0
+
+# Command:  adb shell 'cat /sys/fs/selinux/policy > /dev/null'
+# Visible:  exit status 1, empty output. NOTE the class here is `security` and
+#           the permission is `read_policy` -- there is no file involved at all.
+#           This is why you cannot dump the binary policy from a stock shell.
+08-06 05:34:14.952 17894 17894 I auditd  : type=1400 audit(0.0:7172): avc: denied { read_policy } for comm="cat" scontext=u:r:shell:s0 tcontext=u:object_r:kernel:s0 tclass=security permissive=0
+08-06 05:34:14.952 17894 17894 W cat     : type=1400 audit(0.0:7172): avc: denied { read_policy } for scontext=u:r:shell:s0 tcontext=u:object_r:kernel:s0 tclass=security permissive=0
+
+# Command:  adb shell 'ls -l /system/etc/selinux/'
+# Visible:  three rows printed as  -?????????  ?  ?  ?  ?  ?  plat_mac_permissions.xml
+#           ls could stat the DIRECTORY (it has `search` on that type) but not
+#           these individual files, so it printed the entry name with unknown
+#           metadata. A row of question marks in `ls -l` output is a getattr
+#           denial that has not been logged yet -- go and look.
+08-06 05:30:42.372 17763 17763 I auditd  : type=1400 audit(0.0:7159): avc: denied { getattr } for comm="ls" path="/system/etc/selinux/plat_mac_permissions.xml" dev="dm-4" ino=2037 scontext=u:r:shell:s0 tcontext=u:object_r:mac_perms_file:s0 tclass=file permissive=0
+08-06 05:30:42.372 17763 17763 I auditd  : type=1400 audit(0.0:7160): avc: denied { getattr } for comm="ls" path="/system/etc/selinux/plat_hwservice_contexts" dev="dm-4" ino=2035 scontext=u:r:shell:s0 tcontext=u:object_r:hwservice_contexts_file:s0 tclass=file permissive=0
+08-06 05:30:42.376 17763 17763 I auditd  : type=1400 audit(0.0:7161): avc: denied { getattr } for comm="ls" path="/vendor/etc/selinux/vendor_service_contexts" dev="dm-5" ino=906 scontext=u:r:shell:s0 tcontext=u:object_r:vendor_service_contexts_file:s0 tclass=file permissive=0
+
+
+# -----------------------------------------------------------------------------
+# SECTION 2 -- MEASURED, benign platform noise.
+#
+# Every one of these fired repeatedly during ordinary idle operation of a
+# healthy, unmodified device. They are the reason "there are avc denials in
+# dmesg" is not, by itself, a finding. Read README section 5.9.
+# -----------------------------------------------------------------------------
+
+# Google Play Services probing for a Perfetto tracing socket that policy does
+# not let an app write to. Fired 5,700+ times in one uptime, roughly every 30s.
+# The app handles the failure and carries on. Textbook benign probing.
+08-05 11:41:20.884  3188  3188 I auditd  : type=1400 audit(0.0:80): avc: denied { write } for comm="ThreadPoolForeg" name="traced_producer" dev="tmpfs" ino=11111 scontext=u:r:gmscore_app:s0:c512,c768 tcontext=u:object_r:traced_producer_socket:s0 tclass=sock_file permissive=0 app=com.google.android.gms
+
+# The same app stat()ing every top-level directory it can name, to fingerprint
+# the device. Note the target types: it is walking / and being refused one
+# directory at a time.
+08-05 14:47:15.192  6333  6333 I auditd  : type=1400 audit(0.0:1273): avc: denied { getattr } for comm="CTION_IDLE_MODE" path="/postinstall" dev="dm-4" ino=45 scontext=u:r:gmscore_app:s0:c512,c768 tcontext=u:object_r:postinstall_mnt_dir:s0 tclass=dir permissive=0 app=com.google.android.gms
+08-05 14:47:15.192  6333  6333 I auditd  : type=1400 audit(0.0:1274): avc: denied { getattr } for comm="CTION_IDLE_MODE" path="/metadata" dev="mmcblk0p7" ino=2 scontext=u:r:gmscore_app:s0:c512,c768 tcontext=u:object_r:metadata_file:s0 tclass=dir permissive=0 app=com.google.android.gms
+08-05 14:47:15.192  6333  6333 I auditd  : type=1400 audit(0.0:1276): avc: denied { getattr } for comm="CTION_IDLE_MODE" path="/init" dev="dm-4" ino=26 scontext=u:r:gmscore_app:s0:c512,c768 tcontext=u:object_r:init_exec:s0 tclass=lnk_file permissive=0 app=com.google.android.gms
+08-05 14:47:15.192  6333  6333 I auditd  : type=1400 audit(0.0:1277): avc: denied { getattr } for comm="CTION_IDLE_MODE" path="/data_mirror" dev="tmpfs" ino=11575 scontext=u:r:gmscore_app:s0:c512,c768 tcontext=u:object_r:mirror_data_file:s0 tclass=dir permissive=0 app=com.google.android.gms
+08-05 14:47:15.192  6333  6333 I auditd  : type=1400 audit(0.0:1279): avc: denied { read } for comm="CTION_IDLE_MODE" name="acct" dev="dm-4" ino=13 scontext=u:r:gmscore_app:s0:c512,c768 tcontext=u:object_r:cgroup:s0 tclass=dir permissive=0 app=com.google.android.gms
+
+# The same app reading a system property node it is not allowed to read.
+# `oem_unlock_prop` is the bootloader-unlock state. This is a root/tamper
+# detection probe -- see chapter 37.
+08-05 14:47:16.804  6333  6333 I auditd  : type=1400 audit(0.0:2287): avc: denied { read } for comm="CTION_IDLE_MODE" name="u:object_r:oem_unlock_prop:s0" dev="tmpfs" ino=12486 scontext=u:r:gmscore_app:s0:c512,c768 tcontext=u:object_r:oem_unlock_prop:s0 tclass=file permissive=0 app=com.google.android.gms
+
+# tclass=service_manager. An app asking servicemanager to hand it a Binder
+# service that policy does not let it find. `name=` here is the SERVICE name,
+# not a file name. Chapter 24 owns the IPC surface; this line is the MAC
+# decision about reaching it.
+08-05 11:41:12.377   414   414 I auditd  : avc:  denied  { find } for pid=2396 uid=10028 name=USDKPlus scontext=u:r:priv_app:s0:c512,c768 tcontext=u:object_r:default_android_service:s0 tclass=service_manager permissive=0
+
+# A second service_manager denial, and the single most useful line in this file
+# for understanding MCS: scontext carries FOUR categories, c44 and c260 encode
+# the subject's uid (1068 = 4*256 + 44), c512 and c768 encode Android user 0.
+08-05 11:41:14.837   414   414 I auditd  : avc:  denied  { find } for pid=1672 uid=1068 name=nfc scontext=u:r:secure_element:s0:c44,c260,c512,c768 tcontext=u:object_r:nfc_service:s0 tclass=service_manager permissive=0
+
+# tclass=property_service. Note the whole avc record is WRAPPED inside a
+# type=1107 record emitted by init, because init is the property setter and it
+# is init that reports the refusal. `property=` names the property. There is
+# no scontext/tcontext pair outside the quoted msg -- the outer `subj=` is
+# init's own context. Parsers that look only at the outer record get this
+# wrong; ../scripts/avc-decode.py handles the nesting.
+08-05 11:41:14.628     1     1 I auditd  : type=1107 audit(0.0:78): uid=0 auid=4294967295 ses=4294967295 subj=u:r:init:s0 msg='avc: denied { set } for property=vendor.sms.md.ready pid=1113 uid=1001 gid=1001 scontext=u:r:rild:s0 tcontext=u:object_r:vendor_default_prop:s0 tclass=property_service permissive=0'
+08-05 11:46:52.680     1     1 I auditd  : type=1107 audit(0.0:142): uid=0 auid=4294967295 ses=4294967295 subj=u:r:init:s0 msg='avc: denied { set } for property=persist.device_config.tethering.bpf_net_maps_enable_java_bpf_map pid=1234 uid=1000 gid=1000 scontext=u:r:system_server:s0 tcontext=u:object_r:default_prop:s0 tclass=property_service permissive=0'
+
+# MCS in action against a *privileged* app's data directory. dexoptanalyzer
+# runs at s0 with NO categories; the target carries c512,c768. Under the MLS
+# dir/search constraint the subject's level must dominate the object's, and
+# s0 does not dominate s0:c512,c768, so this is refused on the CONSTRAINT even
+# though there may well be a matching allow rule. This is the shape you must
+# recognise: type enforcement said yes, MLS said no.
+08-05 12:17:25.180  4582  4582 I auditd  : type=1400 audit(0.0:362): avc: denied { search } for comm="main" name="com.google.android.gms" dev="dm-7" ino=999764 scontext=u:r:dexoptanalyzer:s0 tcontext=u:object_r:privapp_data_file:s0:c512,c768 tclass=dir permissive=0 app=com.google.android.gms
+
+# A privileged system daemon being refused, which happens constantly and is
+# almost always harmless. vold cannot read the root of a vendor persist
+# partition; the platform copes.
+08-06 03:03:37.884   428   428 I auditd  : type=1400 audit(0.0:6697): avc: denied { read } for comm="binder:428_2" name="/" dev="mmcblk0p12" ino=2 scontext=u:r:vold:s0 tcontext=u:object_r:persist_data_file:s0 tclass=dir permissive=0
+
+# system_server being refused an ioctl. `ioctlcmd=0x6686` is the extended
+# permission -- ioctl denials carry a command number and need an `allowxperm`
+# rule, not a plain `allow`. 0x6686 is FS_IOC_ENABLE_VERITY.
+08-05 14:47:22.588  1234  1234 I auditd  : type=1400 audit(0.0:2289): avc: denied { ioctl } for comm="PackageManagerB" path="/system/priv-app/MtkMms/MtkMms.apk" dev="dm-4" ino=4089 ioctlcmd=0x6686 scontext=u:r:system_server:s0 tcontext=u:object_r:system_file:s0 tclass=file permissive=0
+
+# comm= is HEX-ENCODED here, because the process name contains a space. The
+# audit subsystem hex-encodes any field value containing whitespace or quotes.
+# 73796E6320737663203238 decodes to: sync svc 28
+08-06 03:12:42.904   729   729 I auditd  : type=1400 audit(0.0:6734): avc: denied { search } for comm=73796E6320737663203238 name="oem" dev="dm-4" ino=44 scontext=u:r:adbd:s0 tcontext=u:object_r:oemfs:s0 tclass=dir permissive=0
+
+# A vendor daemon reading a property node. Note `name=` is the string
+# "u:object_r:default_prop:s0" -- on the properties tmpfs the FILE IS NAMED
+# after its own context. This confuses people into thinking the parser broke.
+08-05 11:41:21.980   739   739 I auditd  : type=1400 audit(0.0:82): avc: denied { read } for comm="mnld" name="u:object_r:default_prop:s0" dev="tmpfs" ino=12391 scontext=u:r:mnld:s0 tcontext=u:object_r:default_prop:s0 tclass=file permissive=0
+
+
+# -----------------------------------------------------------------------------
+# SECTION 3 -- SYNTHETIC. Not observed on the test device. Format-correct only.
+#
+# Each line is marked SYNTHETIC. They exist so the decoder and the labs can
+# exercise shapes that a stock, unrooted, single-user device will not produce
+# on its own. Do not quote them as evidence.
+# -----------------------------------------------------------------------------
+
+# SYNTHETIC -- the canonical app-vs-app denial. Two untrusted_app processes,
+# same domain, different MCS categories. This is the one that 21-App-Sandbox
+# sends you here to understand. c107 -> appId 10107, c150 -> appId 10150.
+<5>[  912.443210] type=1400 audit(1738500000.123:451): avc: denied { read } for pid=14028 comm="attacker" name="session.xml" dev="dm-7" ino=3310721 scontext=u:r:untrusted_app:s0:c107,c256,c512,c768 tcontext=u:object_r:app_data_file:s0:c150,c256,c512,c768 tclass=file permissive=0 app=com.example.attacker
+
+# SYNTHETIC -- an abstract-namespace UNIX socket. There is no path, no inode
+# permission bits, no DAC at all: `name=` is the abstract name with a leading
+# NUL rendered by the kernel as "@". MAC is the ONLY control here. 24-IPC
+# cites this chapter for exactly this case.
+<5>[  913.001004] type=1400 audit(1738500001.001:452): avc: denied { connectto } for pid=14028 comm="attacker" path=005F5F6D797365727669636500 scontext=u:r:untrusted_app:s0:c107,c256,c512,c768 tcontext=u:r:priv_app:s0:c512,c768 tclass=unix_stream_socket permissive=0
+
+# SYNTHETIC -- process:execmem. An app trying to make anonymous memory
+# executable in a domain that is not permitted to. On the test device
+# `appdomain` IS granted execmem, so untrusted_app would not produce this;
+# `traced` and `system_server` carry neverallow rules against it and would.
+<5>[  914.220100] type=1400 audit(1738500002.220:453): avc: denied { execmem } for pid=1234 comm="Binder:1234_5" scontext=u:r:system_server:s0 tcontext=u:r:system_server:s0 tclass=process permissive=0
+
+# SYNTHETIC -- file:execute_no_trans. This is the shape you get when an app
+# targeting API 29+ drops a binary in its own data directory, chmod +x, and
+# tries to execve it. The measured policy on the test device grants
+# untrusted_app_25 and untrusted_app_27 this permission and does NOT grant it
+# to untrusted_app. See README section 3.10.
+<5>[  915.330500] type=1400 audit(1738500003.330:454): avc: denied { execute_no_trans } for pid=14028 comm="sh" path="/data/user/0/com.example.attacker/files/payload" dev="dm-7" ino=3310999 scontext=u:r:untrusted_app:s0:c107,c256,c512,c768 tcontext=u:object_r:app_data_file:s0:c107,c256,c512,c768 tclass=file permissive=0 app=com.example.attacker
+
+# SYNTHETIC -- keystore2_key. The object is a KEY NAMESPACE, not a file.
+# 49-KeyStore cites this chapter for this class. `use` means "perform a crypto
+# operation with a key in that namespace".
+<5>[  916.440900] type=1400 audit(1738500004.440:455): avc: denied { use } for pid=14028 scontext=u:r:untrusted_app:s0:c107,c256,c512,c768 tcontext=u:object_r:vold_key:s0 tclass=keystore2_key permissive=0
+
+# SYNTHETIC -- permissive=1. The operation SUCCEEDED. Policy would have
+# refused it, but the domain is in permissive mode so the kernel logged and
+# allowed. Reading permissive=1 as "blocked" is the most damaging misreading
+# of an avc line there is.
+<5>[  917.550000] type=1400 audit(1738500005.550:456): avc: denied { write } for pid=2001 comm="vendor_daemon" name="config" dev="dm-5" ino=99001 scontext=u:r:vendor_experimental:s0 tcontext=u:object_r:vendor_configs_file:s0 tclass=file permissive=1
+
+# SYNTHETIC -- a granted decision, logged because the rule carries auditallow.
+# Note the word is `granted`, not `denied`. Grepping for "denied" misses these
+# entirely, and they are how you prove a sensitive operation DID happen.
+<5>[  918.660000] type=1400 audit(1738500006.660:457): avc: granted { setenforce } for pid=3001 comm="magiskd" scontext=u:r:magisk:s0 tcontext=u:object_r:kernel:s0 tclass=security
+
+# SYNTHETIC -- capability class. The object is not a file; it is the
+# capability itself, and tcontext equals scontext because a process is asking
+# to use a capability over itself. DAC would have allowed this (the process is
+# root); MAC refused it. This single line is the whole thesis of the chapter.
+<5>[  919.770000] type=1400 audit(1738500007.770:458): avc: denied { sys_module } for pid=3050 comm="rootshell" capability=16 scontext=u:r:shell:s0 tcontext=u:r:shell:s0 tclass=capability permissive=0

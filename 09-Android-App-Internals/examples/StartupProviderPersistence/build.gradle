@@ -1,0 +1,23 @@
+// examples/StartupProviderPersistence/build.gradle
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+}
+
+android {
+    namespace 'com.example.startup'
+    compileSdk 34
+    defaultConfig {
+        applicationId 'com.example.startup'
+        minSdk 24
+        targetSdk 34
+        versionCode 1
+        versionName '1.0'
+    }
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+            java.srcDirs = ['.']
+        }
+    }
+}

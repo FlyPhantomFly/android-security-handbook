@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  examples/AndroidManifest-vulnerable.xml
+
+  The declaration that ConfigSyncReceiver-vulnerable.java relies on.
+
+  Read it as an auditor would. Everything wrong here is visible without running
+  anything — which is exactly why the runtime half of this chapter matters:
+  the two receivers below are the ONLY part of this app's broadcast surface a
+  manifest audit can see. The app also registers two more at runtime, and no
+  amount of manifest reading will find those. See VaultApplication.java.
+
+  Chapter 32 owns the manifest audit itself. This file exists to be a target,
+  not to teach manifest analysis:
+      python3 ../../32-Manifest/scripts/manifest-audit.py AndroidManifest-vulnerable.xml
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.vault">
+
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!--
+      MISTAKE A. A custom permission at protectionLevel="normal".
+
+      "normal" is granted automatically to any app that asks for it, with no
+      user prompt and no signature check. A component guarded by a normal
+      permission is guarded by nothing: the attacker adds one <uses-permission>
+      line and is through. This is the most common way a developer believes a
+      component is protected when it is not.
+
+      The only protectionLevel that means anything between two apps you do not
+      both control is "signature".
+    -->
+    <permission
+        android:name="com.example.vault.permission.SYNC"
+        android:protectionLevel="normal" />
+
+    <!--
+      MISTAKE B. A third-party app declaring <protected-broadcast>.
+
+      This element is honoured ONLY for packages signed with the platform key.
+      In a third-party APK it does absolutely nothing — the action remains
+      forgeable by anyone. Its presence tells you the developer copied a system
+      manifest and believed the copy was doing something.
+
+      Verify rather than assume: run ../scripts/protected-broadcast-map.sh in its
+      single-action mode against com.example.vault.ACTION_SYNC_CONFIG. The exact
+      command line is in ../cheatsheet.md and ../faq.md; it is not repeated here
+      because its flag begins with a double hyphen, which XML forbids inside a
+      comment and aapt2 rejects.
+    -->
+    <protected-broadcast android:name="com.example.vault.ACTION_SYNC_CONFIG" />
+
+    <application
+        android:name=".VaultApplication"
+        android:allowBackup="true"
+        android:label="Vault">
+
+        <activity android:name=".MainActivity" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!--
+          THE BUG.
+
+          Two actions in one filter, at two different trust levels:
+
+            android.intent.action.BOOT_COMPLETED
+                A <protected-broadcast>. Measured on Android 11 / API 30: adb
+                shell (uid 2000) attempting to send it is refused with
+                "SecurityException: Permission Denial: not allowed to send
+                broadcast android.intent.action.BOOT_COMPLETED from pid=8920,
+                uid=2000". Unforgeable by an ordinary app.
+
+            com.example.vault.ACTION_SYNC_CONFIG
+                An app-defined string. Nothing protects it. Measured on the same
+                device: an arbitrary custom action sends successfully and comes
+                back "Broadcast completed: result=0".
+
+          The receiver is exported because it must be, to hear BOOT_COMPLETED.
+          Exporting it for the protected action also exports it for the
+          unprotected one — and, because a filter constrains only IMPLICIT
+          delivery, exports it for EVERY action when addressed by component:
+
+              adb shell am broadcast -n com.example.vault/.ConfigSyncReceiver
+
+          carrying a config_url string extra and a force boolean extra. The
+          command with its extras flags is in ../README.md section on forging and
+          in ../labs/lab-02-forge-a-broadcast.md step 4; it is not written out
+          here because those flags begin with a double hyphen, which XML forbids
+          inside a comment and aapt2 rejects.
+
+          No <intent-filter> is consulted on that command line at all.
+        -->
+        <receiver
+            android:name=".ConfigSyncReceiver"
+            android:exported="true">
+            <intent-filter android:priority="500">
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="com.example.vault.ACTION_SYNC_CONFIG" />
+            </intent-filter>
+        </receiver>
+
+        <!--
+          MISTAKE C. A high-priority filter on an ordered broadcast the app does
+          not own.
+
+          priority only affects ORDERED broadcasts, where it decides who is
+          handed the Intent first and therefore who gets to call
+          abortBroadcast() before anyone else sees it. Values above 1000 are
+          documented as reserved for the system.
+
+          On the measured device, `cmd package query-receivers` (brief mode) for
+          android.intent.action.BOOT_COMPLETED returned 214 receivers, the
+          highest-priority of which sat at priority=2147483647, Integer.MAX_VALUE.
+          The command with its flags is in ../cheatsheet.md.
+          Whoever writes that number is trying to be first, and being first on an
+          ordered broadcast is the interception primitive.
+        -->
+        <receiver
+            android:name=".UpdateInterceptor"
+            android:exported="true">
+            <intent-filter android:priority="2147483647">
+                <action android:name="com.example.vault.SYNC_COMPLETE" />
+            </intent-filter>
+        </receiver>
+
+    </application>
+</manifest>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    examples/keeplab/res/values/strings.xml
+
+    Resource NAMES live in resources.arsc, not in the DEX. R8 never touches
+    them, at any setting. That is why an app whose every class is called `a`
+    still tells you it has a PIN screen: layout/activity_pin, id/pin_entry,
+    string/pin_hint.
+
+    Renaming these requires a separate resource obfuscator, which the AGP
+    toolchain does not include. Check for yourself after building:
+        aapt2 dump resources build/c-overbroad/app.apk | grep -E 'string/|id/'
+-->
+<resources>
+    <string name="app_name">CH41 Keep Lab</string>
+    <string name="status_ready">Ready</string>
+    <string name="license_check_failed">License check failed</string>
+    <string name="pin_entry_hint">Enter your 4-digit PIN</string>
+</resources>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    examples/attacker-app/AndroidManifest.xml
+
+    The manifest of the prober. Four lines, and three of them matter.
+
+    This is deliberately the SMALLEST possible attacker: no permissions beyond
+    package visibility, no services of its own, no receivers, no providers, no
+    network access. An app that looks exactly like this on a store listing
+    raises no flags at all, and, as measured on the test device, it can bind
+    hundreds of services belonging to other apps and to the platform.
+
+    That is the point worth making in a report. The attacker in this threat
+    model is not privileged. It is a torch app.
+
+    (Note for anyone editing this file: a double hyphen is not legal inside an
+    XML comment. aapt2 rejects the whole manifest with
+    "error: not well-formed (invalid token)" and does not tell you why. That is
+    why the prose below uses commas where it would rather use dashes.)
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.pentest.ch28probe">
+
+    <!--
+        WITHOUT THIS LINE THE PROBE SILENTLY REPORTS FALSE NEGATIVES.
+
+        From API 30, an app whose targetSdk is 30 or higher cannot see most
+        other packages. A filtered package behaves as if it does not exist:
+        bindService() returns false, throws nothing, and logs nothing.
+
+        Measured as a controlled experiment. Same prober, same target, one line
+        apart:
+
+          without QUERY_ALL_PACKAGES
+            BIND-RETURN com.vendor.fileexplorer/...FirebaseInstanceIdService => false
+          with QUERY_ALL_PACKAGES
+            BIND-RETURN com.vendor.fileexplorer/...FirebaseInstanceIdService => true
+            CONNECTED   ... descriptor=''
+
+        A real attacker has the same option, so this is a fidelity measure, not
+        a cheat. If you would rather not request it, because some review
+        processes flag it, replace it with a queries block naming your specific
+        targets, which needs no permission at all:
+
+            <queries>
+                <package android:name="com.example.notesvault"/>
+                <intent>
+                    <action android:name="com.example.notesvault.BIND_VAULT"/>
+                </intent>
+            </queries>
+
+        Either way: package visibility is an anti ENUMERATION measure. It is not
+        an access control and must never be reported as a mitigation.
+    -->
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"/>
+
+    <!--
+        targetSdk 30 matches the test device. Raise it to reproduce API 31+
+        behaviour (mandatory android:exported, background foreground service
+        restrictions) and API 34 behaviour (mandatory foregroundServiceType).
+        Lowering it below 30 turns OFF package visibility filtering entirely,
+        which is a legitimate testing technique and also a reminder that the
+        filtering is a targetSdk gated behaviour, not a platform wide one.
+    -->
+    <uses-sdk android:minSdkVersion="21" android:targetSdkVersion="30"/>
+
+    <application android:label="Ch28Probe">
+        <!--
+            exported="true" so `am start` can launch it from adb. That makes the
+            PROBER itself trivially startable by any app on the device, which is
+            fine for a test tool and would be a finding in a real one. Do not
+            leave a build like this on a device you care about.
+        -->
+        <activity
+            android:name=".ProbeActivity"
+            android:exported="true"/>
+    </application>
+</manifest>

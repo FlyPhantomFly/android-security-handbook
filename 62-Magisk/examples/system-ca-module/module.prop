@@ -1,0 +1,6 @@
+id=systemca
+name=Pentest System CA
+version=v1.0
+versionCode=1
+author=Android-Pentesting-Notes
+description=Installs an interception CA into the system trust store, systemlessly. AUTHORISED TESTING DEVICES ONLY - this makes every TLS connection on the device interceptable by whoever holds the private key.

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    labs/ctf-probe/AndroidManifest.xml
+
+    The entrant's test APK for chapter 66 lab 04. It is complete: you should not
+    need to change anything in this file. The three attributes that matter are
+    the same three as in examples/vault-probe, and they are worth re-reading once
+    before you start editing Java:
+
+        package="com.pentest.ch66.ctf.test"
+            a separate package, separately installed.
+
+        android:targetPackage="com.pentest.ch66.ctf"
+            the binding. This is what makes ActivityManagerService start the
+            CTF app's process and load this APK's code into it.
+
+        android:name="com.pentest.ch66.ctf.probe.CtfProbe"
+            the class the framework instantiates. It must extend
+            android.app.Instrumentation and needs a public no-argument
+            constructor.
+
+    build-ctf.sh signs this APK with the SAME key as the CTF target, because
+    chapter 66 section 3.9 measured that the signature relationship, and not
+    android:debuggable, is what ActivityManagerService checks.
+
+    (An XML comment may not contain a double hyphen. aapt2 rejects the file with
+    "not well-formed (invalid token)" and points at the line rather than the
+    reason, which is why this note is here.)
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.pentest.ch66.ctf.test"
+    android:versionCode="1"
+    android:versionName="1.0">
+
+    <uses-sdk android:minSdkVersion="24" android:targetSdkVersion="35" />
+
+    <instrumentation
+        android:name="com.pentest.ch66.ctf.probe.CtfProbe"
+        android:targetPackage="com.pentest.ch66.ctf"
+        android:label="ch66 ctf probe" />
+
+    <application android:label="ch66 ctf probe" />
+</manifest>

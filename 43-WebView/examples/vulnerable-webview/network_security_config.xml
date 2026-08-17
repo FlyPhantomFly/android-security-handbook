@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  examples/vulnerable-webview/network_security_config.xml
+  Compiled into the lab APK as res/xml/network_security_config.xml by ../build.sh.
+
+  This file exists to demonstrate a BOUNDARY, not a vulnerability.
+
+  What it does: permits cleartext HTTP to 127.0.0.1 and nothing else. The lab
+  serves its attack page from the host machine through `adb reverse tcp:8000
+  tcp:8000`, so the device reaches it at http://127.0.0.1:8000/. Without this
+  scope the WebView refuses the load outright and Chromium reports
+  ERR_CLEARTEXT_NOT_PERMITTED, which is the demonstration that chapter 44's
+  mechanism reaches inside the WebView. Run the lab both ways.
+
+  What it cannot do: anything at all about the Activity's
+  onReceivedSslError override. No element in this schema describes what an app
+  does when certificate validation FAILS. The <trust-anchors> element says whose
+  certificates are acceptable; `handler.proceed()` says "load it even though
+  nobody acceptable vouched for this one". They are answers to different
+  questions, and only one of them is in this file.
+
+  Chapter 44 owns this file in full: ../../../44-NetworkSecurityConfig/README.md.
+-->
+<network-security-config>
+
+    <!-- Everything not named below: HTTPS only, system trust anchors only. -->
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+
+    <!-- The lab's loopback listener, reached through `adb reverse`. -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="false">127.0.0.1</domain>
+        <domain includeSubdomains="false">localhost</domain>
+    </domain-config>
+
+</network-security-config>

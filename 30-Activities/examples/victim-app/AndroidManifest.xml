@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  examples/victim-app/AndroidManifest.xml
+
+  The VICTIM half of chapter 30's lab pair. Build it with examples/victim-app/build.sh.
+
+  This app is deliberately vulnerable in exactly two ways, and deliberately CORRECT
+  everywhere else, so that a lab result is attributable to one cause:
+
+    1. DeputyActivity is exported and forwards an Intent it was handed in an extra
+       (the confused-deputy / grant-laundering primitive - see labs/lab-03).
+    2. ConsentActivity does not set filterTouchesWhenObscured (tapjacking - lab-04).
+
+  Everything else about it is ordinary. In particular note what is NOT here:
+  there is no android:taskAffinity on <application>. That is the DEFAULT
+  configuration, and the default is what the whole task-hijacking argument in
+  labs/lab-02 is measured against. Do not "harden" it before running the lab or
+  you will measure the wrong thing.
+
+  The Alpha/Beta/Gamma/Delta/Epsilon activities exist only to make launch modes
+  observable. Each declares one launchMode and does nothing else, so that
+  `dumpsys activity activities` shows the launch mode's effect and nothing else.
+
+  AUTHORISED TESTING ONLY. Install on a device you own.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.pentest.ch30.victim">
+
+    <uses-sdk android:minSdkVersion="21" android:targetSdkVersion="30"/>
+
+    <application
+        android:label="CH30 Victim"
+        android:allowBackup="false">
+
+        <!-- The launcher entry. launchMode is left at the default `standard`
+             and taskAffinity at the default (the package name). -->
+        <activity android:name=".MainActivity" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+
+        <!-- One activity per launch mode. lab-01 walks each one. -->
+        <activity android:name=".AlphaActivity"
+                  android:exported="true"
+                  android:launchMode="standard"/>
+        <activity android:name=".BetaActivity"
+                  android:exported="true"
+                  android:launchMode="singleTop"/>
+        <activity android:name=".GammaActivity"
+                  android:exported="true"
+                  android:launchMode="singleTask"/>
+        <activity android:name=".DeltaActivity"
+                  android:exported="true"
+                  android:launchMode="singleInstance"/>
+
+        <!-- A NON-DEFAULT affinity inside the app's own package. This is the
+             control that proves affinity is what splits tasks, not the package:
+             Epsilon belongs to this app and still lands in a different task. -->
+        <activity android:name=".EpsilonActivity"
+                  android:exported="true"
+                  android:taskAffinity="com.pentest.ch30.other"/>
+
+        <!-- VULNERABILITY 1: the confused deputy. Exported, no permission,
+             forwards an Intent it finds in the "next" extra. -->
+        <activity android:name=".DeputyActivity" android:exported="true">
+            <intent-filter>
+                <action android:name="com.pentest.ch30.victim.FORWARD"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+
+        <!-- The FIXED deputy. Same entry point shape, validating implementation. -->
+        <activity android:name=".DeputyActivityFixed" android:exported="true">
+            <intent-filter>
+                <action android:name="com.pentest.ch30.victim.FORWARD_SAFE"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+
+        <!-- The internal screen the deputy is allowed to reach. -->
+        <activity android:name=".InternalActivity" android:exported="false"/>
+
+        <!-- The CTF target for labs/lab-05. EXPORTED, so anyone may start it -
+             but it only reveals its flag when it believes its own app opened it,
+             which it decides ONCE in onCreate. launchMode="singleTop" means an
+             existing instance is reused via onNewIntent, and that reuse is where
+             the cached decision becomes a second entry point. -->
+        <activity android:name=".VaultActivity"
+                  android:exported="true"
+                  android:launchMode="singleTop"/>
+
+        <!-- VULNERABILITY 2: a consent screen with no obscured-touch filtering. -->
+        <activity android:name=".ConsentActivity" android:exported="true"/>
+
+        <!-- The hardened counterpart. -->
+        <activity android:name=".ConsentSafeActivity" android:exported="true"/>
+
+        <!-- NOT exported. grantUriPermissions=true means a component of THIS app
+             may hand a temporary grant on one of its URIs to another app.
+             That is the capability the deputy launders in lab-03. -->
+        <provider
+            android:name=".SecretProvider"
+            android:authorities="com.pentest.ch30.victim.secrets"
+            android:exported="false"
+            android:grantUriPermissions="true"/>
+    </application>
+</manifest>

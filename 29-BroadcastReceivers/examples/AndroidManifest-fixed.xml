@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  examples/AndroidManifest-fixed.xml
+
+  The declaration that ConfigSyncReceiver-fixed.java relies on. Diff it against
+  AndroidManifest-vulnerable.xml; the differences are the whole remediation.
+
+  What changed, in order of value:
+
+    1. The two-action filter is gone. One receiver, one action, one trust level.
+    2. The sensitive receiver is not declared here AT ALL — it moved to a
+       runtime registration with RECEIVER_NOT_EXPORTED. A component that is not
+       in the manifest cannot be started by another app, cannot be woken when
+       the app is not running, and cannot be found by an attacker reading the
+       APK.
+    3. The custom permission is protectionLevel="signature". Only an app signed
+       with the same key can hold it. "normal" would have been decoration.
+    4. <protected-broadcast> is gone. It never did anything in a third-party
+       manifest and its presence misled whoever read it next.
+    5. The Integer.MAX_VALUE priority is gone. Nothing here needs to run before
+       anything else.
+    6. android:exported is stated explicitly on every component. From API 31 an
+       app with an intent-filtered component and no explicit android:exported
+       will not install; below that, the default flips on the presence of a
+       filter, which is exactly the trap that produces accidentally exported
+       components.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.vault">
+
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!--
+      signature: held only by an app signed with the same key. This is the only
+      protectionLevel that is a real control between two apps. The app must also
+      <uses-permission> its own permission — declaring it is not holding it.
+    -->
+    <permission
+        android:name="com.example.vault.permission.INTERNAL_SYNC"
+        android:protectionLevel="signature" />
+    <uses-permission android:name="com.example.vault.permission.INTERNAL_SYNC" />
+
+    <application
+        android:name=".VaultApplication"
+        android:allowBackup="false"
+        android:label="Vault">
+
+        <activity android:name=".MainActivity" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!--
+          The boot hook, and nothing else.
+
+          android:exported="true" is not optional here: a manifest receiver that
+          must hear a system broadcast has to be exported. That is fine, because
+          the only action it lists is one an ordinary app cannot send, and
+          because BootReceiver.onReceive rejects any other action as its first
+          statement.
+
+          android:directBootAware is deliberately absent. A receiver that runs
+          before the user unlocks the device runs before credential-encrypted
+          storage is available; adding the attribute without understanding that
+          produces a receiver that reads an empty datastore and "helpfully"
+          repopulates it with defaults.
+        -->
+        <receiver
+            android:name=".BootReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+        <!--
+          If — and only if — another app you control genuinely must reach a
+          receiver, this is the shape: exported, guarded by a SIGNATURE
+          permission, one action, and an action check in the code as well.
+
+          Note the asymmetry the manifest cannot express. android:permission
+          here is what the SENDER must hold. The matching control on the other
+          side, receiverPermission in sendBroadcast(intent, permission), is what
+          the RECEIVER must hold, and it appears in no manifest anywhere. Both
+          are needed if both directions matter, and only a hook or a code read
+          will show you the second one — see ../scripts/hook-broadcast.js.
+        -->
+        <receiver
+            android:name=".CompanionBridgeReceiver"
+            android:exported="true"
+            android:permission="com.example.vault.permission.INTERNAL_SYNC">
+            <intent-filter>
+                <action android:name="com.example.vault.ACTION_COMPANION_PING" />
+            </intent-filter>
+        </receiver>
+
+        <!--
+          ConfigSyncReceiver is NOT here. It is registered at runtime with
+          RECEIVER_NOT_EXPORTED, and messages to it are sent with setPackage()
+          plus a signature permission. Verify the result on a live device by
+          running ../scripts/receiver-surface.py scoped to com.example.vault. The
+          exact command line is in ../cheatsheet.md and in ../examples/build.sh;
+          it is not repeated here because its flag begins with a double hyphen,
+          which XML forbids inside a comment and aapt2 rejects.
+
+          On API 33+ the registration reports NOT_EXPORTED. Below 33 the flag
+          does not exist, and the AndroidX backport shows up instead as a
+          requiredPermission ending in
+          DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION.
+        -->
+
+    </application>
+</manifest>

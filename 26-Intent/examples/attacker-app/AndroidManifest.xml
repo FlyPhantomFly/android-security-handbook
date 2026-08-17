@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    examples/attacker-app/AndroidManifest.xml
+
+    The attacker in labs 01 and 04. It is deliberately as boring as possible:
+    ONE launcher activity, NO permissions, NO shared uid, NO intent filters
+    beyond the launcher entry.
+
+    That emptiness is the point of the whole exercise. The exploit needs no
+    permission the user has to grant, no root, no accessibility service, and no
+    special capability. It is an ordinary app — the kind that gets installed for
+    a wallpaper or a torch — and the entire attack is fifteen lines of Java.
+
+    IT IS ALSO WHY YOU CANNOT DO THIS WITH `adb shell`. Shell runs as uid 2000
+    and is privileged; this app runs as an ordinary 10xxx uid, which is what the
+    finding must be proved against. See README section 7.6.
+
+    <queries> is declared because from targetSdk 30 an app cannot see, or resolve
+    against, packages it has not declared an interest in. Without it the attacker's
+    own resolveActivity() calls would return null against the deputy — which is a
+    good illustration of package-visibility filtering in its own right, and lab 01
+    has you comment it out to watch that happen.
+
+    AUTHORISED TESTING ONLY.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.pentest.attacker">
+
+    <uses-sdk android:minSdkVersion="24" android:targetSdkVersion="30" />
+
+    <!-- Package visibility, API 30+. Remove it and watch resolveActivity() fail. -->
+    <queries>
+        <package android:name="com.pentest.deputy" />
+    </queries>
+
+    <application
+        android:label="Photo Filters"
+        android:allowBackup="false">
+
+        <activity android:name=".ExploitActivity" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+    </application>
+</manifest>

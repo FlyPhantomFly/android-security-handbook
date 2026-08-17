@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    73-Labs/examples/chain-target/AndroidManifest.xml
+
+    The target for Lab 02, the cross-chapter chain. It is DELIBERATELY
+    INSECURE and exists so that a static finding can be carried through to a
+    dynamic confirmation and then into a written report.
+
+    Four defects are planted here, and one decoy. The decoy is the point of the
+    lab: it looks worse than the real findings in a static read and is
+    unexploitable in practice, which is what a dynamic stage is for.
+
+    Do not raise the version codes or rename the package: Lab 02 and the CTF in
+    Lab 04 both address this package by name.
+
+    AUTHORISED TESTING ONLY. Install on a device you own; uninstall afterwards.
+    Note for anyone editing this file: aapt2 rejects an XML comment containing a
+    double hyphen, so none of these comments contain one.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.pentest.ch73.chain">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- Declared at manifest level, which is where a permission element
+         belongs. Placing it inside application is a common error and aapt2
+         accepts it silently while the package manager ignores it. -->
+    <permission
+        android:name="com.pentest.ch73.chain.permission.ADMIN"
+        android:protectionLevel="signature" />
+
+    <application
+        android:label="ch73 chain target"
+        android:allowBackup="true"
+        android:debuggable="false">
+
+        <!-- Finding 1 (static, real): the launcher is also the unlock surface.
+             It reads a boolean extra that no legitimate caller ever sets. -->
+        <activity
+            android:name=".VaultActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Finding 2 (static, real): exported provider, no permission of any
+             kind, and it will hand out every row it has to any caller. -->
+        <provider
+            android:name=".NotesProvider"
+            android:authorities="com.pentest.ch73.chain.notes"
+            android:exported="true" />
+
+        <!-- Finding 3 (static, DECOY): an exported receiver guarded by a
+             signature-level permission the caller cannot hold. A grep-driven
+             report calls this exported and therefore reachable. It is not.
+             Lab 02 section 6 is about why, and how you prove it. -->
+        <receiver
+            android:name=".AdminReceiver"
+            android:exported="true"
+            android:permission="com.pentest.ch73.chain.permission.ADMIN">
+            <intent-filter>
+                <action android:name="com.pentest.ch73.chain.WIPE" />
+            </intent-filter>
+        </receiver>
+    </application>
+</manifest>

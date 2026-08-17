@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  examples/ctf-app/AndroidManifest.xml
+
+  The chapter 54 CTF target. See labs/lab-04-ctf-the-confident-tool.md.
+
+  The one line that matters here is android:name=".CtfApp" on <application>.
+  It gives the app a custom Application class, which means attachBaseContext
+  runs before every other line of application code - earlier than any command
+  typed into an already-connected REPL can reach. That is defence 1.
+
+  VaultActivity is the launcher and is exported so it can be re-triggered with
+  `android intent launch_activity` or `am start`. Re-triggering it does NOT
+  re-run the guard, which is the point: the verdict was cached in a static
+  field during attachBaseContext.
+
+  AUTHORISED TESTING ONLY. Build with examples/build.sh, install on a device you
+  own, and uninstall when you are done:
+      adb uninstall com.pentest.ch54.ctf
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.pentest.ch54.ctf">
+
+    <uses-sdk android:minSdkVersion="21" android:targetSdkVersion="30"/>
+
+    <application
+        android:label="CH54 CTF"
+        android:name=".CtfApp"
+        android:allowBackup="false">
+
+        <activity android:name=".VaultActivity" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+
+    </application>
+</manifest>

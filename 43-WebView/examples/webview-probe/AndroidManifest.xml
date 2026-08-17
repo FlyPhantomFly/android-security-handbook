@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  examples/webview-probe/AndroidManifest.xml
+
+  The measurement app. Build with ../build.sh.
+
+  There is nothing deliberately weak here. targetSdkVersion is set by
+  ../build.sh at aapt2 link time and is irrelevant to the results, because the
+  probe overwrites ApplicationInfo.targetSdkVersion in memory before constructing
+  each WebView. See ProbeActivity.java.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.pentest.ch43.probe">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application android:label="CH43 WebView Probe">
+        <activity
+            android:name="com.pentest.ch43.probe.ProbeActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>

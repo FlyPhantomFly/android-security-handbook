@@ -1,0 +1,253 @@
+# .gitignore — Android Pentesting Notes
+#
+# ---------------------------------------------------------------------------
+# THE RULE THIS FILE EXISTS TO ENFORCE: SOURCES, NEVER BINARIES.
+# ---------------------------------------------------------------------------
+#
+# This repository ships the SOURCE of every lab target, fixture and example,
+# plus the script that builds it. It never ships the built binary. That is an
+# editorial policy, not an oversight, and it is worth stating because the
+# alternative is so much more convenient:
+#
+#   1. A committed .apk is an unsigned-by-you executable of unknown provenance
+#      that a reader installs on a device with developer options enabled. The
+#      "deliberately vulnerable app" category has been abused exactly this way.
+#      Sources plus a build script let the reader read what they are about to
+#      run. See 73-Labs/README.md section 5.2.
+#
+#   2. A committed binary rots. The APK built against build-tools 34 behaves
+#      differently from the one a reader builds today, and the chapter's
+#      measured claims are pinned to the build, not to the source.
+#
+#   3. A signing key in version control is worse than an APK. Every build
+#      script here generates a throwaway key at build time, into its output
+#      directory, outside the tree.
+#
+# Because of this, several chapters' build scripts deliberately build OUT OF
+# TREE — 43-WebView/examples/build.sh is the reference implementation, and its
+# closing line is the convention in one sentence: "APKs are under $OUTDIR --
+# nothing was written into the repository." Those scripts default to $TMPDIR
+# and need no help from this file.
+#
+# The rules below exist for the scripts that default to an IN-TREE ./out/, and
+# as a backstop for everyone else. The repository's own verification script
+# treats the extensions in the first block as a hard blocklist: a match is a
+# build failure, not a warning.
+#
+# ---------------------------------------------------------------------------
+# TWO THINGS THIS FILE DELIBERATELY DOES *NOT* IGNORE.
+# ---------------------------------------------------------------------------
+#
+#   *.log      Stock Android and Gradle .gitignore templates all carry `*.log`.
+#              This one must not. 22-SELinux ships two .log files that are
+#              MEASURED EVIDENCE, not build noise:
+#                  22-SELinux/examples/avc-denials-measured.log
+#                  22-SELinux/labs/ctf-quiet-domain/avc.log
+#              Adding `*.log` here would silently delete a chapter's proof.
+#              If you need to ignore a log, name it.
+#
+#   .gitkeep   406 of them hold open the empty examples/, images/, labs/,
+#              references/ and scripts/ directories that every chapter is
+#              required to have. They are content. The negation at the bottom
+#              of this file is a belt-and-braces guard, since git cannot
+#              re-include a file inside an ignored DIRECTORY.
+#
+# ===========================================================================
+
+
+# ---------------------------------------------------------------------------
+# 1. The artefact blocklist — enforced, not advisory
+# ---------------------------------------------------------------------------
+# Compiled or packaged output of any kind. If one of these appears in a diff,
+# something built into the tree that should have built out of it.
+
+# Python
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+
+# Run scripts with `python3 -B` so __pycache__ is never created in the first
+# place. Every script header in this repository says so.
+
+# JVM
+*.class
+*.jar
+*.war
+*.ear
+
+# Android packages and bytecode
+*.apk
+*.apks
+*.aab
+*.dex
+*.odex
+*.vdex
+*.art
+*.aar
+*.ap_
+
+# Native
+*.o
+*.a
+*.so
+*.so.*
+*.dylib
+*.dll
+*.elf
+*.obj
+
+
+# ---------------------------------------------------------------------------
+# 2. Key material — never, under any circumstance
+# ---------------------------------------------------------------------------
+# Build scripts generate a throwaway signing key into their output directory at
+# build time. Nothing in this class is ever committed, not even a debug key.
+
+*.jks
+*.keystore
+*.p12
+*.pfx
+*.bks
+*.pem
+*.key
+debug.ks
+keystore.properties
+
+
+# ---------------------------------------------------------------------------
+# 3. In-tree build output
+# ---------------------------------------------------------------------------
+# Most build scripts write to $TMPDIR. These are the ones that default to a
+# directory beside their sources — 15-Native-Code, 18-ARM, 19-Memory,
+# 23-Permissions, 26-Intent and 52-StaticAnalysis all use ./out/. Two chapters
+# already carry their own local .gitignore saying exactly this; these rules
+# cover the rest.
+
+out/
+out-*/
+build/
+bin/
+gen/
+obj/
+dist/
+
+# Chapter script output with distinctive names
+pulled-apks/
+aosp-recon-*/
+
+
+# ---------------------------------------------------------------------------
+# 4. Gradle and the Android build system
+# ---------------------------------------------------------------------------
+# No Gradle project is committed here — the examples build with bare
+# build-tools precisely so a reader needs no Gradle and no network. These are a
+# backstop for anyone who opens an example in Android Studio.
+
+.gradle/
+gradle-app.setting
+gradlew
+gradlew.bat
+gradle/wrapper/gradle-wrapper.jar
+local.properties
+.externalNativeBuild/
+.cxx/
+captures/
+lint/intermediates/
+lint/generated/
+lint/outputs/
+lint/tmp/
+proguard/
+release/
+
+# NOTE: `.gradle/` has a trailing slash so it matches only the Gradle cache
+# DIRECTORY. The `build.gradle` and `*.gradle` FILES that chapters ship as
+# reading material are unaffected, as are the `*.pro` ProGuard/R8 rule files in
+# 41-ProGuard and 42-R8, which are chapter content.
+
+
+# ---------------------------------------------------------------------------
+# 5. IDE and editor
+# ---------------------------------------------------------------------------
+
+*.iml
+*.ipr
+*.iws
+.idea/
+.project
+.classpath
+.settings/
+.vscode/
+*.swp
+*.swo
+*~
+.\#*
+\#*\#
+
+
+# ---------------------------------------------------------------------------
+# 6. Operating system noise
+# ---------------------------------------------------------------------------
+
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Git Bash / MSYS2 drops these beside the working directory when a native tool
+# crashes. Observed here: a `grep.exe.stackdump` appeared at the repository root
+# during a verification sweep. Harmless, but it is an artefact and it recurs.
+*.stackdump
+core
+core.[0-9]*
+
+
+# ---------------------------------------------------------------------------
+# 7. Analysis working directories
+# ---------------------------------------------------------------------------
+# Decompiler and unpacker output. These are large, machine-generated, and in
+# several cases contain third-party code pulled from a device under test —
+# which must never enter this repository for licensing reasons as well as
+# artefact ones.
+
+*_jadx/
+*_apktool/
+jadx-out/
+apktool-out/
+unpacked/
+decompiled/
+*.dump
+*.hprof
+frida-server*
+*.frida-session
+
+
+# ---------------------------------------------------------------------------
+# 8. Maintainer's build log — deliberately not published
+# ---------------------------------------------------------------------------
+# BUILD-STATUS.md is the internal engineering record kept during construction:
+# the measured findings, the device table, and a candid log of every defect
+# found in the chapters AND in the checking scripts themselves.
+#
+# It is excluded because it is build scaffolding rather than content, and it is
+# written in the vocabulary of the process that produced it rather than for a
+# reader. Excluding it is a publication decision, not a deletion — the file
+# stays in the working tree.
+#
+# Every chapter that used to cite it has been rewritten to state the underlying
+# fact inline, so nothing a reader needs depends on a file they cannot see. If
+# you re-introduce a reference to it, inline the fact instead.
+BUILD-STATUS.md
+
+# ---------------------------------------------------------------------------
+# 9. Guard: .gitkeep is content
+# ---------------------------------------------------------------------------
+# Kept last so it cannot be overridden by a later rule.
+
+!.gitkeep

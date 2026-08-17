@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  examples/squat-pair/strings.xml
+  ==============================
+  Shared res/values/strings.xml for all four squat-pair apps.
+
+  A <permission> element's android:description MUST be a string resource
+  reference, not a literal, which is the only reason these apps have a res/
+  directory at all. build-squat-pair.sh rewrites perm_desc per app so that
+  `pm list permissions -f` visibly shows WHICH definition won the ownership
+  race - that one line of output is the measurement the whole example exists
+  to produce:
+
+      description:Squatter definition of READ_NOTES     <- attacker won
+      description:Victim definition of READ_NOTES       <- defender won
+-->
+<resources>
+    <string name="app_name">SquatPairExample</string>
+    <string name="perm_desc">READ_NOTES definition -- REPLACED PER APP BY build-squat-pair.sh</string>
+</resources>

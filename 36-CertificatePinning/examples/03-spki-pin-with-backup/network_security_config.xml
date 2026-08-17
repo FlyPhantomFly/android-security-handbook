@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  36-CertificatePinning/examples/03-spki-pin-with-backup/network_security_config.xml
+
+  The declarative equivalent of SpkiPinner.kt, and in almost every real app the
+  better choice: no code, no chain-cleaning bug to write, enforced by the
+  platform's own NetworkSecurityTrustManager for every stack in the process.
+
+  Chapter 44-NetworkSecurityConfig owns this file format in full. What is here
+  is only the pinning subset, annotated for what it does AT RUNTIME.
+
+  Install it by pointing the manifest at it:
+      <application android:networkSecurityConfig="@xml/network_security_config" ... >
+
+  Compute the digests with the spki-pin.sh script in ../../scripts/, passing it
+  a host and asking it to emit the nsc form.
+-->
+<network-security-config>
+
+    <!--
+      The base config applies to every domain that no <domain-config> claims.
+      Setting it explicitly is worth doing even when the values are the
+      defaults, because "the default" changes between API levels and a reader
+      six months from now should not have to look it up.
+    -->
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <!--
+              System CAs only. Omitting <certificates src="user" /> is what
+              makes an intercepting proxy's CA useless even after you install
+              it in Settings, and on API 24+ it is already the default for apps
+              targeting that level or higher.
+
+              This is NOT pinning, and calling it pinning in a report is wrong.
+              It is a trust-store decision: the set of roots that may sign a
+              valid chain. Pinning is narrower: a specific key, not a set of
+              issuers. See README section 1.4.
+            -->
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+
+    <domain-config>
+        <domain includeSubdomains="true">api.example.com</domain>
+
+        <!--
+          THE PIN SET.
+
+          expiration is the single most important attribute in this file and
+          the one most often omitted.
+
+          After this date the platform IGNORES the pin set and falls back to
+          ordinary chain validation. It does not fail closed. That sounds like
+          a weakness and it is a deliberate one: the alternative is an app that
+          cannot reach its own API and cannot be fixed without a store update
+          that the affected users may be unable to download.
+
+          Pick a date shorter than your slowest realistic update rollout. A
+          pin set with no expiration is a permanent commitment to a key you
+          may not control in three years.
+
+          Format is yyyy-MM-dd. An invalid date is a build error, not a silent
+          skip, which is one of the few places this file format fails loudly.
+        -->
+        <pin-set expiration="2027-06-30">
+
+            <!--
+              Pin 1: the SubjectPublicKeyInfo of the key currently in
+              production. digest="SHA-256" is the only value the platform
+              accepts; there is no SHA-1 option here, unlike OkHttp's legacy
+              sha1/ prefix.
+            -->
+            <pin digest="SHA-256">AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</pin>
+
+            <!--
+              Pin 2: the BACKUP. A key that exists, has been pinned, and has
+              never been presented by any server. It lives offline until the
+              day the primary key must be replaced.
+
+              Any pin matching accepts, so a backup does not weaken the
+              control: an attacker still needs a private key you chose. What it
+              buys is the ability to rotate without shipping an update.
+
+              A pin set with one pin is a finding. Not because one pin is
+              cryptographically weaker, but because it makes key rotation
+              impossible without an app release, and that guarantees the pin
+              will eventually be either wrong or removed.
+            -->
+            <pin digest="SHA-256">BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB=</pin>
+
+        </pin-set>
+    </domain-config>
+
+    <!--
+      A domain that is deliberately NOT pinned, spelled out.
+
+      Most apps talk to more hosts than they pin: a CDN, an analytics
+      endpoint, a crash reporter, a feature-flag service. Pinning only the API
+      is a legitimate choice. Writing the unpinned hosts down is what turns
+      that from an oversight into a decision, and it is what a reviewer should
+      ask for when the pin set covers one host out of nine.
+    -->
+    <domain-config cleartextTrafficPermitted="false">
+        <domain includeSubdomains="true">cdn.example.com</domain>
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+        <!-- No <pin-set>: static assets, no credentials, public content. -->
+    </domain-config>
+
+    <!--
+      The debug override. Present in the file, active only in a debuggable
+      build, and the reason is worth stating: without it, developers disable
+      pinning in the shared config "just for testing" and forget.
+
+      android:debuggable is set by the build type, so this block cannot take
+      effect in a release APK. Verify that claim rather than trusting it:
+      `aapt2 dump badging` will tell you whether the shipped APK is debuggable,
+      and if it is, this block is live in production.
+    -->
+    <debug-overrides>
+        <trust-anchors>
+            <certificates src="user" />
+            <certificates src="system" />
+        </trust-anchors>
+    </debug-overrides>
+
+</network-security-config>

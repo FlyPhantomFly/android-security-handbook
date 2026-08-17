@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  examples/02-host-app-AndroidManifest.xml
+  ==========================================================================
+  Place at:  app/src/main/AndroidManifest.xml
+
+  PURPOSE
+      The host application's own manifest. Run the experiment in TWO passes.
+
+      PASS 1 — comment out every tools:* attribute below, build, and compare:
+
+          cat app/src/main/AndroidManifest.xml                     # 1 component
+          find app/build/intermediates -name AndroidManifest.xml -path "*erged*" \
+            -exec cat {} \;                                        # 6 components + a permission
+          cat app/build/outputs/logs/manifest-merger-debug-report.txt
+
+          adb shell am start -a android.intent.action.VIEW -d "evilsdk://open"
+          adb logcat -d -s EvilSDK
+
+      plus the `am broadcast` against com.evil.sdk.CommandReceiver. That one is
+      not written out here because its extras flags begin with a double hyphen,
+      which XML forbids inside a comment and aapt2 rejects outright. Copy it
+      verbatim from ../labs/lab-02-manifest-merger-archaeology.md step B1, or
+      from the header of 02-CommandReceiver.kt.
+
+      PASS 2 — restore the tools:* attributes, rebuild, and repeat the am
+      commands. They must now fail, and the merger report must show the
+      remove/replace decisions.
+
+  IMPORTANT
+      tools:node="remove" deletes the manifest ELEMENT. The SDK's CODE is still
+      in classes.dex and still runs. If the SDK's initialisation expects the
+      component, you get a crash instead of a security improvement — so this
+      change must always be tested, and the durable fix is usually to remove or
+      replace the SDK. See ../README.md section 3.10.
+
+  SEE
+      ../README.md sections 3.10, 5.3.2, 9.2
+  ==========================================================================
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:tools="http://schemas.android.com/tools">
+
+    <!--
+      The product does not use location. The SDK asked for it. Remove it.
+      Note: the SDK's location-dependent code paths will now fail at runtime —
+      that is the correct trade only if the product genuinely does not need the
+      feature.
+    -->
+    <uses-permission
+        android:name="android.permission.ACCESS_FINE_LOCATION"
+        tools:node="remove" />
+
+    <application
+        android:name=".App"
+        android:label="Host App"
+        android:allowBackup="false"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:networkSecurityConfig="@xml/network_security_config"
+        android:theme="@style/Theme.AppCompat">
+
+        <!-- ============================================================
+             The ONE component the application's developers actually wrote.
+             ============================================================ -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- ============================================================
+             Everything below this line exists only to neutralise elements
+             the SDK's manifest would otherwise inject. None of it declares
+             functionality; it is all merge instructions, and all of it is
+             stripped from the final manifest by the merger.
+             ============================================================ -->
+
+        <!--
+          Remove the exported receiver entirely. We never call the SDK's
+          command interface, so nothing legitimate depends on it existing.
+        -->
+        <receiver
+            android:name="com.evil.sdk.CommandReceiver"
+            tools:node="remove" />
+
+        <!--
+          We DO use the SDK's deep-link routing, but only from inside our own
+          app. Keep the component; refuse to let it be exported.
+          tools:replace names the single attribute we are overriding, so the
+          rest of the SDK's declaration (launchMode, theme, ...) still merges.
+        -->
+        <activity
+            android:name="com.evil.sdk.RouterActivity"
+            android:exported="false"
+            tools:replace="android:exported" />
+
+        <!--
+          Remove the exported service. Any app on the device could otherwise
+          bind to it and call across its Binder interface as us.
+        -->
+        <service
+            android:name="com.evil.sdk.SyncService"
+            tools:node="remove" />
+
+        <!--
+          Point the SDK at our own proxy rather than its collection endpoint.
+          tools:replace on a meta-data value is the standard way to override
+          library configuration without forking the library.
+        -->
+        <meta-data
+            android:name="com.evil.sdk.ENDPOINT"
+            android:value="https://proxy.example.com/sdk/v1"
+            tools:replace="android:value" />
+
+        <!--
+          The self-initialising provider stays: it is exported="false" and the
+          SDK genuinely needs it. Documented here so the next reviewer knows
+          the omission was a decision rather than an oversight.
+
+          <provider android:name="com.evil.sdk.SdkInitProvider" />   (kept)
+        -->
+
+    </application>
+</manifest>

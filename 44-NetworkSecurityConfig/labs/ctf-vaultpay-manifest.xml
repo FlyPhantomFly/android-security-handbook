@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    labs/ctf-vaultpay-manifest.xml
+
+    The manifest half of the lab 04 challenge. Four attributes here decide what
+    labs/ctf-vaultpay-config.xml MEANS, and three of them are easy to skip past.
+
+    Use it as app/src/main/AndroidManifest.xml if you build the challenge into a
+    real APK, which lab 04 explains how to do. If you are only reasoning on
+    paper, read the <application> and <uses-sdk> attributes and nothing else
+    matters.
+
+    Every dash below is deliberately single: a double hyphen inside an XML
+    comment is forbidden by the specification and aapt2 rejects the resource.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.vaultpay.wallet">
+
+    <uses-sdk
+        android:minSdkVersion="24"
+        android:targetSdkVersion="33" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:label="VaultPay"
+        android:allowBackup="false"
+
+        android:debuggable="false"
+
+        android:usesCleartextTraffic="true"
+
+        android:networkSecurityConfig="@xml/network_security_config">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+    </application>
+</manifest>

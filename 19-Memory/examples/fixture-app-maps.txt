@@ -1,0 +1,117 @@
+# fixture-app-maps.txt
+#
+# A SYNTHETIC /proc/<pid>/maps capture, hand-built for labs/lab-01 and
+# labs/lab-04.
+#
+# READ THIS BEFORE YOU TRUST A NUMBER IN IT.
+#
+# This file is NOT a capture from a real device. It is constructed, and it is
+# constructed for a reason: on a stock Android 13 device an ordinary `adb
+# shell` (uid 2000, SELinux domain u:r:shell:s0) is DENIED read access to
+# another app's /proc entries entirely --
+#
+#     $ adb shell head -3 /proc/$(pidof zygote64)/maps
+#     head: /proc/541/maps: Permission denied
+#
+# -- which was verified on the device this chapter was written against. So a
+# lab that says "now read the target app's maps" cannot be done by a reader
+# without root, and a fixture is the honest alternative to pretending
+# otherwise.
+#
+# The STRUCTURE is faithful: the segment counts, permission patterns, region
+# names, the boot image and OAT layout, the ART space names and the Scudo
+# region names all match what a Zygote-forked app process really looks like.
+# The ADDRESSES are invented and internally consistent. Do not quote an
+# address from this file as evidence of anything.
+#
+# What has been planted in it, for the labs to find:
+#   - one rwxp anonymous region that is NOT the JIT cache
+#   - one executable mapping of a file that has been unlinked
+#   - one executable mapping backed by an anonymous file object
+#   - one executable .so under /data/ that is not inside an APK
+#   - one MAP_SHARED writable file mapping
+#   - one execute-only (--xp) system library segment
+#   - the legitimate JIT cache, so that "rwxp" alone is not the answer
+#
+# Analyse it with:
+#     python3 ../scripts/maps-analyse.py fixture-app-maps.txt
+#     python3 ../scripts/maps-analyse.py fixture-app-maps.txt --gaps
+#
+6f8a2b4000-6f8a2b8000 r--p 00000000 fd:03 1049873                        /system/bin/app_process64
+6f8a2b8000-6f8a2bc000 r-xp 00004000 fd:03 1049873                        /system/bin/app_process64
+6f8a2bc000-6f8a2bd000 r--p 00008000 fd:03 1049873                        /system/bin/app_process64
+6f8a2bd000-6f8a2be000 rw-p 00008000 fd:03 1049873                        /system/bin/app_process64
+6f8a2be000-6f8a2c0000 rw-p 00000000 00:00 0                              [anon:.bss]
+70b1000000-70b1c00000 rw-p 00000000 00:00 0                              [anon:dalvik-main space (region space)]
+70b1c00000-70b2000000 rw-p 00000000 00:00 0                              [anon:dalvik-main space (region space)]
+70e4000000-70e4c00000 rw-p 00000000 00:00 0                              [anon:dalvik-zygote space]
+70e4c00000-70e4e00000 rw-p 00000000 00:00 0                              [anon:dalvik-non moving space]
+70e4e00000-70e5000000 rw-p 00000000 00:00 0                              [anon:dalvik-free list large object space]
+70e5000000-70e5040000 rw-p 00000000 00:00 0                              [anon:dalvik-large object space allocation]
+71a0000000-71a2b40000 r--p 00000000 fd:03 2229761                        /apex/com.android.art/javalib/boot.art
+71a2b40000-71a4180000 r--p 00000000 fd:03 2229762                        /apex/com.android.art/javalib/boot-core-libart.art
+71a4180000-71a41c0000 rw-p 00000000 00:00 0                              [anon:dalvik-CompilerMetadata]
+71b0000000-71b0004000 r--p 00000000 fd:03 2229780                        /apex/com.android.art/javalib/boot.oat
+71b0004000-71b1a80000 r-xp 00004000 fd:03 2229780                        /apex/com.android.art/javalib/boot.oat
+71b1a80000-71b1a84000 r--p 01a80000 fd:03 2229780                        /apex/com.android.art/javalib/boot.oat
+71b1a84000-71b1a88000 rw-p 01a80000 fd:03 2229780                        /apex/com.android.art/javalib/boot.oat
+71c2000000-71c2010000 rw-p 00000000 00:00 0                              [anon:dalvik-indirect ref table]
+71c2010000-71c2018000 rw-p 00000000 00:00 0                              [anon:dalvik-Jit thread pool worker]
+71c4000000-71c4100000 rwxp 00000000 00:00 0                              [anon:dalvik-jit-code-cache]
+71c4100000-71c4140000 rw-p 00000000 00:00 0                              [anon:dalvik-jit-code-cache]
+7300000000-7300040000 rw-p 00000000 00:00 0                              [anon:scudo:primary]
+7300040000-7300080000 rw-p 00000000 00:00 0                              [anon:scudo:primary]
+7300080000-73000c0000 rw-p 00000000 00:00 0                              [anon:scudo:primary]
+7301000000-7301401000 rw-p 00000000 00:00 0                              [anon:scudo:secondary]
+7302000000-7302001000 ---p 00000000 00:00 0                              [anon:GWP-ASan guard]
+7302001000-7302002000 rw-p 00000000 00:00 0                              [anon:GWP-ASan alive slot]
+7302002000-7302003000 ---p 00000000 00:00 0                              [anon:GWP-ASan guard]
+7310a00000-7310a30000 r--p 00000000 fd:0d 655361                         /data/app/~~kQ3n1==/com.example.target-Xb9==/base.apk
+7310a30000-7310a34000 r--p 01a30000 fd:0d 655361                         /data/app/~~kQ3n1==/com.example.target-Xb9==/base.apk
+7310a34000-7310a38000 r--p 00000000 fd:0d 655362                         /data/app/~~kQ3n1==/com.example.target-Xb9==/oat/arm64/base.vdex
+7310a38000-7310a3c000 r--p 00000000 fd:0d 655363                         /data/app/~~kQ3n1==/com.example.target-Xb9==/oat/arm64/base.odex
+7310a3c000-7310b1c000 r-xp 00004000 fd:0d 655363                         /data/app/~~kQ3n1==/com.example.target-Xb9==/oat/arm64/base.odex
+7310b1c000-7310b20000 rw-p 000e0000 fd:0d 655363                         /data/app/~~kQ3n1==/com.example.target-Xb9==/oat/arm64/base.odex
+7320100000-7320108000 r--p 00000000 fd:0d 655377                         /data/app/~~kQ3n1==/com.example.target-Xb9==/lib/arm64/libnative-lib.so
+7320108000-732011c000 r-xp 00008000 fd:0d 655377                         /data/app/~~kQ3n1==/com.example.target-Xb9==/lib/arm64/libnative-lib.so
+732011c000-7320120000 r--p 0001c000 fd:0d 655377                         /data/app/~~kQ3n1==/com.example.target-Xb9==/lib/arm64/libnative-lib.so
+7320120000-7320124000 rw-p 0001c000 fd:0d 655377                         /data/app/~~kQ3n1==/com.example.target-Xb9==/lib/arm64/libnative-lib.so
+7320124000-7320128000 rw-p 00000000 00:00 0                              [anon:.bss]
+7330000000-7330004000 r--p 00000000 fd:0d 655401                         /data/data/com.example.target/files/libdyn-payload.so
+7330004000-7330020000 r-xp 00004000 fd:0d 655401                         /data/data/com.example.target/files/libdyn-payload.so
+7330020000-7330024000 rw-p 00020000 fd:0d 655401                         /data/data/com.example.target/files/libdyn-payload.so
+7340000000-7340004000 r--p 00000000 fd:0d 655455                         /data/data/com.example.target/cache/.tmp7712 (deleted)
+7340004000-7340018000 r-xp 00004000 fd:0d 655455                         /data/data/com.example.target/cache/.tmp7712 (deleted)
+7340018000-734001c000 rw-p 00018000 fd:0d 655455                         /data/data/com.example.target/cache/.tmp7712 (deleted)
+7350000000-7350010000 r-xp 00000000 00:05 40217                          /memfd:jit-cache (deleted)
+7360000000-7360004000 rwxp 00000000 00:00 0
+73a1c00000-73a1c60000 r--p 00000000 fd:03 2229901                        /apex/com.android.art/lib64/libart.so
+73a1c60000-73a1f80000 r-xp 00060000 fd:03 2229901                        /apex/com.android.art/lib64/libart.so
+73a1f80000-73a1fa0000 r--p 00380000 fd:03 2229901                        /apex/com.android.art/lib64/libart.so
+73a1fa0000-73a1fb0000 rw-p 00380000 fd:03 2229901                        /apex/com.android.art/lib64/libart.so
+73a2000000-73a2020000 r--p 00000000 fd:03 2229905                        /apex/com.android.runtime/lib64/bionic/libc.so
+73a2020000-73a20b0000 r-xp 00020000 fd:03 2229905                        /apex/com.android.runtime/lib64/bionic/libc.so
+73a20b0000-73a20b8000 r--p 000b0000 fd:03 2229905                        /apex/com.android.runtime/lib64/bionic/libc.so
+73a20b8000-73a20bc000 rw-p 000b0000 fd:03 2229905                        /apex/com.android.runtime/lib64/bionic/libc.so
+73a3000000-73a3010000 r--p 00000000 fd:03 1052113                        /system/lib64/libcrypto.so
+73a3010000-73a3170000 --xp 00010000 fd:03 1052113                        /system/lib64/libcrypto.so
+73a3170000-73a3180000 r--p 00170000 fd:03 1052113                        /system/lib64/libcrypto.so
+73a3180000-73a3184000 rw-p 00170000 fd:03 1052113                        /system/lib64/libcrypto.so
+73a4000000-73a4008000 r--p 00000000 fd:03 1052140                        /system/lib64/libbinder.so
+73a4008000-73a4090000 r-xp 00008000 fd:03 1052140                        /system/lib64/libbinder.so
+73a4090000-73a4098000 r--p 00090000 fd:03 1052140                        /system/lib64/libbinder.so
+73a4098000-73a409c000 rw-p 00090000 fd:03 1052140                        /system/lib64/libbinder.so
+73b0000000-73b0400000 rw-s 00000000 00:0a 90210                          /dev/ashmem/shared-prefs-cache
+73b1000000-73b1080000 r--s 00000000 00:10 40001                          /dev/__properties__/properties_serial
+73c0000000-73c0004000 rw-p 00000000 00:00 0                              [anon:bionic_alloc_small_objects]
+73c0004000-73c0008000 rw-p 00000000 00:00 0                              [anon:linker_alloc]
+73c0008000-73c000c000 r--p 00000000 00:00 0                              [anon:cfi shadow]
+73d0000000-73d0400000 r--p 00000000 fd:03 2229920                        /apex/com.android.art/bin/linker64
+73d0400000-73d0500000 r-xp 00400000 fd:03 2229920                        /apex/com.android.art/bin/linker64
+73d0500000-73d0510000 r--p 00500000 fd:03 2229920                        /apex/com.android.art/bin/linker64
+73d0510000-73d0514000 rw-p 00500000 fd:03 2229920                        /apex/com.android.art/bin/linker64
+7ff0400000-7ff0c00000 rw-p 00000000 00:00 0                              [anon:stack_and_tls:main]
+7ff0c00000-7ff0c08000 rw-p 00000000 00:00 0                              [anon:thread signal stack]
+7ffc9a1000-7ffc9c3000 rw-p 00000000 00:00 0                              [stack]
+7ffc9f0000-7ffc9f4000 r--p 00000000 00:00 0                              [vvar]
+7ffc9f4000-7ffc9f6000 r-xp 00000000 00:00 0                              [vdso]

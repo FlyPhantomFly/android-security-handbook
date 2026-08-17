@@ -1,0 +1,229 @@
+#!/usr/bin/env python3
+"""
+ctf-build-vault.py -- write the challenge library for chapter 18, lab 04.
+
+WHAT IT DOES
+    Writes libvault.so, a real 4,568-byte AArch64 shared object, into a
+    directory you name. The file is carried in this script as base64 so that
+    the lab needs NOTHING but Python 3 -- no NDK, no compiler, no device, no
+    network -- and so that the repository commits no binary.
+
+    libvault.so was compiled from C with the Android NDK 25.2.9519653
+    (clang 14.0.7) as:
+
+        aarch64-linux-android21-clang -shared -fPIC -O2 \
+            -fvisibility=hidden -fno-stack-protector -s \
+            -Wl,-z,max-page-size=16384 -o libvault.so vault.c
+
+    It is stripped (-s), so .symtab is gone and only four functions reach
+    .dynsym. It carries four flags, each recoverable by a different technique
+    from README section 3. The source is NOT shipped, deliberately: reading it
+    would answer every question the lab asks.
+
+HOW TO RUN
+    # host
+    python3 ctf-build-vault.py /tmp/ch18-ctf
+    ls -l /tmp/ch18-ctf/libvault.so
+
+    python3 ctf-build-vault.py /tmp/ch18-ctf --verify     # check the hash only
+    python3 ctf-build-vault.py --sha256                   # print the hash and exit
+
+    Then:
+    python3 arm64-patch.py /tmp/ch18-ctf/libvault.so --list-symbols
+    python3 find-check-shapes.py /tmp/ch18-ctf/libvault.so
+
+REQUIREMENTS
+    Python 3.6 or newer, standard library only.
+
+WHAT THIS WILL *NOT* DO
+    - Write anything into the repository. It writes exactly one file, into the
+      directory you name on the command line, and refuses to overwrite an
+      existing libvault.so unless you pass --force. Do not point it inside the
+      repo: compiled binaries are build artefacts and this repository commits
+      none.
+    - Tell you the flags. It verifies the file it wrote against a SHA-256 of
+      the BINARY, not of any answer. The per-flag hashes are in the lab.
+    - Run on a device. libvault.so is an arm64-v8a library and your build host
+      almost certainly is not arm64. The whole lab is static; nothing needs to
+      execute.
+    - Work if you edit the payload. The hash check will fail, which is the
+      point -- a challenge binary that has silently changed is worse than no
+      challenge binary.
+
+VERIFIED
+    sha256(libvault.so) = 5def0bcf3636583359a2602fc73180f9cabd9889066bb1b90b72a4f4904df7d1
+    size                = 4568 bytes
+    ELF                 = ELF64, EM_AARCH64 (183), little-endian, DYN
+    exports             = v_unlock, v_reveal, v_stage3, v_is_admin
+"""
+
+from __future__ import print_function
+
+import argparse
+import base64
+import hashlib
+import os
+import sys
+
+SHA256 = "5def0bcf3636583359a2602fc73180f9cabd9889066bb1b90b72a4f4904df7d1"
+SIZE = 4568
+
+PAYLOAD = """\
+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
+kAMAAAAAAAD+//9vAAAAAKADAAAAAAAA////bwAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAASQAAAAAAAABJAAAAAAAAAEkAAAAAAABMaW5rZXI6IExM
+RCAxNC4wLjcAQW5kcm9pZCAoOTM1MjYwMywgYmFzZWQgb24gcjQ1MDc4NGQxKSBjbGFuZyB2ZXJz
+aW9uIDE0LjAuNyAoaHR0cHM6Ly9hbmRyb2lkLmdvb2dsZXNvdXJjZS5jb20vdG9vbGNoYWluL2xs
+dm0tcHJvamVjdCA0YzYwM2VmYjBjY2EwNzRlOTIzOGFmOGI0MTA2YzMwYWRkNDQxOGY2KQAAAC5u
+b3RlLmFuZHJvaWQuaWRlbnQALmR5bnN5bQAuZ251LnZlcnNpb24ALmdudS52ZXJzaW9uX3IALmdu
+dS5oYXNoAC5oYXNoAC5keW5zdHIALnJlbGEuZHluAC5yZWxhLnBsdAAucm9kYXRhAC5laF9mcmFt
+ZV9oZHIALmVoX2ZyYW1lAC50ZXh0AC5wbHQALmRhdGEucmVsLnJvAC5maW5pX2FycmF5AC5keW5h
+bWljAC5nb3QucGx0AC5jb21tZW50AC5zaHN0cnRhYgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAcAAAACAAAAAAAAADgC
+AAAAAAAAOAIAAAAAAACYAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAABUAAAALAAAAAgAA
+AAAAAADQAgAAAAAAANACAAAAAAAAwAAAAAAAAAAHAAAAAQAAAAgAAAAAAAAAGAAAAAAAAAAdAAAA
+////bwIAAAAAAAAAkAMAAAAAAACQAwAAAAAAABAAAAAAAAAAAgAAAAAAAAACAAAAAAAAAAIAAAAA
+AAAAKgAAAP7//28CAAAAAAAAAKADAAAAAAAAoAMAAAAAAAAgAAAAAAAAAAcAAAABAAAABAAAAAAA
+AAAAAAAAAAAAADkAAAD2//9vAgAAAAAAAADAAwAAAAAAAMADAAAAAAAALAAAAAAAAAACAAAAAAAA
+AAgAAAAAAAAAAAAAAAAAAABDAAAABQAAAAIAAAAAAAAA7AMAAAAAAADsAwAAAAAAAEgAAAAAAAAA
+AgAAAAAAAAAEAAAAAAAAAAQAAAAAAAAASQAAAAMAAAACAAAAAAAAADQEAAAAAAAANAQAAAAAAABg
+AAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAFEAAAAEAAAAAgAAAAAAAACYBAAAAAAAAJgE
+AAAAAAAASAAAAAAAAAACAAAAAAAAAAgAAAAAAAAAGAAAAAAAAABbAAAABAAAAEIAAAAAAAAA4AQA
+AAAAAADgBAAAAAAAAEgAAAAAAAAAAgAAABIAAAAIAAAAAAAAABgAAAAAAAAAZQAAAAEAAAACAAAA
+AAAAACgFAAAAAAAAKAUAAAAAAAAUAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAG0AAAAB
+AAAAAgAAAAAAAAA8BQAAAAAAADwFAAAAAAAAXAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAA
+AAB7AAAAAQAAAAIAAAAAAAAAmAUAAAAAAACYBQAAAAAAABwBAAAAAAAAAAAAAAAAAAAIAAAAAAAA
+AAAAAAAAAAAAhQAAAAEAAAAGAAAAAAAAALRGAAAAAAAAtAYAAAAAAABAAgAAAAAAAAAAAAAAAAAA
+BAAAAAAAAAAAAAAAAAAAAIsAAAABAAAABgAAAAAAAAAASQAAAAAAAAAJAAAAAAAAUAAAAAAAAAAA
+AAAAAAAAABAAAAAAAAAAAAAAAAAAAACQAAAAAQAAAAMAAAAAAAAAUIkAAAAAAABQCQAAAAAAAAgA
+AAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAnQAAAA8AAAADAAAAAAAAAFiJAAAAAAAAWAkA
+AAAAAAAQAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAKkAAAAGAAAAAwAAAAAAAABoiQAA
+AAAAAGgJAAAAAAAAgAEAAAAAAAAHAAAAAAAAAAgAAAAAAAAAEAAAAAAAAACyAAAAAQAAAAMAAAAA
+AAAA6IoAAAAAAADoCgAAAAAAADAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAuwAAAAEA
+AAAwAAAAAAAAAAAAAAAAAAAAGAsAAAAAAACyAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAABAAAAAAAA
+AMQAAAADAAAAAAAAAAAAAAAAAAAAAAAAAMoLAAAAAAAAzgAAAAAAAAAAAAAAAAAAAAEAAAAAAAAA
+AAAAAAAAAAA=
+---FLAG HASHES---
+"""
+
+
+def payload_bytes():
+    data = base64.b64decode("".join(PAYLOAD.split()))
+    digest = hashlib.sha256(data).hexdigest()
+    if digest != SHA256 or len(data) != SIZE:
+        raise SystemExit(
+            "payload integrity check FAILED.\n"
+            "  expected %d bytes, sha256 %s\n"
+            "  got      %d bytes, sha256 %s\n"
+            "This script has been edited or corrupted. Do not use the output."
+            % (SIZE, SHA256, len(data), digest))
+    return data
+
+
+def main(argv=None):
+    ap = argparse.ArgumentParser(
+        description="Write libvault.so, the chapter 18 lab 04 challenge.")
+    ap.add_argument("outdir", nargs="?",
+                    help="directory to write libvault.so into "
+                         "(must NOT be inside this repository)")
+    ap.add_argument("--force", action="store_true",
+                    help="overwrite an existing libvault.so")
+    ap.add_argument("--verify", action="store_true",
+                    help="check an already-written libvault.so and exit")
+    ap.add_argument("--sha256", action="store_true",
+                    help="print the expected hash and exit")
+    args = ap.parse_args(argv)
+
+    if args.sha256:
+        print("%s  libvault.so  (%d bytes)" % (SHA256, SIZE))
+        return 0
+
+    if not args.outdir:
+        ap.error("give an output directory, or --sha256")
+
+    path = os.path.join(args.outdir, "libvault.so")
+
+    if args.verify:
+        if not os.path.exists(path):
+            print("not found: %s" % path, file=sys.stderr)
+            return 3
+        with open(path, "rb") as fh:
+            got = hashlib.sha256(fh.read()).hexdigest()
+        ok = got == SHA256
+        print("%s  %s" % ("OK      " if ok else "MISMATCH", path))
+        print("expected %s" % SHA256)
+        print("got      %s" % got)
+        if not ok:
+            print("\nIf you have been patching it, that is expected. Re-run "
+                  "without --verify to get a fresh copy.")
+        return 0 if ok else 1
+
+    data = payload_bytes()
+
+    if not os.path.isdir(args.outdir):
+        os.makedirs(args.outdir)
+    if os.path.exists(path) and not args.force:
+        print("refusing to overwrite %s (pass --force)" % path, file=sys.stderr)
+        return 2
+
+    with open(path, "wb") as fh:
+        fh.write(data)
+
+    print("wrote %s  (%d bytes)" % (path, len(data)))
+    print("sha256 %s" % SHA256)
+    print("")
+    print("Start here:")
+    print("  python3 arm64-patch.py %s --list-symbols" % path)
+    print("  python3 find-check-shapes.py %s" % path)
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

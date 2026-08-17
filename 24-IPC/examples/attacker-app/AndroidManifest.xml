@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    24-IPC / examples/attacker-app / AndroidManifest.xml
+
+    WHAT THIS IS
+        The manifest of a deliberately boring third-party application whose only
+        job is to answer one question honestly:
+
+            "Can an ORDINARY app, with no special privileges, actually reach
+             this component / socket / port?"
+
+    WHY IT MATTERS
+        `adb shell` runs as UID 2000 in the SELinux domain `shell`. That UID
+        holds privileges no installed application has. A component you started
+        with `am start` is NOT thereby proven reachable by an attacker. This APK
+        runs as an ordinary `untrusted_app` UID in the 10000+ range, so what it
+        can do, a malicious app can do. See Chapter 24 section 3.22 step 4 and
+        ../../../77-UsefulCommands/labs/lab-03-exported-sweep.md.
+
+    NOTE ON THE PROJECT LAYOUT
+        The sources sit directly in this directory rather than in
+        src/main/java/..., and build.gradle points the Android sourceSets here.
+        That keeps the proof-of-concept to five readable files. If you prefer the
+        conventional layout, move AndroidManifest.xml to src/main/ and the .java
+        files to src/main/java/com/attacker/poc/ and delete the sourceSets block.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.attacker.poc">
+
+    <!--
+        THE ONLY PERMISSION WE DECLARE.
+
+        INTERNET is protectionLevel="normal": it is granted automatically at
+        install time, it is never shown to the user, and essentially every app on
+        every device holds it. It is needed only for the loopback probe
+        (127.0.0.1), because loopback is a *network* interface.
+
+        Everything else this app does — starting activities, binding services,
+        sending broadcasts, querying providers, connecting to abstract-namespace
+        UNIX sockets — requires NO permission whatsoever. That is the point.
+    -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!--
+        =====================================================================
+        THE <queries> ELEMENT — DO NOT DELETE THIS
+        =====================================================================
+
+        From targetSdk 30 (Android 11), Android applies *package visibility
+        filtering*. An app can no longer see every other installed package by
+        default. The practical consequences for a probe app are brutal and
+        silent:
+
+          * PackageManager.getPackageInfo(target, ...) throws
+            NameNotFoundException, exactly as if the app were not installed.
+          * resolveActivity() / queryIntentActivities() return null or an empty
+            list for components that genuinely exist and are genuinely exported.
+          * startActivity() with an explicit ComponentName fails with
+            ActivityNotFoundException rather than SecurityException.
+
+        None of those look like "filtered". They look like "not there". A tester
+        who forgets this block concludes the target is unreachable and writes
+        "no exported components are reachable from a third-party app" in a
+        report. That is a false negative produced by their own manifest.
+
+        Package visibility filtering is a privacy control, not a security
+        boundary: a real attacker simply declares the target in <queries>, or
+        holds QUERY_ALL_PACKAGES. It never makes an exported component
+        unreachable. It only hides it from apps that did not ask.
+
+        Edit the entries below for each engagement.
+    -->
+    <queries>
+        <!-- 1. The target package, by name. The most reliable form. -->
+        <package android:name="com.example.target" />
+
+        <!-- Add every package in scope, including companion apps that share a
+             signing key with the target. -->
+        <!-- <package android:name="com.example.target.companion" /> -->
+
+        <!-- 2. Providers must additionally be named by AUTHORITY. Declaring the
+                package alone is NOT enough to resolve a content:// URI. -->
+        <provider android:authorities="com.example.target.provider" />
+        <provider android:authorities="com.example.target.files" />
+
+        <!-- 3. Intent-shaped visibility: lets us see anything that handles a
+                given action/scheme. Useful for deep-link squatting research,
+                and for discovering which app claims a custom scheme. -->
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="https" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.SEND" />
+            <data android:mimeType="*/*" />
+        </intent>
+
+        <!--
+            4. Last resort. QUERY_ALL_PACKAGES makes the whole device visible and
+               removes the need for any of the above. It is a restricted
+               permission on Google Play (an app needs a declared, approved use
+               case), which is why real malware usually prefers the targeted
+               forms above. On a test device it is harmless and convenient.
+
+               Uncomment BOTH lines together, and say in your report which form
+               you used, because "we needed QUERY_ALL_PACKAGES" changes the
+               attacker's cost.
+        -->
+        <!-- </queries>
+        <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
+        <queries> -->
+    </queries>
+
+    <application
+        android:allowBackup="false"
+        android:label="Flashlight"
+        android:icon="@android:drawable/ic_menu_compass"
+        android:theme="@android:style/Theme.Material.Light">
+
+        <!--
+            The probe itself. Exported and given a LAUNCHER filter purely so you
+            can start it by tapping it, or with:
+                adb shell am start -n com.attacker.poc/.ProbeActivity
+        -->
+        <activity
+            android:name=".ProbeActivity"
+            android:exported="true"
+            android:label="Flashlight">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!--
+            Chapter 24 section 9.3 launches this app as
+            `com.attacker.poc/.MainActivity`. The alias makes that command work
+            too, so either name starts the same probe.
+        -->
+        <activity-alias
+            android:name=".MainActivity"
+            android:targetActivity=".ProbeActivity"
+            android:exported="true" />
+
+        <!--
+            Where a STOLEN content-URI grant lands.
+
+            In the confused-deputy exploit (Chapter 24 section 3.20) we ask the
+            victim app to start an Intent that targets THIS activity and carries
+            FLAG_GRANT_READ_URI_PERMISSION on a content:// URI belonging to the
+            victim's own non-exported provider. Because the victim app makes the
+            startActivity() call, the framework records the VICTIM as the granter
+            and issues a legitimate read grant to us.
+
+            Exported so the victim app (a different UID) can start it.
+        -->
+        <activity
+            android:name=".GrantSink"
+            android:exported="true" />
+
+        <!--
+            Passive broadcast eavesdropper.
+
+            Any app can register for any action that is not a <protected-broadcast>.
+            If the target calls sendBroadcast() without a receiver permission and
+            without setPackage(), the extras arrive here. This is the "sending
+            direction" leak that manifest-only analysis of the *target* never
+            shows, because the bug is in the target's sending code, not in any
+            component it declares.
+
+            priority is set to the maximum so that for ORDERED broadcasts we run
+            first and can observe, rewrite the result, or abortBroadcast().
+        -->
+        <receiver
+            android:name=".Eavesdropper"
+            android:exported="true">
+            <intent-filter android:priority="2147483647">
+                <action android:name="com.example.target.SESSION_READY" />
+                <action android:name="com.example.target.LOCATION_UPDATE" />
+                <action android:name="com.example.target.ACTION_VERIFY" />
+            </intent-filter>
+        </receiver>
+
+        <!--
+            OPTIONAL: custom-scheme squatting.
+
+            Uncomment and set the scheme to the target's own to test whether a
+            sensitive flow (an OAuth redirect, a magic link, a password reset)
+            can be intercepted. Chapter 24 section 3.19. Leave it commented off
+            by default: a squatting filter changes device-wide link resolution
+            and will interfere with your other tests.
+        -->
+        <!--
+        <activity android:name=".SchemeSquatter" android:exported="true">
+            <intent-filter android:priority="2147483647">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="targetapp" />
+            </intent-filter>
+        </activity>
+        -->
+    </application>
+</manifest>

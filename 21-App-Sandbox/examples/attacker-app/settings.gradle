@@ -1,0 +1,34 @@
+/*
+ * settings.gradle — 21-App-Sandbox / examples/attacker-app
+ *
+ * WHAT IT DOES
+ *     Declares this directory as a standalone, single-module Gradle build. The
+ *     APK it produces is named after rootProject.name, which is why the chapter
+ *     text and the labs refer to
+ *         build/outputs/apk/debug/attacker-app-debug.apk
+ *
+ * WHY IT MATTERS
+ *     The probe must be buildable on its own, without the rest of this
+ *     repository and without a parent build. On an engagement you copy this one
+ *     directory onto a laptop, change the target package in <queries> and in
+ *     ProbeActivity.DEFAULT_TARGET, and ship an APK. Re-targeting should take
+ *     under a minute.
+ *
+ * HOW TO RUN
+ *     # host — from this directory
+ *     gradle -p . assembleDebug
+ *
+ * REQUIREMENTS
+ *     Gradle 7.5+ and the Android SDK. See build.gradle for the full list and
+ *     for the AGP 8 migration note.
+ */
+
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+rootProject.name = 'attacker-app'

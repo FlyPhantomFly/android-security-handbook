@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  examples/weak-permissions-AndroidManifest.xml
+  ============================================
+  AN AUDIT TARGET. Every custom-permission defect this chapter describes, one
+  per element, in a manifest small enough to hold in your head.
+
+  This is the input for lab-01. Run all three chapters' tools against it and
+  compare what each one says - they answer different questions and the
+  difference IS the lesson. The exact three command lines are in
+  examples/README.md, because XML forbids a double hyphen inside a comment and
+  two of the three commands need one.
+
+  THE PLANTED DEFECTS, in declaration order. Do not read this list until you
+  have run the tools and written your own.
+
+    D1  PERM_NO_LEVEL       <permission> with no protectionLevel. Defaults to
+                            normal. Grants itself.
+    D2  PERM_DANGEROUS      Custom permission at dangerous, used for an
+                            internal API. One dialog is the whole control.
+    D3  PERM_SIG_PRIV       signature|privileged on a THIRD-PARTY app's own
+                            permission. The privileged population is
+                            meaningless here - no third-party app is ever in
+                            /system/priv-app - so the flag is noise that makes
+                            the level look wider than the developer intended.
+    D4  PERM_APPOP          signature|appop. The effective state depends on an
+                            App Op that dumpsys package does not show.
+    D5  PERM_DEV            signature|development. Grantable from the shell
+                            with pm grant. Every test you run against it is a
+                            false positive waiting to happen.
+    D6  USED_NOT_DECLARED   android:permission naming a permission this app
+                            never declares. Unowned, therefore squattable.
+    D7  READ_NO_WRITE       Provider with readPermission and no
+                            writePermission. Writable by anyone.
+    D8  PERMISSION_TREE     A <permission-tree>, so the manifest does not
+                            describe the whole permission surface.
+    D9  APP_LEVEL_PERM      <application android:permission> that a component
+                            OVERRIDES rather than adds to.
+    D10 EMPTY_ALIAS_PERM    <activity-alias android:permission=""> - an empty
+                            string REMOVES the application-level requirement.
+
+  AUTHORISED TESTING ONLY. This manifest is deliberately insecure.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.weakperms">
+
+    <uses-sdk android:minSdkVersion="21" android:targetSdkVersion="33" />
+
+    <!-- D1 -->
+    <permission android:name="com.example.weakperms.permission.INTERNAL_API" />
+
+    <!-- D2 -->
+    <permission
+        android:name="com.example.weakperms.permission.SYNC"
+        android:protectionLevel="dangerous"
+        android:label="@string/perm_sync_label"
+        android:description="@string/perm_sync_desc" />
+
+    <!-- D3 -->
+    <permission
+        android:name="com.example.weakperms.permission.ADMIN"
+        android:protectionLevel="signature|privileged" />
+
+    <!-- D4 -->
+    <permission
+        android:name="com.example.weakperms.permission.OVERLAY_CONTROL"
+        android:protectionLevel="signature|appop" />
+
+    <!-- D5 -->
+    <permission
+        android:name="com.example.weakperms.permission.DEBUG_DUMP"
+        android:protectionLevel="signature|development" />
+
+    <!-- D8 -->
+    <permission-tree
+        android:name="com.example.weakperms.dynamic"
+        android:label="@string/tree_label" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
+    <uses-permission android:name="com.example.weakperms.permission.INTERNAL_API" />
+
+    <!-- D9: an application-wide permission that per-component values OVERRIDE. -->
+    <application
+        android:label="@string/app_name"
+        android:permission="com.example.weakperms.permission.INTERNAL_API">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- D6: guarded by a name this app never declares. -->
+        <activity
+            android:name=".SyncSettingsActivity"
+            android:exported="true"
+            android:permission="com.example.suite.permission.MANAGE_SYNC" />
+
+        <!-- D10: the empty string REMOVES the application-level requirement. -->
+        <activity-alias
+            android:name=".OpenAlias"
+            android:targetActivity=".SyncSettingsActivity"
+            android:exported="true"
+            android:permission="" />
+
+        <service
+            android:name=".AdminService"
+            android:exported="true"
+            android:permission="com.example.weakperms.permission.ADMIN" />
+
+        <service
+            android:name=".SyncService"
+            android:exported="true"
+            android:permission="com.example.weakperms.permission.SYNC" />
+
+        <!-- D7: read is guarded, write is not. -->
+        <provider
+            android:name=".NotesProvider"
+            android:authorities="com.example.weakperms.notes"
+            android:exported="true"
+            android:readPermission="com.example.weakperms.permission.INTERNAL_API" />
+
+        <receiver
+            android:name=".DebugReceiver"
+            android:exported="true"
+            android:permission="com.example.weakperms.permission.DEBUG_DUMP">
+            <intent-filter>
+                <action android:name="com.example.weakperms.action.DUMP" />
+            </intent-filter>
+        </receiver>
+
+    </application>
+
+</manifest>

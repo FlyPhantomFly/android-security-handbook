@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    examples/keeplab/AndroidManifest.xml
+
+    The manifest names MainActivity as a literal string. PackageManager starts
+    components by that exact string, so whatever the manifest says must exist
+    in the DEX under that exact name.
+
+    AGP generates a keep rule for every manifest-declared component
+    automatically, which is why an obfuscated app's entry points are always
+    readable while everything behind them is not. Section 3.8 of the README
+    covers the generated rules; section 8 shows how to read them out of a build.
+
+    Note the deliberate absence of android:debuggable and of any exported
+    component other than the launcher. This fixture is a naming demonstration,
+    not a vulnerable app.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.pentest.ch41">
+
+    <application
+        android:label="@string/app_name"
+        android:allowBackup="false">
+
+        <activity
+            android:name="com.pentest.ch41.MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+    </application>
+</manifest>

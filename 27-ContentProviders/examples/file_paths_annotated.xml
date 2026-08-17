@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  examples/file_paths_annotated.xml
+  =================================
+
+  res/xml/file_paths.xml — the resource a FileProvider points at via:
+
+      <provider
+          android:name="androidx.core.content.FileProvider"
+          android:authorities="${applicationId}.fileprovider"
+          android:exported="false"
+          android:grantUriPermissions="true">
+          <meta-data android:name="android.support.FILE_PROVIDER_PATHS"
+                     android:resource="@xml/file_paths" />
+      </provider>
+
+  Both exported="false" and grantUriPermissions="true" above are correct and are
+  what a healthy FileProvider declaration looks like: it is never exported, and it
+  hands out access one URI at a time via a grant.
+
+  The manifest line is only a POINTER. The security decision lives HERE, in the
+  <paths> resource — which is why README section 8.3 says the referenced XML must
+  be opened on every engagement. An auditor who reads the manifest and stops has
+  not audited the FileProvider.
+
+  This file shows the DANGEROUS form beside the SAFE form for each element, so the
+  contrast is on one screen. It is intentionally NOT a shippable file — the two
+  <paths> blocks below are alternatives, presented for comparison. Ship the SAFE
+  block only. Chapter 32 (labs/lab-04-provider-surgery.md) owns the manifest-side
+  audit; this file is the runtime-exploitation companion.
+
+  HOW A FileProvider URI MAPS TO A FILE
+  =====================================
+      content://<authority>/<name>/<path relative to the named root>
+
+  Each <paths> child declares a ROOT DIRECTORY and a NAME. FileProvider.getUriForFile()
+  canonicalises the target and verifies it is inside a configured root, and openFile()
+  reverses that mapping and canonicalises again. So androidx FileProvider itself is
+  NOT usually the bug. The bug is one of:
+    (a) an over-broad root here (root-path, or path="." / path=""),
+    (b) a hand-rolled "FileProvider-like" custom provider that skips the
+        canonicalisation (see ../examples/VulnerableNotesProvider.java openFile),
+    (c) exported="true" on the provider (no correct FileProvider is exported),
+    (d) an app code path that lets an attacker choose WHICH File is shared.
+
+  Verify every finding from an unprivileged app, not just adb shell — see the
+  note at the foot of this file.
+-->
+
+
+<!-- ========================================================================= -->
+<!--  DANGEROUS FORM — DO NOT SHIP. Each element is annotated with what it      -->
+<!--  exposes and the exact URI an attacker builds against it.                  -->
+<!-- ========================================================================= -->
+<paths>
+
+    <!--
+      DEFECT A — root-path with path="."  (or path="/")
+      =================================================
+      Declares the entire filesystem root as a shareable root. FileProvider will
+      now happily produce a URI for ANY file the app's uid can read: its own
+      databases, its shared_prefs, world-readable parts of /system and /proc.
+
+      This is the single most common serious FileProvider misconfiguration. It is
+      the top Stack Overflow answer to "Failed to find configured root that
+      contains ..." and it gets copy-pasted into production constantly. Searching
+      every APK you assess for `<root-path` is a thirty-second check.
+
+      With name="root" and path="/", the relative path IS the absolute path minus
+      its leading slash, so the attacker URI is:
+
+        content://<authority>/root/data/user/0/<pkg>/shared_prefs/auth.xml
+        content://<authority>/root/data/user/0/<pkg>/databases/app.db
+        content://<authority>/root/proc/self/maps
+
+      Read it from the shell with the `content read` verb (the exact command line,
+      with its flag, is in ../labs/lab-03-path-traversal.md step 3 and in
+      ../cheatsheet.md; it cannot be written literally here because an XML comment
+      may not contain a double hyphen). Then confirm from an app with
+      openInputStream(). Severity: High, Critical once you read a credential.
+    -->
+    <root-path name="root" path="." />
+
+    <!--
+      DEFECT B — external-path with path="."
+      ======================================
+      "." resolves to the whole external volume the app can see. On a device where
+      the app has legacy/broad storage access this reaches other apps' leftovers,
+      camera photos and downloads. Lower than root-path, still a real exposure.
+    -->
+    <external-path name="external" path="." />
+
+    <!--
+      DEFECT C — files-path with path=""
+      ==================================
+      An empty path is NOT "nothing" — it is the ROOT of getFilesDir(). Every file
+      the app writes privately becomes shareable: token caches, offline databases,
+      downloaded documents. This is the most common because it looks harmless.
+    -->
+    <files-path name="allfiles" path="" />
+
+    <!--
+      DEFECT D — a path that climbs out of its root
+      =============================================
+      getFilesDir() is <data-dir>/files, so "../databases" escapes upward to
+      <data-dir>/databases. androidx FileProvider canonicalises and usually
+      rejects this exact form — but hand-rolled providers do not canonicalise at
+      all, and this is precisely the shape their <paths> take. Never rely on the
+      root string looking "inside" the app; rely on canonical containment in code.
+    -->
+    <files-path name="db" path="../databases/" />
+
+    <!--
+      DEFECT E — cache over the whole cache directory
+      ===============================================
+      Caches routinely hold decrypted copies of things the app protects elsewhere:
+      rendered documents, thumbnails of sensitive images, and HTTP response bodies
+      that can include bearer tokens. Lower impact, still worth narrowing.
+    -->
+    <cache-path name="allcache" path="" />
+
+</paths>
+
+
+<!-- ========================================================================= -->
+<!--  SAFE FORM — ship THIS. Every root is a single, specific subdirectory      -->
+<!--  that contains ONLY files intended for sharing. Nothing else is reachable  -->
+<!--  even if the provider is otherwise sound, because a URL that resolves       -->
+<!--  outside these roots is rejected by FileProvider before any FD is opened.   -->
+<!-- ========================================================================= -->
+<!--
+<paths>
+
+    -  A dedicated subdirectory of getFilesDir(), used ONLY for shareable files.
+       Put a file here deliberately, immediately before granting a URI for it.
+    <files-path          name="shared"       path="shared/" />
+
+    -  A dedicated subdirectory of getCacheDir() for transient shared artefacts
+       (e.g. a generated PDF you are about to hand to a viewer).
+    <cache-path          name="shared_cache" path="shared/" />
+
+    -  External equivalents, each a NAMED subdirectory, never "." and never "".
+    <external-files-path name="ext_shared"   path="shared/" />
+
+    -  NO <root-path>. There is almost never a legitimate reason for one.
+
+</paths>
+-->
+
+
+<!--
+  PROVING A FileProvider FINDING (both forms)
+  ===========================================
+
+  1. Mechanism, from the shell first (uid 2000): `adb shell`, then the `content
+     read` verb against
+
+       content://<authority>/root/data/user/0/<pkg>/shared_prefs/auth.xml
+
+     The full command line is in ../labs/lab-03-path-traversal.md step 3 and in
+     ../cheatsheet.md. It is not repeated here because its flag begins with a
+     double hyphen, which XML forbids inside a comment and aapt2 rejects.
+
+  2. Then AGAIN from an unprivileged app, because adb shell is uid 2000 and is not
+     an attacker. query() and openInputStream() take DIFFERENT permission paths in
+     ContentProvider — a FileProvider serves through openFile and has no meaningful
+     query, so test the stream, not the cursor:
+
+       // no-permission probe app; needs <queries> for the target on Android 11+
+       Uri u = Uri.parse("content://<authority>/root/data/user/0/<pkg>/shared_prefs/auth.xml");
+       try (InputStream in = getContentResolver().openInputStream(u)) {
+           // read it — if this throws SecurityException you have an OBSERVATION,
+           // not a finding, and the shell result was a false positive.
+       }
+
+  3. Write the fix as the corrected <paths> file, not as prose. The SAFE block
+     above is that fix.
+
+  See ../labs/lab-03-path-traversal.md and
+  ../../32-Manifest/labs/lab-04-provider-surgery.md.
+-->

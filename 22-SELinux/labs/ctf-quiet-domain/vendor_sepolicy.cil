@@ -1,0 +1,201 @@
+;; ============================================================================
+;; vendor_sepolicy.cil  --  CTF ARTEFACT, SYNTHETIC
+;;
+;; *** THIS FILE IS CONSTRUCTED FOR labs/lab-05-ctf-the-quiet-domain.md ***
+;;
+;; It is NOT from any real device. It is written in the CIL syntax that a real
+;; device's /vendor/etc/selinux/vendor_sepolicy.cil uses, and the rules are
+;; format-correct, but the domains, types and daemons are invented. It is
+;; deliberately about a third the size of a real vendor policy so that the
+;; whole thing can be read.
+;;
+;; Do not quote anything in this file as evidence of platform behaviour. The
+;; measured, real material lives in ../../examples/policy-rules-measured.cil.
+;;
+;; Device story: "Aurora Mobile AM-7", a mid-range handset. Android 13,
+;; API 33, policy version 31. Vendor prefix `vnd_`.
+;; ============================================================================
+
+
+;; ---------------------------------------------------------------------------
+;; Type declarations
+;; ---------------------------------------------------------------------------
+
+(type vnd_diagd)
+(type vnd_diagd_exec)
+(type vnd_diagd_data_file)
+(type vnd_diag_socket)
+
+(type vnd_otad)
+(type vnd_otad_exec)
+(type vnd_ota_data_file)
+
+(type vnd_sensord)
+(type vnd_sensord_exec)
+(type vnd_sensor_data_file)
+
+(type vnd_audiofx)
+(type vnd_audiofx_exec)
+
+(type diag_app)
+(type diag_app_data_file)
+
+(type vnd_factory_app)
+(type vnd_factory_data_file)
+
+(type vnd_diag_service)
+(type vnd_ota_service)
+
+(type vnd_diag_prop)
+(type vnd_ota_prop)
+
+
+;; ---------------------------------------------------------------------------
+;; Attribute membership
+;;
+;; NOTE the mlstrustedsubject line. Compare it against the platform set.
+;; ---------------------------------------------------------------------------
+
+(typeattributeset domain (vnd_diagd vnd_otad vnd_sensord vnd_audiofx diag_app vnd_factory_app ))
+(typeattributeset appdomain (diag_app vnd_factory_app ))
+(typeattributeset file_type (vnd_diagd_data_file vnd_ota_data_file vnd_sensor_data_file diag_app_data_file vnd_factory_data_file vnd_diag_socket ))
+(typeattributeset data_file_type (vnd_diagd_data_file vnd_ota_data_file vnd_sensor_data_file diag_app_data_file vnd_factory_data_file ))
+(typeattributeset app_data_file_type (diag_app_data_file vnd_factory_data_file ))
+(typeattributeset exec_type (vnd_diagd_exec vnd_otad_exec vnd_sensord_exec vnd_audiofx_exec ))
+(typeattributeset service_manager_type (vnd_diag_service vnd_ota_service ))
+(typeattributeset property_type (vnd_diag_prop vnd_ota_prop ))
+(typeattributeset mlstrustedsubject (vnd_diagd vnd_otad ))
+
+
+;; ---------------------------------------------------------------------------
+;; vnd_sensord  --  a well-written domain. Read this one first, so you know
+;; what "correct" looks like on this device before you judge the others.
+;; ---------------------------------------------------------------------------
+
+(allow vnd_sensord vnd_sensor_data_file (dir (search getattr)))
+(allow vnd_sensord vnd_sensor_data_file (file (open read write getattr create unlink)))
+(allow vnd_sensord vnd_sensord_exec (file (execute_no_trans entrypoint read getattr map open)))
+(allow vnd_sensord sysfs (dir (search)))
+(allow vnd_sensord sysfs (file (open read getattr)))
+(allow vnd_sensord servicemanager (binder (call transfer)))
+(neverallow vnd_sensord app_data_file (file (open read write)))
+(neverallow vnd_sensord self (capability (dac_override sys_admin)))
+(neverallow appdomain vnd_sensord (unix_stream_socket (connectto)))
+
+
+;; ---------------------------------------------------------------------------
+;; vnd_audiofx  --  also fine. Narrow, no capabilities, no app reach.
+;; ---------------------------------------------------------------------------
+
+(allow vnd_audiofx vnd_audiofx_exec (file (execute_no_trans entrypoint read getattr map open)))
+(allow vnd_audiofx audioserver (binder (call transfer)))
+(allow vnd_audiofx audioserver_service (service_manager (find)))
+(neverallow vnd_audiofx self (capability (dac_override)))
+(neverallow vnd_audiofx app_data_file (dir (search)))
+
+
+;; ---------------------------------------------------------------------------
+;; vnd_otad  --  the OTA updater. Privileged, and it needs to be, but look at
+;; how it reaches app data and compare with how dex2oat does it.
+;; ---------------------------------------------------------------------------
+
+(allow vnd_otad vnd_ota_data_file (dir (search getattr read write add_name remove_name)))
+(allow vnd_otad vnd_ota_data_file (file (open read write getattr create unlink)))
+(allow vnd_otad vnd_otad_exec (file (execute_no_trans entrypoint read getattr map open)))
+(allow vnd_otad self (capability (dac_override sys_admin)))
+(allow vnd_otad vnd_ota_prop (property_service (set)))
+(allow vnd_otad vnd_ota_service (service_manager (add)))
+(allow vnd_otad servicemanager (binder (call transfer)))
+(allow vnd_otad block_device (blk_file (open read write getattr)))
+(allow vnd_otad update_engine (binder (call transfer)))
+(allow vnd_otad app_data_file (file (read write getattr map)))
+(allow vnd_otad app_data_file (dir (search getattr)))
+(allow vnd_otad privapp_data_file (file (read write getattr map)))
+(allow vnd_otad privapp_data_file (dir (search getattr)))
+
+
+;; ---------------------------------------------------------------------------
+;; vnd_diagd  --  the diagnostics daemon.
+;;
+;; This is the quiet one. It produces no denials at all, which is exactly why
+;; nobody has looked at it.
+;; ---------------------------------------------------------------------------
+
+(allow vnd_diagd vnd_diagd_data_file (dir (search getattr read write add_name remove_name)))
+(allow vnd_diagd vnd_diagd_data_file (file (open read write getattr create unlink)))
+(allow vnd_diagd vnd_diagd_exec (file (execute_no_trans entrypoint read getattr map open)))
+
+;; It binds an abstract-namespace socket. Note there is no sock_file type in
+;; play here at all -- an abstract socket has no filesystem entry.
+(allow vnd_diagd self (unix_stream_socket (create bind listen accept read write getopt setopt shutdown)))
+
+;; Capabilities.
+(allow vnd_diagd self (capability (dac_override dac_read_search sys_ptrace)))
+
+;; Reaching app data. Compare the permission set here with vnd_otad's, and
+;; with the dex2oat rules in ../../examples/policy-rules-measured.cil.
+(allow vnd_diagd app_data_file (dir (search getattr read open)))
+(allow vnd_diagd app_data_file (file (open read getattr map)))
+(allow vnd_diagd privapp_data_file (dir (search getattr read open)))
+(allow vnd_diagd privapp_data_file (file (open read getattr map)))
+(allow vnd_diagd system_data_file (dir (search getattr read open)))
+(allow vnd_diagd system_data_file (file (open read getattr)))
+
+;; Logs and crash dumps.
+(allow vnd_diagd tombstone_data_file (dir (search getattr read open)))
+(allow vnd_diagd tombstone_data_file (file (open read getattr)))
+(allow vnd_diagd anr_data_file (dir (search getattr read open)))
+(allow vnd_diagd anr_data_file (file (open read getattr)))
+
+;; Properties and services.
+(allow vnd_diagd vnd_diag_prop (property_service (set)))
+(allow vnd_diagd vnd_diag_service (service_manager (add)))
+(allow vnd_diagd servicemanager (binder (call transfer)))
+(allow vnd_diagd logd (unix_stream_socket (connectto)))
+
+;; And the one that matters most, at the very bottom where nobody scrolls.
+(allow diag_app vnd_diagd (unix_stream_socket (connectto)))
+
+
+;; ---------------------------------------------------------------------------
+;; diag_app  --  the companion application's domain.
+;;
+;; This is an ORDINARY APP DOMAIN. It is a member of appdomain. Read its rules
+;; and ask what an app that landed here could do that an ordinary
+;; untrusted_app could not.
+;; ---------------------------------------------------------------------------
+
+(allow diag_app diag_app_data_file (dir (search getattr read write add_name remove_name open)))
+(allow diag_app diag_app_data_file (file (open read write getattr create unlink map)))
+(allow diag_app self (process (execmem fork sigchld)))
+(allow diag_app vnd_diag_service (service_manager (find)))
+(allow diag_app vnd_diagd (binder (call transfer)))
+(allow diag_app servicemanager (binder (call transfer)))
+(allow diag_app logd (unix_stream_socket (connectto)))
+(allow diag_app vnd_diag_prop (property_service (set)))
+
+
+;; ---------------------------------------------------------------------------
+;; vnd_factory_app  --  a factory-test application domain, left in the
+;; shipping build. It is PERMISSIVE.
+;; ---------------------------------------------------------------------------
+
+(typepermissive vnd_factory_app)
+
+(allow vnd_factory_app vnd_factory_data_file (dir (search getattr read write add_name remove_name open)))
+(allow vnd_factory_app vnd_factory_data_file (file (open read write getattr create unlink)))
+(allow vnd_factory_app servicemanager (binder (call transfer)))
+
+
+;; ---------------------------------------------------------------------------
+;; Assorted vendor rules. Some of these are fine; at least one is not.
+;; ---------------------------------------------------------------------------
+
+(allow vnd_diagd kernel (security (compute_av check_context)))
+(allow vnd_otad kernel (security (compute_av)))
+(allow appdomain vnd_diag_prop (file (open read getattr)))
+(allow untrusted_app vnd_diag_service (service_manager (find)))
+(allow vnd_sensord vnd_sensor_data_file (lnk_file (read getattr)))
+(allow vnd_audiofx tmpfs (file (read write getattr map)))
+(allow vnd_otad vnd_ota_prop (file (open read getattr)))
+(allow diag_app tmpfs (file (read write getattr map)))

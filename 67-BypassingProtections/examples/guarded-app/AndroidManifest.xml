@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  examples/guarded-app/AndroidManifest.xml
+
+  A deliberately over-protected demonstration app for chapter 67.
+
+  It exists so that you have something you are ALLOWED to attack. Every control
+  in it is real code taking a real decision; none of it is a mock. Nothing in
+  this app should ever be copied into a production application - it is a
+  catalogue of client-side controls precisely so that the chapter can show all
+  of them being defeated.
+
+  android:debuggable is deliberately NOT set here. build.sh produces two
+  variants from these same sources: a release variant and a debuggable variant,
+  by patching this attribute at build time. The pair is the point - one of the
+  app's own controls asks whether it is debuggable, and you need both answers.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="com.pentest.ch67.guarded">
+
+    <!--
+      INTERNET is needed only by the server-side sibling example
+      (../server-app). It is requested here as well so that the two variants
+      differ in exactly one thing - where the decision is taken - and not in
+      their permission sets. A comparison with two variables is not a
+      comparison.
+    -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:label="CH67 Guarded"
+        android:allowBackup="false"
+        android:extractNativeLibs="true"
+        android:usesCleartextTraffic="true">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+    </application>
+</manifest>

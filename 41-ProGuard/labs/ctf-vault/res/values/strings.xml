@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    labs/ctf-vault/res/values/strings.xml
+
+    Fragment 4 is the NAME of a resource, not its value. Resource names live in
+    resources.arsc, which R8 does not process at all. No rule, no setting and
+    no engine renames them.
+
+    Resource SHRINKING (shrinkResources) can delete an unreferenced resource,
+    but this one is looked up with getIdentifier(), which is a string lookup,
+    so it would need a keep of its own. That is a different mechanism and it
+    belongs to 08-Build-System rather than to this chapter.
+-->
+<resources>
+    <string name="app_name">CH41 CTF</string>
+    <string name="d31c">fragment four is my name, not my value</string>
+    <string name="decoy_e55e">not the fifth fragment</string>
+</resources>

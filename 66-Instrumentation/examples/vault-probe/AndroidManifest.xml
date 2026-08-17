@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    examples/vault-probe/AndroidManifest.xml
+
+    The TEST APK. Three things in this file do all the work, and every one of
+    them is worth reading carefully:
+
+      package="com.pentest.ch66.vault.test"
+          A separate package, separately installed, with its own row in
+          `pm list packages`. It is NOT a variant of the target.
+
+      <instrumentation android:targetPackage="com.pentest.ch66.vault">
+          The binding. This single attribute is what tells ActivityManagerService
+          to start the TARGET's process and load THIS APK's code into it. There
+          is no permission involved and the target never consents.
+
+      android:name="com.pentest.ch66.probe.VaultProbe"
+          The class the framework instantiates. It must extend
+          android.app.Instrumentation. androidx.test.runner.AndroidJUnitRunner is
+          just one such class; it has no privileged status.
+
+    Note what is NOT here: no <application> component of any kind, no permission,
+    no <uses-permission>, and no android:testOnly. An empty <application> element
+    is still required or aapt2 will not link a usable manifest.
+
+    AUTHORISED TESTING ONLY. This APK reads another application's private data by
+    design. Install it only alongside the vault-target fixture on a device you own.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.pentest.ch66.vault.test"
+    android:versionCode="1"
+    android:versionName="1.0">
+
+    <uses-sdk android:minSdkVersion="24" android:targetSdkVersion="35" />
+
+    <instrumentation
+        android:name="com.pentest.ch66.probe.VaultProbe"
+        android:targetPackage="com.pentest.ch66.vault"
+        android:label="ch66 vault probe"
+        android:handleProfiling="false"
+        android:functionalTest="false" />
+
+    <application android:label="ch66 vault probe" />
+</manifest>

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  examples/squat-pair/victim-AndroidManifest.xml
+  =============================================
+  THE VICTIM THAT DECLARES ITS OWN PERMISSION - the "both declare" case.
+
+  This app does everything a careful developer is told to do. It namespaces the
+  permission under its own package name. It sets protectionLevel="signature",
+  which is the strongest value a manifest can express. It guards its exported
+  provider with that permission.
+
+  And on a device where the squatter got there first, it CANNOT BE INSTALLED
+  AT ALL.
+
+  MEASURED on Android 13 / API 33, squatter installed first:
+
+    $ adb install -r victim.apk
+    Failure [INSTALL_FAILED_DUPLICATE_PERMISSION: Package com.victim.notes
+    attempting to redeclare permission com.victim.notes.permission.READ_NOTES
+    already owned by com.squat.first]
+
+  And symmetrically, with the victim installed first:
+
+    $ adb install -r squatter.apk
+    Failure [INSTALL_FAILED_DUPLICATE_PERMISSION: Package com.squat.first
+    attempting to redeclare permission com.victim.notes.permission.READ_NOTES
+    already owned by com.victim.notes]
+
+  THIS CORRECTS THE TEXTBOOK. The commonly repeated version of permission
+  squatting says the squatter's weaker definition silently GOVERNS the victim's
+  component. When both apps declare the name, that is not what a modern platform
+  does - the second installer is refused, symmetrically, regardless of which is
+  malicious and regardless of protection level.
+
+  That does not make squatting harmless. It changes what it IS. In this
+  configuration squatting is an INSTALL-DENIAL primitive: a malicious app can
+  make a specific victim permanently uninstallable, with no user-visible
+  explanation beyond a generic install failure.
+
+  The configuration where squatting still works as an ACCESS-CONTROL BYPASS is
+  the sibling file, victim-suite-AndroidManifest.xml, where the victim USES a
+  permission it does not DECLARE. Read that one next.
+
+  Build with ./build-squat-pair.sh. Signed with a DIFFERENT key from the
+  squatter, deliberately.
+
+  AUTHORISED TESTING ONLY.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.victim.notes">
+
+    <uses-sdk android:minSdkVersion="21" android:targetSdkVersion="33" />
+
+    <!--
+      The developer did this right. signature means: granted only to apps
+      signed with the same certificate as this one. An attacker would need
+      this app's private key.
+
+      It is still not sufficient on its own, for a reason that has nothing to
+      do with the level: this app is the only member of its "suite" that
+      declares the name. See victim-suite-AndroidManifest.xml.
+    -->
+    <permission
+        android:name="com.victim.notes.permission.READ_NOTES"
+        android:protectionLevel="signature"
+        android:label="Read notes"
+        android:description="@string/perm_desc" />
+
+    <queries>
+        <package android:name="com.victim.suite" />
+    </queries>
+
+    <application
+        android:hasCode="false"
+        android:label="VictimNotes">
+
+        <!--
+          An exported provider guarded by the signature permission above. This
+          is the CORRECT shape for cross-app access within a signed suite:
+          exported, so siblings can reach it, guarded by a permission only a
+          sibling can obtain.
+
+          android:name points at a class that does not exist in this APK,
+          because hasCode is false. The platform records the declaration; it
+          only tries to load the class when something actually resolves the
+          provider. That is enough for every measurement in this chapter, and
+          it keeps the example to a manifest you can read in a minute.
+        -->
+        <provider
+            android:name="com.victim.notes.NotesProvider"
+            android:authorities="com.victim.notes.provider"
+            android:exported="true"
+            android:readPermission="com.victim.notes.permission.READ_NOTES"
+            android:writePermission="com.victim.notes.permission.READ_NOTES" />
+
+    </application>
+
+</manifest>

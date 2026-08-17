@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    labs/ctf-vault/AndroidManifest.xml
+
+    DELIBERATELY VULNERABLE CTF FIXTURE for chapter 66, lab 04. Install it only
+    on a device you own, and uninstall it when you are finished:
+
+        adb uninstall com.pentest.ch66.ctf
+
+    Note what is NOT here, because entrants ask:
+
+      * no android:debuggable. The challenge is not solvable through run-as, and
+        that is deliberate. Chapter 66 measured that debuggable is not the
+        instrumentation gate in either direction.
+      * no exported component except the launcher activity.
+      * no permission of any kind.
+      * no android:testOnly.
+
+    The provider is exported="false" and initOrder is set high so it runs early.
+    That is the only unusual line in the file.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.pentest.ch66.ctf"
+    android:versionCode="1"
+    android:versionName="1.0">
+
+    <uses-sdk android:minSdkVersion="24" android:targetSdkVersion="35" />
+
+    <application
+        android:name="com.pentest.ch66.ctf.CtfApp"
+        android:label="ch66 CTF"
+        android:allowBackup="false">
+
+        <activity
+            android:name="com.pentest.ch66.ctf.CtfActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <provider
+            android:name="com.pentest.ch66.ctf.EarlyProvider"
+            android:authorities="com.pentest.ch66.ctf.early"
+            android:exported="false"
+            android:initOrder="1000" />
+    </application>
+</manifest>

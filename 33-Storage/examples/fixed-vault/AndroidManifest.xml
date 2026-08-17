@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  examples/fixed-vault/AndroidManifest.xml
+
+  The remediated half of chapter 33's example pair. Diff this against
+  examples/leaky-vault/AndroidManifest.xml; the differences are small, and only
+  two of the five real fixes are visible here at all. That asymmetry is the
+  lesson: a manifest audit finds the manifest bugs, and the manifest bugs are
+  the minority.
+
+  VISIBLE HERE
+
+    android:allowBackup="false"
+        The blunt fix, and the correct one for an app whose entire purpose is
+        holding a credential. It removes the app from Auto Backup and from
+        adb backup outright.
+
+        If the app DOES need backup — most do, because users expect their data
+        to follow them to a new phone — then keep allowBackup="true" and
+        exclude the sensitive files instead. backup_rules.xml in this directory
+        is a working example, wired in with:
+
+            android:fullBackupContent="@xml/backup_rules"          (API 23-30)
+            android:dataExtractionRules="@xml/data_extraction_rules"  (API 31+)
+
+        Ship both attributes. The platform reads the one that matches its API
+        level and ignores the other, and an app that sets only the newer one is
+        unprotected on every device below API 31. See examples/README.md.
+
+    android:debuggable removed
+        The leaky app sets it. A debuggable app lets `run-as` read the entire
+        credential-encrypted directory with no root at all, which collapses
+        every "only root can reach this" argument in the whole chapter. It is
+        also the flag that lets any local process attach a debugger and read
+        the decrypted secret out of memory.
+
+  NOT VISIBLE HERE, AND THIS IS THE POINT
+
+    The plaintext staging file, the debug export on external storage, the
+    duplicate token in SharedPreferences, the Log.d, the write to
+    device-encrypted storage, the WAL residue, and FLAG_SECURE are ALL fixed in
+    the Java, and NONE of them is expressible in a manifest. A scanner that
+    reads only AndroidManifest.xml grades the leaky app and this one almost
+    identically.
+
+  AUTHORISED TESTING ONLY — this app still stores a demo secret. It is a
+  teaching artefact, not a product.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.pentest.ch33.vaultfixed">
+
+    <application
+        android:label="CH33 Fixed Vault"
+        android:allowBackup="false"
+        android:theme="@android:style/Theme.Material.Light">
+
+        <!-- singleTop for the same testing reason as the leaky app: without it,
+             a second `am start` for an already-top activity never reaches
+             onNewIntent, and a scripted multi-step exercise silently runs only
+             its first step. See examples/leaky-vault/AndroidManifest.xml. -->
+        <activity
+            android:name=".VaultActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:label="CH33 Fixed Vault">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>

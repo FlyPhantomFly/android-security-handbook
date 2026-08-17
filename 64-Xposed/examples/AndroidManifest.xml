@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    examples/AndroidManifest.xml
+
+    THE FOUR DECLARATIONS THAT MAKE AN ORDINARY APK A MODULE.
+
+    There is nothing structural about a module. It is an APK with meta-data,
+    an asset, and DEX references to classes it does not define. This manifest
+    is the meta-data half; examples/xposed_init is the asset half; and
+    scripts/build-classic-module.sh produces the DEX half.
+
+    IMPORTANT: this exact manifest shape is read by classic Xposed, by
+    EdXposed and by LSPosed alike. You CANNOT tell from an APK which framework
+    will load it. See README section 2.4 and section 6.1.
+
+    XML COMMENT RULE, learned the hard way in this repository: an XML comment
+    must not contain a double hyphen. aapt2 rejects the file, and five files
+    elsewhere in this repo were found violating it. Every dash below is single.
+
+    AUTHORISED TESTING ONLY.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="com.pentest.ch64.module">
+
+    <!--
+        A module needs NO permissions of its own.
+
+        This is the single most misunderstood fact about the format. A module's
+        code runs inside the TARGET application's process, at the TARGET's uid,
+        with the TARGET's permissions. Requesting INTERNET here would grant the
+        module nothing it does not already have inside a target that has it, and
+        nothing at all inside a target that does not.
+
+        Under classic Xposed the module ran in EVERY process, so it inherited
+        whatever each of them had, one process at a time. That is not the same
+        as being privileged, and calling it "root" is wrong: the framework had
+        root in Zygote, before the fork; the module runs after the uid drop.
+    -->
+
+    <application
+        android:label="CH64 Classic Module"
+        android:icon="@android:drawable/ic_dialog_info"
+        android:hasCode="true">
+
+        <!--
+            1. REQUIRED. Without this the installer/manager will not list the
+               APK at all. It is the load bearing declaration: everything else
+               here is metadata about a module, this is what MAKES it one.
+        -->
+        <meta-data
+            android:name="xposedmodule"
+            android:value="true" />
+
+        <!--
+            2. REQUIRED in practice. The minimum XPOSED API version.
+
+               This is not an Android API level, not an Android version, and
+               not an LSPosed version. It is the version of the
+               de.robv.android.xposed surface, and it has been 82 for years.
+               A module declaring 82 is not "old"; it is the only value anyone
+               uses. README section 3.15's last row exists because this is
+               misread constantly.
+        -->
+        <meta-data
+            android:name="xposedminversion"
+            android:value="82" />
+
+        <!--
+            3. RECOMMENDED. One line, shown in the manager's module list.
+               Write it for the person deciding whether to enable you.
+        -->
+        <meta-data
+            android:name="xposeddescription"
+            android:value="Chapter 64 lab module. Observes com.pentest.ch64.vault and demonstrates the classic Xposed API. Targets a lab app only." />
+
+        <!--
+            4. RECOMMENDED, and its MEANING CHANGED between frameworks.
+
+               Under classic Xposed this was documentation and nothing else,
+               because there was no scope: an enabled module ran in every
+               process on the device regardless of what this said.
+
+               Under LSPosed it PRE SELECTS the scope checkboxes the user is
+               shown. It is a hint, not an enforcement boundary; a user can
+               scope a module anywhere, which is why the module's own
+               packageName guard is still correct code and not merely polite.
+
+               Keep this list MINIMAL, and never include "android" unless the
+               module genuinely hooks the framework. "android" means the module
+               loads into system_server at uid 1000 with the platform's
+               permissions, which 63-LSPosed rates Critical, and the checkbox
+               for it looks exactly like the checkbox for a notes app.
+        -->
+        <meta-data
+            android:name="xposedscope"
+            android:value="com.pentest.ch64.vault" />
+
+        <!--
+            NOT PRESENT, deliberately: any Activity, Service, Receiver or
+            Provider.
+
+            A module needs no components. This APK is a container for DEX and
+            an asset. Many real modules do ship a settings Activity, and that
+            is a normal thing to do, but it is not part of being a module and
+            adding one is the fastest way to confuse yourself about what the
+            format requires.
+
+            Also NOT PRESENT: a <queries> element. A module does not need to
+            see other packages, because it does not talk to them; it runs
+            inside them. An app that DOES query for module packages (that is,
+            an Xposed DETECTOR) needs <queries> from API 30 onward, and the
+            absence of one is why the manager package name check in
+            examples/XposedDetector.java is broken independently of everything
+            else. See README section 5.3.
+        -->
+    </application>
+</manifest>

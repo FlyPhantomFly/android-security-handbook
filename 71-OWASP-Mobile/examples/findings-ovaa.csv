@@ -1,0 +1,44 @@
+# ILLUSTRATIVE FIXTURE -- single-app result set for scripts/mas-coverage.py
+#
+# This is a TEACHING EXAMPLE shaped like a real assessment result table. It is NOT an
+# assessment of any published build of OVAA, and the states here must not be quoted as
+# one. Produce your own in labs/lab-02-map-a-known-app.md, then compare.
+#
+# Lines beginning with '#' are skipped by mas-coverage.py.
+# Column meanings:
+#   control   MASVS control identifier, resolved from the current checklist
+#   state     PASS | FAIL | PARTIAL | NOT-TESTED | BLOCKED | N/A
+#   evidence  pointer to a stored artefact; REQUIRED for PASS, FAIL and PARTIAL
+#   finding   finding identifier from the report; expected whenever state is FAIL
+#   severity  from the threat model, never from the control
+#   note      one line, in report voice
+#
+# ONE ROW IS DELIBERATELY WRONG. MASVS-PRIVACY-2 is marked PASS with no evidence
+# reference. mas-coverage.py will refuse to count it as covered and will report it as
+# UNSUBSTANTIATED. That is the single most common defect in real coverage tables, and
+# seeing the tool catch it is the point of shipping this fixture.
+control,state,evidence,finding,severity,note
+MASVS-STORAGE-1,FAIL,evidence/12-storage-datadir-diff.txt,F-01,High,Session identifier written to shared_prefs in plaintext; reproduced across a full feature exercise
+MASVS-STORAGE-2,FAIL,evidence/12-logcat-full.txt#L4471,F-02,Medium,Credential-shaped value emitted to the system log on every token refresh
+MASVS-CRYPTO-1,FAIL,evidence/21-crypto-jca-trace.log,F-03,Medium,Runtime trace shows a block cipher used without an authenticated mode and with a constant IV
+MASVS-CRYPTO-2,FAIL,evidence/21-crypto-jca-trace.log,F-03,Medium,Key material originates from a constant byte array in DEX; KeyStore is never involved
+MASVS-AUTH-1,BLOCKED,,,,No reachable backend in this target; server-side authorization could not be exercised
+MASVS-AUTH-2,N/A,,,,App implements no local authentication surface
+MASVS-AUTH-3,N/A,,,,No sensitive operation requiring step-up authentication exists in this target
+MASVS-NETWORK-1,PARTIAL,evidence/22-cert-failure-matrix.md,F-04,Medium,Three of four bad-certificate cases tested; wrong-hostname case not reproducible without a controlled endpoint
+MASVS-NETWORK-2,N/A,,,,No developer-controlled remote endpoint to pin against
+MASVS-PLATFORM-1,FAIL,evidence/33-platform-probe-results.txt,F-05,High,Exported component reachable from an unprivileged probe app and forwarding an externally supplied target
+MASVS-PLATFORM-2,FAIL,evidence/34-webview-settings.txt,F-06,High,WebView loads an externally supplied URL with a JavaScript bridge attached
+MASVS-PLATFORM-3,PARTIAL,evidence/35-ui-surface.txt,,,Screenshot and clipboard behaviour checked; overlay defence not assessed
+MASVS-CODE-1,FAIL,evidence/11-manifest-audit.md,F-07,Low,targetSdk below the level at which explicit component export became mandatory
+MASVS-CODE-2,NOT-TESTED,,,,No update mechanism exists in the target; excluded at scoping
+MASVS-CODE-3,PARTIAL,evidence/40-dependency-inventory.txt,,,Inventory produced; two bundled native libraries could not be version-identified
+MASVS-CODE-4,FAIL,evidence/33-platform-probe-results.txt,F-08,Medium,Provider path argument reaches file access without canonicalisation
+MASVS-RESILIENCE-1,NOT-TESTED,,,,Excluded at scoping: training target with no hostile-device-owner adversary
+MASVS-RESILIENCE-2,NOT-TESTED,,,,Excluded at scoping: as above
+MASVS-RESILIENCE-3,NOT-TESTED,,,,Excluded at scoping: as above
+MASVS-RESILIENCE-4,NOT-TESTED,,,,Excluded at scoping: as above
+MASVS-PRIVACY-1,FAIL,evidence/11-manifest-audit.md,F-09,Low,Two requested permissions have no corresponding use in the decompiled sources
+MASVS-PRIVACY-2,PASS,,,,No persistent hardware identifier observed in egress during the standard exercise
+MASVS-PRIVACY-3,BLOCKED,,,,No published privacy policy exists for this target to compare egress against
+MASVS-PRIVACY-4,N/A,,,,No account or data-control surface exists in this target

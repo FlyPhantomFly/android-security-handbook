@@ -1,0 +1,169 @@
+# 79-Glossary/scripts/lexicon.txt
+#
+# THE WATCHLIST: terms this repository's prose asks a reader to understand,
+# and which the glossary is therefore required to define.
+#
+# `glossary-coverage.py` asserts that every term below has a glossary entry
+# (FORWARD), and separately that every glossary entry is used somewhere in the
+# repository (REVERSE). Both checks are what `README.md:3` now claims.
+#
+# HOW A TERM GETS ON THIS LIST
+#   - It appeared in the reader-experience audit as used-but-undefined.
+#   - `--propose` nominated it by shape and triage kept it.
+#   - A chapter introduced it in prose without defining it in place.
+#
+# HOW A TERM LEAVES
+#   Only by the repository ceasing to use it. Deleting a line here to make the
+#   gate pass is the one move this file exists to make visible.
+#
+# One term per line. `#` starts a comment. Case matters: the term is matched
+# case-sensitively (a leading capital is also accepted, for sentence starts).
+
+# ---- nominated by --propose and triaged in (2026-08) -----------------------
+AVD
+PATH
+ClassLoader
+JIT
+AOT
+SharedPreferences
+Service
+
+# ---- found used-but-undefined by the 2026-08 reader-experience audit -------
+Activity
+BroadcastReceiver
+bytecode
+daemon
+Gradle
+logcat
+SELinux
+syscall
+
+# ---- the seven nouns 00-Introduction's "systemless root" definition uses ---
+boot image
+ramdisk
+init
+overlay filesystem
+dm-verity
+Magisk
+# `/system` itself is a path, not a word: it is covered by section 7 of the
+# glossary, and a bare `system` is too generic to be matched usefully here.
+
+# ---- component model: a beginner meets all of these in chapters 00-02 ------
+ContentProvider
+Intent
+PendingIntent
+Binder
+Zygote
+system_server
+servicemanager
+Exported component
+Deep link
+UID
+sandbox
+
+# ---- execution and packaging ----------------------------------------------
+APK
+DEX
+Smali
+Dalvik
+ART
+dex2oat
+OAT
+VDEX
+ELF
+JNI
+Reflection
+R8
+ProGuard
+Obfuscation
+resources.arsc
+AXML
+Baksmali
+
+# ---- platform and security model ------------------------------------------
+AOSP
+DAC
+MAC
+seccomp-bpf
+seapp_contexts
+AVC denial
+AVB
+Bootloader
+Bionic
+ptrace
+ASLR
+PIE
+RELRO
+CFI
+Scudo
+isolatedProcess
+run-as
+sharedUserId
+targetSdkVersion
+Scoped storage
+FLAG_SECURE
+AppOps
+Confused deputy
+Intent redirection
+
+# ---- crypto, transport, identity ------------------------------------------
+AEAD
+ECB
+GCM
+IV
+Nonce
+Salt
+MAC
+SecureRandom
+KeyStore
+Attestation
+StrongBox
+TEE
+KeyMint
+Gatekeeper
+CryptoObject
+TrustManager
+Pinning
+SPKI pin
+Conscrypt
+BoringSSL
+Network Security Config
+JWT
+Bearer token
+PKCE
+DPoP
+IDOR
+
+# ---- tradecraft and tooling -----------------------------------------------
+Frida
+Frida Gadget
+Stalker
+Objection
+JADX
+Ghidra
+Drozer
+LSPosed
+Xposed
+Zygisk
+RootBeer
+Fastboot
+adbd
+shell
+Tapjacking
+StrandHogg
+launchMode
+taskAffinity
+WebView
+DexClassLoader
+Hidden API
+APEX
+Mainline
+Treble
+HAL
+Parcel
+MASVS
+Play Integrity API
+TracerPid
+MTE
+fs-verity
+Deodex

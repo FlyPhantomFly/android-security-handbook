@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  examples/target-app/AndroidManifest.xml
+
+  The chapter 54 target application. Build it with examples/build.sh.
+
+  WHY THIS APP EXISTS
+  This app is not "a vulnerable app". It is a MEASURING INSTRUMENT. Its only job
+  is to run five root-detection checks that were chosen because of how they line
+  up against the three hooks that `android root disable` actually installs:
+
+    Check A  new File("/system/xbin/su").exists()
+             The path IS in objection's hard-coded commonPaths list.
+             Expected: objection neutralises it.
+
+    Check B  new File("/sbin/magisk").exists()
+             The path is NOT in that list.
+             Expected: objection does NOT neutralise it.
+
+    Check C  Runtime.getRuntime().exec("/system/bin/su")
+             The single-String overload, which objection hooks.
+             Expected: objection neutralises it.
+
+    Check D  Runtime.getRuntime().exec(new String[]{"/system/bin/which","su"})
+             The String[] overload, which objection does NOT hook.
+             Expected: objection does NOT neutralise it.
+
+    Check E  android.os.Build.TAGS.contains("test-keys")
+             objection hooks java.lang.String.contains.
+             Expected: objection neutralises it.
+
+  Three of five are covered. Two are not. That asymmetry is the entire point of
+  the chapter, and this app makes it observable rather than asserted.
+
+  There is also AuthGate.checkPin(), a boolean-returning method used to
+  demonstrate `android hooking set return_value` and `android hooking watch
+  class_method` with its dump-args and dump-return flags. (Those flags are
+  spelled with two leading hyphens on the command line; they are written out
+  here because an XML comment may not contain two consecutive hyphens.)
+
+  WHAT IS DELIBERATELY *NOT* HERE
+  No networking, no INTERNET permission, no pinning. Pinning belongs to
+  36-CertificatePinning, which owns the subject; this chapter only needs a
+  target whose ROOT checks are individually attributable. Adding TLS would make
+  the app bigger and the lab result less attributable.
+
+  The activity is exported so `android intent launch_activity` can be
+  demonstrated against it. That is a deliberate property of a lab target, not a
+  finding.
+
+  AUTHORISED TESTING ONLY. This app is built to be instrumented. Install it on a
+  device you own, and uninstall it when you are done:
+      adb uninstall com.pentest.ch54.target
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.pentest.ch54.target">
+
+    <uses-sdk android:minSdkVersion="21" android:targetSdkVersion="30"/>
+
+    <application
+        android:label="CH54 Target"
+        android:allowBackup="false">
+
+        <activity android:name=".MainActivity" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+
+        <!-- Exported with no intent-filter, so it is reachable by explicit
+             component name only. Used to demonstrate
+             `android intent launch_activity com.pentest.ch54.target.GateActivity`. -->
+        <activity android:name=".GateActivity" android:exported="true"/>
+
+    </application>
+</manifest>

