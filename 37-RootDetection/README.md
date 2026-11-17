@@ -18,12 +18,8 @@ at all.
 
 ---
 
-> **⚠️ Warning — scope and authorisation**
-> Everything in this chapter is written for **authorised testing**: an app you own, an app you are
-> contracted to assess, or a deliberately vulnerable lab target. Defeating a root check on an
-> application you have no permission to test is, in most jurisdictions, unauthorised access to a
-> computer system regardless of how trivial the check was. The techniques are identical; the
-> authorisation is what separates a penetration test from a crime.
+> Everything in this chapter targets an app you own, an app you are contracted to assess, or a
+> deliberately vulnerable lab target. See [SECURITY.md](../SECURITY.md) for authorised-testing scope.
 
 ---
 
@@ -54,7 +50,7 @@ Imagine you rent out a flat. You install a lock on the front door and hand the t
 imagine a different arrangement: you are a bank, and you have handed a customer a *safe* — and the
 customer takes that safe home, puts it in their own garage, and owns every tool in the garage. The
 safe is now sitting inside territory the attacker completely controls. They can weigh it, X-ray it,
-drill it, put it in a press, or simply lie to it about what time it is.
+drill it, put it in a press, or lie to it about what time it is.
 
 An Android application on a rooted phone is the safe in the garage.
 
@@ -67,7 +63,7 @@ the line, because the operating system is trusted and the apps are not. That mod
 Root detection exists because a category of applications faces a *different* threat model, one the
 platform was never designed to solve:
 
-> **📖 Definition — the "user is the attacker" threat model**
+> **Definition — the "user is the attacker" threat model**
 > A threat model in which the person holding the device is the adversary you are defending against,
 > rather than the party you are defending. It applies whenever the app is enforcing a rule *against*
 > its own user: a bank limiting transfers, a DRM client refusing to hand over a decrypted film, a
@@ -78,7 +74,7 @@ In that model, the operating system is no longer a trusted referee, because the 
 
 ### 1.2 What "root" actually is
 
-> **📖 Definition — root**
+> **Definition — root**
 > On any Linux-based system, including Android, **root** is the user account with UID (user
 > identifier) 0. The kernel special-cases UID 0 in its permission checks: a process running as UID 0
 > bypasses the standard discretionary access control (DAC) checks on files and can perform
@@ -90,7 +86,7 @@ Android ships without that mechanism on purpose. A retail (`user` build) Android
 - No `su` binary in any executable path.
 - `adbd` (the ADB daemon) refusing to run as root because `ro.debuggable` is `0`.
 - Verified Boot (AVB) checking every system partition against a signature rooted in hardware, so an
-  attacker cannot simply write a `su` binary into `/system` and reboot.
+  attacker cannot write a `su` binary into `/system` and reboot.
 - SELinux in enforcing mode, which applies *mandatory* access control on top of UID checks. Even UID
   0 is confined by its SELinux domain. This is why "I have root but still get permission denied" is
   such a common experience — see [22-SELinux](../22-SELinux/README.md).
@@ -123,7 +119,7 @@ this entire chapter.
 
 ### 1.4 The honest framing: this cannot be won on the client
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Every root check is a question the app asks *itself*, on hardware the attacker owns, using code the
 > attacker can rewrite, receiving answers from an operating system the attacker replaced. The app is
 > a detective interrogating a witness, in a room built by the suspect, where the suspect wrote the
@@ -151,7 +147,7 @@ whose verdict is signed by Google and validated server-side, and Key Attestation
 keystore ([49-KeyStore](../49-KeyStore/README.md),
 [50-HardwareBackedSecurity](../50-HardwareBackedSecurity/README.md)).
 
-> **⚠️ Warning**
+> **Warning**
 > "Client-side detection is a speed bump" does not mean "do not implement it". Speed bumps work on
 > the population that is driving slowly by accident. A cheap root check removes the entire class of
 > casual, unmotivated, script-following attacker at a cost of a few hundred lines. It removes exactly
@@ -372,7 +368,7 @@ these.
 | `/cache/magisk.log`, `/data/adb/magisk`, `/data/adb/modules` | Magisk state |
 | `/init.magisk.rc`, `/sbin/magisk`, `/sbin/magiskinit`, `/sbin/magiskpolicy` | Magisk binaries |
 
-> **🔬 Measured — the classic `su` path probe answers differently depending on who asks, and the
+> **Measured — the classic `su` path probe answers differently depending on who asks, and the
 > `su` it finds is not the one doing the rooting.** On `sdk_gphone16k_x86_64` (Android 15 / API 35):
 >
 > ```
@@ -464,7 +460,7 @@ The check is a filesystem existence test against a hardcoded list of paths. Unde
 `java.io.File.exists()` performs a `stat`/`access` system call, so this is ultimately a kernel
 question about a path.
 
-> **📖 Definition — setuid**
+> **Definition — setuid**
 > A file permission bit (`04000`). When the kernel executes a file with this bit set, it sets the new
 > process's effective UID to the *file owner's* UID instead of the caller's. It is the standard UNIX
 > mechanism for controlled privilege elevation and is how `su`, `sudo` and `passwd` work.
@@ -521,7 +517,7 @@ Java_com_example_integrity_NativeCheck_suOnDisk(JNIEnv *env, jclass clazz) {
 }
 ```
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > `access()` and `stat()` are different system calls (`faccessat` and `newfstatat` on modern arm64
 > bionic) that both ultimately resolve the path through the kernel's VFS layer. A Java-level hook on
 > `File.exists()` intercepts *neither*, because the native code never enters the ART runtime. This is
@@ -625,7 +621,7 @@ Interceptor.attach(accessPtr, {
 });
 ```
 
-The most robust, tool-free bypass is not a hook at all: **make the statement true**. Magisk's
+The most reliable, tool-free bypass is not a hook at all: **make the statement true**. Magisk's
 DenyList (or, better, the mount-namespace isolation Magisk performs for denied apps) removes the
 `su` bind-mount from the target process's own view of the filesystem, so the check honestly finds
 nothing. See section 3.14.
@@ -682,7 +678,7 @@ public static boolean whichSu() {
 }
 ```
 
-> **⚠️ Warning — a real developer bug**
+> **Warning — a real developer bug**
 > The `whichSu()` above hardcodes `/system/xbin/which`, which does not exist on many modern devices
 > (toybox lives in `/system/bin`). The `exec` throws `IOException`, the `catch` returns `false`, and
 > the check silently never fires. This exact bug ships in production apps. When you are testing, a
@@ -753,7 +749,7 @@ Java.perform(function () {
 });
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Throwing `IOException` is usually more faithful than returning a fake empty `Process`, because that
 > is exactly what the framework does when the binary is absent, and defensive code paths are already
 > written to handle it. Returning `null` will crash apps that immediately call `getInputStream()`.
@@ -799,7 +795,7 @@ public static boolean canExecuteSu() {
 }
 ```
 
-> **⚠️ Warning — for developers**
+> **Warning — for developers**
 > This check has a serious usability cost. On a legitimately rooted developer device it pops a root
 > prompt, and on some root implementations a *pending* prompt blocks `readLine()` for as long as the
 > user ignores it. Apps have shipped ANRs (Application Not Responding) caused by running this on the
@@ -957,7 +953,7 @@ Java.perform(function () {
 });
 ```
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > Hooking `android.content.pm.PackageManager` (the abstract class) does nothing. The concrete
 > implementation an app receives from `Context.getPackageManager()` is
 > `android.app.ApplicationPackageManager`, which marshals a Binder call to `PackageManagerService` in
@@ -1021,7 +1017,7 @@ static int magisk_socket_present(void) {
 }
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `/proc/net/unix` was for years the highest-value Magisk detection, because the daemon socket name
 > was a fixed string. Modern Magisk randomises it per boot. When you meet a native check that opens
 > `/proc/net/unix` you are almost certainly looking at code written against an older Magisk, and it
@@ -1110,7 +1106,7 @@ public static boolean systemMountedRw() throws java.io.IOException {
 }
 ```
 
-> **⚠️ Warning — a subtle bug in the wild**
+> **Warning — a subtle bug in the wild**
 > `File.canWrite()` on `/system` returns the result of an `access(path, W_OK)` call. As UID 0 this
 > returns success even when the filesystem is read-only, because DAC is checked before the mount
 > flags. Conversely, some devices legitimately mount `/proc` `rw`. Both directions produce false
@@ -1158,7 +1154,7 @@ The Java surface is `System.getProperty` (which does **not** read Android proper
 confusion), `android.os.SystemProperties` (a hidden framework class, reached via reflection), or
 `Runtime.exec("getprop")`. The native surface is `__system_property_get` from bionic.
 
-> **⚠️ Warning — two different "properties"**
+> **Warning — two different "properties"**
 > `java.lang.System.getProperty("os.version")` reads the **JVM system properties** table, which is a
 > different thing from Android's build properties. `android.os.SystemProperties.get("ro.build.tags")`
 > reads the Android property store. Apps that use the former to look for `ro.build.tags` get `null`
@@ -1211,7 +1207,7 @@ static int prop_suspicious(void) {
 }
 ```
 
-> **🔬 Under the Hood — why `ro.boot.verifiedbootstate` is the interesting one**
+> **Under the Hood — why `ro.boot.verifiedbootstate` is the interesting one**
 > `ro.boot.*` properties are set by the bootloader and passed to the kernel on the command line
 > (`/proc/cmdline`), then imported by `init`. `verifiedbootstate=orange` means the bootloader is
 > unlocked and the boot image is unverified. That value originates *outside Android*, before any of
@@ -1290,7 +1286,7 @@ Java.perform(function () {
 });
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > Modern bionic frequently resolves properties through `__system_property_find` +
 > `__system_property_read_callback` rather than `__system_property_get`. If your spoof appears to do
 > nothing, trace both. `frida-trace -U -i "__system_property*" -f com.target` answers this in one
@@ -1385,7 +1381,7 @@ var TARGETS = ["/proc/self/mounts", "/proc/mounts", "/proc/self/mountinfo"];
 });
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > Writing over the argument buffer in place is only safe if the replacement string is no longer than
 > the original, and only if the buffer is writable. `/data/local/tmp/mounts.clean` (26 chars) is
 > shorter than `/proc/self/mountinfo` — no it is not. Count your characters, or allocate a new buffer
@@ -1412,7 +1408,7 @@ Java.perform(function () {
 });
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The `BufferedReader.readLine` hook above is broad — it affects *every* line-oriented read in the
 > app, including legitimate ones. It is superb for a five-minute triage and dangerous for a long
 > session because it can corrupt an app's own data parsing. Narrow it once you know which file the
@@ -1519,7 +1515,7 @@ static int selinux_weak(void) {
 }
 ```
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > Magisk does *not* set SELinux permissive. It uses `magiskpolicy` to inject targeted allow rules into
 > the loaded policy — the system remains "enforcing" while containing rules that permit the Magisk
 > daemon's domain to do what it needs. So a modern rooted device reports `Enforcing`, and this check
@@ -1591,7 +1587,7 @@ public static boolean toolingStaged() {
 }
 ```
 
-> **⚠️ Warning — for developers**
+> **Warning — for developers**
 > `/data/local/tmp` is mode `0771 shell:shell` on modern Android. An ordinary app UID cannot list it;
 > `listFiles()` returns `null` and this check is dead. It is also worth remembering that ADB being
 > enabled is not a vulnerability and is not root — blocking users who have Developer Options on
@@ -1684,7 +1680,7 @@ static int raw_access(const char *path) {
 Even `syscall()` is a libc export and therefore hookable, but truly hostile code emits the `svc #0`
 instruction inline with assembly, at which point there is no symbol at all.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > When you have hooked `access`, `stat`, `open`, `openat`, `fopen`, `faccessat` and `syscall`, and the
 > app *still* detects root, you are almost certainly looking at inline syscall assembly. At that
 > point, stop hooking and start patching: find the comparison in Ghidra, note the offset, and either
@@ -1816,7 +1812,7 @@ Java.perform(function () {
 });
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > If `Java.use("com.scottyab.rootbeer.RootBeer")` throws `ClassNotFoundException` but
 > `librootbeer.so` is present, the app has shaded/renamed the library. Enumerate loaded classes with
 > `Java.enumerateLoadedClasses()` and grep for methods named `isRooted`, or hook the native symbol
@@ -1834,16 +1830,16 @@ badly by developers who then treat its boolean as truth.
 
 #### What the mechanisms are
 
-> **📖 Definition — MagiskHide (historical)**
+> **Definition — MagiskHide (historical)**
 > A Magisk feature, removed in Magisk v24, that actively unmounted Magisk's modifications from the
 > mount namespace of processes on a hide list and hid the Magisk daemon's traces from them.
 
-> **📖 Definition — DenyList (current)**
+> **Definition — DenyList (current)**
 > The successor. For each process on the list, Magisk's daemon **reverts** the process's mount
 > namespace to a clean state before the app's code runs, so the app sees no Magisk mounts, no
 > overlay, and no `su`. It does *not* actively fight detection beyond that.
 
-> **📖 Definition — Zygisk**
+> **Definition — Zygisk**
 > Magisk's Zygote-injection mechanism. It loads Magisk's code into the Zygote process, which means
 > every forked app process starts with Magisk's hook infrastructure available. It gives modules the
 > ability to run inside app processes, and it enables "DenyList in Zygisk mode", where the unmounting
@@ -1899,7 +1895,7 @@ first:
 | 6. Targeted hook or `Memory.patchCode` on the specific function | 1–3 hours | Inline syscalls, custom crypto-verified checks |
 | 7. Static patch of the DEX/`.so` and re-sign | 2–6 hours | When you need a persistent artefact, or Frida is itself detected |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Step 5 is the one juniors skip and seniors do first. Knowing *which* check fired turns an
 > open-ended fight into a specific, small task. The tracer script in this chapter exists exactly for
 > that, and it is the most valuable file in the folder.
@@ -1918,7 +1914,7 @@ requests from a device whose attestation verdict is unacceptable.
 
 #### How it works
 
-> **📖 Definition — remote attestation**
+> **Definition — remote attestation**
 > A process in which a device produces a statement about its own state that is **signed by a key the
 > device's owner cannot extract**, so that a remote party can verify the statement's authenticity
 > independently of the device's software.
@@ -1991,11 +1987,11 @@ Server side (pseudocode — language irrelevant, placement is the point):
    from a rooted one. This is the single most common implementation flaw and it completely negates
    the control.
 3. **Failing open.** Google's service can be slow or unavailable, and developers add a
-   "if we could not get a verdict, allow it" path. Attackers then simply block the network path to
+   "if we could not get a verdict, allow it" path. Attackers then block the network path to
    Google's endpoint. Fail closed, or degrade to a reduced-risk mode, but never treat "no verdict" as
    "good verdict".
 
-> **🔍 Pentester's Note — how to test an integrity integration**
+> **Pentester's Note — how to test an integrity integration**
 > Do not start by trying to defeat Play Integrity. Start by determining **where the verdict is
 > evaluated**. Hook the network layer, capture the request that carries the token, and then replay
 > that exact request from a different device or at a later time. If the server accepts it, the
@@ -2246,7 +2242,7 @@ the state, not achieving it.
 | **MASVS-RESILIENCE-4** | The app implements anti-dynamic-analysis | [38-TamperDetection](../38-TamperDetection/README.md), Frida detection |
 | MASTG-TEST-0238 / "Testing Root Detection" | The test procedure | Sections 7 and 8 here |
 
-> **🔍 Pentester's Note — how to write the finding**
+> **Pentester's Note — how to write the finding**
 > MASVS treats resilience controls as a separate, *optional* profile precisely because they are not
 > security boundaries. Write your report accordingly. "Root detection can be bypassed" is a weak
 > finding on its own and a good reviewer will push back on it. The strong finding is: "The
@@ -2542,7 +2538,7 @@ Full version: [`scripts/native-root-bypass.js`](scripts/native-root-bypass.js).
 frida -U -f com.target.app -l scripts/native-root-bypass.js --no-pause
 ```
 
-> **⚠️ Warning — the library-not-loaded race**
+> **Warning — the library-not-loaded race**
 > If the check lives in a library loaded by `System.loadLibrary()` during `onCreate`, your
 > `Module.findExportByName` at script-load time returns `null` because the library is not mapped yet.
 > Hook `android_dlopen_ext` (or `dlopen`) and install your interceptors from its `onLeave` when the
@@ -2595,7 +2591,7 @@ adb shell "su -c 'strace -f -o /data/local/tmp/t.log -e trace=openat,faccessat,e
     \$(pidof -s zygote64)'" &
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `strace` shows you the ground truth that no hook can lie about, and it catches inline-syscall checks
 > that defeat every Frida interceptor. When a bypass mysteriously fails, `strace` is the tool that
 > tells you why. It is under-used because it is slower to read than Frida output; learn to read it
@@ -2716,7 +2712,7 @@ whole test plan toward section 3.15's three failure modes rather than toward fil
 
 ## 9. Examples
 
-> **✅ Verified against a compiler.** `examples/native_root_check.c` compiles **clean** with
+> **Verified against a compiler.** `examples/native_root_check.c` compiles **clean** with
 > `-Wall -Wextra` using `aarch64-linux-android21-clang` from **NDK 25.2.9519653** and links as a
 > shared library. Zero diagnostics matters for this file specifically: it is written to be dropped
 > into a reader's own app as a starting point, and a detection routine that arrives with warnings is
@@ -2811,7 +2807,7 @@ apiClient.setDeviceRiskSignals(r.score, r.signals);
 get locked out over `test-keys` alone), and it produces a *risk signal* rather than a binary. Both
 properties matter more for the business than the detection strength does.
 
-**Bypass:** run the tracer, note that seven signals fire, and hook the five cheap ones plus the native
+**Bypass:** run the tracer,seven signals fire, and hook the five cheap ones plus the native
 one. Or — much faster — hook `evaluate` itself to return `new Result(0, emptyList)`. Always look for
 the aggregation point; there is usually exactly one, and it is the cheapest place to intervene.
 
@@ -2966,7 +2962,7 @@ attestation? Each of those is a real finding and each is more valuable than any 
 Root is UID 0, the Linux superuser, for which the kernel bypasses standard permission checks. Android
 ships no way to obtain it. Rooting means installing one, most commonly by unlocking the bootloader and
 flashing a Magisk-patched boot image, so that a daemon running as root can grant UID 0 to chosen
-processes on request. Note that SELinux still applies to root, so root is necessary but not always
+processes on request.SELinux still applies to root, so root is necessary but not always
 sufficient.
 
 **Q: Name five ways an app can detect root.**
@@ -2977,7 +2973,7 @@ therefore defeatable.
 
 **Q: Why is `File.exists("/system/bin/su")` a weak check?**
 Because the app is asking the operating system a question, and on a rooted device the attacker
-controls the operating system's answer — and, more simply, because the attacker can hook
+controls the operating system's answer — and, more directly, because the attacker can hook
 `File.exists` or patch the branch that consumes its result. Also because modern systemless root does
 not put anything in `/system` at all.
 
@@ -3114,7 +3110,7 @@ preserve both usability and the value of the signal.
 
 - **Trusting the boolean.** Building an `if (isRooted()) denyEverything()` gate and considering the
   problem solved. Every technique in section 3 ends at that one branch.
-- **Checking once at startup.** An attacker attaches or hooks before your code runs, or simply
+- **Checking once at startup.** An attacker attaches or hooks before your code runs, or
   restarts the check's state. Re-evaluate before sensitive operations, and understand that this only
   raises cost.
 - **Acting locally instead of reporting.** Calling `System.exit()` destroys the fraud signal and gains
@@ -3183,7 +3179,7 @@ Full lab material lives in [`labs/`](labs/).
 | [Lab 01 — Build and break your own root check](labs/lab-01-build-and-break.md) | Write a nine-signal root checker, then defeat each signal in turn and record the cost of each bypass | Beginner |
 | [Lab 02 — Native check, no Java surface](labs/lab-02-native-check.md) | Implement the check in C with obfuscated strings and raw syscalls; bypass it with libc hooks, then with `strace` plus a patch | Intermediate |
 | [Lab 03 — Trace, identify, neutralise](labs/lab-03-trace-and-neutralise.md) | Given an unknown binary with twelve checks and no source, use the tracer to identify and defeat every one | Advanced |
-| [Lab 04 — CTF: The decoupled check](labs/lab-04-ctf-decoupled.md) | An app that shows no root message and simply "fails to connect"; find the check, find the consequence, and recover the flag | CTF |
+| [Lab 04 — CTF: The decoupled check](labs/lab-04-ctf-decoupled.md) | An app that shows no root message and "fails to connect"; find the check, find the consequence, and recover the flag | CTF |
 
 **Assignment.** Write your own tracer from scratch before reading
 [`scripts/root-check-tracer.js`](scripts/root-check-tracer.js). The act of deciding which functions

@@ -209,7 +209,7 @@ In rough order of likelihood:
    [13-ART](../13-ART/README.md) and `cmd package compile -m verify -f`.
 5. **The logic is native**, and no Java hook can ever see it.
 
-Note that all five produce the *same* symptom, which is why guessing is expensive and why the first
+all five produce the *same* symptom, which is why guessing is expensive and why the first
 move is always to establish which one it is.
 
 ---

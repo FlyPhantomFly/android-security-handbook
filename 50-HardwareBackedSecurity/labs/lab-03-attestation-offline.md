@@ -263,7 +263,7 @@ python3 -B ./examples/hardware_posture_policy.py parsed.json \
     --trusted-root-spki <the spki-sha256 of the root you decided to trust>
 ```
 
-Note how the tier changes, and note that the policy **refuses to invent a trusted root for you** —
+Note how the tier changes, and confirm that the policy **refuses to invent a trusted root for you** —
 without `--trusted-root-spki` it caps the tier and says why.
 
 ### D.2 — Write the bug yourself

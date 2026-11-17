@@ -39,7 +39,7 @@ package:/data/app/~~<hash>/com.example.target-<hash>/base.apk
 $ adb pull /data/app/~~<hash>/com.example.target-<hash>/base.apk ./target.apk
 ```
 
-> **⚠️ Record your device before you trust any version-dependent result.**
+> **Record your device before you trust any version-dependent result.**
 > ```bash
 > $ adb devices -l && adb shell getprop ro.product.model && adb shell getprop ro.build.version.sdk
 > ```
@@ -89,7 +89,7 @@ Typical output:
 | `version` | The exact toolchain — use it to interpret naming schemes |
 | `pg-map-id` | Links this build to a specific `mapping.txt`, if one ever surfaces |
 
-> **✅ Checkpoint 1.** You can state whether the app was minified at all, and with which R8 version, in under thirty seconds and without decompiling anything.
+> **Checkpoint 1.** You can state whether the app was minified at all, and with which R8 version, in under thirty seconds and without decompiling anything.
 
 > **Question 1.** Suppose `ExtractMarker` prints nothing at all. List three different explanations, and say how you would distinguish them.
 
@@ -154,7 +154,7 @@ Record the numbers. A representative shape from a real mid-sized Kotlin app:
 | `$WhenMappings` | tens | kotlinc, `when` over an enum |
 | `$Companion`, `$DefaultImpls` | tens to hundreds | kotlinc |
 
-> **✅ Checkpoint 2.** Add up the synthetic counts and divide by the total. If it is above 40%, you have just discovered that most of what you were about to read is not code anyone wrote.
+> **Checkpoint 2.** Add up the synthetic counts and divide by the total. If it is above 40%, you have just discovered that most of what you were about to read is not code anyone wrote.
 
 > **Question 2.** `$$ExternalSyntheticOutline0` and `$$ExternalSyntheticLambda0` are both R8 output, but they mean opposite things about the original code. Explain the difference, and say what each tells you about the source.
 
@@ -212,7 +212,7 @@ $ grep -oE '\$\$InternalSyntheticLambda\$[0-9]+\$[0-9a-f]{64}\$[0-9]+' classes.t
 $ wc -l lambda-hashes.txt
 ```
 
-> **✅ Checkpoint 3.** You have a set of build-stable identifiers. If you ever analyse a second version of this app, intersecting these two sets tells you which lambdas are unchanged — a structural diff that survives the rename churn that makes name-based diffing useless.
+> **Checkpoint 3.** You have a set of build-stable identifiers. If you ever analyse a second version of this app, intersecting these two sets tells you which lambdas are unchanged — a structural diff that survives the rename churn that makes name-based diffing useless.
 
 ---
 
@@ -267,7 +267,7 @@ Interpretation:
 | < 20%, `~R8` marker present | **Finding.** Shrinking ran; renaming was neutered by over-broad keep rules |
 | < 20%, no `~R8` marker | `minifyEnabled false`. Informational |
 
-> **⚠️ Why measuring the whole APK is wrong**
+> **Why measuring the whole APK is wrong**
 > Dependencies are obfuscated by the app's own R8 run regardless of what the app exempts for itself. A whole-APK average is dominated by AndroidX and `kotlin-stdlib` and will report "well obfuscated" for an app that exempted every one of its own classes with `-keep class com.app.** { *; }`. That exact configuration is the most common way an app ends up unobfuscated while its build file claims otherwise ([§5.4](../README.md#54-how-developers-get-this-wrong)).
 
 > **Question 4.** Your measurement returns 41%. Before writing anything down, what would you check next, and why is 41% on its own uninterpretable?
@@ -288,7 +288,7 @@ $ sed -E 's/^L//; s/;$//' classes.txt | sed -E 's/.*\///; s/\$.*//' \
 
 An obfuscated build shows a large spike at lengths 1–2 and hundreds of packages each containing a class called `a`. A genuinely short-named real codebase shows neither.
 
-> **⚠️ The `-obfuscationdictionary` case**
+> **The `-obfuscationdictionary` case**
 > Some builds rename into plausible-looking English words rather than `a`, `b`, `c`. Name *length* then tells you nothing. The reuse check still works — a dictionary-renamed build reuses the same small vocabulary across unrelated packages — and so does the semantic check: do the names have any relationship to what the classes do?
 
 ---
@@ -345,7 +345,7 @@ $ unzip -o target.apk 'lib/*/*.so' -d ./libs >/dev/null 2>&1
 $ strings -a libs/lib/*/*.so 2>/dev/null | grep -E '^Java_[A-Za-z0-9_]+' | sort -u | head -20
 ```
 
-> **✅ Checkpoint 4.** You now have three independent lists: compiler-generated classes to ignore, authored classes to read, and unrenameable entry points to start from. That is a triage plan, and it took under an hour without decompiling anything.
+> **Checkpoint 4.** You now have three independent lists: compiler-generated classes to ignore, authored classes to read, and unrenameable entry points to start from. That is a triage plan, and it took under an hour without decompiling anything.
 
 ---
 

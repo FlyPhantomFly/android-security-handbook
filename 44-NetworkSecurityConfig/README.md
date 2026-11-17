@@ -54,12 +54,12 @@ on. You will notice nothing, because everything you check still checks out.
 
 That list is a **trust store**, and this chapter is about the file that decides what is on it.
 
-> **📖 Definition — trust anchor**
+> **Definition — trust anchor**
 > A certificate that you accept *because you decided to*, not because something else vouched for it.
 > It is the end of the chain of reasoning. A "root CA certificate" in a browser or a phone is a trust
 > anchor. Everything else in a TLS handshake is an argument that terminates in one.
 
-> **📖 Definition — certificate authority (CA)**
+> **Definition — certificate authority (CA)**
 > An organisation whose business is signing other people's certificates, so that anyone who trusts
 > the CA transitively trusts what it signed. There are a few hundred of them in a phone's default
 > list, run by companies and governments in dozens of countries. Every one of them can issue a
@@ -358,7 +358,7 @@ That last clause is the source of more misreadings than anything else in this fi
 `<base-config>`. If `<base-config>` permits cleartext, so does that host, no matter how carefully
 pinned it looks.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Think of it as CSS. `<base-config>` is the rule on `body`; each `<domain-config>` is a more
 > specific selector; each property cascades on its own. Writing `color` on a child does not reset its
 > inherited `font-size`. Exactly the same trap, with the same consequences for anyone reading only
@@ -493,7 +493,7 @@ manager gets the config's one, without a line of integration code.
 | `0` (no `android:networkSecurityConfig`) | A default configuration derived from `targetSdkVersion` and `FLAG_USES_CLEARTEXT_TRAFFIC` alone. No per-domain configs at all — the private `mConfigs` field is left **null**, which is measurable. |
 | non-zero | An `XmlConfigSource` bound to that resource id. Nothing is parsed yet. |
 
-> **🔬 Under the Hood — measured, API 30**
+> **Under the Hood — measured, API 30**
 > Attaching to the file-explorer app (`com.vendor.fileexplorer`, no config declared) and reading the
 > private fields:
 > ```
@@ -548,7 +548,7 @@ Seven elements. That is all there is.
 | `<pin-set>` | `expiration` | `yyyy-MM-dd` | none (never expires) | After this date, **pins are not enforced at all** |
 | `<pin>` | `digest` | `SHA-256` | *required* | The only algorithm accepted. Anything else is a parse error |
 
-> **⚠️ Warning — the default of `overridePins` flips**
+> **Warning — the default of `overridePins` flips**
 > Outside `<debug-overrides>` it is `false`. Inside `<debug-overrides>` the platform builds the
 > anchors with `overridePins = true` whether or not you write it. That is deliberate: the whole
 > purpose of the block is to let a developer proxy their own build, and a live pin set would defeat
@@ -598,7 +598,7 @@ app now cannot reach that host through any public certificate — an outage they
 immediately, and fix by adding `<certificates src="system"/>`, which is how the two lines end up
 together in almost every real config.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > When you see `<certificates src="system"/>` next to something else, ask which order the developer
 > arrived at. If the private CA came first and `system` was added to fix breakage, the private CA is
 > probably not doing what they think it is doing — everything the system CAs vouch for is accepted
@@ -619,7 +619,7 @@ together in almost every real config.
 most useful fact in this table. An app targeting API 23 running on Android 14 still gets the old
 defaults, because the default configuration is selected from `ApplicationInfo.targetSdkVersion`.
 
-> **🔬 Under the Hood — how the default is chosen**
+> **Under the Hood — how the default is chosen**
 > `NetworkSecurityConfig.getDefaultBuilder(ApplicationInfo)` is a public static method on API 30
 > (confirmed by reflection on the device). It reads `targetSdkVersion` and
 > `FLAG_USES_CLEARTEXT_TRAFFIC`, and returns a builder pre-populated with the system certificate
@@ -654,7 +654,7 @@ This is a **policy that cooperating libraries consult**, not a firewall. Nothing
 | **Native code using BoringSSL/curl directly** | **no** | Nothing checks |
 | **Flutter's `dart:io` HttpClient** | **no** | It has its own stack and its own trust store |
 
-> **⚠️ Warning**
+> **Warning**
 > `cleartextTrafficPermitted="false"` is **not** evidence that an app sends no plaintext. It is
 > evidence that the app's *cooperating* HTTP libraries will refuse to. Confirm with a capture, every
 > time. Chapter 32 makes the same point about `android:usesCleartextTraffic` and it is worth making
@@ -677,7 +677,7 @@ library asks decides whether the request goes out. Measured on the device: MIUI 
 
 ### 3.6 `<pin-set>` — the declaration, and its three silent failure modes
 
-> **📖 Definition — certificate pinning**
+> **Definition — certificate pinning**
 > Requiring that a server's certificate chain contain a specific public key, over and above the
 > normal requirement that it chain to a trusted CA. It narrows trust from "any of ~140 CAs" to "this
 > key". Chapter 36 covers pinning at runtime and how to defeat it; here we are only concerned with
@@ -709,7 +709,7 @@ does not happen at all if any of these is true:**
 The middle row is the one this chapter insists on. **An expired pin-set fails open, silently, and
 permanently.**
 
-> **🧠 Mental Model**
+> **Mental Model**
 > The expiration is a dead man's switch installed backwards. It exists so that an app cannot brick
 > itself against a certificate rotation nobody anticipated — a genuinely good reason, because the
 > alternative failure mode is an installed base that cannot reach your API and cannot be fixed from
@@ -731,7 +731,7 @@ And it is not hypothetical. §5.5 measures it in two of the largest apps on the 
 and "expired" are represented in the same `long`. Reading `9223372036854775807` at runtime means *no
 expiry declared*; any smaller number is a real date in milliseconds since the epoch.
 
-> **🔬 Under the Hood — the date parse, measured**
+> **Under the Hood — the date parse, measured**
 > The social-media app's config declares `expiration="2021-07-1"` — note the un-padded day. `SimpleDateFormat`
 > with pattern `yyyy-MM-dd` is lenient by default, so it parses. At runtime the field read
 > `1625077800000`, which is `2021-06-30T18:30:00Z` — midnight on 1 July 2021 **in the device's
@@ -762,7 +762,7 @@ Consequences, in order of how often they are got wrong:
    does `debuggable true` on any build type; so does repackaging with `apktool` and editing the
    manifest. All three make the block live.
 
-> **🔬 Under the Hood — measured, and this is the whole argument**
+> **Under the Hood — measured, and this is the whole argument**
 > The professional-network app's release APK (`com.vendor.professionalnet`, targetSdk 29) declares
 > `android:networkSecurityConfig`, and the resource it points at contains **nothing but** a
 > `<debug-overrides>` block trusting `system` and `user`:
@@ -812,7 +812,7 @@ which is why a Burp CA installed on any device is nearly always `9a5ba575.0`.
 `DirectoryCertificateSource` reads these directories lazily and caches; `TrustedCertificateStoreAdapter`
 bridges them to Conscrypt.
 
-> **🔍 Pentester's Note — measured on the test device, and it matters**
+> **Pentester's Note — measured on the test device, and it matters**
 > ```
 > $ adb shell "su -c 'mount | grep cacerts'"
 > APatch on /system/etc/security/cacerts type tmpfs (rw,seclabel,relatime,…)
@@ -858,14 +858,14 @@ understand. Because the parse is lazy and happens on the app's own thread, the f
 | `<domain-config>` with no `<domain>` | Parse error |
 | `<trust-anchors/>` with no `<certificates>` | Valid, and catastrophic: nothing validates, every TLS connection to matched hosts fails |
 
-> **⚠️ Warning — an asymmetry worth memorising**
+> **Warning — an asymmetry worth memorising**
 > An unknown **element** is a hard error; an unknown **attribute** is silently dropped. So
 > `<base-config cleartextTrafficPermited="false">` — one missing `t` — compiles, installs, runs, and
 > permits cleartext, because the attribute the platform reads was never set and the value inherited
 > from the platform default. This is exactly the kind of defect that survives code review, and
 > [`scripts/nsc-audit.py`](scripts/nsc-audit.py) checks for it (finding `NSC-021`).
 
-> **🔬 Under the Hood — honesty about what was measured**
+> **Under the Hood — honesty about what was measured**
 > The element-versus-attribute asymmetry above is read from the parser's structure, **not measured on
 > the device for this chapter**. Building an app with a deliberately broken config and observing the
 > exception is [`labs/lab-03-prove-it-on-the-device.md`](labs/lab-03-prove-it-on-the-device.md),
@@ -883,9 +883,9 @@ understand. Because the parse is lazy and happens on the app's own thread, the f
 | **Conscrypt** | Does the actual chain validation. `NetworkSecurityTrustManager` wraps `TrustManagerImpl` and applies pins to the chain Conscrypt returns |
 | **WebView** | A separate implementation reading the same policy through JNI. Cleartext blocking works; the pin-set does **not** apply to WebView's own network requests in the general case — see §5.9 |
 
-> **⚠️ Warning**
+> **Warning**
 > "The policy is entirely userspace and entirely advisory" is the sentence to remember. There is no
-> kernel enforcement. An app that wants to ignore all of this simply does not ask.
+> kernel enforcement. An app that wants to ignore all of this does not ask.
 
 ### 3.12 Resolving the reference by hand
 
@@ -947,7 +947,7 @@ arsc 48384 bytes
        -> global string pool[0x4b] = "res/xml/network_security_config.xml"
 ```
 
-> **⚠️ Warning — the off-by-one that produces a confident wrong answer**
+> **Warning — the off-by-one that produces a confident wrong answer**
 > `Res_value.dataType` is at byte **3** of the structure, not byte 2. Byte 2 is `res0`, a reserved
 > field that is almost always zero. A parser that reads byte 2 gets `TYPE_NULL` for every resource in
 > every APK and concludes "this resource does not name a file". The first draft of
@@ -1026,7 +1026,7 @@ defeat without patching the APK.
 **Row 8 is the reminder** that matching is on the hostname string. A literal IP address matches only
 a `<domain>` that is that literal address; nothing here resolves DNS.
 
-> **🔍 Pentester's Note — how to test rows 4 and 5**
+> **Pentester's Note — how to test rows 4 and 5**
 > Do not reason about them, enumerate them. Give
 > [`scripts/nsc-runtime.js`](scripts/nsc-runtime.js) a hostname list that includes, for every
 > `<domain>` in the config: the name itself, one label deeper, and two labels deeper. The platform's
@@ -1114,7 +1114,7 @@ Step 3 is the clever part. `TrustManagerFactory.getInstance("PKIX")` — which i
 `HttpsURLConnection` ask for — now returns a factory that produces a `RootTrustManager` bound to the
 app's config. No library changed a line.
 
-> **🔬 Under the Hood — the consequence for testers**
+> **Under the Hood — the consequence for testers**
 > This is why `TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm()).init(null)`
 > inside a running app returns a trust manager whose `getAcceptedIssuers()` reflects **the app's
 > config**, not the device's store. Measured on the test device: MIUI Calculator returned 139
@@ -1181,7 +1181,7 @@ private boolean isPinningEnforced(List<X509Certificate> chain) {
 set, and throws `CertificateException` if none matches. **Any one certificate in the chain matching
 any one pin is sufficient** — that is what makes pinning an intermediate work.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Step 1 happening before steps 3 and 4 is why a pin failure and a CA failure are distinguishable
 > from the outside: a chain that does not validate at all fails inside Conscrypt with a
 > `CertPathValidatorException` nested in the `CertificateException`; a chain that validates but does
@@ -1208,7 +1208,7 @@ combined path, with the file at each step:
 Step 3's ordering is the mechanism behind the "config overrides the manifest" rule, and it is
 directly measurable:
 
-> **🔬 Under the Hood — measured, and it contradicts a common shortcut**
+> **Under the Hood — measured, and it contradicts a common shortcut**
 > The marketplace app's declares `android:usesCleartextTraffic="true"` in its manifest. Inside the
 > running process:
 > ```
@@ -1485,7 +1485,7 @@ UserCertificateSource`. So on this app: pinning is off, *and* a user-installed C
 pinned domains. A proxy CA in the user store should terminate the social-media app's TLS with no root and no
 repackaging.
 
-> **🔍 Pentester's Note — what was and was not proven here**
+> **Pentester's Note — what was and was not proven here**
 > The policy above is **measured**: it is what the platform built, read out of the running processes.
 > Whether a capture actually decrypts is **not** measured in this chapter, because the test device's
 > system CA store has been contaminated by the root solution (§3.8) and a successful interception
@@ -1590,7 +1590,7 @@ The procedure, in the order that wastes least time:
    Record which one you used — it changes what your finding means.
 5. **Capture, then report.** A cleartext finding without a capture is a configuration observation.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Step 3 is the one people skip, and it is the one that saves a day. Three very different problems
 > produce the identical symptom "Burp shows nothing", and the fixes are unrelated.
 
@@ -1607,7 +1607,7 @@ Malware writes its own config, and what it writes is informative:
 - **A `<domain-config>` naming domains the app has no business talking to.** The config is a
   declaration of intent that survives obfuscation, because it is a resource rather than code.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > For a malware analyst, this file is a **network manifest**. Class names can be obfuscated and
 > strings encrypted, but a `<domain>` element is plain text in a resource, and it lists infrastructure
 > the sample intends to reach before you have run a single instruction.
@@ -1980,7 +1980,7 @@ The script is documented in its own header. It prints the manifest facts, both c
 counts, every per-domain configuration the platform built, the default configuration, and the answer
 for a set of hostnames you choose by editing `CONFIG.hosts` at the top of the file.
 
-> **⚠️ Warning — a trap that wastes twenty minutes**
+> **Warning — a trap that wastes twenty minutes**
 > The frida CLI's `-P/--parameters` flag does **not** reach a plain agent script. Measured on
 > frida-tools 16.1.6: `typeof parameters` is `"undefined"` under `frida -l script.js`, so anything
 > documented as "pass hosts with `-P`" silently does nothing. Edit `CONFIG` in the file, or drive the
@@ -2140,12 +2140,12 @@ apksigner sign --ks test.keystore --out final.apk aligned.apk
 aapt2 dump xmltree final.apk --file res/xml/network_security_config.xml
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > Re-signing changes the signing certificate, which breaks anything keyed to it: Google Sign-In,
 > SafetyNet/Play Integrity, any server-side signature check, and app-links verification. If the app
 > stops working after repackaging, that is usually why, and it is not a finding.
 
-> **🔍 Pentester's Note — this device**
+> **Pentester's Note — this device**
 > The test device refuses `adb install` with `INSTALL_FAILED_USER_RESTRICTED` regardless of settings,
 > because of MIUI's "Install via USB" policy. `adb push` followed by
 > `adb shell "su -c 'pm install -r /data/local/tmp/app.apk'"` works — root is not subject to the
@@ -2169,7 +2169,7 @@ su -c 'chown root:root /system/etc/security/cacerts/9a5ba575.0'
 [62-Magisk lab 02](../62-Magisk/labs/lab-02-write-a-module.md) writes the module properly, which is
 what you should do.
 
-> **⚠️ Warning — and this is the methodology point of the whole section**
+> **Warning — and this is the methodology point of the whole section**
 > Once you have done this, **your device's system store is no longer the platform's**, and every
 > subsequent claim about default trust is contaminated. On the device used for this chapter:
 > ```
@@ -2272,7 +2272,7 @@ rather than guessing.
 | 7. Which stack is it? | `ls work/lib/*/ \| grep -iE 'ssl\|crypto\|flutter\|cronet'` and `grep -rn X509TrustManager work/smali*/` | A hit | That is your subject now, not this file |
 | 8. Is it even HTTP? | `tcpdump` / a transparent proxy | Non-HTTP on 443, or another port entirely | gRPC, MQTT, a custom protocol, or QUIC |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Step 6 is the highest-value single check in this list and the one most often skipped. It costs one
 > command and it separates "the config is stopping me" from "the config is irrelevant to this app",
 > which are the two halves of the problem space and have nothing in common.
@@ -2341,7 +2341,7 @@ Or all three at once, with this chapter's tool, which resolves the id itself thr
 python3 -B scripts/nsc-audit.py base.apk --xml
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `nsc-audit.py` imports chapter 10's `parse_axml.py` rather than shipping a second AXML parser. That
 > is deliberate: the whole argument about tool divergence depends on there being **one** parser in
 > this repository whose behaviour you understand. Run it with `python3 -B` — the import writes a
@@ -2482,7 +2482,7 @@ Seven commands. At the end of them you know whether interception is possible, by
 the app's declared policy is, whether the app honours it, and what your device has done to the
 question. Everything after that is testing the application rather than fighting the transport.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Steps 2 and 7 are the same question asked of two different authorities: the file, and the platform.
 > Steps 4 and 6 exist to tell you when neither authority is answering the question you think you
 > asked. The value is not in any one of them; it is in noticing when they disagree.
@@ -2572,7 +2572,7 @@ travels over `legacy-reports.example.com`, with the capture attached.
 </network-security-config>
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `<certificates src="@raw/…">` replacing the system anchors is the strongest configuration in this
 > whole chapter, and it is also the one a proxy CA cannot defeat by any means short of patching the
 > APK. If you meet it, stop trying to intercept and go and read the code — chapters 36 and 53.
@@ -2632,7 +2632,7 @@ them. `nsc-audit.py` emits finding `NSC-003` for exactly this shape and tells yo
 
     <!-- The corporate intranet, reached over the VPN. Certificates are issued by
          the company's own CA, which no public root vouches for, so it must be
-         bundled. Note that system anchors are deliberately NOT included: an
+         bundled.system anchors are deliberately NOT included: an
          intranet hostname signed by a public CA would be an incident. -->
     <domain-config>
         <domain includeSubdomains="true">internal.example-corp.com</domain>

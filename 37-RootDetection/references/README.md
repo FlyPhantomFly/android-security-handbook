@@ -70,7 +70,7 @@ Read these on [cs.android.com](https://cs.android.com/), which gives cross-refer
 | Resource | Relevance |
 |---|---|
 | [MASVS](https://mas.owasp.org/MASVS/) | The standard your client's requirements are probably derived from |
-| [MASVS-RESILIENCE](https://mas.owasp.org/MASVS/09-MASVS-RESILIENCE/) | The category root detection sits in. Note that MASVS itself frames these as *resilience*, not *security* controls — that framing is the whole argument of this chapter |
+| [MASVS-RESILIENCE](https://mas.owasp.org/MASVS/09-MASVS-RESILIENCE/) | The category root detection sits in.MASVS itself frames these as *resilience*, not *security* controls — that framing is the whole argument of this chapter |
 | [MASTG](https://mas.owasp.org/MASTG/) | Test procedures |
 | [MASTG Android tests](https://mas.owasp.org/MASTG/tests/android/) | The platform-integrity and anti-reversing tests map onto §3 |
 | MASTG UnCrackable series | Canonical practice targets — see [80-Appendix](../../80-Appendix/README.md) |

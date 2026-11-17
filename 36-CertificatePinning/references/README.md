@@ -41,7 +41,7 @@ cited anywhere in this chapter** — they move between releases and a wrong one 
 | [Conscrypt](https://github.com/google/conscrypt) | The provider itself, with a readable history of how `TrustManagerImpl` changed |
 | [BoringSSL](https://boringssl.googlesource.com/boringssl/) | The native layer under everything on Android |
 | [Appmattus certificatetransparency](https://github.com/appmattus/certificatetransparency) | The Android CT library you will meet. Read it when a bypass succeeds and the connection still fails — CT rejects *after* the pin accepts |
-| [TrustKit Android](https://github.com/datatheorem/TrustKit-Android) | A pinning library with its own config format and reporting. Recognise its classes; note that its reporting is a tripwire |
+| [TrustKit Android](https://github.com/datatheorem/TrustKit-Android) | A pinning library with its own config format and reporting. Recognise its classes;its reporting is a tripwire |
 | [Flutter engine](https://github.com/flutter/engine) | Where Dart's `SecurityContext` and the bundled root list live. Read `third_party/boringssl` integration when you need to know what the engine is actually doing |
 
 ---

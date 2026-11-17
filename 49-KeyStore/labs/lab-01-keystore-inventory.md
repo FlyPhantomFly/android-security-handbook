@@ -23,13 +23,13 @@ whether the value they protect also exists in plaintext three directories away.
 
 This lab turns that sentence into a table of facts.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > `KeyGenParameterSpec` is what the app **asked for**. `KeyInfo` is what the device **gave it**. They
 > differ on real hardware more often than anyone expects — a StrongBox request silently downgraded, or
 > no hardware request at all on a device that then produced a software key. You cannot audit key
 > handling by reading source code; you have to read the key back on the target's own hardware.
 
-> **📖 Definition — alias**
+> **Definition — alias**
 > The string handle under which a key is stored. It is the app's only reference to the key: there is no
 > API that returns key material, and `getEncoded()` on an `AndroidKeyStore` key returns `null`.
 
@@ -286,7 +286,7 @@ Keystore.
 
 It is API 31+. On older devices the script falls back to `isInsideSecureHardware()`, which is a
 boolean floor rather than a grade: `true` means "not pure software" and tells you nothing about whether
-the TEE is robust or minimal.
+the TEE is strong or minimal.
 
 If you need a finer answer on an older device, generate an attested key and read
 `keymasterSecurityLevel` out of the attestation instead — see
@@ -341,8 +341,8 @@ worth the time because it bounds everything else: if the device declares no `har
 feature, no key on it can be hardware-backed regardless of what the app requests.
 
 If an app claims StrongBox and the device has no `strongbox_keystore` feature, the app is either
-falling back silently (Finding 8) or the claim is simply false. Confirm with `KeyInfo` before writing
-it up — and note that the *device* you were given may not be the device the claim was made about, which
+falling back silently (Finding 8) or the claim is false. Confirm with `KeyInfo` before writing
+it up — and confirm that the *device* you were given may not be the device the claim was made about, which
 is a question for the client rather than a finding.
 
 **2.** Either (a) the keys are created lazily and have not been created yet, or (b) the app does not
@@ -364,7 +364,7 @@ called. Reading source, or reading a builder chain in JADX, requires you to noti
 not there — which people reliably fail to do.
 
 The concrete example is Finding 4: a key protecting a payment credential with no authentication
-binding at all. In the decompiled builder chain there is simply no line to see. The hook says
+binding at all. In the decompiled builder chain there is no line to see. The hook says
 "`setUserAuthenticationRequired` NOT SET (default: false — NO auth binding)", which is unmissable.
 
 **4.** Yes, it is a finding, but the phrasing decides whether it survives.
@@ -422,7 +422,7 @@ Three follow-up steps, in order:
 1. **Is it constant?** `adb uninstall` then `adb install`, and re-run. Same bytes means hardcoded,
    which is the High-severity case: it works on every installation, needs no device access, and cannot
    be rotated without a new build. Different bytes means per-install, and you must then find what it is
-   derived from — and note that if it is derived from `ANDROID_ID` or a device identifier, the attacker
+   derived from — and confirm that if it is derived from `ANDROID_ID` or a device identifier, the attacker
    can read that too.
 2. **Find it statically**, so the finding does not depend on Frida:
    `grep -rn "<first 8 bytes hex>" out/sources/` and `strings` over `assets/` and `res/raw/`.

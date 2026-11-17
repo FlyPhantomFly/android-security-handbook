@@ -131,7 +131,7 @@ Safe to cite by name. Each is well documented and unambiguous.
 | Android `SecureRandom` seeding (August 2013) | Improper PRNG seeding in some app contexts led to repeated ECDSA nonces and Bitcoin key theft. The reason Android's `SecureRandom` guidance exists in the form it does |
 | ROCA (CVE-2017-15361) | Structured RSA key generation in an Infineon library allowed factoring. Shows that key *generation* is part of the attack surface |
 
-> **⚠️ Warning**
+> **Warning**
 > Do not cite a CVE number you have not verified against the vendor's own advisory. In a client report,
 > one incorrect CVE reference undermines every other claim in the document. When in doubt, describe the
 > vulnerability class by name ("a padding oracle in the CBC decryption path") rather than reaching for

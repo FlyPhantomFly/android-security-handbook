@@ -63,13 +63,13 @@ adb shell pm path $PKG
 adb pull /data/app/~~AbCd…==/com.example.app-XyZ…==/base.apk ./$PKG.apk
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > `pm path` can return several lines for a split-installed app: `base.apk`, `split_config.arm64_v8a.apk`,
 > `split_config.en.apk` and so on. Pull **all** of them. A network security config normally lives in
 > `base.apk`, but nothing forces it to, and the resource table you need to resolve the reference may
 > be in a different split than you expect.
 
-> **🔍 Pentester's Note — Git Bash on Windows**
+> **Pentester's Note — Git Bash on Windows**
 > A path starting with `/data` gets mangled into `C:/Program Files/Git/data/...` by MSYS path
 > conversion, and `adb pull` fails with "failed to stat remote object". Prefix the command with
 > `MSYS_NO_PATHCONV=1`, or use PowerShell for the pull.
@@ -114,7 +114,7 @@ unzip -l base.apk | grep -i 'res/xml'
 You will see a list of `res/xml/*.xml` entries. On an obfuscated build they may be named `a.xml`,
 `b.xml`, `c.xml`. Which one is the network security config?
 
-> **✅ Checkpoint 1**
+> **Checkpoint 1**
 > Write down, in one sentence, why the manifest does not contain the filename. If you cannot, re-read
 > [README §2.5](../README.md#2-high-level-architecture).
 
@@ -146,14 +146,14 @@ Four facts to record now, because each one changes what the config means:
 
 If `android:debuggable` does not appear at all, it is absent from the manifest, which means `false`.
 
-> **💡 Hint**
+> **Hint**
 > `parse_axml.py` prints both the `rawValue` text and the typed value, and flags any disagreement.
 > For `networkSecurityConfig` you should see `TYPE_REFERENCE` and no anomaly. If you see an anomaly
 > report, read it — a manifest that decodes differently in two tools is itself a finding, and
 > [10-APK-Internals lab 04](../../10-APK-Internals/labs/lab-04-ctf-the-lying-manifest.md) is built on
 > exactly that.
 
-> **✅ Checkpoint 2**
+> **Checkpoint 2**
 > You have a 32-bit number. Decompose it: `0x7f0b0000` is package `0x7f`, type `0x0b`, entry
 > `0x0000`. Write down all three.
 
@@ -221,13 +221,13 @@ Resolution walks:
    **global value string pool** at the top of `resources.arsc`, and the string there is the archive
    path.
 
-> **💡 Hint — a bug worth knowing about**
+> **Hint — a bug worth knowing about**
 > `Res_value` is `{ uint16 size; uint8 res0; uint8 dataType; uint32 data }`. `dataType` is at byte
 > **3**, not byte 2. The first draft of `nsc-audit.py` read byte 2 and reported "dataType 0x00, not
 > TYPE_STRING — it does not name a file" for every APK. If your own resolver returns `TYPE_NULL`
 > everywhere, check that offset first.
 
-> **✅ Checkpoint 3**
+> **Checkpoint 3**
 > You have a path like `res/xml/alt_network_security_config.xml`. Confirm it exists in the archive:
 > `unzip -l base.apk | grep alt_network_security_config`
 
@@ -241,7 +241,7 @@ python3 -B ../../10-APK-Internals/examples/parse_axml.py --extract base.apk \
         --entry res/xml/alt_network_security_config.xml
 ```
 
-> **⚠️ Warning — Windows**
+> **Warning — Windows**
 > If the config contains non-ASCII text, the Windows console codec raises `UnicodeEncodeError`
 > partway through the tree and you get a truncated document plus a traceback. Set
 > `PYTHONIOENCODING=utf-8` before the command. This is not hypothetical: one of the configs in this
@@ -291,7 +291,7 @@ Real output, trimmed:
 
 **Do not move on until you have read this.** Three things are visible and each is a different lesson.
 
-> **✅ Checkpoint 4**
+> **Checkpoint 4**
 > Write down, before reading Part 5:
 > 1. Is `<certificates src="user"/>` inside `<base-config>` a finding? Why or why not?
 > 2. What is today's date, and what is the `<pin-set>` expiration?
@@ -333,7 +333,7 @@ python3 -B ../scripts/nsc-audit.py base.apk | sed -n '/effective policy/,/findin
        pin-set             : 15 pin(s), expiration=2021-07-1
 ```
 
-> **✅ Checkpoint 5**
+> **Checkpoint 5**
 > Your table and the tool's output should agree exactly. If they do not, the interesting question is
 > which of you is wrong — work it out before continuing, because the same reasoning is what you will
 > use on the app you are actually being paid to test.
@@ -407,7 +407,7 @@ REMEDIATION
         python3 -B nsc-audit.py app-release.apk --fail-on MEDIUM
 ```
 
-> **✅ Checkpoint 6**
+> **Checkpoint 6**
 > Your write-up must contain a date and a day count. "The pin set is expired" is an assertion; "the
 > pin set expired on 2021-07-01, 1869 days before testing" is a measurement.
 
@@ -465,13 +465,13 @@ The developer wrote a comment using `//`, which is not XML comment syntax, so in
 stripped at compile time it was preserved as character data and shipped inside the APK. It says
 *"trust certificates the user installed themselves"*.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Two lessons. First, developer intent sometimes ships verbatim, and it is worth reading every text
 > node rather than only elements. Second, a tool that reconstructs a DOM and discards whitespace-only
 > or unexpected text nodes will lose this entirely — which is one more reason to look at
 > `parse_axml.py`'s raw event stream rather than a tidied tree.
 
-> **✅ Checkpoint 7**
+> **Checkpoint 7**
 > For each app, write one sentence: what would you have to do to intercept its traffic? The answers
 > should be different for at least three of them.
 

@@ -65,7 +65,7 @@ No Gradle. No Android Studio. No network.
 **Device.** Any Android 5+ device or emulator. **Root is not required** — this entire lab was
 written and measured on an unrooted Android 13 / API 33 phone.
 
-> **⚠️ Authorisation**
+> **Authorisation**
 > Everything you build and attack here is software you compiled yourself, from sources in this
 > repository. Install it on a device you own and uninstall it when you are done. The last section
 > tells you how.
@@ -94,7 +94,7 @@ values rather than two? Write down, in one sentence, why a check that could not 
 `PASS`.
 
 **Question A2.** Find `checkDexIdentity`. It computes a CRC and then returns `UNKNOWN` with the
-comment "reported, no baseline compiled in". Why can the expected CRC of `classes.dex` not simply be
+comment "reported, no baseline compiled in". Why can the expected CRC of `classes.dex` not be
 written into the source as a constant?
 
 <details>
@@ -107,7 +107,7 @@ The three real solutions all move the value somewhere the digest does not cover:
 asset injected into the zip after dexing, or the server. Each moves the problem rather than solving
 it — which, if you follow the thought to its end, is the argument for remote attestation.
 
-Note that the **signature** check has no such problem: the signature is applied after everything
+the **signature** check has no such problem: the signature is applied after everything
 else, so the expected certificate hash can sit happily in `classes.dex`.
 </details>
 
@@ -186,7 +186,7 @@ apksigner verify -v --print-certs /tmp/ch38/clean.apk | grep 'certificate SHA-25
 Signer #1 certificate SHA-256 digest: f4a76558cf5fc9e7ccc0eca49458275e926cc54630965c87305168383a49c24f
 ```
 
-> **🧠 Mental Model**
+> **Mental Model**
 > `keytool`'s SHA-256 fingerprint, `apksigner`'s certificate digest, and
 > `sha256(Signature.toByteArray())` are **the same number**, because all three hash the DER encoding
 > of the same X.509 certificate. This equivalence is what lets a build system compute the expected
@@ -297,7 +297,7 @@ a zip entry), realigned, and re-signed with the attacker key.
 this a clean experiment: if the check fires, it fired because of the key and nothing else.
 
 **Question D1.** The script's note says the APK Signing Block "is not a zip entry at all". Where does
-it live, and why does simply rewriting the zip discard it?
+it live, and why does rewriting the zip discard it?
 
 <details>
 <summary>Answer D1</summary>
@@ -307,7 +307,7 @@ The APK Signing Block sits **between the last local file entry and the central d
 central directory and no zip tool knows it exists.
 
 So when Python's `zipfile` reads the entries and writes a new archive, it copies entries and rebuilds
-the central directory, and the region between them is simply not carried over. The v2/v3 signature
+the central directory, and the region between them is not carried over. The v2/v3 signature
 vanishes without anyone deleting it.
 
 This is also why the v1 entries have to be removed explicitly: those *are* zip entries, and a copy
@@ -334,7 +334,7 @@ the install fail, and what exactly is the platform comparing?
 <details>
 <summary>Answer D2</summary>
 
-This is not a signature *verification* failure. The APK verifies perfectly; it is simply signed by a
+This is not a signature *verification* failure. The APK verifies perfectly; it is signed by a
 different key.
 
 What failed is the **continuity** check: the package manager compares the new package's
@@ -379,7 +379,7 @@ SUMMARY checks=7 fail=1 unknown=2 elapsed_us=61514
 **D1 flipped from PASS to FAIL.** The certificate the app sees is now `e9ff1d0f…` — the attacker key
 — where the baseline still says `f4a76558…`. The app detected its own repackaging.
 
-Note that it detected it **without ever looking at its own code**. It asked the platform who signed
+it detected it **without ever looking at its own code**. It asked the platform who signed
 it. That is §3.2's whole argument, now measured.
 
 ### E2 — The result people do not expect
@@ -495,7 +495,7 @@ With this build installed:
 adb shell "run-as com.pentest.ch38.integrity ls -la /data/data/com.pentest.ch38.integrity"
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `run-as` succeeding is a **one-command test** for `FLAG_DEBUGGABLE` on any app. If it works on a
 > production app you are assessing, that is worth reporting on its own, independent of any tamper
 > question: it means the app's private data directory is readable over `adb` and a JDWP debugger can
@@ -518,7 +518,7 @@ In one terminal, attach `jdb` and leave it connected:
 jdb -connect com.sun.jdi.SocketAttach:hostname=localhost,port=8700
 ```
 
-> **⚠️ On Windows**, `jdb` defaults to the shared-memory transport and fails with
+> **On Windows**, `jdb` defaults to the shared-memory transport and fails with
 > `shmemBase_attach failed`. You must pass `-connect com.sun.jdi.SocketAttach:...` explicitly, as
 > above.
 
@@ -601,7 +601,7 @@ You will find the `IntegrityGate` smali. Locate `checkOwnSignature` and the comp
 Rebuild, re-sign with the **attacker** key, install, and run.
 
 **Question G1.** D1 now reports PASS on a build signed by the attacker. How many bytes of change did
-that take, and — the interesting part — what did you have to do to the APK in order to install your
+that take, and — the interesting part — what did you have to do to the APK to install your
 patched version?
 
 <details>
@@ -627,7 +627,7 @@ If you have root and `frida-server`:
 frida -U -f com.pentest.ch38.integrity -l ../scripts/which-check-fired.js
 ```
 
-Read which check fires and what it saw. Note that on the **clean** build with Frida attached, D1
+Read which check fires and what it saw.on the **clean** build with Frida attached, D1
 still passes — because Frida changed nothing on disk.
 
 **Question G2.** You attach Frida to the clean, correctly-signed build. Which checks fire and which

@@ -27,13 +27,13 @@ But attestation's value is entirely conditional on the verifier, and the verifie
 client side is fifteen lines and hard to get wrong. Every attestation finding worth writing up is on
 the other end of the wire.
 
-> **📖 Definition — key attestation**
+> **Definition — key attestation**
 > A certificate chain, produced by the device's secure hardware, in which the **leaf** certificate
 > contains an X.509 extension (`1.3.6.1.4.1.11129.2.1.17`) describing the attested key's properties and
 > the device's boot state. The chain is signed by a factory-provisioned key that software cannot reach,
 > and terminates at a root certificate Google publishes.
 
-> **⚠️ Warning — the `softwareEnforced` trap**
+> **Warning — the `softwareEnforced` trap**
 > Every field in the authorization list appears **twice**: once in `softwareEnforced` and once in
 > `hardwareEnforced`. The software-enforced copy is asserted by the Android framework, which is on the
 > attacker's side of the trust boundary. A verifier that reads `rootOfTrust` or `origin` from it — or
@@ -54,7 +54,7 @@ adb shell getprop ro.boot.verifiedbootstate      # green / orange / yellow / red
 adb shell getprop ro.boot.flash.locked           # 1 = locked
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > A rooted device is convenient for the rest of this repository and *inconvenient* here: unlocking the
 > bootloader changes `verifiedBootState` to `Unverified` and `deviceLocked` to `false`, which is
 > exactly what you want to *observe* but means you cannot produce a "clean" attestation for comparison.

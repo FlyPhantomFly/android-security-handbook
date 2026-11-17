@@ -53,7 +53,7 @@ I CH38CTF : raw=042c1928e7a456d2bc27cf7eebf67f65432bcb200b238bb27f99fceabd5a2292
 
 Forty-two bytes. No message. Nothing else in the log.
 
-> **⚠️ Note on the build.** `build-ctf.sh` generates two throwaway keys and signs the challenge APK
+> **Note on the build.** `build-ctf.sh` generates two throwaway keys and signs the challenge APK
 > with the *distributor* one. In a real engagement you would be handed a repackaged APK and would
 > have neither key; here you generate both so that the challenge is verifiable. **Do not look at the
 > keystores.** That is not the intended route and it teaches nothing.
@@ -201,7 +201,7 @@ apksigner verify -v --print-certs /tmp/ch38ctf/vault-challenge.apk | grep 'certi
 Then find the constant the app expects, in the decompiled source. **They do not match.**
 
 You are running a build signed by somebody other than the party the app expects. That is exactly the
-scenario §1.2 calls threat T‑A, and the app detected it perfectly — it simply never said so.
+scenario §1.2 calls threat T‑A, and the app detected it perfectly — it never said so.
 
 So the state word is `HEALTHY ^ C_SIG` instead of `HEALTHY`, and every byte downstream is wrong.
 </details>

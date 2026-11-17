@@ -74,7 +74,7 @@ openssl x509 -inform PEM -subject_hash_old -in burp.pem -noout
 cp burp.pem 9a5ba575.0
 ```
 
-> **💡 Hint**
+> **Hint**
 > `-subject_hash_old` (MD5-based), not `-subject_hash` (SHA-1-based). Android uses the old algorithm.
 > Getting this wrong produces a certificate that sits in the directory and is never loaded, which is
 > a maddening failure because nothing reports it.
@@ -100,7 +100,7 @@ adb shell "su -c 'ls -la /data/misc/user/0/cacerts-added/'"
 # -rw-r--r-- 1 system system 939 … 9a5ba575.0
 ```
 
-> **⚠️ Warning — check the system store too**
+> **Warning — check the system store too**
 > If you have ever installed a CA into the system store with a Magisk or APatch module, this lab's
 > measurements are meaningless, because your CA will be trusted through the *system* path regardless
 > of what the config says.
@@ -325,7 +325,7 @@ Two things it already handles that you would otherwise rediscover painfully:
 adb install -r app/build/outputs/apk/debug/app-debug.apk
 ```
 
-> **🔍 Pentester's Note — MIUI**
+> **Pentester's Note — MIUI**
 > On the device this chapter was written against, both `adb install` and `pm install` return
 > `INSTALL_FAILED_USER_RESTRICTED` regardless of the APK, because "Install via USB" is disabled at
 > the vendor level. `settings put global verifier_verify_adb_installs 0` does not help. Root does:
@@ -373,7 +373,7 @@ Read that message carefully, because it is the *specific* failure this whole cha
 > **Trust anchor for certification path not found.**
 
 The chain your proxy presented is well-formed and correctly signed. It terminates in your CA. Your CA
-is on the device. It is simply **not in the set of anchors the app was given**, because the app
+is on the device. It is **not in the set of anchors the app was given**, because the app
 targets API 24 or later and its config asks only for `src="system"`.
 
 Contrast it with the two other failures you might have seen:
@@ -385,7 +385,7 @@ Contrast it with the two other failures you might have seen:
 | `CLEARTEXT communication to X not permitted by network security policy` | You used `http://`, and cleartext is denied |
 | Timeout, or no exception and no proxy traffic | The app is not using the proxy or not using the platform stack |
 
-> **✅ Checkpoint 1**
+> **Checkpoint 1**
 > Reproduce the failure and paste the exact message into your notes. If you got a *different* message,
 > stop and work out which row of the table above you are in — the rest of the lab depends on being in
 > the first one.
@@ -453,7 +453,7 @@ The debug APK's config contains `<certificates src="user"/>`. **The release APK'
 it at all** — the file is a different file. That is the property that makes Form A safe: the
 relaxation cannot reach production because it is not compiled into the release APK.
 
-> **✅ Checkpoint 2**
+> **Checkpoint 2**
 > Diff the two decoded configs and confirm they are different documents, not the same document
 > interpreted differently. This is the distinction between Form A and Form B and the rest of the lab
 > turns on it.
@@ -559,7 +559,7 @@ frida -U -p $(adb shell pidof com.pentest.nsclab) -l ../scripts/nsc-runtime.js |
 `UserCertificateSource` is **absent**. The platform parsed the `<debug-overrides>` block and built
 nothing from it.
 
-> **✅ Checkpoint 3**
+> **Checkpoint 3**
 > You now have, from your own build, the evidence that makes the the professional-network app example in
 > [README §3.7](../README.md#3-deep-internal-working) reportable. Save both `nsc-runtime.js` outputs.
 > Two runs of the same script against the same config file, differing only in `FLAG_DEBUGGABLE`, is
@@ -607,7 +607,7 @@ Now run three experiments and predict each before you run it.
    `overridePins` defaults to `true` inside that block, so the chain terminating in your CA is exempt
    from the pin-set entirely.
 
-> **✅ Checkpoint 4**
+> **Checkpoint 4**
 > Experiment 3 is the one worth pausing on. You did not write `overridePins="true"` anywhere. The
 > platform applied it because the anchor came from `<debug-overrides>`. This is why a debuggable
 > release build with a debug block is a CRITICAL rather than a HIGH: it does not only add trust, it
@@ -681,7 +681,7 @@ and from inside the process:
       cleartextTrafficPermitted : false
 ```
 
-> **✅ Checkpoint 5**
+> **Checkpoint 5**
 > You have now reproduced, in a build you control, the exact situation measured in the marketplace app's shopping
 > app in [README §4.6](../README.md#4-source-code-walkthrough-aosp). Any manifest-only cleartext check
 > produces a false positive here.
@@ -733,13 +733,13 @@ python3 -B ../scripts/nsc-audit.py final.apk --xml
 If the audit does not show your config, the manifest is pointing somewhere else and installing would
 have wasted twenty minutes.
 
-> **⚠️ Warning**
+> **Warning**
 > Re-signing changes the signing certificate, which breaks everything keyed to it: Google Sign-In,
 > Play Integrity / SafetyNet, any server-side APK signature check, and App Links verification. If the
 > app stops working after repackaging, that is almost always why, and it is **not a finding**. Say so
 > in your notes so nobody later mistakes it for one.
 
-> **✅ Checkpoint 6**
+> **Checkpoint 6**
 > Record which route you used to get traffic. "The application's traffic was intercepted" means four
 > very different things depending on whether you used the user store, the system store, a repackaged
 > APK or Frida — and only the first is a finding about the app.

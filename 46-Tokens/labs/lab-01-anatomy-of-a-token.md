@@ -175,7 +175,7 @@ PY
 python3 -B "$CH46/examples/01-broken-verifier.py" --keydir keys --token-file break1.jwt
 ```
 
-**Q6.** What happened? Which verifier property caught it? Note that this is the *only*
+**Q6.** What happened? Which verifier property caught it? This is the *only*
 break in this lab that the deliberately broken verifier detects.
 
 ### Break 2 — `alg: none`
@@ -251,7 +251,7 @@ print(si + "." + sig)
 PY
 ```
 
-Note that this one is **correctly signed**. We had the secret, so we re-signed it properly.
+this one is **correctly signed**. We had the secret, so we re-signed it properly.
 
 **Q9.** A verifier that checks the signature will accept this token. What is wrong with it,
 and what would a correct verifier have to do that is *not* a cryptographic operation?

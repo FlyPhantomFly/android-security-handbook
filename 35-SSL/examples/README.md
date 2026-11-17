@@ -30,7 +30,7 @@ permissive `TrustManager` to grep for and no `HostnameVerifier` to find. The def
 block, and the app validates properly, refuses properly, and then sends the request in plaintext
 anyway. A static scan that looks for the usual signatures reports this app as clean.
 
-> **⚠️ Warning**
+> **Warning**
 > Do not copy any part of `InsecureTlsClient.java` into a real application. That is not a
 > formality. Pattern A in particular has been copied out of question-and-answer sites into shipping
 > financial applications more than once, because it is the top-voted answer to "how do I fix
@@ -117,7 +117,7 @@ openssl req -x509 -newkey rsa:2048 -nodes -keyout private_root.key \
         -out private_root.crt -days 30 -subj "/CN=ch35 private root"
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > Never commit a private key or a certificate to this repository. Generate them in a scratchpad,
 > and record the command in your notes rather than the output. The chapter's labs are written the
 > same way for the same reason.

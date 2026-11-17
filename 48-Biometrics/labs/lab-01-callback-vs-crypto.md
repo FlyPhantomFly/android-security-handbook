@@ -13,10 +13,9 @@
 | **Chapter sections** | [§3.4](../README.md), [§5.3 V1](../README.md), [§7.1–7.7](../README.md) |
 | **Files** | [`../examples/01-CallbackOnlyVault.java`](../examples/01-CallbackOnlyVault.java), [`../examples/02-CryptoBoundVault.java`](../examples/02-CryptoBoundVault.java), [`../scripts/hook-biometric-prompt.js`](../scripts/hook-biometric-prompt.js) |
 
-> **⚠️ Warning — authorised testing only**
-> `01-CallbackOnlyVault.java` is deliberately vulnerable. Build and install it **only on a device or
-> emulator you own**. It contacts no network and handles no data but a hard-coded string. Do not
-> lift it into anything real.
+> `01-CallbackOnlyVault.java` is deliberately vulnerable. Build and install it **only on a device
+> or emulator you own**. It contacts no network and handles no data but a hard-coded string. Do not
+> lift it into anything real. See [SECURITY.md](../../SECURITY.md) for authorised-testing scope.
 
 ---
 
@@ -75,7 +74,7 @@ If `frida-ps -U` lists processes, you are ready. If frida-server is not running,
 adb shell 'su -c "/data/local/tmp/frida-server &"'
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Record which device you are on and whether it is rooted, in your notes, before you measure
 > anything. The chapter was written across two devices that disagree about `dumpsys biometric`,
 > about whether the shell holds `USE_BIOMETRIC`, and about whether the keystore is a real TEE. A
@@ -299,7 +298,7 @@ Java.perform(function () {
 });
 ```
 
-Three lines. Note that `null` is accepted, because the vulnerable app never reads the result
+Three lines.`null` is accepted, because the vulnerable app never reads the result
 parameter — which is itself the tell from §6.2.
 
 **Even simpler**, and often the first thing to try: attack the field rather than the callback.
@@ -377,7 +376,7 @@ BINDING HELD. A callback was forged and the cryptographic operation was still
 refused by the keystore. The prompt is not bypassable by this technique.
 ```
 
-> **🧠 Mental Model**
+> **Mental Model**
 > `forge()` *worked* against both apps. The method was found, it was called, it returned. Frida
 > reported no failure. If your definition of "bypass" is "the callback fired", you just bypassed
 > both. The difference only appears when you ask what happened next — which is why the third pass

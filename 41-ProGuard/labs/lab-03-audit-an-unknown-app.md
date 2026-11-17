@@ -17,10 +17,10 @@ reconstruct the rules that produced it, and write a finding at a severity you ca
 This is the assessment skill. Lab 02 gave you the rules and asked what they produced; this lab gives
 you the product and asks for the rules.
 
-> **⚠️ Authorised testing only.** Analyse apps you own, apps you have written permission to test, or
-> apps distributed as deliberately-vulnerable training targets. Pulling an APK off your own device is
-> fine; publishing findings about a third party's app is not, unless you have permission. Where this
-> lab shows measured output from a real app, the app is not named, for exactly that reason.
+> Analyse apps you own, apps you have written permission to test, or apps distributed as
+> deliberately-vulnerable training targets. Pulling an APK off your own device is fine. Where this
+> lab shows measured output from a real app, the app is not named. See
+> [SECURITY.md](../../SECURITY.md) for authorised-testing scope.
 
 ---
 

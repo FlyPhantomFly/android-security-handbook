@@ -165,7 +165,7 @@ often owned by a different team. Legacy and organisational friction, not a techn
 
 Not necessarily. `autoVerify` is the app *asking* the platform to verify. Verification can fail —
 the domain does not serve `assetlinks.json`, it serves it with the wrong content type, the signing
-certificate fingerprint does not match, or the fetch simply failed on a bad network at install time.
+certificate fingerprint does not match, or the fetch failed on a bad network at install time.
 When it fails, the app silently falls back to being one of several possible handlers.
 
 Check the actual state:
@@ -266,7 +266,7 @@ The browser request then contains only `client_id` and that opaque reference.
 
 It matters because it removes the front channel as a tampering surface entirely — there is nothing in
 the URL to rewrite. If you see `require_pushed_authorization_requests: true` in the discovery
-document, the deployment is hardened and several classic attacks are simply unavailable. See §3.13.
+document, the deployment is hardened and several classic attacks are unavailable. See §3.13.
 
 ### 23. What is DPoP and why does it keep coming up with the Keystore?
 

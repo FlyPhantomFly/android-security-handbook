@@ -20,12 +20,8 @@ measured on. Behaviour differences are marked in Version Matrix tables.
 
 ---
 
-> **⚠️ Warning — scope and authorisation**
-> Everything in this chapter is written for **authorised testing**: an app you own, an app you are
-> contracted to assess, or a deliberately vulnerable lab target. Defeating an emulator check on an
-> application you have no permission to test is, in most jurisdictions, unauthorised access to a
-> computer system regardless of how trivial the check was. The techniques are identical; the
-> authorisation is what separates a penetration test from a crime.
+> Everything in this chapter targets an app you own, an app you are contracted to assess, or a
+> deliberately vulnerable lab target. See [SECURITY.md](../SECURITY.md) for authorised-testing scope.
 
 ---
 
@@ -68,7 +64,7 @@ else.
 
 ### 1.2 What an emulator actually is
 
-> **📖 Definition — emulator**
+> **Definition — emulator**
 > A program that runs software written for one machine on a different machine, by simulating the
 > first machine's processor, memory and devices. The Android Emulator is a fork of **QEMU** (Quick
 > EMUlator, an open-source machine emulator), configured with a synthetic hardware platform that
@@ -76,7 +72,7 @@ else.
 
 Two words appear constantly in this chapter and they are not interchangeable:
 
-> **📖 Definition — goldfish and ranchu**
+> **Definition — goldfish and ranchu**
 > **goldfish** is the name of the original virtual hardware platform the Android Emulator presented
 > to the guest: a synthetic set of devices (a timer, a framebuffer, a battery, a "pipe" for talking
 > to the host) with no real-world counterpart. **ranchu** is its successor, built on **virtio** —
@@ -88,7 +84,7 @@ Two words appear constantly in this chapter and they are not interchangeable:
 > hybrid is why `Build.HARDWARE` reads `ranchu` while `/dev/goldfish_sync` still exists — a fact
 > measured in [§3.6](#36-device-nodes-and-the-single-most-out-of-date-check-in-the-field).
 
-> **📖 Definition — virtualisation vs emulation**
+> **Definition — virtualisation vs emulation**
 > **Emulation** simulates a processor's instructions in software: an ARM binary on an x86 host has
 > every instruction decoded and executed by a program. **Virtualisation** runs the guest's
 > instructions on the real CPU, with a hypervisor trapping only the privileged ones. The modern
@@ -149,7 +145,7 @@ Four of the best-known checks in the discipline, all returning "not an emulator"
 measurements are in [§3](#3-deep-internal-working) and the full table is in
 [§3.14](#314-the-grading-table-every-signal-measured-on-both-devices).
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Root detection asks *"has this device been modified?"* Emulator detection asks *"is this device
 > real?"* They feel like the same question and they are not. A rooted phone is real hardware that
 > lies about its integrity. An emulator is honest software that is not hardware at all. That is why
@@ -169,7 +165,7 @@ measurements are in [§3](#3-deep-internal-working) and the full table is in
 | Malware that detects *your* sandbox | [69-MalwareAnalysis](../69-MalwareAnalysis/README.md) | Same signals, adversary reversed. §5.6 |
 | Obfuscation applied to these checks | [40-Obfuscation](../40-Obfuscation/README.md) | §6.5 covers only what obfuscation does *to* them |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > If you arrived here because **an app works on your phone and misbehaves on your emulator**, you do
 > not need the whole chapter. Run [`scripts/emu-signal-map.py`](scripts/emu-signal-map.py) against
 > the APK to see which signals it reads, then [`scripts/emu-trace.js`](scripts/emu-trace.js) to see
@@ -189,7 +185,7 @@ say which:
 | Build type | `user`, `release-keys` | `userdebug`, `dev-keys` |
 | State | Rooted (Magisk/APatch), frida-server present | Stock AVD image, `adb root` available |
 
-> **⚠️ Warning — the API levels differ, and that is a limitation**
+> **Warning — the API levels differ, and that is a limitation**
 > The phone is API 30 and the AVD is API 35. Where a difference could plausibly be an *API-level*
 > difference rather than an *emulator* difference, this chapter says so explicitly rather than
 > claiming the stronger result. The clearest example is package-visibility filtering in
@@ -388,7 +384,7 @@ Every signal in this chapter carries one of five grades. They describe **strengt
 | **NOISY** | Fires on real devices too | Nothing — and it costs the *developer*, in false positives |
 | **INFO** | Context. Useful in combination, never a verdict alone | — |
 
-> **⚠️ Warning — a signal's presence in a table is not a claim about its strength**
+> **Warning — a signal's presence in a table is not a claim about its strength**
 > This is the most important sentence in the chapter. Published checklists are flat lists, which
 > silently implies every entry is worth the same. They are not. Four of the best-known entries are
 > **DEAD**, and two signals that fire on the physical Redmi used here are **NOISY** in a way that
@@ -469,14 +465,14 @@ That still has a seam — everything does — but hooking it now costs the attac
 rather than one hook total, and the app can send `fired()` to a server that decides. The decision
 belongs there anyway ([§5.8](#58-the-correct-architecture)).
 
-> **🧠 Mental Model**
+> **Mental Model**
 > A check that returns a boolean has thrown away its evidence and kept its conclusion. That is exactly
 > backwards. The evidence is what the server needs, what your telemetry needs, and what makes a
 > false positive diagnosable. Keep the evidence; let something less attackable draw the conclusion.
 
 ### 3.3 System properties — what they are and how an app reads them
 
-> **📖 Definition — system property**
+> **Definition — system property**
 > A key–value pair in a small database the Android platform keeps in shared memory. Keys are
 > dotted strings like `ro.product.model`; values are strings of at most 91 characters
 > (`PROP_VALUE_MAX` is 92 including the terminator). Keys beginning `ro.` are **read-only**: the
@@ -502,7 +498,7 @@ An app has three ways in, and they end in the same place:
 | `SystemProperties.get("ro.x")` (reflection; `@hide`) | Java | One `Java.use` hook |
 | `__system_property_get("ro.x", buf)` | libc, native | `Interceptor.attach` on the native symbol |
 
-> **⚠️ Warning — `Build` fields are latched, and this breaks the obvious bypass**
+> **Warning — `Build` fields are latched, and this breaks the obvious bypass**
 > Every `Build` field is a `public static final` assigned in a static initialiser. Static
 > initialisers run **once**, when the class is first loaded — which for `android.os.Build` is during
 > process startup, long before your Frida script attaches. Hooking `SystemProperties.get` after
@@ -534,7 +530,7 @@ An app has three ways in, and they end in the same place:
 | **`qemu.hw.mainkeys`** | **`0`** | *unset* | **NOISY** | **Set on the REAL phone. See below** |
 | **`ro.kernel.qemu.gles`** | **`0`** | *unset* | **NOISY** | **Set on the REAL phone. See below** |
 
-> **🔬 Under the Hood — the inversion, and it is measured, not theoretical**
+> **Under the Hood — the inversion, and it is measured, not theoretical**
 > The last two rows are the wrong way round, and this is one of the more useful findings in the
 > chapter. A very common heuristic is *"enumerate the properties; if any key contains `qemu`, it is
 > an emulator."* Run from an app on the physical Redmi:
@@ -584,7 +580,7 @@ u:object_r:boottime_prop:s0
 Counted across the whole family: **111 `ro.boottime.*` properties visible to root, 0 to the shell,
 0 to an app.**
 
-> **⚠️ CORRECTED — this passage originally showed the shell reading the value.** That transcript was
+> **CORRECTED — this passage originally showed the shell reading the value.** That transcript was
 > taken with root in effect, the same error as the count table below. The SELinux mechanism described
 > here was right; the vantage attached to it was not.
 >
@@ -609,7 +605,7 @@ it generalises:
 **~424 of the AVD's properties are invisible to an app — but only ~40 of those are the shell's to
 see.** The gap that matters is *root* versus app, not shell versus app.
 
-> **⚠️ CORRECTED — this table originally read `shell = 1053`, and that figure was `root`.**
+> **CORRECTED — this table originally read `shell = 1053`, and that figure was `root`.**
 > The original row put `root` at 1050 and `shell` at 1053, which should have been the tell: two
 > different domains cannot see effectively the same property set when one of them is subject to
 > `boottime_prop` and the other is not. Re-measured twice, independently, by two later chapters:
@@ -634,7 +630,7 @@ see.** The gap that matters is *root* versus app, not shell versus app.
 Measured with `__system_property_foreach` from [`examples/emu_probe.c`](examples/emu_probe.c) run in
 each context, and cross-checked with `getprop`.
 
-> **🔍 Pentester's Note — this is the methodology trap of the whole chapter**
+> **Pentester's Note — this is the methodology trap of the whole chapter**
 > `adb shell` is not an app. When you test a property check from the shell and it works, you have
 > proved nothing about whether the app can do it. The repo-wide discipline from
 > [60-ADB](../60-ADB/README.md) applies here with unusual force: **prove reachability from an app,
@@ -718,7 +714,7 @@ zero" misclassifies the Redmi. A threshold of "more than five" separates these t
 and that threshold is an *empirical* choice that needs re-validating against a device fleet, not a
 constant to copy out of this chapter.
 
-> **🔬 Under the Hood — why native enumeration resists the Java hook**
+> **Under the Hood — why native enumeration resists the Java hook**
 > `SystemProperties.get` is one Java method; hooking it covers every Java property read in the
 > process. `__system_property_foreach` is a libc symbol reached with no Java frame at all. A
 > `Java.use`-based bypass does not see it, and the analyst has to move down to
@@ -809,7 +805,7 @@ more than bypassing it.
 
 #### 3.6.1 `exists()` throws away the information you need
 
-> **📖 Definition — `errno`**
+> **Definition — `errno`**
 > A thread-local integer libc sets when a system call fails, saying *why*. `ENOENT` (2) means "no such
 > file". `EACCES` (13) means "permission denied" — the file may well exist.
 
@@ -826,7 +822,7 @@ if (stat(path, &st) == 0) {
 } else if (errno == ENOENT) {
     verdict = "REAL";                /* genuinely absent */
 } else {
-    verdict = "UNKNOWN";             /* EACCES and friends - we simply do not know */
+    verdict = "UNKNOWN";             /* EACCES and friends - we do not know */
 }
 ```
 
@@ -863,7 +859,7 @@ figures for each. That is a much larger lie than one property, and an *inconsist
 Note also `Goldfish 3-axis Accelerometer`, the literal sensor name on the AVD. A name check is a
 one-line SOFT signal; the vendor *distribution* is the HARD one.
 
-> **⚠️ Warning — the false-positive that matters here**
+> **Warning — the false-positive that matters here**
 > A device with **zero** sensors is not necessarily an emulator. Android TV boxes, some kiosk
 > hardware and many automotive head units have no accelerometer. Check
 > `PackageManager.FEATURE_TELEVISION` and `UiModeManager.getCurrentModeType()` before treating an
@@ -881,7 +877,7 @@ Measured from an app with `targetSdkVersion 30`:
 The package count looks like a fine signal — a real user's phone accumulates apps, a fresh AVD has
 few. It is **NOISY** for a reason that catches a lot of production code:
 
-> **⚠️ Warning — package visibility filtering, and the silent failure it causes**
+> **Warning — package visibility filtering, and the silent failure it causes**
 > From **API 30**, an app that targets 30 or higher cannot see arbitrary installed packages. Unless
 > it holds `QUERY_ALL_PACKAGES` (a Play-policy-restricted permission) or declares a `<queries>`
 > element, `getInstalledPackages()` returns a **filtered** list — and the filtering is silent, with no
@@ -932,7 +928,7 @@ Measured:
 | `/proc/cpuinfo` model name | `AArch64 Processor rev 14` | `Android virtual processor` |
 | `/proc/cpuinfo` `hypervisor` flag | absent | **present** |
 
-> **📖 Definition — native bridge**
+> **Definition — native bridge**
 > A translation layer that lets an Android device execute native code compiled for a *different*
 > instruction set. An x86_64 emulator uses one (`libndk_translation.so`; historically Intel's
 > `libhoudini.so`) so that apps shipping only `arm64-v8a` libraries still run. It works by translating
@@ -975,7 +971,7 @@ rather than a one-value problem.
 The **`hypervisor` CPUID bit** is the other HARD member of this family and is even better, with one
 caveat.
 
-> **📖 Definition — the CPUID hypervisor bit**
+> **Definition — the CPUID hypervisor bit**
 > On x86, bit 31 of the `ECX` register returned by `CPUID` leaf 1 is reserved as the "hypervisor
 > present" bit. Real silicon leaves it clear; virtualisation software sets it by convention so guests
 > can detect they are virtualised. Linux surfaces it as the `hypervisor` flag in `/proc/cpuinfo`.
@@ -984,10 +980,10 @@ caveat.
 
 Measured present on the AVD, absent on the Redmi, readable by an app from `/proc/cpuinfo` on both.
 
-> **⚠️ Warning — this signal is architecture-specific and its absence proves nothing**
+> **Warning — this signal is architecture-specific and its absence proves nothing**
 > There is no ARM equivalent. An arm64 emulator image (which Apple-silicon developers use routinely)
 > has no `hypervisor` flag, so a `false` here is meaningless on arm64. A check that treats "no
-> hypervisor flag" as "real device" is correct on x86 and simply wrong everywhere else. Gate it on
+> hypervisor flag" as "real device" is correct on x86 and wrong everywhere else. Gate it on
 > `Build.SUPPORTED_ABIS` containing an x86 ABI.
 
 ### 3.10 Timing, and why this chapter refuses to grade it above INFO
@@ -1022,7 +1018,7 @@ on the x86_64 emulator, where every ARM instruction is translated to x86:
 Binary translation still beat the real ARM CPU. `libndk_translation.so` compiles hot blocks once and
 reuses them, so a tight loop pays translation cost on the first pass and runs native x86 thereafter.
 
-> **⚠️ Warning — do not ship a timing threshold**
+> **Warning — do not ship a timing threshold**
 > Any constant you pick from measurements on your own hardware will misclassify real devices in the
 > field. Phones vary by an order of magnitude across the price range; the same phone varies by a
 > factor of two between cold and thermally throttled. A threshold that separates *your* laptop's
@@ -1136,7 +1132,7 @@ confused. The signal sets barely intersect:
 Two rows overlap, and both are the NOISY "this is not a retail build" family. Everything else is
 disjoint.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Root detection asks about **privilege**. Emulator detection asks about **hardware**. A rooted
 > physical phone is high-privilege real hardware. A stock emulator is low-privilege fake hardware.
 > They are opposite corners of the same square, which is why an app that wants to exclude both must
@@ -1206,7 +1202,7 @@ real phone as an emulator and the emulator as a phone.
 Everything above is gathered inside the guest, so everything above can be changed by whoever owns the
 guest. There is exactly one exception.
 
-> **📖 Definition — hardware key attestation**
+> **Definition — hardware key attestation**
 > The device's Trusted Execution Environment generates a key pair and issues an X.509 certificate
 > chain for it, signed ultimately by a key the manufacturer provisioned into the hardware. The
 > certificate carries an extension describing the environment: whether the key is in hardware, the
@@ -1217,7 +1213,7 @@ On an emulator there is no TEE. Every key is `SOFTWARE`, `hardwareEnforced` is e
 level in the attestation record says so. That is measurable and it is not spoofable from inside the
 guest, because the guest has no attestation key to sign with.
 
-> **⚠️ Warning — and this is measured, in chapter 50**
+> **Warning — and this is measured, in chapter 50**
 > **On an emulator every key is `SOFTWARE`, `hardwareEnforced` is empty — and the attestation chain
 > still verifies perfectly.** A valid chain proves the chain, not the hardware. A verifier that checks
 > "does this chain validate?" and stops has learned nothing. It must inspect the **security level**
@@ -1530,7 +1526,7 @@ for (String key : allPropertyNames()) {
 }
 ```
 
-**Why developers write it.** It generalises, which feels robust — no hard-coded list to maintain.
+**Why developers write it.** It generalises, which feels solid — no hard-coded list to maintain.
 
 **Detection.** Run it on a real Xiaomi. `qemu.hw.mainkeys` and `ro.kernel.qemu.gles` are both set on
 the Redmi measured for this chapter ([§3.3.1](#331-the-properties-measured-on-both-devices)), so the
@@ -1568,7 +1564,7 @@ because the developer's own devices never exhibit it.
 | **MASTG-TEST-0244** *(Testing Emulator Detection, Android)* | Determine whether the app detects emulators and how easily it is bypassed | §7 is the procedure |
 | **MASVS-PRIVACY-1** | The app minimises personal data access | §5.1 — the evidence set is a device fingerprint |
 
-> **⚠️ Warning — MASTG test IDs get renumbered**
+> **Warning — MASTG test IDs get renumbered**
 > The MASTG has been reorganised more than once and test identifiers have moved between numbering
 > schemes. Cite the **test title** as well as the number and check it against the current MASTG
 > before putting it in a report. The MASVS control identifiers above are stable; the MASTG numbers
@@ -1628,7 +1624,7 @@ server do without it?"**
 | Detection false-positives on retail devices ([§5.3.3](#533-the-false-positive-that-blocks-real-customers)) | **MEDIUM** | Availability impact on real customers |
 | No detection **and** no attestation **and** server trusts a client-supplied "deviceOk" flag | **HIGH** | The client-trust flaw is the finding; emulator detection is incidental |
 
-> **🔍 Pentester's Note — the sentence to put in the report**
+> **Pentester's Note — the sentence to put in the report**
 > *"Emulator detection was bypassed"* is not a finding. **"With emulator detection bypassed, N
 > accounts were provisioned from a single host in M minutes, and the server applied no rate limit or
 > device-reputation control"** is a finding. The first describes an activity; the second describes an
@@ -1813,7 +1809,7 @@ The one-instruction patch, for a lab you own:
 .end method
 ```
 
-> **⚠️ Warning — patching means re-signing, and re-signing trips a different control**
+> **Warning — patching means re-signing, and re-signing trips a different control**
 > A repackaged APK is signed with your key, not the developer's, and any self-signature check will
 > notice — the digest changes even when `classes.dex` does not. [38-TamperDetection](../38-TamperDetection/README.md)
 > measured exactly this: re-signing changed the signature digest while the `classes.dex` CRC stayed
@@ -1866,7 +1862,7 @@ say. Set a breakpoint on the libc symbol and read the arguments at run time inst
 | Control-flow flattening | The `||` chain becomes a state machine | Trace instead of reading; the syscalls are unchanged |
 | Inlining | No function to hook | **The important one.** See below |
 
-> **⚠️ Warning — inlining is what actually defeats you, not obfuscation**
+> **Warning — inlining is what actually defeats you, not obfuscation**
 > [18-ARM §5.4](../18-ARM/README.md) measured this and it is the most useful negative result in the
 > repository: a check function was patched to `return 1`, verified to return 1, **and the caller still
 > refused** — because clang had inlined the check, and the patched copy was called by nothing.
@@ -1893,7 +1889,7 @@ The order matters more than the tooling, and the first step is the one people sk
 5. **Exercise the sensitive flows.** Apps re-check at payment, at login, at export.
 6. **Test the server.**
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Step 1 is skipped constantly, and it is the highest-value step in the list. A large fraction of apps
 > that "have emulator detection" according to their own developers have detection that has not fired
 > since 2019. Five minutes on a stock AVD settles it.
@@ -1944,7 +1940,7 @@ That output answers the only question that matters: **which signal fired**. Here
 and the sensor count — so hooking `File.exists` would have been a waste of an hour, and hooking
 `Build.FINGERPRINT` would have been a waste of another.
 
-> **⚠️ Warning — use `-f`, not `-p`, or you will miss the check entirely**
+> **Warning — use `-f`, not `-p`, or you will miss the check entirely**
 > Many checks run in `Application.onCreate()` or a static initialiser, which execute before you can
 > attach to a running process. `frida -U -f <pkg>` spawns the process suspended and installs hooks
 > before any app code runs. `frida -U -p <pid>` attaches to something that already made its decision.
@@ -2031,7 +2027,7 @@ B.MODEL.value       = "M2101K6P";
 B.HARDWARE.value    = "qcom";
 ```
 
-> **🔬 Under the Hood — why the second block is necessary**
+> **Under the Hood — why the second block is necessary**
 > `Build.FINGERPRINT` is `public static final`, assigned in a static initialiser that ran during
 > process startup. `SystemProperties.get` was called then and will not be called again. Hooking it
 > now cannot retroactively change a value that is already a constant in the class's static storage.
@@ -2059,7 +2055,7 @@ signals, not emulator ones — none of the thirteen hard-coded paths in its agen
 Expect nothing from it here, and read a "successful hook" message as evidence a hook installed, not
 that the app checked anything.
 
-### 7.7 Making the emulator less obviously an emulator
+### 7.7 Making the emulator less recognisable as an emulator
 
 The complementary approach: instead of hooking the app, fix the environment. This is the lowest
 altitude available and it is invisible to the app process entirely.
@@ -2177,7 +2173,7 @@ grep -rn 'android.os.SystemProperties' out/sources/
 grep -rnE 'getSensorList|getDefaultSensor|getNetworkOperator|getSimOperator|getInstalledPackages' out/sources/
 ```
 
-> **⚠️ Warning — a string is not a check**
+> **Warning — a string is not a check**
 > `"ro.hardware"` in an APK does not mean the app performs emulator detection. Analytics SDKs read
 > the same properties for crash reports and device breakdowns. **Cross-reference every hit to a
 > branch**: find where the value is compared, and what the comparison gates. Chapter
@@ -2901,7 +2897,7 @@ Full command reference in [`cheatsheet.md`](cheatsheet.md).
 - apktool — <https://apktool.org/>
 - radare2 — <https://rada.re/>
 
-> **⚠️ Warning — no CVE identifiers are cited in this chapter, deliberately**
+> **Warning — no CVE identifiers are cited in this chapter, deliberately**
 > Emulator detection is an application-level control, not a platform vulnerability class, so there is
 > no meaningful CVE to cite. Published "emulator detection bypass CVEs" almost always describe a
 > vulnerability in a specific commercial SDK. Rather than reproduce an identifier this chapter has not

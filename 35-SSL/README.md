@@ -57,7 +57,7 @@ when you called. If the café's router answered instead of the bank, you have an
 conversation with the attacker, and the padlock in the corner of the screen is entirely honest about
 it: the connection *is* encrypted. It is encrypted to the wrong party.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Encryption without authentication is a locked armoured van with no idea where it is going. It will
 > protect the cargo beautifully all the way to the thief's warehouse. Almost every real-world TLS
 > failure in mobile applications is an authentication failure, not an encryption failure — and
@@ -87,13 +87,13 @@ TLS is that scheme, with a certificate as the passport, a **Certificate Authorit
 office, a **digital signature** as the thing only the issuer can produce, and the **hostname** as
 the photograph.
 
-> **📖 Definition**
+> **Definition**
 > A **certificate** is a small file that says "this public key belongs to this name", signed by
 > someone else. That is the whole of it. It is a statement of ownership, plus a signature over that
 > statement. Everything else in the file — validity dates, permitted uses, extensions — exists to
 > constrain when and how that statement may be believed.
 
-> **📖 Definition**
+> **Definition**
 > A **Certificate Authority (CA)** is an organisation whose signature your device has been
 > pre-configured to believe. There is no mathematics that makes a CA trustworthy. It is trusted
 > because its certificate was shipped in the trust store on your phone, by whoever built the
@@ -150,7 +150,7 @@ Nobody has legitimately used SSL for two decades, but the name stuck to everythi
 in an Android class name, read "TLS". This chapter says TLS when it means the protocol and SSL only
 when quoting an identifier.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > "The app uses SSL" in a report means nothing. Which version, negotiated with which cipher suite,
 > validating which anchors, against which hostname? Section 7 gives you the commands to answer each
 > of those, and section 5.9 explains why a version-only finding is usually the weakest thing you
@@ -273,7 +273,7 @@ opens a second, separate TLS connection onward to the real server. There are two
 sets of keys. The only thing standing between the proxy and success is step 1 of that validation
 block: can the proxy's certificate be chained to something the client already trusts?
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Interception is not an attack on TLS. It is an application to be trusted, which the client either
 > grants or refuses. Everything in section 3.4 about trust stores is about how to get that
 > application granted; everything in section 5 is about applications that get granted when they
@@ -441,7 +441,7 @@ The extensions that decide behaviour:
 | `cRLDistributionPoints` | 2.5.29.31 | Where to fetch the revocation list, if anyone bothers |
 | `authorityInfoAccess` | 1.3.6.1.5.5.7.1.1 | OCSP responder URL, and often a URL for the missing intermediate |
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > `basicConstraints` is the extension that made the 2000s interesting. Before verifiers checked it
 > properly, an ordinary leaf certificate — the kind anyone could buy for their own domain — could be
 > used to sign a certificate for any other domain, because nothing said it was not a CA. The check
@@ -523,7 +523,7 @@ The handshake is also one round trip shorter, and more of it is encrypted. In pa
 which certificate a server presented. SNI is still cleartext by default, so the *requested* hostname
 usually leaks anyway, but this changes what a packet capture alone can tell you.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > This has a practical consequence for testing. Under TLS 1.2 you could read a server's certificate
 > out of a pcap. Under TLS 1.3 you cannot, so you must complete a handshake yourself to see it —
 > which is exactly what `scripts/tls-posture.py` does, and why a passive capture is no longer
@@ -555,7 +555,7 @@ sequenceDiagram
 
 There are **two independent TLS connections**, with two different sets of keys. The proxy is a
 server to the app and a client to the real server. Nothing about the cryptography is weakened; the
-app is simply talking to a different party than it thinks.
+app is talking to a different party than it thinks.
 
 The forged certificate copies the hostname from the real one — that is essential, because otherwise
 hostname verification would fail even if the CA were trusted. Note the consequence: **a proxy
@@ -589,7 +589,7 @@ throwing*, which means an empty method body is a complete, compiling, silently c
 implementation. The insecure version of this method contains strictly *less* code than a correct
 one, and nothing in it contains a keyword that says "insecure".
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Almost every security API in Android fails closed: you must do something to allow. `X509TrustManager`
 > fails **open**: you must do something to *deny*. That inversion, in one interface, is responsible
 > for more broken Android TLS than every protocol weakness combined.
@@ -643,7 +643,7 @@ The opt-in is a `network_security_config` declaring `<certificates src="user"/>`
 pattern C in [examples/InsecureTlsClient.java](examples/InsecureTlsClient.java), and because it lives
 in code rather than XML, no manifest review will find it.
 
-> **⚠️ Warning**
+> **Warning**
 > This is the answer to "why did installing my CA not help". Nothing failed. The certificate is
 > installed, it is in the right directory with the right name, the browser trusts it — and the app
 > ignores it, on purpose, because it targets API 24 or later. The fix is not to reinstall it. The fix
@@ -694,7 +694,7 @@ because by the time any app looked, the certificate was no longer a user CA.** T
 what the rule predicts — had that certificate only ever been in `/data/misc/user/0/cacerts-added/`,
 the `targetSdk >= 24` rows would have shown 138 anchors and reported it untrusted.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > The API-30 platform exposes exactly one `getDefaultBuilder` overload,
 > `(android.content.pm.ApplicationInfo)`, which is why the probe passes a synthetic `ApplicationInfo`
 > rather than a target SDK integer. Reading the value off the live platform class is what makes this
@@ -742,7 +742,7 @@ of you. This chapter deliberately does not tell you which it will be.
 | `trustusercerts`-style Magisk/APatch module | Yes | Yes | Every app | The measured arrangement in 3.4.3; leaves `/system` untouched |
 | Emulator with a writable system image | n/a | Yes | Every app | Cleanest of all when the target runs on an emulator |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Whichever you use, **write it down**. A CA you added is a change you made to the device, and it is
 > methodology, not a finding. Reporting "the device trusts an attacker CA" when you are the attacker
 > who installed it is the fastest way to lose a client's confidence. The same discipline appears in
@@ -779,8 +779,8 @@ step:
 | `Could not validate certificate signature` | 2 |
 | `Certificate is not a CA` / `basic constraints` | 4 |
 
-> **⚠️ Warning**
-> `Trust anchor for certification path not found` is *also* what you get when the server simply
+> **Warning**
+> `Trust anchor for certification path not found` is *also* what you get when the server
 > failed to send an intermediate and the client could not fetch it. That is a server
 > misconfiguration, not a client bug, and it is the single most common false positive in this area.
 > Desktop browsers hide it because they cache intermediates from previous browsing and will fetch a
@@ -858,7 +858,7 @@ On Android, the practical position is: **assume revocation is not checked.** The
 `/data/misc/keychain/pubkey_blacklist.txt` and `serial_blacklist.txt` for catastrophic cases —
 which is a manually-curated kill switch for specific compromised keys, not general revocation.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Do not write "the app does not check certificate revocation" as a finding without qualification.
 > Almost no mobile application does, the platform does not by default, and the control is largely
 > ineffective even where implemented. If revocation genuinely matters for the client's threat model,
@@ -977,7 +977,7 @@ test device by hooking `checkServerTrusted` on every implementation. Feeding a z
 
 Three classes, one rejection, propagated back up. That is the platform's trust pipeline, measured.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > The direction of the arrows is worth noticing. The handshake runs in **native** code, and it calls
 > **up** into Java to ask whether the chain is acceptable. That inversion is why a Java-level hook on
 > `checkServerTrusted` works at all against a natively-driven handshake — and equally why an
@@ -1079,7 +1079,7 @@ warns that it disables all certificate validation. It exists for a narrow class 
 genuinely have no PKI available, and it is a live, loaded, callable trust-everything trust manager
 present in every app process on the device.
 
-> **⚠️ Warning**
+> **Warning**
 > An application that obtains its socket factory from `SSLCertificateSocketFactory.getInsecure()`
 > has the same vulnerability as one that writes its own empty `checkServerTrusted`, with none of the
 > code that static analysis looks for. Grep for `getInsecure` as well as for `TrustManager`.
@@ -1257,7 +1257,7 @@ invalid, or reset the connection — and the app downgrades itself.
 means the identity check failed. Fix D in
 [examples/HardenedTlsClient.java](examples/HardenedTlsClient.java).
 
-**Severity.** Critical on an authentication endpoint. Note that from API 28 the platform blocks
+**Severity.** Critical on an authentication endpoint.from API 28 the platform blocks
 cleartext by default, so this is often *latent* — the bug is present and defused. An app that also
 sets `cleartextTrafficPermitted="true"` has removed the safety net, and the combination is the
 finding.
@@ -1458,7 +1458,7 @@ Two rules that follow:
   because a scanner emitted both is how a report loses its reader. Report both, rate them
   differently, and say why.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The inverse mistake is just as damaging. An app that is perfect on its API host and permissive on
 > its "non-sensitive" analytics host has an interceptable connection into its own process; if that
 > analytics response can influence any behaviour — a feature flag, a URL, a payload rendered in a
@@ -1647,7 +1647,7 @@ What obfuscation *does* cost you:
 | String encryption | Hostnames and pins are no longer greppable; you must recover them at runtime |
 | Control-flow flattening | The `return-void` shape becomes a state machine; the bytecode heuristic degrades |
 
-> **⚠️ Warning**
+> **Warning**
 > Inlining is the failure mode worth remembering, and this repository has already measured its
 > consequences in a different context: `18-ARM` §5.4 records a native check function that was
 > successfully patched to return "pass" and *still* did not change behaviour, because the compiler
@@ -1765,7 +1765,7 @@ CIPHER SUITES accepted under TLS 1.3   (3)
 Cloudflare's `alert 70` for TLS 1.0 is a clean, deliberate refusal. `badssl.com` answering `alert 40`
 for TLS 1.3 means something different: it is not configured for 1.3 at all.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > Cipher enumeration works by repeatedly offering the suites not yet seen and recording which one the
 > server picks. Reversing the order of the first two accepted suites and re-offering them determines
 > whether the server enforces its own preference or honours the client's — which is why the output
@@ -1788,7 +1788,7 @@ echo | openssl s_client -connect badssl.com:443 -servername badssl.com 2>/dev/nu
 It is printed here for **comparison against what an app has configured**, not because pinning is this
 chapter's subject — that is chapter 36.
 
-> **⚠️ Warning**
+> **Warning**
 > A clean report from this tool says nothing about the app. The server can be configured perfectly
 > and the app can still accept any certificate on earth, because validation happens in the client.
 > The script's own header says so, and it is the most common misreading of this kind of output.
@@ -1808,7 +1808,7 @@ adb shell cmd package compile -m verify -f com.example.app
 frida -U -f com.example.app -l trace-tls-validation.js
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > Frida 16 has **no `--no-pause` flag.** Spawning resumes the process by default and `--pause` opts
 > in. Command lines copied from older material will fail with
 > `error: unrecognized arguments: --no-pause`.
@@ -1880,7 +1880,7 @@ The measured results above are the demonstration: three platform classes throw
 `java.lang.IllegalArgumentException: null or zero-length parameter`, and
 `android.net.SSLCertificateSocketFactory$1` returns quietly.
 
-> **⚠️ Warning**
+> **Warning**
 > Know the limit. A positive result proves *that trust manager* is permissive. It does **not** prove
 > the app's connections are interceptable: the app may not use that trust manager for the endpoint
 > you care about, and a pin set is enforced somewhere else entirely. The oracle points you at the
@@ -1976,7 +1976,7 @@ adb logcat | grep -iE 'SSLHandshake|CertPathValidator|CertificateException|Trust
 | `Certificate pinning failure!` | Pinning — chapter 36 |
 | `java.security.cert.CertPathValidatorException` wrapped in `SSLHandshakeException` | Some step of chain validation; read the cause |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > A rejection in logcat is a **pass**, not a bug. The app refused a certificate it should refuse.
 > Record it as evidence that validation works, because that is exactly what Lab 02 is trying to
 > establish, and because a report that only lists failures cannot demonstrate that the tests were
@@ -2497,7 +2497,7 @@ write none**, because reaching for the platform default does not feel like doing
 | Believing the trust store is at `/system/etc/security/cacerts` on every device | It moves at API 34. Check |
 | Using `subject_hash` instead of `subject_hash_old` for the filename | The certificate is installed, correctly formatted, in the right directory, and never found |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The most valuable habit in this chapter is recording, for every claim, whether you *measured* it or
 > *inferred* it. "The app accepts a self-signed certificate for `api.example.com`, demonstrated by
 > capturing a session token" is a finding. "The app has a permissive `TrustManager` in
@@ -2553,7 +2553,7 @@ chain validation, a valid certificate with the wrong name for hostname verificat
 for the validity window, and one signed by an unknown CA to separate "trusts anything" from "trusts
 my CA".
 
-> **⚠️ Warning**
+> **Warning**
 > Generate every key and certificate in a scratchpad directory outside this repository, and never
 > commit one. The labs are written to have you produce them from `openssl` command lines for exactly
 > this reason.

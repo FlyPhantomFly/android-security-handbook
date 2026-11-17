@@ -42,7 +42,7 @@ trust and a report people argue with.
 
 **Tools.** `python3`, `adb`, `jadx`, `apktool`, `apksigner`, `llvm-readelf`.
 
-> **⚠️ Authorisation — read this before you build a corpus**
+> **Authorisation — read this before you build a corpus**
 > Static analysis of an APK you legitimately possess is normally fine, and it is all this lab does:
 > the mapper **never modifies an APK and never touches a device**. But:
 >
@@ -73,7 +73,7 @@ adb shell pm path com.example.app
 adb pull /data/app/~~XXXX==/com.example.app-YYYY==/base.apk ./corpus/com.example.app.apk
 ```
 
-> **⚠️ Split APKs — the trap that inverts conclusions**
+> **Split APKs — the trap that inverts conclusions**
 > `pm path` often prints **several** lines: `base.apk`, plus `split_config.arm64_v8a.apk`,
 > `split_config.en.apk`, and feature splits. **The native libraries frequently live in the splits,
 > not in the base.**
@@ -407,7 +407,7 @@ Replace STRONG/WEAK with a 0.0–1.0 score combining pattern specificity, hit co
 **co-occurrence**: `TracerPid` alone is weak; `TracerPid` **and** `/proc/self/maps` **and** an
 `isDebuggerConnected` in the same DEX is much stronger than the sum of three weak signals.
 
-> **⚠️ Before you build this, read [52-StaticAnalysis](../../52-StaticAnalysis/README.md).** It
+> **Before you build this, read [52-StaticAnalysis](../../52-StaticAnalysis/README.md).** It
 > measured 15 of 17 HIGH-confidence hits rejected by hand, and its conclusion is blunt: **confidence
 > ranking is not severity ranking.** A score that looks precise invites people to stop adjudicating,
 > which is worse than two honest buckets.

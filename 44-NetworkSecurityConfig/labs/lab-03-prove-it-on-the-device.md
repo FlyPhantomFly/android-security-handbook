@@ -70,7 +70,7 @@ frida-server
 16.1.6
 ```
 
-> **⚠️ Warning — this is somebody's phone**
+> **Warning — this is somebody's phone**
 > Root is a capability, not a licence. This lab launches applications and reads their memory. It does
 > **not** install anything, does not change any setting permanently, and force-stops every app it
 > starts. Keep it that way: record what you launched and stop it afterwards.
@@ -114,7 +114,7 @@ frida-ps -Ua
  3274  Settings           com.android.settings
 ```
 
-> **💡 Hint**
+> **Hint**
 > `frida -U -n <name>` matches the **display name** in that first column, not the package. It is
 > easier to be unambiguous: `frida -U -p $(adb shell pidof com.miui.calculator)`.
 
@@ -171,7 +171,7 @@ Two things worth pausing on:
   `sandbox.api.collect.data.intl.miui.com`. Which one a given library calls decides whether the
   request goes out.
 
-> **✅ Checkpoint 1**
+> **Checkpoint 1**
 > Run the script against three apps. For each, write down whether it declares a config
 > (`networkSecurityConfigRes` non-zero), and what the default configuration's anchor sources are.
 
@@ -239,7 +239,7 @@ Measured:
 
 **`UserCertificateSource` is absent.** The block was parsed and discarded. There is no finding.
 
-> **✅ Checkpoint 2**
+> **Checkpoint 2**
 > Save this output. Paired with the static read above, it is a complete, self-contained argument that
 > `<debug-overrides>` in a non-debuggable build is not a vulnerability — and you will need it, because
 > a scanner will hand you this finding on most engagements.
@@ -306,7 +306,7 @@ adb shell "am force-stop $PKG"
 
 The `ApplicationInfo` flag is set, and the effective policy is `false`.
 
-> **✅ Checkpoint 3**
+> **Checkpoint 3**
 > Write one sentence explaining why a manifest-only cleartext checker produces a false positive on
 > this app, and one sentence explaining how to construct the opposite — an app whose manifest says
 > `false` and whose effective policy is `true`.
@@ -362,7 +362,7 @@ Three separate observations in six lines:
    slightly different instants on phones in different timezones. It has never mattered, but it tells
    you precisely which parser ran.
 
-> **✅ Checkpoint 4**
+> **Checkpoint 4**
 > Check whether the app also honours an un-padded day. `2021-07-1` is not strictly `yyyy-MM-dd`, and
 > it parsed anyway, because `SimpleDateFormat` is lenient by default. What would `2021-13-45` do?
 > Predict, then test it on your own build from lab 02.
@@ -397,13 +397,13 @@ dumpsys package packages | grep -c CLEARTEXT
 Zero, across every third-party package on the device — including the file-manager app and the marketplace app, both of
 which have the flag set in `ApplicationInfo` (Part 3 measured it directly).
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > This is genuinely unusual. Most of the manifest is inspectable through `dumpsys` — chapter 32 relies
 > on it for component export state — and this subsystem is not. There is **no adb-only way** to read
 > an app's effective network policy on API 30. If you are in an environment where you cannot run
 > Frida, you are limited to the static read and you should say so.
 
-> **✅ Checkpoint 5**
+> **Checkpoint 5**
 > Confirm the count is zero on your own device, then confirm with `nsc-runtime.js` that at least one
 > package on it does have the flag set. That contradiction is the point.
 
@@ -458,7 +458,7 @@ on the social-media app, whose config trusts both stores:
 139, not 140. Two sources, one deduplicated set. **The source list is the contamination-proof
 measurement; the count is not.**
 
-> **✅ Checkpoint 6**
+> **Checkpoint 6**
 > Write, in your own words, the sentence you would put in a report's methodology section describing
 > your test device's certificate store state. If your report does not contain such a sentence, a
 > competent reviewer cannot evaluate your trust findings.
@@ -511,12 +511,12 @@ certificate somewhere the config does not reach:
 | Native code using BoringSSL or libcurl directly | `ls work/lib/*/ \| grep -iE 'ssl\|crypto'` |
 | The traffic is not TLS at all | Capture it |
 
-> **⚠️ Warning**
+> **Warning**
 > `-f` spawns the process, and your script may run before `ActivityThread.handleBindApplication`
 > finishes. `nsc-runtime.js` detects a null `Application` and tells you so rather than throwing an
 > unhelpful error, but the fix is to attach after launch rather than spawning.
 
-> **✅ Checkpoint 7**
+> **Checkpoint 7**
 > Find one app on your device where the trust manager fires and one where it does not. The second is
 > more interesting.
 
@@ -543,7 +543,7 @@ They are marked as such in the README, and closing them is the natural extension
 Doing all three turns this chapter's "three silent failure modes" from a structural claim into three
 measurements you performed.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > The distinction between "I read this in the source" and "I watched this happen" is the difference
 > between a chapter and a report. Both are legitimate; conflating them is not. Every claim in this
 > repository that says "measured" was, and every claim that was not says so.

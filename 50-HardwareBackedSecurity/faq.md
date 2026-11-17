@@ -176,7 +176,7 @@ versions 1 through 3+, with a Rust reference implementation in AOSP).
 It matters mainly because of a trap: **the Android version does not tell you which one the device
 uses.** Measured for this chapter, a phone running Android 13 (API 33) is backed by
 `android.hardware.keymaster@4.1-service.beanpod` — a legacy HIDL Keymaster — with `keystore2`
-driving it through a compatibility shim. Every KeyMint-only capability is simply absent on that
+driving it through a compatibility shim. Every KeyMint-only capability is absent on that
 device, no matter what the API level says.
 
 Read the running HAL:

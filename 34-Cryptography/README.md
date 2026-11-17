@@ -45,7 +45,7 @@ hand and your friend's hand, that letter is touched by a dozen strangers. Any of
 
 Those four problems have four names, and cryptography is the discipline that solves them.
 
-> **📖 Definition**
+> **Definition**
 > **Cryptography** is the practice of transforming information so that it retains its meaning for the
 > intended party and loses it for everyone else — and so that any tampering with it becomes
 > detectable. It is applied mathematics, but the security properties it delivers are *operational*
@@ -74,7 +74,7 @@ Over the last two decades, the number of Android applications broken because AES
 is, to a very good approximation, **zero**. The number broken because the developer used AES *wrongly*
 is enormous.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Cryptographic primitives are like power tools. AES is a superb, essentially unbreakable saw. But a
 > saw does not know whether you are cutting wood or your own hand. Almost every real Android finding
 > is a **usage** failure: a key stored in the APK, a fixed IV, ECB mode, a password used directly as
@@ -112,7 +112,7 @@ Claude Shannon proved in 1949 that an attacker who sees only the ciphertext lear
 about the plaintext, because every possible plaintext of that length is equally consistent with what
 they observed.
 
-> **📖 Definition**
+> **Definition**
 > **One-time pad (OTP)** — a cipher in which the key is random, at least as long as the message, and
 > used exactly once. It offers *information-theoretic* security: unbreakable even by an adversary
 > with unlimited computing power.
@@ -162,7 +162,7 @@ often believe:
 | "Encrypting" a request body to stop tampering while the key is in the APK | Trivially reversible; also, this is what TLS + server-side validation is for |
 | Obfuscating a string so a scanner does not flag it | Obfuscation is not encryption — see [40-Obfuscation](../40-Obfuscation/README.md) |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > When you find crypto in an app, the first question is never "is this algorithm good?" It is **"what
 > is this trying to protect, and from whom?"** If the answer is "protect a secret from the user of the
 > device", the design is already broken and the algorithm is irrelevant. Write the finding against the
@@ -404,7 +404,7 @@ it solves, how it works internally, the Android API that exposes it, and how it 
 
 ### 3.1 Symmetric encryption: block ciphers
 
-> **📖 Definition**
+> **Definition**
 > A **block cipher** is a keyed, invertible permutation on fixed-size blocks of bits. Given a key `K`,
 > it maps every possible 128-bit input to a distinct 128-bit output, and the mapping is reversible if
 > and only if you know `K`. It encrypts exactly one block; turning it into something that can encrypt
@@ -435,7 +435,7 @@ attack, and it is why 3DES was formally deprecated. NIST disallowed 3DES for new
 | AES | 128 bit | 128/192/256 bit | Current standard | Fine — check the *mode* |
 | ChaCha20 | stream | 256 bit | Current standard | Fine — check nonce handling |
 
-> **⚠️ Warning**
+> **Warning**
 > `Cipher.getInstance("DES")` still works on Android through the BouncyCastle provider on many API
 > levels. The platform will not stop a developer using a broken cipher. Absence of an exception is not
 > evidence of security.
@@ -457,7 +457,7 @@ applied — 10 rounds for AES-128, 12 for AES-192, 14 for AES-256. Each round pe
 The final round omits `MixColumns` so that decryption is structurally symmetric. The **key schedule**
 expands the master key into one round key per round plus one for the initial whitening.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > On every ARMv8-A device — which is every 64-bit Android phone — AES is not executed as software
 > table lookups. The CPU has dedicated instructions: `AESE` (encrypt round), `AESD` (decrypt round),
 > `AESMC`/`AESIMC` (mix columns), plus `PMULL`/`PMULL2` for the GF(2¹²⁸) multiplication used by GCM.
@@ -486,7 +486,7 @@ software, which is why it is preferred on devices without AES hardware.
 
 Because a stream cipher is a pad generator, all the one-time-pad rules apply with full force:
 
-> **⚠️ Warning**
+> **Warning**
 > Reusing a (key, nonce) pair with any stream cipher — including AES in CTR or GCM mode, which are
 > stream ciphers in disguise — means the same keystream is XORed with two different plaintexts. XOR the
 > two ciphertexts together and the keystream cancels out, leaving `P1 ⊕ P2`. This is not a theoretical
@@ -529,7 +529,7 @@ a block, or swap two blocks, and decryption still "succeeds", producing a rearra
 ciphertext is `[user_id_block][balance_block]`, swapping blocks between two users' records is a direct
 attack.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > ECB is instantly recognisable without any key, and this is one of the few pure-ciphertext findings
 > you can prove from a data file alone. Take the ciphertext, split it into 16-byte blocks, and count
 > duplicates. If any 16-byte block appears twice in a body of data that should be high-entropy, the
@@ -592,7 +592,7 @@ or server, observing only whether decryption reported "bad padding" or some othe
 attacker wants `P₂`, the plaintext of block 2.
 
 **The key identity.** Decryption computes `P₂ = D_K(C₂) ⊕ C₁`. Call `D_K(C₂)` the **intermediate
-value** `I₂`. The attacker does not know `I₂`, but note that `I₂` depends **only on `C₂` and the key** —
+value** `I₂`. The attacker does not know `I₂`, but `I₂` depends **only on `C₂` and the key** —
 it does not depend on `C₁` at all. So if the attacker sends `C₁' ‖ C₂` with a *forged* `C₁'`, the
 receiver computes `P₂' = I₂ ⊕ C₁'`. The attacker fully controls `C₁'`, and therefore fully controls
 `P₂'` in the sense of being able to shift it by any XOR mask.
@@ -661,7 +661,7 @@ the authentication tag is checked before any padding logic runs. If you must use
 constant-time comparison **before** invoking the cipher at all. If the MAC fails you never decrypt, so
 there is no padding to be wrong about.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > To test for a padding oracle in an Android app, you do not need the network. Hook the decryption
 > entry point with Frida, feed it mutated ciphertexts, and observe the exception type. If
 > `BadPaddingException` is distinguishable from any other outcome — including by the app crashing
@@ -701,7 +701,7 @@ attacker can modify. It needs a MAC.
 
 **GCM** is CTR mode plus an authenticator, packaged as a single **AEAD** primitive.
 
-> **📖 Definition**
+> **Definition**
 > **AEAD** — Authenticated Encryption with Associated Data. A single operation that provides
 > confidentiality *and* integrity *and* can additionally authenticate (but not encrypt) extra data such
 > as headers or a record ID. Encryption outputs ciphertext plus an **authentication tag**; decryption
@@ -782,7 +782,7 @@ record, or an IPC message, forging is game over — far worse than reading.
 This attack is known in the literature as the "forbidden attack" against GCM, and it has been
 demonstrated against real TLS servers that repeated nonces due to buggy random generation.
 
-> **⚠️ Warning**
+> **Warning**
 > A single repeated (key, nonce) pair in AES-GCM does not degrade security gracefully. It hands the
 > attacker the authentication subkey `H` and therefore unlimited forgery under that key. There is no
 > partial credit. When you see a hardcoded or counter-restarted GCM IV in an Android app, that is a
@@ -797,7 +797,7 @@ demonstrated against real TLS servers that repeated nonces due to buggy random g
 | Max data per (key, nonce) | ~64 GB | The CTR counter is 32 bits |
 | Max messages per key with random nonces | ~2³² | Birthday bound on a 96-bit nonce; beyond this, a repeat becomes likely. Use a counter, or rotate keys |
 
-> **⚠️ Warning**
+> **Warning**
 > `new GCMParameterSpec(16, iv)` is a real and frequently shipped bug. The first argument is the tag
 > length **in bits**. `16` means a 16-bit tag. Look for it specifically; it is easy to grep for and
 > easy to miss by eye.
@@ -839,14 +839,14 @@ stream cipher.
 
 | Mode | Confidentiality | Integrity | Padding needed | Parallel | Nonce/IV rule | Verdict for new code |
 |---|---|---|---|---|---|---|
-| **ECB** | ✗ (leaks patterns) | ✗ | Yes | Yes | none | **Never.** Always a finding |
-| **CBC** | ✓ | ✗ | Yes | Decrypt only | Random + unpredictable, 16 B | Only with encrypt-then-MAC |
-| **CFB / OFB** | ✓ | ✗ | No | No | Unique | Legacy; avoid |
-| **CTR** | ✓ | ✗ | No | Yes | Unique, never reused | Only with a MAC |
-| **GCM** | ✓ | ✓ | No | Yes | Unique, 12 B, **never reused** | **Default choice** |
-| **CCM** | ✓ | ✓ | No | Partly | Unique, never reused | Fine; constrained environments |
-| **ChaCha20-Poly1305** | ✓ | ✓ | No | Yes | Unique, 12 B, **never reused** | **Default choice** where AES-NI absent |
-| **XTS** | ✓ | ✗ | No | Yes | Sector number as tweak | Disk encryption only |
+| **ECB** | No (leaks patterns) | No | Yes | Yes | none | **Never.** Always a finding |
+| **CBC** | Yes | No | Yes | Decrypt only | Random + unpredictable, 16 B | Only with encrypt-then-MAC |
+| **CFB / OFB** | Yes | No | No | No | Unique | Legacy; avoid |
+| **CTR** | Yes | No | No | Yes | Unique, never reused | Only with a MAC |
+| **GCM** | Yes | Yes | No | Yes | Unique, 12 B, **never reused** | **Default choice** |
+| **CCM** | Yes | Yes | No | Partly | Unique, never reused | Fine; constrained environments |
+| **ChaCha20-Poly1305** | Yes | Yes | No | Yes | Unique, 12 B, **never reused** | **Default choice** where AES-NI absent |
+| **XTS** | Yes | No | No | Yes | Sector number as tweak | Disk encryption only |
 
 ### 3.4 The IV / nonce / salt table — the distinction developers destroy
 
@@ -857,7 +857,7 @@ it.
 | Property | **IV** (Initialisation Vector) | **Nonce** (Number used ONCE) | **Salt** |
 |---|---|---|---|
 | **Used with** | Block cipher modes: CBC, CFB, OFB | Stream ciphers and AEAD: CTR, GCM, CCM, ChaCha20 | Key derivation and password hashing: PBKDF2, scrypt, Argon2, bcrypt, HKDF |
-| **Purpose** | Make encryption of the same plaintext under the same key produce different ciphertext | Ensure the keystream is unique per message | Ensure the same password produces a different derived key on every account/device, defeating precomputation |
+| **Purpose** | Make encryption of the same plaintext under the same key produce different ciphertext | Keep the keystream unique per message | Make the same password produce a different derived key on every account/device, defeating precomputation |
 | **Must be secret?** | **No** | **No** | **No** |
 | **Must be unique?** | **Yes**, per (key, message) | **Yes**, absolutely, per (key, message) | Yes, per user/record — but a collision is far less severe |
 | **Must be random?** | **Yes for CBC** — must also be *unpredictable* in advance | **No** — a counter is not only acceptable but *preferred*, because it guarantees uniqueness where random values only make collisions unlikely | **Yes** — random, 16 bytes typical |
@@ -867,7 +867,7 @@ it.
 | **Consequence of being predictable** | BEAST-style chosen-plaintext attack | Same as reuse if the attacker can force a repeat | Minor, provided it is unique |
 | **Consequence of being public** | None — it is designed to be public | None | None |
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Think of the **key** as which lock you are using, the **IV/nonce** as which *starting position* the
 > lock's tumblers are in for this particular message, and the **salt** as a per-user serial number
 > stamped into the lock's manufacture so that two people with the same combination still get different
@@ -932,7 +932,7 @@ The developer wrote three characters and got the worst mode in the catalogue.
 | 28+ (Android 9) | Still resolves to ECB, but the platform logs a warning to logcat when the deprecated Crypto provider is requested; ECB itself is still not blocked |
 | All | Android Lint (`GetInstance` check) and Google Play's pre-launch report flag it |
 
-> **⚠️ Warning**
+> **Warning**
 > `Cipher.getInstance("AES")` and `Cipher.getInstance("RSA")` are both silent downgrades — the second
 > resolves to `RSA/ECB/PKCS1Padding`. Always grep for `getInstance("` with a transformation string
 > containing no `/`. It is one of the highest-yield greps in Android security review.
@@ -986,7 +986,7 @@ written, for reasons worth listing because they explain what padding is for:
 
 | Textbook RSA flaw | Why |
 |---|---|
-| Deterministic | The same message always encrypts to the same ciphertext. An attacker with a small message space (a PIN, a yes/no, a card number) simply encrypts every candidate and compares |
+| Deterministic | The same message always encrypts to the same ciphertext. An attacker with a small message space (a PIN, a yes/no, a card number) encrypts every candidate and compares |
 | Malleable | `C₁ · C₂ mod n` decrypts to `M₁ · M₂`. An attacker can multiply a ciphertext by `2^e` to double the plaintext |
 | Small-message weakness | If `M^e < n` — for example a short message with `e = 3` — there is no modular reduction, and the attacker just takes the integer cube root |
 | Reveals equality | Two identical plaintexts to the same recipient are visibly identical |
@@ -1004,7 +1004,7 @@ written, for reasons worth listing because they explain what padding is for:
   hash. It has a security proof and no equivalent oracle. **This is the only acceptable choice for RSA
   encryption in new code.**
 
-> **⚠️ Warning**
+> **Warning**
 > The Android string `"RSA/ECB/OAEPWithSHA-256AndMGF1Padding"` has a notorious inconsistency: some
 > providers interpret the MGF1 hash as SHA-1 even when the label hash is SHA-256. If you must use it,
 > pass an explicit `OAEPParameterSpec(
@@ -1073,9 +1073,9 @@ generic square-root algorithms, so a 256-bit curve gives roughly the same securi
 finite-field DH or RSA modulus — with far smaller keys and far less computation. On a phone, that
 matters.
 
-> **⚠️ Warning**
+> **Warning**
 > Plain (unauthenticated) Diffie–Hellman is completely defeated by an active man-in-the-middle: Eve
-> simply runs DH separately with Alice and with Bob, and relays. DH gives you a shared secret with
+> runs DH separately with Alice and with Bob, and relays. DH gives you a shared secret with
 > *somebody*, not with the person you meant. Authentication — a signature or a certificate — is what
 > binds the exchange to an identity. This is precisely what the TLS handshake in
 > [35-SSL](../35-SSL/README.md) does, and why the certificate matters.
@@ -1090,7 +1090,7 @@ matters.
 | **Ed25519** | edwards25519 | The signature counterpart of Curve25519 (EdDSA). Deterministic nonces by construction |
 | secp256k1 | — | Bitcoin's curve. In an Android app, its presence usually means cryptocurrency |
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > A classic ECDH implementation bug is the **invalid curve attack**: the receiver does not verify that
 > the peer's public key is actually a point on the agreed curve. An attacker sends a point on a
 > different, weaker curve; the arithmetic still "works" and the resulting shared secret lives in a
@@ -1134,7 +1134,7 @@ This is not hypothetical. It is exactly how the Sony PlayStation 3 code-signing 
 key thefts from wallets with broken random number generators, including the 2013 Android
 `SecureRandom` failure discussed in Section 3.9.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > If an app produces ECDSA signatures, collect several and compare the `r` values. Identical `r` across
 > two different messages means the same `k` was used, and you can recover the signing key with a short
 > Python script. This is a spectacular, unambiguous finding. The same check applies to DSA.
@@ -1162,7 +1162,7 @@ certainly wrong.
 
 ### 3.7 Hash functions
 
-> **📖 Definition**
+> **Definition**
 > A **cryptographic hash function** maps input of any length to a fixed-length output (a "digest"),
 > such that it is infeasible to (a) find an input producing a given digest, (b) find a second input
 > matching a given input's digest, or (c) find any two inputs with the same digest.
@@ -1190,7 +1190,7 @@ collision resistance.
 | **BLAKE3** | 256 bit default | Secure, extremely fast, tree-structured | Rare on Android; increasing |
 | CRC32 | 32 bit | **Not a cryptographic hash at all** | If used for integrity, it is a finding — trivially forgeable |
 
-> **⚠️ Warning**
+> **Warning**
 > An app computing `MD5(password)` to store a credential is a serious finding, but so is an app
 > computing `SHA-256(password)` with no salt and no work factor. A modern GPU computes tens of billions
 > of SHA-256 hashes per second. Passwords need a **password hashing function** (Section 3.8), not a
@@ -1249,7 +1249,7 @@ everyone reviewing your code expects.
 | **Poly1305** | One-time universal hash | via `ChaCha20/Poly1305` | Only safe as part of an AEAD — its key must never be reused |
 | **GMAC** | GHASH | via AES-GCM with empty plaintext | Authenticates without encrypting |
 
-> **⚠️ Warning**
+> **Warning**
 > Comparing MACs with `Arrays.equals()` or `String.equals()` introduces a **timing side channel**,
 > because those methods return as soon as they find a differing byte. An attacker who can measure
 > response time recovers the correct tag byte by byte. Use `MessageDigest.isEqual(a, b)`, which is
@@ -1301,7 +1301,7 @@ both.
 
 #### 3.8.3 Key derivation functions
 
-> **📖 Definition**
+> **Definition**
 > A **KDF** turns one piece of keying material into one or more cryptographic keys of the required
 > length, with the guarantee that the outputs are independent and that the input is not recoverable.
 
@@ -1329,7 +1329,7 @@ tutorial from 2011:
 | OWASP current guidance | 1,300,000 for PBKDF2-HMAC-SHA1 |
 | Practical mobile compromise | ≥ 100,000, measured to take ~100 ms on the target's *slowest* supported device, and recorded in the stored record so it can be raised later |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > When you find PBKDF2 in an app, extract three things: the **iteration count**, the **salt** (is it
 > per-user and random, or the string `"salt"`?), and the **PRF**. An iteration count of 1,000 with a
 > constant salt means you can crack the derived key offline at hundreds of millions of guesses per
@@ -1370,7 +1370,7 @@ Every key, every IV, every nonce, every salt, every ECDSA `k` comes from a rando
 that generator is predictable, everything above it collapses, and — critically — **nothing looks
 wrong**. Ciphertext still looks like noise. Tests still pass.
 
-> **📖 Definition**
+> **Definition**
 > A **PRNG** (pseudorandom number generator) produces a deterministic stream from a seed; it is
 > designed for statistical quality, not unpredictability. A **CSPRNG** (cryptographically secure PRNG)
 > additionally guarantees that an attacker who sees any amount of output cannot predict the next bit
@@ -1418,7 +1418,7 @@ platform, and publish guidance for applications to explicitly seed `SecureRandom
 by Conscrypt and ultimately by the kernel's `getrandom(2)`, and **you must not "help" it by calling
 `setSeed()` with your own value**.
 
-> **⚠️ Warning**
+> **Warning**
 > `SecureRandom.setSeed(seed)` on Android **replaces** rather than supplements the seed in some
 > provider implementations, historically including the old Crypto provider. Code of the form
 > `SecureRandom sr = SecureRandom.getInstance("SHA1PRNG"); sr.setSeed(password.getBytes());
@@ -1584,7 +1584,7 @@ classDiagram
 | `javax.crypto.spec.GCMParameterSpec` | Tag length + IV | `<init>` |
 | `javax.crypto.spec.PBEKeySpec` | Password, salt, iterations, key length | `<init>` |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `SecretKeySpec.<init>(byte[], String)` is the single highest-value hook in Android crypto. Every raw
 > symmetric key that is *not* hardware-backed must pass through it, because that is the only way to turn
 > a `byte[]` into something `Cipher.init` accepts. Hook the constructor and you capture every software
@@ -1650,14 +1650,14 @@ AndroidKeyStore master key so the raw key is never stored in plaintext, and key 
 first-class concept.
 
 **Jetpack Security** (`androidx.security:security-crypto`, providing `EncryptedSharedPreferences` and
-`EncryptedFile`) is a thin wrapper over Tink. Note that the original `security-crypto` library entered
+`EncryptedFile`) is a thin wrapper over Tink.the original `security-crypto` library entered
 maintenance mode and Google's current guidance has shifted; when you see it, check the version and
 whether the app pins a `MasterKey` correctly. Its presence is generally a *good* sign compared with
 hand-rolled crypto, but verify that the master key alias uses
 `MasterKey.KeyScheme.AES256_GCM` and that the app is not simultaneously storing the same data
 unencrypted elsewhere — which is a surprisingly common finding.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > There are three tiers of Android crypto code, and you can grade an app in thirty seconds by which
 > tier it is in. **Tier 1**: it uses Tink or Jetpack Security — probably fine, verify configuration.
 > **Tier 2**: it uses the JCA directly with AES/GCM and AndroidKeyStore — plausible, audit the details.
@@ -1767,7 +1767,7 @@ static native long EVP_AEAD_CTX_seal(long evpAead, byte[] key, int tagLen,
 
 These are the exact functions to target when an app has been hardened against Java-level hooking:
 `EVP_CipherInit_ex` receives the key and IV as `byte[]`, and `EVP_AEAD_CTX_seal` receives the key,
-nonce, plaintext and associated data. Hooking `NativeCrypto` methods is often more robust than hooking
+nonce, plaintext and associated data. Hooking `NativeCrypto` methods is often more reliable than hooking
 `Cipher`, because the app cannot reimplement them without abandoning Conscrypt entirely.
 
 ### 4.3 Randomness, all the way down
@@ -1840,7 +1840,7 @@ three questions:
    decrypted contents of the local database containing session tokens for every account used on this
    device" is a finding.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The single fastest way to lose credibility with a mobile client is to report "hardcoded encryption
 > key — Critical" for a key that encrypts a UI preference cache. Do the second and third steps. Decrypt
 > something. Show it.
@@ -1953,7 +1953,7 @@ Cipher c2 = Cipher.getInstance("AES/ECB/PKCS5Padding");
 ```
 
 **Why developers write it.** Overwhelmingly because of the two-character habit `getInstance("AES")` —
-they did not choose ECB, they simply did not choose anything. A minority choose it deliberately because
+they did not choose ECB, they did not choose anything. A minority choose it deliberately because
 "CBC needs an IV and I don't want to store the IV", which is a real (if wrong) engineering trade
 against a storage-format problem.
 
@@ -2262,7 +2262,7 @@ String stored = sha1(password);                               // credential stor
 ```
 
 **Why developers write it.** MD5 and SHA-1 are shorter, faster, and appear in every legacy protocol.
-Many backend teams still define an API signing scheme around MD5 and the mobile team simply implements
+Many backend teams still define an API signing scheme around MD5 and the mobile team implements
 the spec.
 
 **Static detection**
@@ -2700,7 +2700,7 @@ These are well-documented, named issues that you can reference safely.
 | **Android `SecureRandom` flaw (August 2013)** | Improper PRNG seeding in certain app contexts led to repeated ECDSA nonces and Bitcoin key theft | The reason `SecureRandom` guidance exists |
 | **ROCA (CVE-2017-15361)** | Structured RSA key generation in an Infineon library allowed factoring | Affected some smartcards and TPMs |
 
-> **⚠️ Warning**
+> **Warning**
 > Do not cite a CVE number you have not verified. In a client report, an incorrect CVE reference
 > undermines every other claim in the document. When in doubt, describe the vulnerability class by name
 > ("a padding oracle in the CBC decryption path") rather than reaching for an identifier.
@@ -2909,7 +2909,7 @@ Hooking these with `Interceptor.attach` is covered in Section 7.5.
 | **Packers / dynamic DEX loading** | The real code is not in `classes.dex` at all. Dump the loaded DEX at runtime first — see [40-Obfuscation](../40-Obfuscation/README.md) |
 | **Anti-Frida / anti-debug** | Hooking blocked. Bypass first — see [67-BypassingProtections](../67-BypassingProtections/README.md) — or fall back to static analysis and memory dumps |
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Obfuscation moves the point at which the secret becomes visible; it never removes that point. The key
 > must be a `byte[]` at the moment it is used, and the plaintext must be a `byte[]` at the moment it is
 > produced. Find the narrowest place where that is guaranteed to be true and put your hook there.
@@ -3125,7 +3125,7 @@ if (seal !== null) {
 }
 ```
 
-Use this when the Java hooks produce nothing but the app is clearly encrypting — the classic signature
+Use this when the Java hooks produce nothing but the app is still encrypting — the classic signature
 of a Flutter app, a bundled native SDK, or a deliberately hardened build. See
 [15-Native-Code](../15-Native-Code/README.md) and [16-JNI](../16-JNI/README.md).
 
@@ -3859,7 +3859,7 @@ AES-256 remains comfortable and AES-128 becomes merely adequate; hash output siz
 collision resistance. Asymmetric cryptography is the exposure: RSA, DH, ECDH and ECDSA all fall to
 Shor's algorithm on a sufficiently large quantum computer, which motivates the "harvest now, decrypt
 later" threat for long-lived confidential data in transit. Expect hybrid key exchange (a classical
-ECDH combined with ML-KEM) in TLS first, then signature migration, and note that on mobile the binding
+ECDH combined with ML-KEM) in TLS first, then signature migration, and confirm that on mobile the binding
 constraint is not the maths but the deployment tail: devices that no longer receive updates keep the
 old algorithms for a decade. Crucially, **none of this changes the findings in Section 5** — a
 hardcoded key is equally broken before and after the transition, and that is where the real risk in

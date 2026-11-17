@@ -75,13 +75,13 @@ return false;                                  // fail CLOSED
 
 | | 21–27 | 28–29 | 30–32 | 33+ |
 |---|---|---|---|---|
-| `GET_SIGNING_CERTIFICATES` / `SigningInfo` | — | ✅ | ✅ | ✅ |
+| `GET_SIGNING_CERTIFICATES` / `SigningInfo` | — | | | |
 | `GET_SIGNATURES` | only option | deprecated | deprecated | deprecated |
-| `hasSigningCertificate()` | — | ✅ | ✅ | ✅ |
-| `getInstallSourceInfo()` | — | — | ✅ | ✅ |
-| `getInstallerPackageName()` | ✅ | ✅ | deprecated | deprecated |
-| v3.1 signatures | — | — | — | ✅ |
-| `<queries>` needed for peer checks | — | — | ✅ (targetSdk 30+) | ✅ |
+| `hasSigningCertificate()` | — | | | |
+| `getInstallSourceInfo()` | — | — | | |
+| `getInstallerPackageName()` | | | deprecated | deprecated |
+| v3.1 signatures | — | — | — | |
+| `<queries>` needed for peer checks | — | — | (targetSdk 30+) | |
 
 ---
 
@@ -238,12 +238,12 @@ invoke-static {v0, v1}, Ljava/util/Arrays;->equals([B[B)Z
 
 | Element | Survives R8 |
 |---|---|
-| `getPackageInfo`, `SigningInfo`, `toByteArray` | ✅ platform API |
-| `0x8000000` / `134217728` | ✅ constant — **best single search term** |
-| `"SHA-256"` | ✅ unless string encryption |
-| `Java_com_example_Foo_check` | ✅ **JNI resolved by name — best hook anchor** |
-| The app's own method/field names | ❌ |
-| Baseline `byte[]` **contents** | ✅ still in the DEX |
+| `getPackageInfo`, `SigningInfo`, `toByteArray` | platform API |
+| `0x8000000` / `134217728` | constant — **best single search term** |
+| `"SHA-256"` | unless string encryption |
+| `Java_com_example_Foo_check` | **JNI resolved by name — best hook anchor** |
+| The app's own method/field names | |
+| Baseline `byte[]` **contents** | still in the DEX |
 
 ---
 
@@ -295,7 +295,7 @@ invoke-static {v0, v1}, Ljava/util/Arrays;->equals([B[B)Z
 | Mappings in a live app process | **2,448**, 0 anonymous executable |
 | 7 Java-tier checks, elapsed | 82 ms cold, 62 ms warm |
 | Install a re-signed build over the original | `INSTALL_FAILED_UPDATE_INCOMPATIBLE` |
-| `keytool` SHA256 = `apksigner` digest = `sha256(Signature.toByteArray())` | ✅ three tools, one value |
+| `keytool` SHA256 = `apksigner` digest = `sha256(Signature.toByteArray())` | three tools, one value |
 
 ### Corpus, 18 APKs
 

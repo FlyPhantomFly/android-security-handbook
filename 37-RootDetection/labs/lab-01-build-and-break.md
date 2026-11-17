@@ -606,7 +606,7 @@ the decision.
 **Q6.** `android.content.pm.PackageManager` is abstract. `Context.getPackageManager()` returns an
 `android.app.ApplicationPackageManager`, which marshals a Binder call to `PackageManagerService` in
 `system_server`. Frida replaces a method implementation on a specific class; the abstract declaration
-is never executed, so the hook is installed correctly and simply sits on code that never runs.
+is never executed, so the hook is installed correctly and sits on code that never runs.
 
 Correct version:
 
@@ -631,7 +631,7 @@ Java.perform(function () {
 **Q7.** Because `NameNotFoundException` is what the framework genuinely throws when a package is
 absent, so the app's existing `catch` block handles it and execution continues exactly as it would on
 a clean device. Returning `null` reaches code that immediately dereferences the result — the app
-crashes with an NPE, which is loud, obviously artificial, and in an anti-tamper-aware app may itself be
+crashes with an NPE, which is loud, plainly artificial, and in an anti-tamper-aware app may itself be
 treated as evidence of tampering.
 
 The general rule: **make the lie indistinguishable from the truth.** That is also why the native

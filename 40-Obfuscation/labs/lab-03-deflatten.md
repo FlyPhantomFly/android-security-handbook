@@ -236,7 +236,7 @@ indicate on a real target?
 
 Now do `TokenBuilder.build`.
 
-**Q7.** Build the transition table. Note that three transitions are *conditional on a parameter* rather
+**Q7.** Build the transition table.three transitions are *conditional on a parameter* rather
 than fixed. How does that change the table's shape?
 
 **Q8.** Reconstruct the original method as source. What does it produce for
@@ -680,7 +680,7 @@ The developer conversation that follows:
 > control is to make the value depend on something the client does not hold — not to make the client's
 > copy harder to read.
 
-Note that this is the same shape of advice as everywhere else in the chapter: price it honestly, credit
+this is the same shape of advice as everywhere else in the chapter: price it honestly, credit
 what it does buy, and redirect the budget to the control that changes the outcome.
 </details>
 

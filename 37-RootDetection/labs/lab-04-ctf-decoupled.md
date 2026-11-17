@@ -313,7 +313,7 @@ print("BLOB   =", base64.b64encode(ct).decode())
 print("IV_B64 =", base64.b64encode(iv).decode())
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > Run this script from a scratch directory, not from inside the repository, and do not commit the
 > generated `.pyc` or any build artefacts. The script writes nothing to disk by itself.
 
@@ -369,7 +369,7 @@ Open the APK in JADX. Find the string
 **Q4.** Which method produces that string, and what is the immediate cause of it being shown?
 
 **Q5.** Read `Vault.open()`. Is there a bug in the cryptography? Is the code doing anything it should
-not? State clearly what is and is not wrong with it.
+not? State precisely what is and is not wrong with it.
 
 **Q6.** You are now inside a correct AES/PBKDF2 routine that is failing. Write down, before continuing,
 the list of *inputs* to that routine and which of them you have verified. This list is the answer to
@@ -481,7 +481,7 @@ Re-read the tracer's own header comment:
 > switch to strace and static patching.*
 
 `syscall(__NR_faccessat, ...)` is one step short of inline assembly, and it produces exactly the same
-symptom. The `syscall` symbol itself is hookable; the tracer simply does not instrument it, because
+symptom. The `syscall` symbol itself is hookable; the tracer does not instrument it, because
 doing so requires branching on the syscall number to find the path argument.
 </details>
 

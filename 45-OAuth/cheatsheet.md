@@ -8,14 +8,14 @@ Printable. Tables and commands only. Full explanations in [README.md](README.md)
 
 | What you see in the captured request | Grant | Verdict for a mobile app |
 |---|---|---|
-| `response_type=code` + `code_challenge` + `code_challenge_method=S256` | Authorisation code + PKCE | ✅ Correct |
-| `response_type=code`, no `code_challenge` | Authorisation code, no PKCE | 🟠 Client-side gap — test server enforcement |
-| `response_type=token` or `response_type=id_token token` | Implicit | 🔴 Dead grant; token in the URL fragment |
-| `grant_type=password` with `username`/`password` | ROPC | 🔴 App holds the user's IdP password |
-| `grant_type=client_credentials` from the app | Client credentials | 🔴 Implies an embedded client secret |
-| `device_code` / `user_code` / `verification_uri` | Device grant (RFC 8628) | ⚪ Only for input-constrained devices |
-| `grant_type=refresh_token` | Refresh | ⚪ Normal; test rotation and scope escalation |
-| `request_uri=urn:ietf:params:oauth:request_uri:...` | PAR (RFC 9126) | ✅ Hardened |
+| `response_type=code` + `code_challenge` + `code_challenge_method=S256` | Authorisation code + PKCE | Correct |
+| `response_type=code`, no `code_challenge` | Authorisation code, no PKCE | Client-side gap — test server enforcement |
+| `response_type=token` or `response_type=id_token token` | Implicit | Dead grant; token in the URL fragment |
+| `grant_type=password` with `username`/`password` | ROPC | App holds the user's IdP password |
+| `grant_type=client_credentials` from the app | Client credentials | Implies an embedded client secret |
+| `device_code` / `user_code` / `verification_uri` | Device grant (RFC 8628) | Only for input-constrained devices |
+| `grant_type=refresh_token` | Refresh | Normal; test rotation and scope escalation |
+| `request_uri=urn:ietf:params:oauth:request_uri:...` | PAR (RFC 9126) | Hardened |
 
 ---
 
@@ -25,7 +25,7 @@ Printable. Tables and commands only. Full explanations in [README.md](README.md)
 |---|---|---|
 | `response_type` | Yes | Must be `code` |
 | `client_id` | Yes | Identifier, **not** a credential |
-| `redirect_uri` | Yes | `https://` App Link ✅ / custom scheme 🟠 / wildcard or open 🔴 |
+| `redirect_uri` | Yes | `https://` App Link / custom scheme / wildcard or open |
 | `scope` | Usually | Every scope must map to a feature |
 | `state` | **Must** | Present, ≥128 bits entropy, validated on return |
 | `code_challenge` | **Must** | Present |
@@ -40,7 +40,7 @@ Printable. Tables and commands only. Full explanations in [README.md](README.md)
 | Field | Meaning | Check |
 |---|---|---|
 | `access_token` | Authority at the API | Sent as `Authorization: Bearer` |
-| `token_type` | `Bearer` or `DPoP` | `DPoP` = sender-constrained ✅ |
+| `token_type` | `Bearer` or `DPoP` | `DPoP` = sender-constrained |
 | `expires_in` | Access token lifetime (s) | Minutes, not days |
 | `refresh_token` | Long-lived renewal credential | Must rotate; test reuse detection |
 | `id_token` | **Identity for the client only** | Never send to a resource server |
@@ -71,10 +71,10 @@ curl -s -X POST "$TOKEN_EP" -d grant_type=authorization_code \
 | Variant | Expected | If it succeeds instead |
 |---|---|---|
 | A — correct verifier | `200` + tokens | (control) |
-| B — verifier omitted | `400 invalid_grant` | 🔴 **Critical — PKCE not enforced** |
-| C — verifier wrong | `400 invalid_grant` | 🔴 **Critical — verification not performed** |
-| D — code reused | `400 invalid_grant` | 🟠 High — codes not single-use |
-| E — `plain` downgrade accepted | `400 invalid_request` | 🟠 High — PKCE defeatable by an interceptor |
+| B — verifier omitted | `400 invalid_grant` | **Critical — PKCE not enforced** |
+| C — verifier wrong | `400 invalid_grant` | **Critical — verification not performed** |
+| D — code reused | `400 invalid_grant` | High — codes not single-use |
+| E — `plain` downgrade accepted | `400 invalid_request` | High — PKCE defeatable by an interceptor |
 
 **Generate a verifier/challenge pair:**
 
@@ -91,10 +91,10 @@ echo "verifier=$V"; echo "challenge=$C"
 
 | Mechanism | Exclusive? | How to confirm |
 |---|---|---|
-| Custom scheme `app://cb` | ❌ Never | `cmd package query-activities` shows every claimant |
-| `https://` with `autoVerify` **declared** | ❌ Not yet | Manifest only says the app *wants* it |
-| `https://` **verified** App Link | ✅ Platform-enforced | `pm get-app-links` shows `verified` |
-| Loopback `http://127.0.0.1:PORT` | ⚠️ Desktop pattern | Any local app can bind a port |
+| Custom scheme `app://cb` | Never | `cmd package query-activities` shows every claimant |
+| `https://` with `autoVerify` **declared** | Not yet | Manifest only says the app *wants* it |
+| `https://` **verified** App Link | Platform-enforced | `pm get-app-links` shows `verified` |
+| Loopback `http://127.0.0.1:PORT` | Desktop pattern | Any local app can bind a port |
 
 ```bash
 # host — who claims this redirect?
@@ -204,10 +204,10 @@ curl -s https://login.example.com/.well-known/openid-configuration | jq '{
 | `response_types_supported: token` | Implicit still enabled |
 | `code_challenge_methods_supported` absent | AS may not support PKCE at all |
 | `code_challenge_methods_supported: plain` | Downgrade possible |
-| `id_token_signing_alg_values_supported: none` | 🔴 Unsigned tokens accepted |
+| `id_token_signing_alg_values_supported: none` | Unsigned tokens accepted |
 | `id_token_signing_alg_values_supported: HS256` for a public client | Algorithm-confusion surface |
 | `revocation_endpoint` absent | Logout cannot revoke server-side |
-| `require_pushed_authorization_requests: true` | ✅ Hardened |
+| `require_pushed_authorization_requests: true` | Hardened |
 
 ---
 
@@ -220,7 +220,7 @@ curl -s https://login.example.com/.well-known/openid-configuration | jq '{
 | 3 | Key selected by `kid` from the issuer's JWKS, fetched over TLS | Wrong-key acceptance |
 | 4 | Signature verifies | **Total forgery with a text editor** |
 | 5 | `iss` == the exact expected issuer | Cross-issuer confusion |
-| 6 | **`aud` contains my `client_id`** (and `azp` == it if multiple) | 🔴 **Cross-client token replay — the classic bug** |
+| 6 | **`aud` contains my `client_id`** (and `azp` == it if multiple) | **Cross-client token replay — the classic bug** |
 | 7 | `exp` > now (small skew) | Expired token accepted |
 | 8 | `iat` recent, `nbf` <= now | Stale token accepted |
 | 9 | `nonce` == the one I generated | ID token replay |
@@ -267,19 +267,19 @@ curl -s -X POST "$TOKEN_EP" -d grant_type=refresh_token -d refresh_token="$RT" \
 
 | Finding | Base severity | Modifier |
 |---|---|---|
-| PKCE not enforced **and** custom-scheme redirect | 🔴 Critical | Account takeover by any installed app |
-| PKCE not enforced, verified App Link redirect | 🟠 High | Codes still leak via history, logs, `Referer` |
-| ROPC in production | 🔴 Critical | App holds the IdP password; no MFA possible |
-| `id_token` accepted without `aud` check | 🔴 Critical | Cross-client account takeover |
-| `id_token` accepted without signature check | 🔴 Critical | Forgery with `base64` |
-| Implicit grant | 🟠 High | Token in URL fragment |
-| WebView used for the flow | 🟠 High | Credential inside the client trust boundary |
-| `state` absent | 🟠 High | CSRF / account-injection |
-| Custom scheme redirect, PKCE enforced | 🟡 Medium | Interception yields an inert code |
-| Logout does not revoke server-side | 🟡 Medium | Stolen token survives "logout" |
-| Refresh token never rotated | 🟡 Medium | No theft detection |
-| Over-scoped grant | 🟡 Medium | Blast radius; prove the scope is unused |
-| `code_challenge_method=plain` accepted | 🟠 High | PKCE downgradeable |
+| PKCE not enforced **and** custom-scheme redirect | Critical | Account takeover by any installed app |
+| PKCE not enforced, verified App Link redirect | High | Codes still leak via history, logs, `Referer` |
+| ROPC in production | Critical | App holds the IdP password; no MFA possible |
+| `id_token` accepted without `aud` check | Critical | Cross-client account takeover |
+| `id_token` accepted without signature check | Critical | Forgery with `base64` |
+| Implicit grant | High | Token in URL fragment |
+| WebView used for the flow | High | Credential inside the client trust boundary |
+| `state` absent | High | CSRF / account-injection |
+| Custom scheme redirect, PKCE enforced | Medium | Interception yields an inert code |
+| Logout does not revoke server-side | Medium | Stolen token survives "logout" |
+| Refresh token never rotated | Medium | No theft detection |
+| Over-scoped grant | Medium | Blast radius; prove the scope is unused |
+| `code_challenge_method=plain` accepted | High | PKCE downgradeable |
 
 ---
 

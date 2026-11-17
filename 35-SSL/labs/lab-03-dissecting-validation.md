@@ -29,7 +29,7 @@ lab sits between them and is the analytical one: it is where you stop saying "TL
 app" and start saying **which** part of TLS is broken, because those are different findings with
 different fixes and very different severities.
 
-> **🧠 Mental Model.** TLS validation is not one switch. It is a row of six independent switches
+> **Mental Model.** TLS validation is not one switch. It is a row of six independent switches
 > wired in series, and an app can have any subset of them off. "Certificate validation is disabled"
 > is the sentence of somebody who never looked at which switch it was. A permissive TrustManager
 > (switches 1–4 off) and a permissive HostnameVerifier (switch 5 off) both let you intercept, but
@@ -54,7 +54,7 @@ whole point of the lab is that you re-measure rather than quote.
 | Conscrypt APEX | `/apex/com.android.conscrypt/` exists, **no `cacerts` directory** |
 | User trust store | `/data/misc/user/0/cacerts-added/`, root-only |
 
-> **⚠️ Warning — two environment facts that cost an hour each.** `adb install` on this device fails
+> **Warning — two environment facts that cost an hour each.** `adb install` on this device fails
 > with `INSTALL_FAILED_USER_RESTRICTED`, which is MIUI policy and not a broken APK; the route that
 > works is `adb push app.apk /data/local/tmp/app.apk` followed by
 > `adb shell "su -c 'pm install -r /data/local/tmp/app.apk'"`. And Frida 16.1.6 has **no
@@ -65,17 +65,17 @@ whole point of the lab is that you re-measure rather than quote.
 
 ## Part 0 — The six checks, named precisely
 
-> **📖 Definition — trust anchor.** A certificate trusted because it is *present in a store you
+> **Definition — trust anchor.** A certificate trusted because it is *present in a store you
 > control*, not because anything vouched for it. Every chain terminates at one. On Android the stores
 > are the system store (shipped with the OS) and the user store (installed by a human through
 > Settings). An anchor is trusted by *placement*, which is why placing one is such a powerful act.
 
-> **📖 Definition — certificate chain.** The ordered list `leaf, intermediate…, root` where each
+> **Definition — certificate chain.** The ordered list `leaf, intermediate…, root` where each
 > certificate is signed by the private key of the next. The server sends what it thinks the chain is;
 > the client is not obliged to believe that ordering, and a good client rebuilds the path itself from
 > the certificates it was handed plus the anchors it holds.
 
-> **📖 Definition — SAN (Subject Alternative Name).** An X.509 extension listing the identities a
+> **Definition — SAN (Subject Alternative Name).** An X.509 extension listing the identities a
 > certificate is valid for, as typed entries such as `DNS:api.example.com` and `IP:10.0.0.1`. It is
 > the *only* field a current client consults when checking the hostname; the old `CN` (Common Name)
 > field is no longer consulted by Chrome, by OkHttp, or by Android's platform verifier.
@@ -118,14 +118,14 @@ statements are checked by two different objects that do not know about each othe
 | 5 | Hostname verification | `HostnameVerifier`, `OkHostnameVerifier`, Conscrypt | `Hostname api.bank.example not verified` |
 | 6 | Revocation (OCSP/CRL) | almost nowhere, on mobile | — |
 
-> **🔍 Pentester's Note.** Check 6 is the one to be honest about. Android's platform TLS stack does
+> **Pentester's Note.** Check 6 is the one to be honest about. Android's platform TLS stack does
 > not perform online revocation checking by default, and neither does OkHttp. Certificate
 > Transparency and short-lived certificates are the industry's answer to that gap, not OCSP. Writing
 > "the app does not check revocation" as a finding against a mobile app, with no context, marks the
 > report as machine-generated. Write it only when the app is in a threat model where a
 > known-compromised certificate is a realistic input, and say so.
 
-> **🔬 Under the Hood.** On the reference device (API 30) the platform's trust manager is a chain of
+> **Under the Hood.** On the reference device (API 30) the platform's trust manager is a chain of
 > three delegating objects, observed live rather than read from documentation:
 > `android.security.net.config.RootTrustManager` delegates to
 > `android.security.net.config.NetworkSecurityTrustManager`, which delegates to
@@ -182,7 +182,7 @@ Measured on a Burp CA file present on the device: the filename `9a5ba575.0` matc
 Two facts that will cost you an hour if you get them wrong: the wrong hash name means the store
 silently ignores the file, and PEM content in a store that expects DER means the same.
 
-> **🔬 Under the Hood.** `subject_hash_old` exists because Android's trust store layout was frozen
+> **Under the Hood.** `subject_hash_old` exists because Android's trust store layout was frozen
 > against OpenSSL 0.9.8's hashing before OpenSSL 1.0 changed it to SHA-1-based. Conscrypt kept
 > compatibility rather than migrating every device's store. This is why a certificate you install
 > through Settings works and a certificate you copy in by hand with a `subject_hash` name does not.
@@ -263,7 +263,7 @@ Two instructions: load the constant 1, return it. `p1` is the hostname the app a
 the session holding the certificate the server actually presented. Comparing those two is the
 method's entire purpose, and this body compares nothing.
 
-> **🧠 Mental Model.** Match on **shape, not name**. `checkServerTrusted` and `verify` are interface
+> **Mental Model.** Match on **shape, not name**. `checkServerTrusted` and `verify` are interface
 > methods declared in `javax.net.ssl`, which is a platform package that R8 cannot rename — an
 > override must keep the name and descriptor of the method it overrides or it stops overriding
 > anything. What R8 *does* rename is the class: `com.example.net.LegacyTrustManager` becomes
@@ -358,7 +358,7 @@ prefix reports `com.android.okhttp.internal.tls.OkHostnameVerifier` as app-writt
 the device**, and sends you off to decompile a class the app never wrote. A tool that cries wolf on
 100% of targets is worse than no tool.
 
-> **🔍 Pentester's Note.** `verify: 0 call(s)` on the platform verifier, as in the measured output
+> **Pentester's Note.** `verify: 0 call(s)` on the platform verifier, as in the measured output
 > above, is not "hostname verification is disabled". It usually means the hostname check happened
 > inside Conscrypt during the handshake rather than through a separate `HostnameVerifier` object, so
 > no Java-level `verify` call existed to hook. Silence is not evidence. The way you turn silence
@@ -373,7 +373,7 @@ a bug in the classifier. It is AOSP's own deliberately-insecure TrustManager, th
 class behind `SSLCertificateSocketFactory.getInsecure()`, and it ships inside the platform on every
 device.
 
-> **⚠️ Warning.** The presence of that class on the heap does not prove the app under test uses it.
+> **Warning.** The presence of that class on the heap does not prove the app under test uses it.
 > Classes get loaded for many reasons. What proves use is a `checkServerTrusted` call attributed to
 > it *while the app was making the request you care about*, which is why you exercise the app between
 > starting the tracer and calling `verdict()`, and why the call counts are printed at all.
@@ -413,7 +413,7 @@ trust-nothing-checked implementation, and it answers instantly, with no proxy, n
 network traffic. That is what makes the oracle the fastest honest answer to "is this thing validating
 at all".
 
-> **⚠️ Warning — the oracle's stated limit.** A positive result proves **that TrustManager** is
+> **Warning — the oracle's stated limit.** A positive result proves **that TrustManager** is
 > permissive. It does not prove the app is interceptable. The app may hold a permissive TrustManager
 > for an analytics endpoint and a correct one for the API; a pin set declared in a
 > network-security-config is enforced somewhere else entirely; and native TLS stacks are invisible to
@@ -424,11 +424,11 @@ A second limit is the reason to run the oracle *after* exercising the app rather
 needs a live instance on the heap, found with `Java.choose`. A TrustManager that has not been
 constructed yet is reported as `no live instance on the heap, skipped`.
 
-> **🔬 Under the Hood.** Everything the oracle does runs inside `Java.perform`, and this is not
+> **Under the Hood.** Everything the oracle does runs inside `Java.perform`, and this is not
 > stylistic. Calling `Java.use` from a thread that is not attached to the ART VM does **not** raise a
 > JavaScript error you can catch — it kills the target process silently. The symptom is an app that
 > "crashes on its own" a second after your script loads, with nothing in your Frida console and
-> nothing obviously wrong in the script. This was a real bug found while building this chapter's
+> nothing visibly wrong in the script. This was a real bug found while building this chapter's
 > tooling. If your own script makes a target vanish, the first thing to check is whether a callback,
 > a `setTimeout`, or an `Interceptor` handler is touching the Java bridge from outside
 > `Java.perform`.
@@ -500,7 +500,7 @@ This is the reading skill this part exists to teach.
 
 | Alert | Name | What the server is saying | What you conclude |
 |---|---|---|---|
-| 40 | `handshake_failure` | "I have no cipher suite or parameter in common with you." | The **version** may well be enabled. You simply did not offer a suite it likes. Re-probe with a wider suite list before writing anything down. |
+| 40 | `handshake_failure` | "I have no cipher suite or parameter in common with you." | The **version** may well be enabled. You did not offer a suite it likes. Re-probe with a wider suite list before writing anything down. |
 | 70 | `protocol_version` | "I refuse this protocol version." | The version is genuinely disabled. This is a definitive negative. |
 | 48 | `unknown_ca` | "I did not recognise a CA you offered." | You are looking at client-certificate territory, not server configuration. |
 | 112 | `unrecognized_name` | "SNI names a host I do not serve." | Wrong virtual host, not a security finding. |
@@ -511,7 +511,7 @@ answer that happens to end the handshake, the other is an explicit *version* rej
 that collapses them into one column will occasionally report a version as disabled when it is merely
 unreachable with that scanner's default suite list.
 
-> **🔍 Pentester's Note.** SSL 3.0 being reachable at all is the POODLE precondition
+> **Pentester's Note.** SSL 3.0 being reachable at all is the POODLE precondition
 > (CVE-2014-3566), a padding-oracle attack against SSL 3.0's CBC construction. That is the only CVE
 > this lab names, and it is named because it is the one where "the old version is merely available"
 > is itself the vulnerability. For everything else, availability of an old version is a finding whose
@@ -530,7 +530,7 @@ openssl x509 -in leaf.pem -pubkey -noout \
   | openssl dgst -sha256 -binary | openssl enc -base64
 ```
 
-> **⚠️ Warning.** `tls-posture.py` deliberately does **not** verify the chain against a trust store.
+> **Warning.** `tls-posture.py` deliberately does **not** verify the chain against a trust store.
 > The question that matters is what the *Android device's* store makes of the chain, not what your
 > laptop's store makes of it. A green report from this tool says nothing whatsoever about whether the
 > app trusts the endpoint, because validation happens in the client.
@@ -579,7 +579,7 @@ attacker's cost is one certificate for a domain they legitimately own, obtainabl
 from a public CA, and it is accepted for your bank's API. The padlock is intact and the chain is
 genuinely trusted. It is a complete authentication bypass at the price of a domain name.
 
-> **🧠 Mental Model.** Chain validation answers "was this certificate issued by someone I trust?"
+> **Mental Model.** Chain validation answers "was this certificate issued by someone I trust?"
 > Hostname verification answers "was it issued to the person I am trying to talk to?" A passport
 > checked for forgery but not for the name printed inside is exactly as useful as this app's TLS.
 
@@ -627,7 +627,7 @@ The app's TLS code is correct. Every check 1 through 5 is performed, and perform
 is in the **catch block**: a handshake failure — the one signal in the entire system that says
 "somebody is in the middle" — is treated as a transient network error and answered by removing the
 protection that produced the signal. The attacker does not need a certificate. They need only to make
-the handshake fail, which they can do by presenting any invalid certificate or simply by resetting
+the handshake fail, which they can do by presenting any invalid certificate or by resetting
 the connection.
 
 How you actually find it: watch the network, not the code. In the tracer's log you will see a
@@ -636,7 +636,7 @@ the same host. On API 28 and above the platform blocks that cleartext request by
 gets an `IOException` instead, which is why the chapter-44 setting `cleartextTrafficPermitted="true"`
 turns this dormant bug into a live one.
 
-> **🔍 Pentester's Note.** Generalise the lesson. Your tools measure the code paths they were pointed
+> **Pentester's Note.** Generalise the lesson. Your tools measure the code paths they were pointed
 > at. Pattern D is invisible to all of them because the vulnerability is not *in* the TLS code — it
 > is in what the application does when the TLS code says no. Always end a TLS assessment by asking:
 > **what does this app do when the handshake fails?** Break the handshake deliberately and watch.
@@ -691,7 +691,7 @@ Score these four, from the same fictional app, and write one sentence of justifi
 **1. Image CDN over cleartext.** Data 0, direction 0, position 3, missing check 3, reachability 3 —
 total 9, which lands in "High" and is *wrong*, and that is the point of the exercise. The direction
 axis carries the truth: nothing private is exposed and nothing the app obeys is injected. Downgrade
-it with a written justification, note that an attacker can still swap images to embarrass or phish
+it with a written justification,an attacker can still swap images to embarrass or phish
 the user, and report it as Low. **A rubric you cannot argue with produces reports nobody believes.**
 
 **2. Analytics with pattern A.** Data 2 (a device identifier plus coarse location is personal data),

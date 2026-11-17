@@ -190,7 +190,7 @@ summary: CRITICAL=3, HIGH=1, MEDIUM=2, LOW=0, INFO=2
 ```
 
 Compare its severity ordering with yours. Where you disagree with the tool, decide who is right —
-and note that the tool's own header says it cannot tell whether a rule is *necessary*, only how
+and confirm that the tool's own header says it cannot tell whether a rule is *necessary*, only how
 broad it is.
 
 ---

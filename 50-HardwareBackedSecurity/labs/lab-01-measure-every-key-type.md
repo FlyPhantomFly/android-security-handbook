@@ -62,7 +62,7 @@ adb shell getprop ro.build.version.release
 adb shell getprop ro.build.version.sdk
 ```
 
-> **⚠️ This is not a formality.** While this chapter was being measured, the attached device
+> **This is not a formality.** While this chapter was being measured, the attached device
 > **changed mid-session**: an `i9000S` on Android 13 disappeared from `adb devices` between two
 > commands and a Redmi `M2101K6P` on Android 11 appeared in its place. Half a results table had
 > already been produced against the first device. Every number in this chapter therefore carries
@@ -392,7 +392,7 @@ measurement — they answer different questions. What you *can* do without root:
 - The PIN-change test in [Lab 02](lab-02-gatekeeper-and-the-hat-chain.md), which needs no tooling
   at all and tells you whether the auth binding is real.
 
-State clearly in your writeup which measurements you performed and which you did not. A gap you
+State explicitly in your writeup which measurements you performed and which you did not. A gap you
 name is methodology; a gap you hide is a false report.
 
 ---
@@ -466,7 +466,7 @@ previous run. Clear the app's data and try again:
 adb shell pm clear com.target.app
 ```
 
-Note that this deletes the app's Keystore keys along with everything else, which is exactly what you
+this deletes the app's Keystore keys along with everything else, which is exactly what you
 want here and is destructive, so only do it on a test install.
 </details>
 
@@ -498,7 +498,7 @@ A finding from this lab should read approximately like this:
 > so it has never detected this on any device.
 >
 > **Severity: Medium.** The key material is recoverable by an attacker with root or with code
-> execution in the process — which would *not* be true of a Keystore-backed key. Note that the
+> execution in the process — which would *not* be true of a Keystore-backed key.the
 > absence of StrongBox on this device is **not** part of this finding; no device tested has one.
 
 And a *non*-finding should read like this, because writing these down is just as important:

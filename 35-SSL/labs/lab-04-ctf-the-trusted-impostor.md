@@ -54,7 +54,7 @@ ships no keys, no certificates and no APKs, and yours must not end up in it eith
 able to name, at the end, exactly which of the six validation checks from
 [Lab 03](lab-03-dissecting-validation.md) the app performs and which it does not.
 
-> **⚠️ Warning.** The challenge app deliberately trusts the user certificate store and deliberately
+> **Warning.** The challenge app deliberately trusts the user certificate store and deliberately
 > skips hostname verification. Build it, run it, uninstall it — and remove the CA you are about to
 > generate when you are done. A CA left in the user store is a standing invitation to every app that
 > behaves like this one.
@@ -278,7 +278,7 @@ public class VaultActivity extends Activity {
 </manifest>
 ```
 
-> **📖 Definition — sealed constant.** `SEALED_ID` and `SEALED_FLAG` are XOR-obfuscated, not
+> **Definition — sealed constant.** `SEALED_ID` and `SEALED_FLAG` are XOR-obfuscated, not
 > encrypted. Obfuscation is not security and is not claimed to be here; the seal exists so that
 > glancing at the source does not hand you the answer before you have done the reasoning. Decoding
 > `SEALED_ID` by hand is a legitimate move. Decoding `SEALED_FLAG` without making the app print it is
@@ -304,7 +304,7 @@ adb push "$OUT/vault.apk" /data/local/tmp/vault.apk
 adb shell "su -c 'pm install -r /data/local/tmp/vault.apk'"
 ```
 
-> **⚠️ Warning.** On the MIUI reference device `adb install` fails with
+> **Warning.** On the MIUI reference device `adb install` fails with
 > `INSTALL_FAILED_USER_RESTRICTED` regardless of the APK — vendor policy, not a broken build — so the
 > push-then-`pm install`-as-root route above is the one that works. Frida 16.1.6 also has **no
 > `--no-pause` flag**: spawning with `-f` resumes by default and `--pause` is the opt-in.
@@ -362,7 +362,7 @@ Substitute your machine's address on the same network as the device. If the remo
 devices carry a read-only overlay — the alternatives are a Magisk module that overlays
 `/system/etc/hosts`, a DNS server the device is pointed at, or the fallback below.
 
-> **🔍 Pentester's Note — the fallback that also teaches something.** You may set `ENDPOINT` to
+> **Pentester's Note — the fallback that also teaches something.** You may set `ENDPOINT` to
 > `https://192.0.2.10/unlock`, a literal IP, before building. This is permitted. Note what changes:
 > a literal IP means no SNI extension is sent, because SNI must carry a name, and a hostname check
 > against an IP would have to match an `iPAddress` SAN entry rather than a `dNSName` one. Neither
@@ -376,7 +376,7 @@ you install is an anchor the app will use. You need a CA that is a *valid* CA, n
 self-signed certificate you called one: check 4 of the pipeline — `basicConstraints`, `keyUsage`,
 `pathLen` — is performed honestly by Conscrypt.
 
-> **🔬 Under the Hood.** `AndroidCAStore` is not a file. It is a `KeyStore` implementation supplied by
+> **Under the Hood.** `AndroidCAStore` is not a file. It is a `KeyStore` implementation supplied by
 > Conscrypt that reads two directories and presents their union as one anchor set: the system store,
 > `/system/etc/security/cacerts` (139 files on the reference device), and the user store,
 > `/data/misc/user/0/cacerts-added/`. That union is the whole mechanism by which one `tmf.init(...)`
@@ -626,7 +626,7 @@ The app prints `TLSLAB{san_is_not_the_hostname}`.
 
 ### 7. Prove you understand, by making it fail on purpose
 
-Re-issue the leaf with `subjectAltName=DNS:vault.tlslab.test` — the "obviously correct" certificate,
+Re-issue the leaf with `subjectAltName=DNS:vault.tlslab.test` — the "correct" certificate,
 the one that matches the host — restart the server and run the app again. It fails with `node identity
 mismatch: presented [vault.tlslab.test]`. That inversion is the lab: the certificate every real client
 would accept is rejected, and the one every real client would reject is accepted, because the app
@@ -701,7 +701,7 @@ it really is a valid, unexpired, correctly-constrained certificate. That is the 
 validation answers *"was this issued by someone I trust?"* and hostname verification answers *"was it
 issued to whom I am talking to?"* — no amount of the first substitutes for the second.
 
-> **🧠 Mental Model.** The passport analogy, finished. Checks 1–4 confirm the passport is genuine:
+> **Mental Model.** The passport analogy, finished. Checks 1–4 confirm the passport is genuine:
 > real paper, real signature, unexpired, issued by a real authority. Check 5 reads the *name* inside
 > and compares it to the person you came to meet. Vaultline built a border post that examines the
 > paper meticulously and then compares the name to a note in its own pocket — never to the person

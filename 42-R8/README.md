@@ -10,7 +10,7 @@
 
 ---
 
-> **⚠️ What was measured, and on what**
+> **What was measured, and on what**
 >
 > This chapter distinguishes throughout between what was **measured on this machine** and what is **documented from source**. The distinction is not decoration — several widely repeated claims about R8 did not survive measurement, and they are corrected in [§5.6](#56-a-measured-correction-to-the-kotlinmetadata-folklore).
 >
@@ -56,13 +56,13 @@ Imagine you have written a book. You want to post it to a friend, but the postag
 
 Those three jobs are **shrinking**, **optimisation** and **obfuscation**. They are genuinely different operations with different motives, and confusing them is the single most common misunderstanding in this area. Shrinking and optimisation exist because Android applications ship as a download over a mobile network onto a device with finite storage, and because every method in a DEX file costs space in a table that historically could hold only 65,536 entries. Obfuscation exists because the code you ship is code you no longer control.
 
-> **📖 Definition — shrinking (tree shaking)**
-> Removing classes, methods and fields that nothing reachable from an entry point can ever use. The program's behaviour is unchanged; there is simply less of it. Also called *dead code elimination*.
+> **Definition — shrinking (tree shaking)**
+> Removing classes, methods and fields that nothing reachable from an entry point can ever use. The program's behaviour is unchanged; there is less of it. Also called *dead code elimination*.
 
-> **📖 Definition — optimisation**
+> **Definition — optimisation**
 > Rewriting code that *is* reachable into a form that is smaller or faster: replacing a call with the callee's body (*inlining*), collapsing two classes into one (*merging*), replacing a constant-valued method call with the constant (*constant propagation*), turning an enum into an integer (*enum unboxing*).
 
-> **📖 Definition — obfuscation**
+> **Definition — obfuscation**
 > Replacing meaningful identifiers with meaningless ones — `LicenceVault` becomes `a`, `verifyLicence` becomes `q`. Behaviour and size are essentially unchanged. Only comprehension is affected. Chapter [40-Obfuscation](../40-Obfuscation/README.md) owns this as a subject; this chapter owns the specific tool.
 
 For most of Android's history these jobs were done by **ProGuard**, a general-purpose Java tool that predates Android entirely, and by **`dx`**, Google's Java-bytecode-to-DEX converter. The pipeline was: `javac` produced `.class` files, ProGuard shrank and obfuscated those `.class` files, and `dx` converted the result to DEX. Three separate programs, two intermediate formats, and — importantly — ProGuard made all its decisions without knowing anything about DEX.
@@ -81,7 +81,7 @@ And applications ship with **every identifier the developer chose** — every cl
 
 ### What R8 precisely is
 
-> **📖 Definition — R8**
+> **Definition — R8**
 > R8 is Google's whole-program optimiser and DEX compiler for Android. In a single pass over the entire program it performs shrinking, optimisation, identifier obfuscation, desugaring and DEX generation, replacing the historical ProGuard-then-`dx` pipeline. It became the default shrinker in **Android Gradle Plugin 3.4.0**, and from **AGP 7.0** the option to use ProGuard instead was removed. It reads the same `-keep` rules language as ProGuard, which is why the migration was mostly invisible to developers.
 
 The name is a joke: `dx` was the original DEX tool, `D8` its replacement, and `R8` is D8 plus whole-program *reduction*. `D8` and `R8` are the same codebase — in the Android SDK there is not even a separate jar. Both live inside `build-tools/<version>/lib/d8.jar`, and you select which one you want by choosing a main class:
@@ -114,7 +114,7 @@ The differences that matter are not about renaming — both tools rename, and a 
 
 That last row is the one people miss, and it is the reason this chapter treats `mapping.txt` as its centrepiece rather than as an appendix. An R8 mapping file is not a dictionary. It is a **record of what the optimiser did to the program**, and it discloses far more than the names.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > ProGuard was a *renamer that also deleted things*. R8 is a *compiler that also renames*. If you keep expecting a renamer, R8's output will keep surprising you: you will look for a method that the mapping file says exists, and it will not be there, because R8 dissolved it into three call sites. The mapping file is telling you the truth; your model of what a "method" is has not caught up.
 
 ### Where this chapter sits among its neighbours
@@ -127,7 +127,7 @@ This chapter is one of a group and it deliberately does not restage its neighbou
 - **[05-Kotlin](../05-Kotlin/README.md)** owns Kotlin decompilation artefacts and the structure of the `@Metadata` annotation, including the `d1`/`d2` split and a `grep` that dumps `d2` strings. This chapter owns **what R8 does to that annotation** — strip it, rewrite it, or leave it — and ships a decoder that reads the `d1` protobuf properly.
 - **[12-DEX-Internals](../12-DEX-Internals/README.md)** owns `ACC_SYNTHETIC`, `source_file_idx` and the DEX container. This chapter owns the *naming schemes* R8 uses for the synthetic classes that flag sets.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The single most valuable sentence in this chapter, if you read nothing else: **the absence of obfuscation is not a finding, but a leaked `mapping.txt` very nearly is.** One is a missing hardening control on a control that was never a security boundary. The other is the vendor handing you a complete, authoritative, machine-readable de-obfuscation key for their shipped binary — and, as [§5.3](#53-the-mappingtxt-disclosure-and-why-it-is-different-in-kind) shows, disclosing the shape of their codebase even before you use it to rename anything. Report them differently.
 
 ---
@@ -204,7 +204,7 @@ sequenceDiagram
 
 The ordering here explains almost every confusing thing about R8's output.
 
-The **Enqueuer** runs first and decides what survives. It starts from the *root set* — everything matched by a `-keep` rule, plus everything the Android framework must be able to reach by name, such as the `Activity` subclasses named in the manifest — and follows references transitively. Anything it never reaches is deleted before the optimiser ever sees it. This is why a missing keep rule produces `ClassNotFoundException` at runtime rather than a compile error: from R8's point of view the class was simply unreachable, which is not an error.
+The **Enqueuer** runs first and decides what survives. It starts from the *root set* — everything matched by a `-keep` rule, plus everything the Android framework must be able to reach by name, such as the `Activity` subclasses named in the manifest — and follows references transitively. Anything it never reaches is deleted before the optimiser ever sees it. This is why a missing keep rule produces `ClassNotFoundException` at runtime rather than a compile error: from R8's point of view the class was unreachable, which is not an error.
 
 The **Optimiser** then rewrites the survivors, and it is the phase that makes R8's output structurally different from the source. Crucially, it records what it did, because otherwise stack traces would be unretraceable.
 
@@ -212,7 +212,7 @@ The **Minifier** assigns the new names. It runs *after* optimisation, which mean
 
 The **DEX writer** runs last and does desugaring and register allocation. It also assigns the line numbers you see in a release stack trace, which are not source line numbers at all but positions in a synthetic line-number table that the mapping file translates back.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > The line numbers in an R8 release stack trace are frequently *fabricated*. R8 emits a compact, monotonically increasing line-number table whose only purpose is to be a lookup key into `mapping.txt`. In the measured build, the whole of `main` — every inlined callee included — occupies obfuscated lines 1 to 16, while the original source spans lines 19 to 141. A frame that says `SourceFile:12` is not telling you about line 12 of anything. It is telling you *which entry in the mapping table to consult*, and without the mapping it is close to meaningless. This is also why two builds of the same app produce different line numbers for the same crash.
 
 ### 2.3 What comes out, and who is allowed to see it
@@ -264,7 +264,7 @@ stateDiagram-v2
     C3 --> Bigger: larger APK, more names survive
 ```
 
-> **📖 Definition — R8 full mode**
+> **Definition — R8 full mode**
 > R8's default and more aggressive interpretation of the keep-rules language, in which a `-keep` rule is read as narrowly as its wording allows rather than as generously as ProGuard read it. Enabled by default in the standalone `r8` CLI, and in AGP by `android.enableR8.fullMode=true` — which became the **default from AGP 8.0**. *Compatibility mode* (`--pg-compat`) is the opposite: it reproduces ProGuard's more generous behaviour so that rule files written for ProGuard keep working.
 
 The reverse-engineering consequence of this switch is direct: **full-mode output contains fewer surviving names and more structural rewriting**. [§3.9](#39-full-mode-and-what-it-actually-changes) works through the differences with a measured example, including one that surprised me and which is the basis of the chapter's central correction.
@@ -296,10 +296,10 @@ The root set is where the security-relevant subtlety lives, because it is assemb
 | AGP's generated rules | The Android Gradle Plugin | Manifest components, `View` subclasses used in XML layouts, `@Keep`-annotated members |
 | The default file | `proguard-android-optimize.txt` in the SDK | Broad rules: native methods, `Parcelable.CREATOR`, enums' `values`/`valueOf`, annotations |
 
-> **⚠️ Warning**
+> **Warning**
 > `configuration.txt` in `build/outputs/mapping/release/` is the *merged* result of all four. This is the only place a developer can see what their build is actually keeping. It is also, therefore, an excellent file for a reviewer to ask for — and a bad file to publish, since it enumerates every SDK in the app. Auditing this merged file, rather than the hand-written rules file, is the correct way to satisfy the hardening item *"`minifyEnabled true` with rules reviewed"* from [40-Obfuscation](../40-Obfuscation/README.md). Reviewing only `proguard-rules.pro` reviews perhaps a fifth of the rules in effect.
 
-Chapter 41 — ProGuard owns the syntax of these rules. What matters here is the *effect* of a rule on R8's three phases, because a rule does not simply say "keep this":
+Chapter 41 — ProGuard owns the syntax of these rules. What matters here is the *effect* of a rule on R8's three phases, because a rule does not say "keep this":
 
 | Rule form | Shrinking | Optimisation | Renaming |
 |---|---|---|---|
@@ -343,7 +343,7 @@ After a full-mode R8 build, `tierWeight` does not exist, `computeActivationCode`
 
 Read that as a stack, innermost first. Obfuscated lines 130 to 146 of the method now called `main` are, in reality, source line 56 of `tierWeight`, called from source line 70 of `computeActivationCode`, called from source line 119 of `main`. **Three source frames, one runtime method.** That is why retracing is not a dictionary lookup, and why hand-retracing an R8 trace is unreliable.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Inlining is the reason "I hooked the method and nothing happened" is such a common Frida complaint on release builds. If `verifyLicence()` was small and private, there is no `verifyLicence` at runtime to hook — its body is now three copies scattered inside its callers. The mapping file tells you where the copies went; without it, you find them by searching for the *constants* and *string literals* the method used, which survive inlining because they are data, not names. [§7.3](#73-hooking-what-r8-left-behind) covers the technique.
 
 ### 3.3 Class merging
@@ -352,7 +352,7 @@ R8 merges classes in two directions.
 
 **Vertical merging** collapses a class into its only subclass (or a superclass with a single implementor) when the intermediate type is not needed. An interface with exactly one implementation is the classic case: after merging, the interface is gone and every reference points at the implementation.
 
-**Horizontal merging** collapses *sibling* classes with compatible shapes into one class, distinguishing the original behaviours with an added integer field or an extra constructor parameter. This is why you sometimes decompile a class that appears to do three unrelated things, switching on an `int` field that is never obviously set — you are looking at three source classes that R8 fused.
+**Horizontal merging** collapses *sibling* classes with compatible shapes into one class, distinguishing the original behaviours with an added integer field or an extra constructor parameter. This is why you sometimes decompile a class that appears to do three unrelated things, switching on an `int` field that is never visibly set — you are looking at three source classes that R8 fused.
 
 In the measured build, the entire `LicenceVault` class was merged away into `VaultEntryPoint`, and the mapping records the casualties explicitly:
 
@@ -361,10 +361,10 @@ com.pentest.ch42.vault.LicenceVault$Diagnostics -> R8$$REMOVED$$CLASS$$0:
 com.pentest.ch42.vault.LicenceVaultKt -> R8$$REMOVED$$CLASS$$1:
 ```
 
-> **📖 Definition — `R8$$REMOVED$$CLASS$$n`**
+> **Definition — `R8$$REMOVED$$CLASS$$n`**
 > A placeholder R8 writes into `mapping.txt` for a class that existed in the input and does **not exist in the output at all**. It is not a renamed class; there is no such type in the DEX. Its purpose is to keep the class's members available for retracing, because those members were inlined into surviving classes and a stack trace may still need to name them. If you search an APK for `R8$$REMOVED$$CLASS$$0` you will find nothing, and that is correct.
 
-> **⚠️ Warning**
+> **Warning**
 > A very common triage error is to count classes in `mapping.txt` and report it as the app's class count. Those two numbers are not the same and the difference can be large. The mapping file lists classes in the *input*, including ones R8 deleted. In the measured build the mapping lists 12 classes; the DEX contains 9, three of which R8 invented. Use `scripts/mapping-reader.py <file> stats`, which separates the categories, rather than `grep -c ' -> '`.
 
 ### 3.4 Enum unboxing
@@ -391,7 +391,7 @@ The `sourceFile` is `R8$$SyntheticClass`, not a real file. Any class whose recor
 
 The `com.android.tools.r8.synthesized` marker appears as a JSON comment attached to the class and to each member. This is part of mapping format version 2.x and is machine-readable — `scripts/mapping-reader.py stats` counts them, which gives you an immediate measure of how much of the binary is compiler-generated.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > Enum unboxing is why `enum.name` and `enum.values()` sometimes still work and sometimes throw in a release build. R8 will not unbox an enum whose `name()`, `ordinal()` or `values()` is reachable in a way it cannot rewrite — for example through reflection or `Enum.valueOf(Class, String)`. So a codebase with one reflective enum lookup keeps *that* enum boxed and unboxes the rest, and a developer sees inconsistent behaviour with no obvious cause. It is also why the enum-name strings frequently survive obfuscation, which [40-Obfuscation §3.1](../40-Obfuscation/README.md) lists in its "what survives renaming" table.
 
 ### 3.5 Outlining
@@ -400,7 +400,7 @@ Where inlining moves a small method into its callers, **outlining** does the rev
 
 The artefact is a synthetic class, typically named after the package it serves, containing methods that take an implausible number of parameters and do something that reads as a fragment rather than an operation — because it *is* a fragment. If you decompile a method that begins by calling `a.b.c(this, x, y, 3, null, null)` and returns immediately, and `c` turns out to contain a chunk of unrelated-looking logic, you are reading an outline.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Inlining and outlining look contradictory but they optimise the same quantity from opposite ends. Inlining removes a `method_id` and a call. Outlining removes many duplicated instruction sequences at the cost of one `method_id`. R8 does both in the same pass, on different code, and the net effect is that **the method boundaries in the APK have almost no relationship to the method boundaries in the source.** Stop expecting them to correspond and the output becomes much easier to read.
 
 ### 3.6 The minifier's naming scheme
@@ -412,7 +412,7 @@ Once the program is optimised, the minifier assigns names. Its rules:
 - Packages are renamed too unless `-keeppackagenames` says otherwise, and with `-repackageclasses` everything is moved into a single package.
 - The assignment is a graph-colouring problem over the inheritance hierarchy: a method that overrides another must get the same name as the one it overrides, which is why some names appear "stuck" across a hierarchy.
 
-> **⚠️ Warning — the single most important operational fact about R8 names**
+> **Warning — the single most important operational fact about R8 names**
 > **R8's name assignment is not stable across builds.** Adding one unused class to the app can shift the entire alphabet, so `a.b.c` in version 4.2 and `a.b.c` in version 4.3 are almost certainly different classes. Chapter [56-JADX §8.7](../56-JADX/README.md) makes the same point for diffing. The consequences: a `mapping.txt` from one version applied to another produces confident, wrong answers; a Frida script that hooks `a.b.c` breaks on the next release; and diffing two versions of an obfuscated app on names alone is pure noise. Use `-applymapping` (the developer's tool for keeping names stable) or match on structure and constants instead.
 
 ### 3.7 The `mapping.txt` format, completely
@@ -444,7 +444,7 @@ Every line is a comment, so old tools ignore it, but the content is valuable to 
 | `pg_map_id` | Short id of this mapping | The APK can embed a matching id — see below |
 | `pg_map_hash` | SHA-256 of the mapping content | Lets you prove a leaked mapping matches a specific build |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `pg_map_id` is how you *prove* a leaked mapping file belongs to a shipped APK, which turns "I found a file" into "I found the de-obfuscation key for this exact release". R8 can embed the same id in the DEX as a marker, and the AGP-produced APK usually carries it. Recovering it from the APK is done with R8's own `ExtractMarker`:
 > ```bash
 > # host — read the R8/D8 markers embedded in a shipped DEX
@@ -541,7 +541,7 @@ $ java -cp .../d8.jar com.android.tools.r8.retrace.Retrace mapping.txt trace.txt
 
 **Source files in inline chains.** The file name for an inlined frame comes from the *owner's* class entry, not from the class it was inlined into; when the owner has no entry (because it was merged away entirely) R8 synthesises `<SimpleName>.java`. That rule is why the retrace above says `LicenceVault.java` for two frames and `LicenceVault.kt` for the third, from a codebase with no Java in it at all. [`scripts/mapping-reader.py`](scripts/mapping-reader.py) implements it, and its output is byte-identical to R8's `retrace` on both test traces.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > The `# {"id":"com.android.tools.r8.residualsignature","signature":"..."}` comments answer a question the classic format could not: *what is this member's signature in the shipped program?* After enum unboxing, class merging and argument removal, a method's original descriptor and its residual descriptor differ. A tool that resolves a member by its original descriptor — many do — will fail to find it. If you write anything that matches mapping entries against DEX members, honour the residual signature or you will silently mismatch overloads.
 
 #### 3.7.5 A complete annotated block
@@ -596,10 +596,10 @@ com.pentest.ch42.vault.LicenceVault$$ExternalSyntheticLambda1 -> a.d:
 
 The last line is the richest. In a build where the class is called `a.d`, the mapping tells you the original class was `LicenceVault`, the original method was `sortedBySubscriber`, and the lambda was the second one (`$lambda$1`) inside it. All three names are the developer's.
 
-> **⚠️ Warning — synthetic names are toolchain-version-dependent**
+> **Warning — synthetic names are toolchain-version-dependent**
 > The exact spelling of these names changes between D8/R8 versions. `$$Lambda$Foo$0` (older desugaring) became `Foo$$ExternalSyntheticLambda0`; `$$InternalSyntheticLambda` hashes changed length and composition. [12-DEX-Internals](../12-DEX-Internals/README.md) already flags toolchain identification as a dating tool, and this is the same lever: **the synthetic naming scheme dates the build**. It also means any tool, script or regular expression that matches these names must be version-tolerant, and that a diff between two versions of an app built with different AGP versions will show thousands of purely cosmetic differences. Read the `compiler_version` header, or run `ExtractMarker` on the APK, before you trust a name-shape heuristic.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Treat every `$$` in a class name as a sign saying *"a compiler wrote this, and it left the original name to the left of the marker."* `LicenceVault$$ExternalSyntheticLambda0` is not an obfuscated name that happens to be long — it is a **generated** name built by concatenating a real name with a scheme suffix. That is why heavily obfuscated apps still leak: R8 renames the parts it considers identifiers, but a synthetic name it constructed earlier in the pipeline can carry an original name through as a *string*.
 
 ### 3.9 Full mode, and what it actually changes
@@ -624,7 +624,7 @@ The measured size difference on the chapter's toy program, same source, same rul
 
 Compat mode produced an output **2.6 times larger** with **more than twice the classes**. On a toy program that ratio is exaggerated, but the direction is real and it is the reason full mode became the default.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The practical tell for full mode, from the outside, is *structural aggression relative to name aggression*. Both modes rename. Full mode additionally leaves you with unboxed enums, merged classes and a much higher ratio of synthetic classes to authored ones. If you decompile an app where names are obfuscated but the class structure still mirrors a normal MVVM codebase, you are probably looking at compat mode or a rules file full of over-broad `-keep` directives — and over-broad keep rules are themselves a reportable weakness, because they usually mean whole packages were exempted from obfuscation to make something work.
 
 ### 3.10 `kotlin.Metadata`: the annotation R8 does not always finish rewriting
@@ -716,10 +716,10 @@ And because the metadata records the JVM field and getter alongside the Kotlin n
 
 That is a fragment of `mapping.txt`, reconstructed from the APK alone, with no mapping file involved.
 
-> **🔬 Under the Hood — why properties survive when functions do not**
+> **Under the Hood — why properties survive when functions do not**
 > This is not a bug so much as a consequence of what R8 can know. R8 renames *JVM members*. A Kotlin function corresponds one-to-one with a JVM method, so when R8 renames the method it can set the metadata's function name to the new name and stay consistent. A Kotlin **property is not a JVM member at all** — it is a Kotlin-level construct backed by up to three JVM members (a field, a getter, a setter), each renamed independently. There is no single new name to write into `Property.name`, so R8 rewrites the JVM signature extensions and leaves the Kotlin-level name alone. The same reasoning explains why `Function.name` is rewritten but the property's `field`/`getter`/`setter` sub-signatures are updated to the *renamed* members: R8 updates what it has a mapping for, and a Kotlin property name is not something it has a mapping for.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The operational rule this gives you: **on a Kotlin app where `@Metadata` survives, run the extractor with `--members` and read the `val` lines, even if the class and function names come back obfuscated.** The `--rewrite-check` verdict will say `rewritten`, which is easy to read as "nothing here". It is not. Class names rewritten and property names intact is the normal case, and property names are frequently the most informative identifiers in the app — `authToken`, `isPremiumUser`, `pinRetryCount`, `deviceFingerprint`.
 
 #### 3.10.4 A fourth state nobody expects: the empty shell
@@ -743,14 +743,14 @@ detail   : 1393 classes carry an @kotlin.Metadata annotation whose elements are 
            for 'Lkotlin/Metadata;' would have called this a leak; it is not one.
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > A string in the DEX string table proves a *reference* exists somewhere, not that any class carries the annotation with data. This generalises well beyond metadata: `grep` over `strings` or over baksmali output answers "does this token appear", which is a much weaker question than the one you meant to ask. Parse the structure.
 
 ### 3.11 Desugaring, and the artefacts it leaves
 
 Desugaring is the fourth job in R8's single pass, and it is the one most often forgotten because it is not a size or secrecy operation — it is a compatibility one.
 
-> **📖 Definition — desugaring**
+> **Definition — desugaring**
 > Rewriting a language or library feature that the target runtime does not support into constructs it does. The name is a pun on *syntactic sugar*: the feature is "sweetened" syntax over something more primitive, and desugaring reverses the sweetening.
 
 What gets rewritten depends entirely on `--min-api`:
@@ -765,7 +765,7 @@ What gets rewritten depends entirely on `--min-api`:
 | Newer JDK static methods (`Objects.requireNonNullElse`, `List.of`) | Varies | `$$ExternalSyntheticBackport<n>` |
 | API-level-guarded calls | — | `$$ExternalSyntheticApiModelOutline<n>` |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The `j$.` prefix is a strong and under-used signal. Seeing `j$.time.Instant` or `j$.util.stream.Stream` in a decompiled app tells you the build enabled **core library desugaring**, which in turn tells you the app supports a fairly low `minSdkVersion` — useful when you are deciding which platform-version-dependent attacks are worth trying. It also means the `java.time` classes you are looking at are *bundled in the APK*, not the platform's, so their behaviour is pinned to the desugaring library version rather than to the device.
 
 Two consequences that catch people out. First, **desugaring runs even when shrinking and obfuscation are off**, because it is D8's job and D8 always runs — which is why an unobfuscated debug build still contains `$$ExternalSyntheticLambda` classes. Their presence is therefore *not* evidence of R8. Only the `~R8` marker is.
@@ -789,7 +789,7 @@ This matters to an analyst for two opposite reasons.
 
 **It makes a single leaked mapping far more valuable.** Normally a `mapping.txt` is version-specific. Under `-applymapping`, one leaked file deobfuscates a whole *family* of releases, because the name assignment was deliberately frozen across them. When you report a mapping-file leak, checking for `-applymapping` is what tells you whether the blast radius is one build or two years of builds.
 
-> **⚠️ Warning**
+> **Warning**
 > Do not infer `-applymapping` from a handful of matching names. Small programs and stable code regions can coincidentally receive the same names twice, particularly for classes early in the allocation order. Confirm across a large sample, and prefer distinctive names deep in the alphabet (`a.q4`, not `a.a`).
 
 ### 3.13 Resource shrinking, and where it stops
@@ -802,7 +802,7 @@ R8 participates via `--android-resources <input> <output>`, because deciding whi
 - Resources referenced only through `Resources.getIdentifier("name", ...)` are invisible to it, exactly as reflectively-referenced classes are invisible to the Enqueuer. The mitigation is a `keep.xml` under `res/raw/`, which is the resource world's equivalent of a keep rule.
 - Shrunk resources are typically **replaced with a tiny placeholder rather than removed**, so the resource id remains valid. A decompiled app with many suspiciously identical tiny drawables has had its resources shrunk, not tampered with.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Resource *shrinking* is not resource *obfuscation*. Resource names survive R8 entirely — `R.string.api_base_url` is still called `api_base_url` in `resources.arsc`, and string resources are a routine place to find endpoints and keys. Tools that rename resources exist, but they are not R8. This is one of the clearest cases of the [§5.8](#58-what-r8-does-not-protect-ever) principle: R8 renames Java and Kotlin identifiers, and nothing else.
 
 ### 3.14 Version matrix
@@ -828,7 +828,7 @@ Behaviour that depends on a version — of AGP, of R8, or of the Android platfor
 | `kotlin.Metadata` stripped by default | **Measured on R8 8.6.2, both modes** | Requires a rule keeping the annotation *type* to survive |
 | `kotlin.Metadata` rewritten when kept | **Measured on R8 8.6.2, both modes** | Class and function names rewritten; **property names not** |
 
-> **⚠️ Warning**
+> **Warning**
 > Do not carry the R8-8.6.2 metadata rows forward to other versions without re-measuring. The mechanism behind the property-name survival ([§3.10.3](#3103-the-part-r8s-rewriter-does-not-finish--and-this-is-the-recovery-path)) is structural and unlikely to change, but "unlikely" is not "verified". `scripts/kotlin-metadata-recover.py --rewrite-check` re-measures it in one command; run it rather than quoting this table.
 
 ### 3.14a How R8 breaks applications, mechanically
@@ -847,10 +847,10 @@ Behaviour that depends on a version — of AGP, of R8, or of the Android platfor
 | Service loader / DI | Implementation named in a metadata file the Enqueuer does not parse | Runtime "no implementation found" | Library consumer rules, or explicit keeps |
 | Full-mode migration | `-keep` no longer implies keeping the default constructor | `InstantiationException` on a class that previously worked | Add the constructor to the rule explicitly |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Read this table backwards and it becomes a reconnaissance tool. Every entry describes a place where the developer was **forced to write a keep rule**, and every keep rule is an obfuscation exemption. So the classes that kept their names in a renamed app are disproportionately the reflective entry points, the serialisation models, the JNI bindings and the DI graph — which is to say, the app's boundaries with the outside world. The exemptions advertise exactly what you wanted to find, and the surrounding renaming makes them *easier* to spot, not harder.
 
-> **⚠️ Warning**
+> **Warning**
 > The diagnostic order matters, because the tempting first move makes things worse. Do **not** start by adding `-keep class com.app.** { *; }` to see whether the crash goes away — it will, and you will have disabled obfuscation and optimisation for the entire application while learning nothing. Start with `usage.txt`, which lists precisely what R8 removed, and add the narrowest rule that covers the specific construct.
 
 ### 3.15 The secondary outputs, in detail
@@ -868,7 +868,7 @@ Behaviour that depends on a version — of AGP, of R8, or of the Android platfor
 
 `configuration.txt` is the sleeper. Because it merges consumer rules from every dependency, it enumerates the app's third-party SDKs **by name**, complete with the class patterns each one needs kept. That survives even aggressive repackaging: an SDK whose classes were flattened into `p001a.b.c` is still named in the rules that protected it.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > When you find one of these four in a shipped artefact or on a public endpoint, check for the other three before filing — they are written to the same directory by the same task, so the accident that exposed one usually exposed all of them. And in a *source* review, ask for `configuration.txt` rather than `proguard-rules.pro`: the hand-written file is a small fraction of the rules actually in force, and the over-broad rule that disabled obfuscation is as likely to have come from a dependency as from the app.
 
 ---
@@ -903,7 +903,7 @@ The path from "Kotlin reflection wants the original name" down to the bytes is w
 
 Every step of that walk is static structure in the file. Nothing is computed at runtime, nothing is encrypted, and the same walk is what [`scripts/kotlin-metadata-recover.py`](scripts/kotlin-metadata-recover.py) performs offline. That is the whole reason the recovery path exists: **the annotation must be readable by reflection at runtime, therefore it must be readable by you statically.**
 
-> **⚠️ Warning — MUTF-8 is not UTF-8, and it matters here specifically**
+> **Warning — MUTF-8 is not UTF-8, and it matters here specifically**
 > DEX strings are Modified UTF-8: the code point U+0000 is encoded as the two bytes `C0 80`, and a raw `00` byte is the string terminator. Kotlin's default `d1` encoding stores arbitrary bytes `0x00`–`0xFF` as individual UTF-16 code units, and the payload begins with a `U+0000` marker. A decoder that reads DEX strings with a standard UTF-8 library will mangle exactly the bytes that carry the protobuf. The extractor decodes to *code units* rather than to a Python `str` for this reason, and it is why naive attempts to decode `d1` usually fail on the first class.
 
 ### 4.2 R8's own source, and the parts worth reading
@@ -978,7 +978,7 @@ Both traces came back byte-identical, including a 13-frame expansion in which fo
 
 Before anything else in this section, the position this chapter argues:
 
-> **⚠️ R8 is a hardening control, not a security boundary.**
+> **R8 is a hardening control, not a security boundary.**
 > Obfuscation does not prevent any attack. It raises the *time cost* of understanding the application for an attacker who already has the binary — and an attacker always has the binary, because it was installed on their device. Every secret in an R8-built APK is recoverable given enough hours. What R8 buys is hours, not impossibility.
 
 Two consequences follow, and they are the reason this section exists.
@@ -998,7 +998,7 @@ R8 sits under the resilience group of the OWASP Mobile Application Security Veri
 | **MASVS-CODE-4** | The app is built in release mode with settings appropriate for a release build | `minifyEnabled`, `debuggable false`, no debug symbols, no mapping file shipped |
 | **MASTG-TEST-0219 / the resilience test group** | Testing whether the app is obfuscated and to what degree | The measurement procedures in [§8](#8-static-analysis) |
 
-> **📖 Definition — MASVS-RESILIENCE**
+> **Definition — MASVS-RESILIENCE**
 > The group of MASVS controls concerned with making an application resistant to *analysis and modification by someone who controls the device*. Unlike the other MASVS groups, its controls are explicitly about raising cost rather than preventing an outcome — which is precisely why severity assessment here is different from, say, a broken TLS check.
 
 The MASVS framing helps with the severity argument, because the standard itself treats resilience as a graduated, threat-model-dependent set of controls rather than a pass/fail. An app that displays a train timetable and an app that authorises payments are held to different resilience expectations, and saying so in a report is not a hedge — it is the standard's own position.
@@ -1046,7 +1046,7 @@ members total                 : 156
 
 **Severity.** Higher than "obfuscation absent", and here is the argument for why, phrased for a report: *the vendor chose to apply an obfuscation control, and then shipped the key to it.* The control's presence establishes that the vendor's own threat model considered code comprehension a risk worth mitigating; the leak defeats that mitigation completely and at zero attacker cost. It is not equivalent to never having obfuscated, because the leak also discloses the structural information listed above, which an unobfuscated app does not contain. Whether it reaches "medium" or higher depends entirely on what the recovered code protects — see [§5.7](#57-severity-a-rubric-you-can-defend).
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Do not stop at `mapping.txt`. The same directory produces `seeds.txt`, `usage.txt` and `configuration.txt`, and the same accidents ship them. `configuration.txt` is the sleeper: it is the fully merged rule set including every AAR's consumer rules, so it enumerates the app's third-party SDKs by name even when their classes were repackaged into `p001a.b.c`. If you are writing up a mapping-file leak, check for its three siblings before you file.
 
 ### 5.4 How developers get this wrong
@@ -1102,7 +1102,7 @@ kotlin.collections.c0  -> kotlin.collections.UCollectionsKt
 
 **The recommended correction**, offered to chapters 40 and 56 rather than asserted unilaterally: change *"frequently not stripped … hand you back original names wholesale"* to *"stripped by default on modern R8, but preserved whenever a library's consumer rules keep `kotlin.Metadata`; when preserved on a renamed class R8 rewrites class and function names but frequently leaves Kotlin **property** names intact, which yields a member-level mapping table."* The recovery path 40 promises is real; it is a scalpel, not a shovel.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > The general lesson is worth more than the specific correction. A claim of the form "tool X does not remove Y by default" ages badly, because defaults change and because "by default" hides a configuration space. The durable version of the claim is mechanistic: *R8 can only rewrite metadata for constructs it has a rename mapping for, and a Kotlin property is not a JVM member, so it has no mapping for it.* That statement will still be true when the defaults have changed again.
 
 ### 5.7 Severity: a rubric you can defend
@@ -1119,7 +1119,7 @@ kotlin.collections.c0  -> kotlin.collections.UCollectionsKt
 
 That last row is the one that most improves a report. If obfuscation was the only thing standing between an attacker and an API key, the finding is "hardcoded API key with no server-side control", severity driven by what the key does. The obfuscation weakness is context, not the finding. Writing it the other way round — "insufficient obfuscation, high" — invites the developer to argue about obfuscation instead of rotating the key.
 
-> **⚠️ Warning — the false positive to expect from automated tooling**
+> **Warning — the false positive to expect from automated tooling**
 > Scanners flag "application is not obfuscated" by sampling class-name lengths, and they produce false positives in both directions. A Flutter or React Native app has a tiny Java layer that may be entirely framework classes with real names, while all the actual logic is in a `.so` or a JavaScript bundle — the scanner sees "not obfuscated" and is measuring nothing relevant. Conversely, an app whose dependencies are obfuscated but whose own code is exempted by `-keep class com.app.**` scores as *well* obfuscated on a whole-APK average. [§8.4](#84-measuring-how-much-of-the-app-is-actually-obfuscated) measures the application's own package specifically, which is the number that means something.
 
 ### 5.8 What R8 does *not* protect, ever
@@ -1147,7 +1147,7 @@ R8 itself is not a bounty target — it is a build tool, and "the app is obfusca
 
 The framing that gets these triaged rather than closed: **report the consequence, not the technique.** A report that opens "the application does not implement sufficient obfuscation" invites a policy argument. One that opens "this URL serves the de-obfuscation key for release 4.2.1, and here is the `pg_map_id` proving it" is a factual claim about the vendor's infrastructure that has a clear owner and a clear fix.
 
-> **⚠️ Warning**
+> **Warning**
 > Do not submit "app is not obfuscated" to a bounty programme. Essentially every programme's exclusion list contains some form of "lack of obfuscation / missing hardening", and submitting it costs you signal on the platform. It belongs in a paid assessment report as an informational item, where the client is buying completeness, not in a bounty queue.
 
 ### 5.10 How a forensic analyst uses R8's traces
@@ -1166,7 +1166,7 @@ R8 leaves provenance in the binary, and unlike most such signals it is not easy 
 
 **Linking a sample to a build.** If a `pg-map-id` is present in the marker and a mapping file is ever recovered — from an incident, a leak, or a cooperating vendor — the `pg_map_id` header links them cryptographically rather than circumstantially. That turns "this looks like their build" into a defensible statement.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > The markers are written by R8 into the DEX as specially-formatted strings beginning with `~D8{` and `~R8{`, carrying a small JSON object. They are ordinary DEX strings, so they can be stripped by a post-processing tool — their **absence** proves nothing. Their **presence**, and particularly their internal consistency with the rest of the file, is the signal. Treat a marker as evidence that something was built a certain way, never as evidence that it was not.
 
 ---
@@ -1233,7 +1233,7 @@ fun sortedBySubscriber(): List<LicenceRecord> {
 }
 ```
 
-DEX has no `invokedynamic` below API 26, and even above it D8/R8 usually desugars rather than emit a call site. The lambda therefore becomes a real class. In Smali, the desugared class looks like this — note that the *class* is renamed to `a/d` but everything about its shape is fixed by the interface it implements:
+DEX has no `invokedynamic` below API 26, and even above it D8/R8 usually desugars rather than emit a call site. The lambda therefore becomes a real class. In Smali, the desugared class looks like this —the *class* is renamed to `a/d` but everything about its shape is fixed by the interface it implements:
 
 ```smali
 # a/d.smali  — was LicenceVault$$ExternalSyntheticLambda1
@@ -1302,7 +1302,7 @@ The column that matters is the middle one. **R8 alone leaves the two most useful
 
 ### 6.5 Reading an unboxed enum in Smali
 
-Enum unboxing ([§3.4](#34-enum-unboxing)) produces some of the most confusing decompiler output R8 generates, because a type simply stops existing and is replaced by bare integers. Recognising it saves a great deal of time.
+Enum unboxing ([§3.4](#34-enum-unboxing)) produces some of the most confusing decompiler output R8 generates, because a type stops existing and is replaced by bare integers. Recognising it saves a great deal of time.
 
 **Before** — what the source had:
 
@@ -1352,7 +1352,7 @@ Four things to read off it:
 3. **The enum name strings may still be present** elsewhere in the DEX, because `name()` and `toString()` on enums are commonly reachable and R8 will not unbox an enum whose name is needed. Search the string table for plausible constant names before assuming they are gone.
 4. **A `$EnumUnboxingSharedUtility` class in the mapping names the original enum type.** In the measured build, `LicenceTier$EnumUnboxingSharedUtility` disclosed the type name in a build where the enum itself no longer existed.
 
-> **⚠️ Warning**
+> **Warning**
 > Do not confuse an unboxed enum with a horizontally merged class. Both produce switching on an integer. The distinguishing feature: an unboxed enum switches on a value that *flows in as a parameter or field*, while a merged class switches on a field set in the constructor and never afterwards. Trace where the integer comes from before deciding which you are looking at.
 
 ### 6.6 Reading a horizontally merged class
@@ -1397,7 +1397,7 @@ The tells, in order of reliability:
 
 The analysis move is to **treat each switch case as a separate class**. Find the construction sites, note which constant each passes, and read only the matching case. Reading the class as a whole produces a description of something no developer ever wrote — and that is exactly the "the app implements a custom multi-purpose handler" sentence that makes a report wrong.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > After merging, a *class* in the APK is closer to a **union of source classes** than to any one of them, and after inlining a *method* is closer to a **region of a call tree** than to any one function. Once you stop expecting one-to-one correspondence between APK constructs and source constructs, R8's output becomes ordinary rather than baffling — and the mapping file, which describes exactly these many-to-one relationships, becomes readable as documentation rather than as a lookup table.
 
 ### 6.7 A worked triage: from `a.b.c` to a hypothesis in ten minutes
@@ -1420,7 +1420,7 @@ Putting §6 together on a class you know nothing about, with no mapping file.
 
 ## 7. Dynamic Analysis
 
-> **⚠️ Device honesty statement**
+> **Device honesty statement**
 > The device attached while writing this chapter is an **`i9000S`, Android 13, API 33, and it is neither rooted nor running `frida-server`** — confirmed with `adb devices -l && adb shell getprop ro.product.model && adb shell getprop ro.build.version.sdk`. Everything in [§7.1](#71-what-you-can-do-with-no-root-at-all) and [§7.2](#72-getting-a-real-obfuscated-stack-trace) was **executed**. Everything in [§7.3](#73-hooking-what-r8-left-behind) and [§7.4](#74-a-frida-script-for-reading-kotlinmetadata-at-runtime) is **documented from the API contracts and not observed on this device**, and is labelled as such rather than presented as measured output.
 
 R8 is a build-time tool, so "dynamic analysis of R8" really means: *using runtime behaviour to defeat the comprehension barrier R8 erected.* That reframing is the useful one, because obfuscation is almost entirely a static-analysis problem — a running app must resolve real classes, execute real logic and produce real values regardless of what anything is named.
@@ -1528,7 +1528,7 @@ Java.perform(function () {
 });
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The reason structure-based hooking is worth the effort on R8 builds specifically is [§3.6](#36-the-minifiers-naming-scheme): **R8's names are not stable across builds.** A script that hooks `a.b.c` is a script that works once, against one APK, and silently hooks the wrong class against the next release — silently, because `a.b.c` will still exist and still be hookable. That failure mode is much worse than an error.
 
 ### 7.4 A Frida script for reading `kotlin.Metadata` at runtime
@@ -1630,7 +1630,7 @@ Two points about using this on R8 output specifically. A single obfuscated metho
 
 ### 7.7 Using a leaked mapping file at runtime
 
-If you have a `mapping.txt`, the highest-leverage dynamic use is not retracing crashes — it is generating a Frida script with real names in it.
+If you have a `mapping.txt`, the highest-value dynamic use is not retracing crashes — it is generating a Frida script with real names in it.
 
 ```bash
 # host — turn a mapping file into a name-annotated hook list
@@ -1646,7 +1646,7 @@ java -cp "$D8" com.android.tools.r8.ExtractMarker target.apk | grep -o 'pg-map-i
 python3 -B scripts/mapping-reader.py mapping.txt stats | grep pg_map_id
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > A mismatched mapping does not fail loudly. `a.b.c` exists in both files and resolves to *something* in each, so you get a fully-formed, plausible, wrong hook list — and a Frida script that attaches successfully to the wrong class. This is the single easiest way to waste a day and then publish a false finding. Check `pg_map_id` first; if either side is absent, treat every name as unverified and say so in the report.
 
 ### 7.8 What dynamic analysis will not fix
@@ -1711,7 +1711,7 @@ unzip -l app.aab | grep -Ei 'mapping|BUNDLE-METADATA'
 # R8 mappings live at BUNDLE-METADATA/com.android.tools.build.obfuscation/proguard.map
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `BUNDLE-METADATA/com.android.tools.build.obfuscation/proguard.map` inside an `.aab` is **not** a finding — that is where the mapping is *supposed* to live in an App Bundle, so Play can symbolicate. It never reaches the device. If you are handed an `.aab` for testing and report the mapping inside it as a leak, you are reporting the format working as designed. The finding is a mapping inside the *installed APK*, or on a public URL.
 
 ### 8.3 Reading `mapping.txt` by hand
@@ -1782,8 +1782,8 @@ Interpretation, calibrated against the corpus:
 | Below 20% with `~R8` marker present | Shrinking ran, renaming was effectively disabled by over-broad keep rules. **This is the finding** |
 | Below 20% with no `~R8` marker | `minifyEnabled false`. Informational |
 
-> **⚠️ Warning**
-> The `<= 3` threshold is a heuristic, not a definition, and it misfires on codebases with genuinely short class names and on apps using `-obfuscationdictionary` to rename into plausible-looking words. Two cross-checks make it robust: an obfuscated build has a *bimodal* name-length distribution with a large spike at 1–2 characters, and it has many duplicate simple names across packages. A real codebase has neither. Never report the percentage alone; report it alongside the `ExtractMarker` output.
+> **Warning**
+> The `<= 3` threshold is a heuristic, not a definition, and it misfires on codebases with genuinely short class names and on apps using `-obfuscationdictionary` to rename into plausible-looking words. Two cross-checks make it reliable: an obfuscated build has a *bimodal* name-length distribution with a large spike at 1–2 characters, and it has many duplicate simple names across packages. A real codebase has neither. Never report the percentage alone; report it alongside the `ExtractMarker` output.
 
 ### 8.5 Finding the recoverable Kotlin names
 
@@ -1859,7 +1859,7 @@ unzip -p target.apk AndroidManifest.xml | strings -a \
   | grep -oE '[a-zA-Z][a-zA-Z0-9_.]*\.[A-Z][A-Za-z0-9_]*' | sort -u | head -40
 ```
 
-The comparison is the useful part: if the manifest names `com.example.app.ui.LoginActivity` while every other class in that package is a single letter, obfuscation is working and the manifest is simply the exception it must be. If the manifest names are the *only* long names, you have found the app's whole entry-point surface in one command.
+The comparison is the useful part: if the manifest names `com.example.app.ui.LoginActivity` while every other class in that package is a single letter, obfuscation is working and the manifest is the exception it must be. If the manifest names are the *only* long names, you have found the app's whole entry-point surface in one command.
 
 #### In resources and `resources.arsc`
 
@@ -1882,8 +1882,8 @@ unzip -o target.apk 'lib/*/*.so' -d ./libs >/dev/null
 strings -a libs/lib/*/*.so | grep -E '^Java_[A-Za-z0-9_]+' | sort -u
 ```
 
-> **⚠️ Warning**
-> A renamed class with a native method creates a contradiction that R8 resolves in the developer's favour: the JNI symbol must match the *shipped* class name, so either the class is kept (and its name survives in the DEX), or the developer used `RegisterNatives` to bind dynamically (and no `Java_` symbol exists). Finding no `Java_` symbols in a library that clearly has JNI entry points means dynamic registration, which is covered in [16-JNI](../16-JNI/README.md) — not that the app has no native interface.
+> **Warning**
+> A renamed class with a native method creates a contradiction that R8 resolves in the developer's favour: the JNI symbol must match the *shipped* class name, so either the class is kept (and its name survives in the DEX), or the developer used `RegisterNatives` to bind dynamically (and no `Java_` symbol exists). Finding no `Java_` symbols in a library that visibly has JNI entry points means dynamic registration, which is covered in [16-JNI](../16-JNI/README.md) — not that the app has no native interface.
 
 #### In Smali
 
@@ -2335,7 +2335,7 @@ $ ./build-ctf.sh /tmp/ch42-ctf
 
 Neither script needs a device, a rooted phone, Gradle, or an internet connection. They need the Android SDK build-tools, a JDK 21 or lower, and the Kotlin compiler jars that any machine which has opened an Android project already has in its Gradle cache.
 
-> **⚠️ The one environment failure to expect**
+> **The one environment failure to expect**
 > `Unsupported class file major version NN`, reported by R8 as *"Compilation failed with an internal error"*. It is not an R8 bug and not a problem with your source: R8 8.6.x cannot read class files newer than Java 21, and your default JDK is newer. Set `JAVA21` to Android Studio's bundled JDK, as above. Both scripts search for a suitable JDK automatically and print which one they chose.
 
 ---

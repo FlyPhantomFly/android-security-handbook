@@ -23,7 +23,7 @@ By the end you will have:
 
 ---
 
-## ⚠️ Read this before you start
+## Read this before you start
 
 **This lab changes the device's lock-screen credential.** That is not incidental — it is the
 experiment. Consequences on a real device:

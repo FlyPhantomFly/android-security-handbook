@@ -67,7 +67,7 @@ draws on API 23–27, where no system dialog existed.
 
 | Source | Why |
 |---|---|
-| Android Developers — *Biometric authentication* guide | The canonical starting point. Note that its simplest sample uses the one-argument `authenticate()`, which is a large part of why the modal implementation is callback-only |
+| Android Developers — *Biometric authentication* guide | The canonical starting point.its simplest sample uses the one-argument `authenticate()`, which is a large part of why the modal implementation is callback-only |
 | Android Developers — `androidx.biometric` reference | Version fragmentation lives here. Check which release introduced `setAllowedAuthenticators` before reasoning about an app's bundled version |
 | Android Developers — `KeyGenParameterSpec` reference | **The most important documentation page for this chapter.** Read the interaction between `setUserAuthenticationRequired`, `setUserAuthenticationValidityDurationSeconds`, `setUserAuthenticationParameters` and `setInvalidatedByBiometricEnrollment` closely |
 | Android Developers — `KeyInfo` reference | The read-back API almost nobody calls |

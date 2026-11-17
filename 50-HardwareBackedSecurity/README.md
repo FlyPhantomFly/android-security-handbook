@@ -54,7 +54,7 @@ Every number, error message and certificate field in this chapter was produced o
 | **B** | Redmi `M2101K6P` (`sweetin`) | 11 / API 30 | Qualcomm `sm6150` | legacy `keystore` | `android.hardware.keymaster@4.0-service-qti` | **yes** | **absent** |
 | **C** | `sdk_gphone16k_x86_64` emulator | 15 / API 35 | `ranchu` / goldfish | `keystore2` | software KeyMint 3.0 | n/a | **absent** |
 
-> **⚠️ Warning — the device under your desk is not the device in the last paragraph**
+> **Warning — the device under your desk is not the device in the last paragraph**
 > Target A vanished from `adb devices` in the middle of this chapter's measurement run and target B appeared in its place. That is not a metaphor; it happened, mid-command, and the same thing has happened to other chapters in this repository. **Run `adb devices -l && adb shell getprop ro.product.model && adb shell getprop ro.build.version.sdk` immediately before any measurement you intend to quote**, and record the answer next to the number. A hardware-security claim attached to the wrong device is worse than no claim at all.
 
 ---
@@ -71,7 +71,7 @@ The regress terminates in exactly one place: **a value that was physically creat
 
 That value is the **hardware-unique key**, and everything in this chapter is built on it.
 
-> **📖 Definition — hardware-unique key (HUK)**
+> **Definition — hardware-unique key (HUK)**
 > A secret, typically 128 or 256 bits, burned into one-time-programmable fuses inside a system-on-chip during manufacture, or derived deterministically from such fuses by a hardware key-derivation block. It is different on every individual chip that leaves the factory. It is wired directly into the crypto engine: software can ask the engine to *use* it, and there is no instruction, register or debug path that returns it. Sometimes called the *root key*, *device root key*, *HUK*, or *chip-unique key* depending on vendor.
 
 If you understand nothing else in this chapter, understand this asymmetry. Software can say "encrypt this using the HUK". Software cannot say "tell me the HUK". Every guarantee in the rest of this chapter is a consequence of that one design decision, applied recursively.
@@ -86,7 +86,7 @@ If you understand nothing else in this chapter, understand this asymmetry. Softw
 
 The second computer is smaller *on purpose*. Its security comes overwhelmingly from being small. It is the only realistic response to the fact that no one knows how to write a hundred million lines of bug-free code.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Android's security architecture is a series of walls, and each wall costs the attacker more to cross. The app sandbox is a wall in software, enforced by the kernel. The kernel is a wall in software, enforced by the CPU's privilege levels. **The TEE is a wall in hardware, enforced by wires.** When you cross a software wall you exploit a bug in code. When you cross a hardware wall you must exploit a bug in *different* code that runs on the other side, or attack the silicon itself. The prices are not comparable.
 
 ### 1.3 What would break without hardware backing
@@ -107,7 +107,7 @@ Take each away and watch what happens. These are not hypotheticals; each describ
 
 There is one failure mode that dominates real reports in this area, and correcting for it up front will save you from writing a bad finding.
 
-> **🔍 Pentester's Note — "no StrongBox" is not a finding**
+> **Pentester's Note — "no StrongBox" is not a finding**
 > The overwhelming majority of Android devices in the world do not have StrongBox. All three targets measured for this chapter lack it, including a 2024-era emulator image and two physical phones from different silicon vendors. Writing "the application does not use StrongBox" as a vulnerability is like writing "the application does not require the user to own a Pixel". It is a *hardware availability fact*, not an application defect, and reviewers will discount your whole report for it.
 >
 > **The finding is always a mismatch.** Specifically:
@@ -212,12 +212,12 @@ This is the table to memorise. It is also the table that most published summarie
 | Typical key size limits | None | Generous | **Restrictive** — often 2048-bit RSA maximum, limited key slots |
 | Present on how many devices? | All | Nearly all since ~2015 | **A small minority** — flagship Pixel, some Samsung, few others |
 
-> **📖 Definition — the guarantee of each level, in one sentence each**
+> **Definition — the guarantee of each level, in one sentence each**
 > **Software:** the key is protected by the same operating system that is protecting everything else, so it is exactly as strong as the OS and no stronger.
 > **TEE:** the key material is not visible to *any code running under Android*, including the kernel and including `root`; extracting it requires breaking the secure world's own code or the silicon.
 > **StrongBox:** additionally, the key material is not on the same die as the application processor, so an attack that compromises the main SoC — including physical attacks on it — does not reach the key.
 
-> **🧠 Mental Model — the levels answer different questions**
+> **Mental Model — the levels answer different questions**
 > The three levels are not "good, better, best" on a single axis. They answer *whose compromise is survivable*:
 > - Software survives nothing above the app.
 > - TEE survives compromise of **Android** (kernel included).
@@ -381,10 +381,10 @@ Start below the software. A modern Android SoC contains, at minimum:
 | Secure timer / monotonic counter | A counter that only increases and is not resettable from the normal world | Makes throttling and rollback resistance possible |
 | Optional: discrete secure element | A separate packaged chip on the board | StrongBox |
 
-> **🔬 Under the Hood — why the TZASC is the real boundary**
+> **Under the Hood — why the TZASC is the real boundary**
 > The most common misconception about TrustZone is that it is a software mode. It is not. `NS` (non-secure) is a physical signal on the AMBA/AXI bus, asserted alongside every memory transaction the CPU issues. The TZASC is configured at boot to mark certain physical address ranges as secure-only. When the AP is running in non-secure state and issues a read to a secure range, **the memory controller refuses it in hardware** — no exception handler decided that, no code was consulted. The kernel could be entirely under an attacker's control and the read would still fail. This is why "root can read all memory" stops being true at the secure-world boundary.
 
-> **📖 Definition — TEE, precisely**
+> **Definition — TEE, precisely**
 > A **Trusted Execution Environment** is an execution context on the same physical processor as the main OS, isolated from it by hardware, with its own operating system, its own memory, and a controlled entry point. On ARM it is normally implemented with TrustZone. It is *not* a separate chip; it *is* separate memory and separate privilege. Code inside it is called a **trusted application** or **trustlet**.
 
 ### 3.2 ARM TrustZone mechanics
@@ -455,7 +455,7 @@ $ adb shell 'ps -A -o NAME' | grep -i keymaster
 android.hardware.keymaster@4.1-service.beanpod
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Identifying the TEE OS is a two-minute step that changes what you should read next. "Is there published research on extracting keys from this TEE?" has a very different answer for QSEE (extensive) than for Beanpod (almost none, which is not the same as "secure"). Record the TEE vendor in every report alongside the device model.
 
 ### 3.4 KeyMint and Keymaster — and why the version you assume is wrong
@@ -473,7 +473,7 @@ The interface between Android and the secure world has been renamed and re-speci
 | KeyMint 2 | AIDL `V2` | Android 13 | Certificate-chain changes, RKP maturity |
 | KeyMint 3 | AIDL `V3` | Android 14 | — measured on target C, which reports `attestationVersion 300` |
 
-> **⚠️ Warning — "Android 12+ means KeyMint" is false, and this chapter measured it false**
+> **Warning — "Android 12+ means KeyMint" is false, and this chapter measured it false**
 > Target A runs **Android 13 (API 33)** and its Keystore is backed by:
 >
 > ```
@@ -481,7 +481,7 @@ The interface between Android and the secure world has been renamed and re-speci
 > android.hardware.keymaster@4.1::IKeymasterDevice/default
 > ```
 >
-> — a **legacy HIDL Keymaster 4.1 HAL**, not KeyMint. `keystore2` drives it through a compatibility shim, visible in `service list` as `android.security.compat: [android.security.compat.IKeystoreCompatService]`. The framework is modern; the silicon's interface is not. A device that ships with a new Android version on old hardware keeps the old HAL, and every KeyMint-only capability is simply absent. Read the running HAL, never the API level.
+> — a **legacy HIDL Keymaster 4.1 HAL**, not KeyMint. `keystore2` drives it through a compatibility shim, visible in `service list` as `android.security.compat: [android.security.compat.IKeystoreCompatService]`. The framework is modern; the silicon's interface is not. A device that ships with a new Android version on old hardware keeps the old HAL, and every KeyMint-only capability is absent. Read the running HAL, never the API level.
 
 The version is also readable as a feature flag from API 31 onwards — and its encoding is worth knowing:
 
@@ -503,7 +503,7 @@ Target B declares **no keystore feature at all** and still puts every key in the
 
 ### 3.5 StrongBox, precisely
 
-> **📖 Definition — StrongBox**
+> **Definition — StrongBox**
 > A KeyMint implementation running on a **physically separate, tamper-resistant secure element** with its own CPU, RAM, non-volatile storage, random number generator and clock, connected to the application processor over a serial bus. Requested with `setIsStrongBoxBacked(true)`, advertised by `PackageManager.FEATURE_STRONGBOX_KEYSTORE`, and reported by `KeyInfo.getSecurityLevel()` as `SECURITY_LEVEL_STRONGBOX` (2).
 
 What the separate chip buys you, concretely:
@@ -544,7 +544,7 @@ int actual = readSecurityLevel(key);      // KeyInfo.getSecurityLevel()
 reportToServer(actual);                   // the server decides what this device is allowed to do
 ```
 
-> **⚠️ Warning — the fallback that becomes the vulnerability**
+> **Warning — the fallback that becomes the vulnerability**
 > The dangerous version of the code above catches a broader exception:
 >
 > ```java
@@ -573,7 +573,7 @@ The only thing that saves it is **making guesses impossible to perform offline**
 
 #### 3.6.2 What Gatekeeper is
 
-> **📖 Definition — Gatekeeper**
+> **Definition — Gatekeeper**
 > The Android component that enrols and verifies lock-screen credentials (PIN, pattern, password) **inside the TEE**, throttles failed attempts using secure hardware state, and — on success — issues a cryptographically signed **hardware auth token** that KeyMint will accept as proof the user authenticated. It exists as a trusted application in the secure world, a vendor HAL (`android.hardware.gatekeeper@1.0::IGatekeeper`), and a normal-world daemon (`gatekeeperd`) that relays between the framework and the HAL.
 
 Its interface is two operations:
@@ -599,7 +599,7 @@ password_handle_t (conceptually — the exact layout is vendor-defined)
 
 **This is the entire trick.** The stored handle is not a password hash in any useful sense — it is a *keyed* MAC, and the key is in hardware. Copy the handle to a GPU farm and you can compute nothing: you do not have `K_gk`, and no amount of compute derives it. Verification is not "hash the candidate and compare"; it is "ask the chip, which is the only thing that can compute the comparison value".
 
-> **🧠 Mental Model**
+> **Mental Model**
 > An ordinary password hash lets *anyone with the hash* try candidates. Gatekeeper's handle lets *only the chip that made it* try candidates. That single change converts an offline attack into an online one, and an online attack is one the hardware can rate-limit. Everything else — the throttle, the auth token, the key binding — is built on top of that conversion.
 
 #### 3.6.3 Throttling, and why it cannot be reset
@@ -615,7 +615,7 @@ On a failed `verify`, the Gatekeeper TA increments a failure counter held in sec
 
 Vendors tune the exact numbers, and the framework layers its own policy on top (for example, wiping after N failures under device policy). What matters is *where the counter lives*.
 
-> **🔬 Under the Hood — three ways people try to defeat the throttle, and why each fails**
+> **Under the Hood — three ways people try to defeat the throttle, and why each fails**
 > **"Delete the counter file in `/data`."** The framework-side lockout state does live in `/data/system`, and clearing it does clear the *UI* lockout. It does not clear the TA's counter, which is why the correct PIN still gets refused with a retry timeout after you have done it. The framework counter and the Gatekeeper counter are different objects.
 > **"Reboot to reset it."** Gatekeeper implementations persist the counter or bind it to a monotonic counter precisely so that a reboot does not help. Some early implementations were weaker here; that was a bug class, not the design.
 > **"Copy the handle off and brute-force it elsewhere."** There is nothing to brute-force. Without `K_gk` the handle is a random string.
@@ -629,7 +629,7 @@ When you create a key with `setUserAuthenticationRequired(true)`, the framework 
 
 Change the PIN and a new enrolment happens with a **new SID**. Every existing key bound to the old SID can never be satisfied again, and using one throws `KeyPermanentlyInvalidatedException`. This is not a bug and not a rough edge — it is the point. A credential change must invalidate everything the old credential authorised, or an attacker who can change the credential inherits everything it protected.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > This gives you a clean, non-destructive test. Ask the user to change their PIN (on a test device you own), then use the app. If the app's auth-gated feature **still works with no re-enrolment**, its "biometric protection" was not bound to a key — it was a UI check. If it correctly throws and re-enrols, the binding is real. This is one of the few tests in this area that needs neither root nor Frida.
 
 #### 3.6.5 Measured: reading Gatekeeper's state from an ordinary shell
@@ -728,7 +728,7 @@ flowchart TD
 
 Everything in that diagram happens **inside the secure world**. That is the answer to "why can't a rooted framework forge it": the framework is not a participant in the check. It carries the token from Gatekeeper to KeyMint and it can *fail* to carry it, but it cannot produce one, alter one, or persuade KeyMint to skip the check.
 
-> **🧠 Mental Model — what root can and cannot do to the HAT**
+> **Mental Model — what root can and cannot do to the HAT**
 > Root **can**: suppress a token (denial of service), replay a token within its validity window, hook `BiometricPrompt` callbacks so the *UI* reports success, and use any key that is not auth-bound.
 > Root **cannot**: mint a token, change a token's SID or timestamp, satisfy a per-use binding without a real authentication, or make KeyMint ignore `Tag::USER_SECURE_ID`.
 > Therefore the correct reading of a "biometric bypass" demonstration is: *did the attacker get the plaintext, or did they only get the UI to say yes?* [49 §3.5.3](../49-KeyStore/README.md) and chapter 48's material on `BiometricPrompt` are the other halves of this test.
@@ -745,7 +745,7 @@ Per-use binding (`setUserAuthenticationParameters(0, …)`, or the deprecated `s
 
 ### 3.8 Rollback resistance, secure storage, and what "deleted" means
 
-> **📖 Definition — rollback resistance**
+> **Definition — rollback resistance**
 > A KeyMint key is *rollback-resistant* if the implementation guarantees that once the key is deleted, it can never be used again — even if an attacker restores an old copy of the entire flash storage. Represented by `Tag::ROLLBACK_RESISTANCE` (KeyMint) / `Tag::ROLLBACK_RESISTANT` (Keymaster 3 and earlier).
 
 Why it is hard: an ordinary Keystore key is a *blob on flash*. Delete the row from `persistent.sqlite` and the key is gone from the database — but if an attacker took a raw image of the partition yesterday, restoring that image restores the blob, and the blob still decrypts, because the HUK has not changed. Deletion in the database is not destruction in the hardware.
@@ -791,7 +791,7 @@ Every clause of that sentence is load-bearing, and the things it does **not** sa
 | That the TEE is unbroken | The chain inherits the manufacturer's provisioning integrity and the TEE's soundness. A broken TEE produces perfect attestations |
 | Anything at all, if `attestationSecurityLevel` is `Software` | The claim was then made by the Android framework, which the attacker owns |
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Attestation converts "trust me" into "trust the manufacturer's silicon, and check the maths yourself". That is an enormous improvement and a bounded one. It moves the trust, it does not eliminate it — and it says nothing about the *moment of use*, which is where [49](../49-KeyStore/README.md)'s extraction-versus-use distinction lives.
 
 #### 3.9.2 The `softwareEnforced` / `hardwareEnforced` split, shown rather than asserted
@@ -870,7 +870,7 @@ against target B's chain, which terminates at the well-known Google hardware att
     spki-sha256 : feb2ea7551ee316ed4bb443c8293b884dbfdea40b603ee3e4f4a897e4580fbae
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > A server that does not pin the root will accept the emulator's chain, because it is internally perfectly valid — every signature verifies. `parse-attestation.py` reports `PASS` for all three links on target C's chain and still tells you the attestation is worthless, because *chain validity and trustworthiness are different questions*. When you review a verifier, the two things to check are: which root it pins, and which list it reads. Everything else is detail.
 
 #### 3.9.3 Remote Key Provisioning, in one paragraph
@@ -911,7 +911,7 @@ OS's own (much less battle-tested) isolation.
 | **Secure UI / Protected Confirmation** | Render a dialogue the normal world cannot draw over or read | Compromise defeats the one anti-overlay control that is not defeatable from Android |
 | **Vendor-specific** (payment, SIM lock, RPMB management, sensor attestation) | Varies | Unknown surface. The single strongest argument for reading `lshal` output carefully |
 
-> **🔬 Under the Hood — the DRM trustlet is the reason so many TEE exploits exist**
+> **Under the Hood — the DRM trustlet is the reason so many TEE exploits exist**
 > A media-decryption trustlet has to parse attacker-supplied, structurally complex data — licence
 > blobs, container metadata, key requests — arriving from a normal-world app. That is a parser
 > attack surface inside the highest-privilege environment on the device, which is close to the
@@ -939,7 +939,7 @@ includes the exact text shown. The key will not sign anything else. The server c
 just "this device signed the transaction" but "a human on this device was shown *this specific
 string* and physically confirmed it".
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > You will almost never see this in the wild — it requires hardware support that few devices have,
 > and no target measured for this chapter supports it. Its value to you is as a *comparison*: when a
 > developer argues that their in-app confirmation dialogue is a security control, this is the thing
@@ -978,7 +978,7 @@ What this means in practice:
 | A device rolled *back* to an older OS | The blob's version binding is **newer** than the system. Upgrade is refused, by design, and keys become unusable |
 | An OEM update that changes the TEE implementation | Vendor-dependent. On some devices keys survive; on others they do not, and users experience it as "the app forgot my login after the update" |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > "Users lost their saved credentials after the system update" is a support-ticket phrase that
 > usually means keys were invalidated by a version binding or a TEE change, not that the app has a
 > bug. It matters to you because it is one of the pressures that pushes teams towards a
@@ -1101,7 +1101,7 @@ The `Verify` path in `gatekeeper.cpp` follows this order, and the order itself i
 4. On failure: increment and persist the failure record, return the new timeout.
 5. On success: clear the failure record, mint an `hw_auth_token_t`, sign it with `K_shared`, return it.
 
-> **🔬 Under the Hood — why step 2 comes before step 3**
+> **Under the Hood — why step 2 comes before step 3**
 > If the implementation compared the password first and applied the throttle afterwards, the timing difference between "wrong password" and "throttled" would leak, and — worse — an attacker who could crash or reset the TA between the compare and the counter write would get unlimited attempts. Throttle-then-compare is the ordering that makes the counter authoritative. When you audit any rate-limited authentication, this ordering is the first thing to check, and it generalises well beyond Android.
 
 ### 4.3 The KeyMint side: where an authorisation actually becomes enforcement
@@ -1208,7 +1208,7 @@ This is the cleanest possible demonstration of the chapter's thesis, and it has 
 | **This is why "check `ro.boot.verifiedbootstate`" is bad advice in most published hardening guides.** | It is not merely weak. On a rooted device it returns the *wrong* answer with total confidence, which is worse than returning nothing |
 | **It also bounds what root can do.** | Root rewrote the property. Root could not rewrite the attestation, because root cannot reach `K_attest`. The two facts together are the whole trust model in one experiment |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Run this experiment on any rooted test device before you next argue with a developer about integrity checks. It takes two minutes, needs no app, and produces a signed contradiction of the device's own claim about itself. It is the single most persuasive artefact in this chapter.
 
 ### 5.2 How attackers abuse hardware-backed security
@@ -1341,7 +1341,7 @@ Named identifiers are given only where the issue is well documented and the iden
 | **Weak or normal-world timer for throttling** | If a vendor wires Gatekeeper's `GetMillisecondsSinceBoot` to a manipulable clock, offline-style guessing becomes possible | Class; a vendor-specific audit target |
 | **Rollback of the failure record** | If the Gatekeeper failure record is stored without rollback protection, restoring storage resets the throttle | Class; see §3.8 and §4.2 |
 
-> **⚠️ Warning**
+> **Warning**
 > Do not write "the device's TEE is vulnerable" in a report on the strength of the device being old. TEE advisories are vendor- and model-specific, patch levels for the TEE are carried in `ro.vendor.build.security_patch` and in the attestation's `vendorPatchLevel`/`bootPatchLevel` — which is *why* those fields exist. Target B attested `vendorPatchLevel: 20211201`. That is a checkable fact; "old phones are insecure" is not.
 
 ### 5.5 OWASP MASVS and MASTG mapping
@@ -1536,7 +1536,7 @@ Three readings, all mechanical:
 
 The weak form is recognisable by what is *missing*: a builder chain with no `setUserAuthenticationRequired` at all, and often no `setRandomizedEncryptionRequired`.
 
-> **🔍 Pentester's Note — what obfuscation does and does not do**
+> **Pentester's Note — what obfuscation does and does not do**
 > R8/ProGuard cannot rename `android.security.keystore.KeyGenParameterSpec$Builder` or its methods; they are platform API. What obfuscation removes is the *app's* names — the wrapper class, the alias constant (often moved into a `StringFogged` decryptor), and the control flow around the fallback. So after obfuscation you can still find every builder chain and read every option, but you may not be able to tell *which feature* a key belongs to without dynamic analysis. See [40](../40-Obfuscation/README.md), [41](../41-ProGuard/README.md), [42](../42-R8/README.md).
 
 ### 6.3 Native code
@@ -1647,7 +1647,7 @@ context bootstrap  : needed - IllegalStateException: Failed to obtain applicatio
                      ActivityThread.systemMain() -> android.app.ContextImpl
 ```
 
-> **🔬 Under the Hood — where the keys you create actually go**
+> **Under the Hood — where the keys you create actually go**
 > Running as uid 2000 puts your keys in the **shell's** keystore namespace, not an app's. That is what makes the technique safe on a daily driver: you cannot touch an app's keys and an app cannot touch yours. It also has one visible consequence in the attestation — target B's chain reported `attestationApplicationId: package : UnknownPackage`, because uid 2000 has no single owning package, while target C's reported `com.android.shell (version 35)` with a real signing digest. Neither is a defect; both are the honest answer to "which package is calling?".
 
 ### 7.3 The Frida script, and what it prints
@@ -1676,7 +1676,7 @@ frida -U -f com.target.app -l scripts/hook-security-level.js
 
 That `note Builder.setMaxUsageCount not present on this platform` line is worth pausing on. It is the **same defect §2.3 found from an entirely different direction**: the probe found it by calling the method and catching `NoSuchMethodError`; Frida found it by enumerating the class and failing to find the overload. Two independent mechanisms agreeing is much stronger evidence than either alone, and it is why the claim is stated as a measurement rather than a suspicion.
 
-> **⚠️ Warning — Frida's Java bridge and `app_process` do not mix, measured**
+> **Warning — Frida's Java bridge and `app_process` do not mix, measured**
 > Attaching the same script to an `app_process` invocation on target B produced `Java.available = true` but the `Java.perform()` callback **never ran**; attaching to `com.android.settings` on the same device, seconds later, ran it immediately. The two techniques in this chapter are complementary, not interchangeable: use `app_process` when you have no root and want the *device's* answer, and Frida when you have root and want the *app's* answer. Do not try to drive the probe under Frida.
 
 ### 7.4 Testing the auth binding with no tooling at all
@@ -1993,7 +1993,7 @@ The three rules the file exists to demonstrate:
 - run `hook-security-level.js` against it and watch the `SecretKeySpec` alarm fire;
 - hand a developer a diff between the two files rather than a paragraph of advice.
 
-It is deliberately *plausible* code. Nobody writes an obviously bad key manager; they write a defensive one that never crashes, and the never-crashing is the bug.
+It is deliberately *plausible* code. Nobody writes a blatantly bad key manager; they write a defensive one that never crashes, and the never-crashing is the bug.
 
 ### 9.5 Enterprise — posture as a first-class, server-side decision
 

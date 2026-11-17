@@ -263,7 +263,7 @@ convenience wrapper over roughly the Java-layer hooks in
 not know about your target's custom checker class, and it will not tell you *why* it failed when it
 fails.
 
-Use it as a thirty-second probe. If it works, note that the app's protection is Java-only and move on.
+Use it as a thirty-second probe. If it works,the app's protection is Java-only and move on.
 If it does not, run the tracer.
 
 ---

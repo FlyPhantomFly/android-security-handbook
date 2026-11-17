@@ -103,7 +103,7 @@ description of what their product does to an APK. Read them as vendor claims, no
 | Digital.ai (formerly Arxan) | App Protection | Native hardening and integrity webs; the marketing describes the technique categories |
 | Qihoo 360, Bangcle, Tencent, Ijiami | regional packers | Documentation is often Chinese-language; the artefacts in §3.7.4 are more useful than the marketing |
 
-> **⚠️ Warning**
+> **Warning**
 > Do not write a vendor's name into a client report without a positive, defensible identification.
 > Products change, libraries get renamed, and vendors ship different tiers to different customers. The
 > useful output of identification is not the name — it is the answer to "has anyone published a general

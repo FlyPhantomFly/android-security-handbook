@@ -3,10 +3,10 @@
 Four directories and one build script. Three of the directories are Android apps; the fourth is a
 page served from your host machine that attacks one of them.
 
-> **⚠️ Authorised testing only.** `vulnerable-webview/` is deliberately insecure — it is an
-> app that will hand its private files to any page it renders. Install it on a device you own,
-> and uninstall it when you are finished (`./build.sh --uninstall`). Do not put it on a phone
-> you use for anything else.
+> `vulnerable-webview/` is deliberately insecure — it is an app that will hand its private files to
+> any page it renders. Install it on a device you own, and uninstall it when you are finished
+> (`./build.sh --uninstall`). Do not put it on a phone you use for anything else. See
+> [SECURITY.md](../../SECURITY.md) for authorised-testing scope.
 
 ---
 

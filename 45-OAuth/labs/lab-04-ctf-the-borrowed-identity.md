@@ -326,7 +326,7 @@ curl -s -X POST http://localhost:9000/token \
 You now hold an `id_token` for `victim@lab.local`. POST it to the backend and read the note.
 
 **Layer that failed:** the authorisation server's token endpoint. **Control that failed:** PKCE
-enforcement. Note that the *client* did everything right.
+enforcement.the *client* did everything right.
 </details>
 
 <details>

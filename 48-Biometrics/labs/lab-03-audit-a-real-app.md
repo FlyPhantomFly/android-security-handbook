@@ -12,7 +12,7 @@
 | **Chapter sections** | [§5.3](../README.md), [§5.7](../README.md), [§6](../README.md), [§7](../README.md), [§8](../README.md) |
 | **Files** | [`../scripts/grade-biometric-usage.py`](../scripts/grade-biometric-usage.py), [`../scripts/hook-biometric-prompt.js`](../scripts/hook-biometric-prompt.js), [`../scripts/probe-biometrics.sh`](../scripts/probe-biometrics.sh) |
 
-> **⚠️ Warning — scope**
+> **Warning — scope**
 > Run this only against an app you are authorised to test: your own, a deliberately vulnerable
 > training app, or one covered by a written engagement scope. Instrumenting a third-party app on a
 > device you own is a grey area in many jurisdictions and a clear breach of most terms of service.
@@ -91,7 +91,7 @@ dumpsys fingerprint
 Write down `accept` and `acceptCrypto`. You will read them again after exercising the app, and the
 delta is a zero-tooling verdict.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > This step takes four minutes and it has saved entire engagements. On the API 30 device used for
 > this chapter, `dumpsys biometric` produced **no output at all** while the phone plainly had a
 > working fingerprint sensor. A tester who took that as "no biometric hardware" would have written
@@ -134,7 +134,7 @@ for a in *.apk; do
 done
 ```
 
-> **⚠️ Warning — this exact command has a bug you should know about**
+> **Warning — this exact command has a bug you should know about**
 > An earlier version of this triage piped the DEX through `strings`. On the machine this chapter was
 > written on, `strings` on `PATH` was a Windows Sysinternals-style binary that does not behave like
 > GNU `strings` on a pipe, and **every app in a 43-app sweep reported zero for every signal.** The
@@ -282,7 +282,7 @@ run-as $PKG ls -la /data/data/$PKG/shared_prefs /data/data/$PKG/databases
 run-as $PKG cat /data/data/$PKG/shared_prefs/*.xml | head -50
 ```
 
-> **🔍 Pentester's Note — `run-as` refuses in two distinct ways**
+> **Pentester's Note — `run-as` refuses in two distinct ways**
 > Chapter 60 measured this precisely: a debuggable third-party app succeeds; a debuggable **system**
 > app returns `package not an application`; a non-debuggable app returns `package not debuggable`.
 > The real rule is `FLAG_DEBUGGABLE` **and** an application uid. Reading the first message as "not
@@ -458,7 +458,7 @@ measured exactly this trap — an app reporting zero security controls in `base.
 ships in splits — and a scan that does not notice it will confidently report an absence that is not
 there.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Read the funnel as three questions, each narrower than the last: *does the app have a biometric
 > surface?* (16), *does it have the vocabulary of binding?* (13, mostly from a bundled library),
 > *does it have the one flag that creates the guarantee?* (4). Only the third question is about

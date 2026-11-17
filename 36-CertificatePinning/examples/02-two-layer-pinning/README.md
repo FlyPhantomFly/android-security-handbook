@@ -34,7 +34,7 @@ openssl ecparam -genkey -name prime256v1 -noout -out /tmp/backup.key
 ../../scripts/spki-pin.sh --key /tmp/backup.key
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > `backup.key` is a private key. It must never be committed, and this repository's verification
 > script treats a committed key as a failure. Generate it in a scratch directory outside the repo.
 

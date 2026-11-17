@@ -130,7 +130,7 @@ key can only be used by a `Cipher` that was itself authorised, which means `Biom
 receive a `CryptoObject` wrapping that exact cipher. There is no window for unrelated code to ride
 along.
 
-In form (B), **any** authentication in the last 30 seconds — including the user simply unlocking the
+In form (B), **any** authentication in the last 30 seconds — including the user unlocking the
 device for an unrelated reason — authorises **any** use of the key by **any** code in the process,
 with no prompt at all. Your hook does not have to defeat the biometric; it just has to wait for the
 user to unlock their phone.
@@ -221,7 +221,7 @@ int level = info.getSecurityLevel();     // API 31+
 | `SECURITY_LEVEL_UNKNOWN_SECURE` (-2) | Secure, level unreported. Acceptable |
 
 Below API 31 you have `isInsideSecureHardware()`, which is a boolean floor, not a grade: `true` tells
-you "not pure software" and nothing about whether the TEE is robust or minimal.
+you "not pure software" and nothing about whether the TEE is strong or minimal.
 
 `KeyGenParameterSpec` is what you asked for. `KeyInfo` is what you got. Never audit an app from the
 spec alone, and always read the level on the *target's* hardware, not on your Pixel.
@@ -274,7 +274,7 @@ trusting the device. Verifying it on the device means the attacker, who controls
 the verifier. Hook the method, return `true`, done.
 
 If you find an app doing this, it is a finding — and a particularly instructive one, because the
-developers clearly understood the mechanism and then spent all the effort in the wrong place.
+developers understood the mechanism and then spent all the effort in the wrong place.
 
 ---
 
@@ -299,7 +299,7 @@ them.
 It is a real and often-missed detail, but it is not a defeat.
 
 When you `Cipher.doFinal(plaintext)`, the plaintext travels from your process to `keystore2` and into
-the HAL. So the plaintext is visible to your process (obviously — you produced it) and to `keystore2`,
+the HAL. So the plaintext is visible to your process (unsurprisingly — you produced it) and to `keystore2`,
 which is a more privileged, more trusted component running as UID 1017 in its own SELinux domain.
 
 The **key** still never crosses. That is the property being protected. If you can already read the

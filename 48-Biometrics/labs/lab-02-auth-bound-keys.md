@@ -13,7 +13,7 @@
 | **Chapter sections** | [§3.5](../README.md), [§3.6](../README.md), [§7.3](../README.md) |
 | **Files** | [`../scripts/probe-biometrics.sh`](../scripts/probe-biometrics.sh), [`../scripts/BiometricProbe.java`](../scripts/BiometricProbe.java), [`../examples/03-TimeBoundTrap.kt`](../examples/03-TimeBoundTrap.kt) |
 
-> **⚠️ Warning**
+> **Warning**
 > Part C sets a lock-screen PIN. **Do this on an emulator or a dedicated test device, never on a
 > phone you rely on.** The lab removes the PIN at the end, but a device left in an unexpected lock
 > state is a bad afternoon. If your only device is a daily driver, do parts A and B and read part C.
@@ -83,7 +83,7 @@ The runs in this lab came from two devices:
 | Features | `android.hardware.fingerprint` only | `fingerprint` **and** `biometrics.face` |
 | Keystore | TEE (`isInsideSecureHardware=true`), no StrongBox | `SOFTWARE` |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Note what is *absent* from the Redmi's feature list: `android.hardware.biometrics.face`. That
 > phone has face unlock — `miui.face.FaceService` is registered, `com.miui.face` is running, and
 > `settings list secure` shows `facelock_liveliness_recognition_threshold=2.2`. It is entirely
@@ -261,7 +261,7 @@ Measured result: `canAuthenticate(DEVICE_CREDENTIAL)` changed from `11` (`ERROR_
 `0` (`BIOMETRIC_SUCCESS`) — so the credential definitely took — and
 `key.timebound_30.create` **still failed** with `Gatekeeper service not available`.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > You have just run a proper controlled experiment. One variable (the credential) changed and the
 > symptom did not; another variable (the SELinux domain) changed and the symptom did. That is the
 > difference between "I think it's a permissions thing" and "it is a permissions thing", and it is
@@ -455,7 +455,7 @@ Things worth noticing in the diff:
 | `key.baseline.securityLevel` | `isInsideSecureHardware=true` | `SOFTWARE` | An emulator enforces nothing in hardware |
 | `key.*.enforcedBySecureHardware` | — | `false` | Correlates with the above |
 
-> **⚠️ Warning**
+> **Warning**
 > The emulator row is the one to remember. Chapter 50 measured that **on an emulator every key is
 > `SOFTWARE`, `hardwareEnforced` is empty, and the attestation chain still verifies perfectly.** A
 > valid chain proves the chain, not the hardware. Any conclusion about *enforcement* drawn on an
@@ -541,7 +541,7 @@ adb unroot
 ./scripts/probe-biometrics.sh 2>&1 | grep 'canAuthenticate(DEVICE'
 ```
 
-> **⚠️ Warning — `locksettings clear` lies to you when you are not root**
+> **Warning — `locksettings clear` lies to you when you are not root**
 > Measured while cleaning up after writing this lab. As uid 2000 on the API 35 emulator:
 >
 > ```
@@ -558,7 +558,7 @@ adb unroot
 > `Gatekeeper service not available` (§3) and chapter 60's three distinct `run-as` refusals. The
 > pattern is consistent enough to be a rule: **on Android, a permission failure frequently arrives
 > disguised as a capability failure.** Never accept "this device does not support X" without
-> checking whether you are simply not allowed to do X. And always verify a cleanup rather than
+> checking whether you are not allowed to do X. And always verify a cleanup rather than
 > trusting its exit message.
 
 The probe deletes its keys by **enumerating and filtering on the `ch48_probe_` prefix**, never by

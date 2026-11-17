@@ -49,7 +49,7 @@ Expected shape of the output, measured:
 | permissive | `true` | 7 | **CRITICAL** — `<debug-overrides>` becomes live |
 | hardened | `false` | 5 | MEDIUM — the scoped loopback cleartext permit, correctly |
 
-Note that the permissive file is annotated with **eight** numbered defects but
+the permissive file is annotated with **eight** numbered defects but
 the tool reports **seven** findings. Defects 3 and 4 land on the same element and
 are reported together, because `overridePins="true"` on a user anchor is not a
 separate problem from the user anchor — it is what makes it worse. Counting
@@ -61,7 +61,7 @@ That is deliberate. A tool that prints nothing for a good configuration teaches
 you nothing about it; these four say what the policy is, when the pin-set stops
 protecting anything, and which of the entries can never fire.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The `MEDIUM` on the hardened file is the loopback cleartext permit, and it is a
 > false positive **in context** — `localhost`, `127.0.0.1` and `10.0.2.2` are not
 > reachable from a network path. Being able to explain why your own tool's
@@ -102,7 +102,7 @@ openssl s_client -connect api.example.com:443 -servername api.example.com \
 through `<certificates src="@raw/..."/>`, and reports whether a declared `<pin>`
 actually matches it.
 
-> **⚠️ Warning**
+> **Warning**
 > This repository ships **no certificates and no private keys**, and neither
 > should your notes. A pin is a public hash and is safe to write down. The key it
 > was computed from is not.

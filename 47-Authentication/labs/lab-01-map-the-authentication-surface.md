@@ -34,11 +34,10 @@ This lab builds the inventory. [Lab 02](lab-02-session-lifecycle-and-logout.md) 
 session, [Lab 03](lab-03-enumeration-lockout-and-otp.md) attacks the login flow itself, and
 [Lab 04](lab-04-ctf-the-account-that-would-not-close.md) is the CTF that needs all three.
 
-> **⚠️ Authorised testing only**
-> Use applications you own, applications you have written permission to assess, or
-> deliberately vulnerable ones. The scanning in Part 1 reads local files and sends nothing,
-> so it is safe against any APK you legally possess — but **do not act on** what you find in
-> a third-party app without authorisation.
+> Use applications you own or deliberately vulnerable ones. The scanning in Part 1 reads local
+> files and sends nothing, so it is safe against any APK you legally possess — but keep it
+> read-only for third-party apps. See [SECURITY.md](../../SECURITY.md) for authorised-testing
+> scope.
 
 ---
 
@@ -74,7 +73,7 @@ for p in $(adb shell pm path $PKG | tr -d '\r' | sed 's/package://'); do
 done
 ```
 
-> **⚠️ Scan every split, or your result is meaningless**
+> **Scan every split, or your result is meaningless**
 > An app that ships its code in split APKs shows an almost empty `base.apk`.
 > [38-TamperDetection](../../38-TamperDetection/README.md) measured one large application
 > presenting **zero** security controls in `base.apk` for exactly this reason. The scanner in

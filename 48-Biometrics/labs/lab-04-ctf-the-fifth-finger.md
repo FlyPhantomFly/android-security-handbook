@@ -11,7 +11,7 @@
 | **Chapter sections** | All of [§3](../README.md), [§5.3](../README.md), [§7](../README.md) |
 | **Prerequisite labs** | [01](lab-01-callback-vs-crypto.md) and [02](lab-02-auth-bound-keys.md) |
 
-> **⚠️ Warning — deliberately vulnerable**
+> **Warning — deliberately vulnerable**
 > `VaultTimeApp` is built from broken code on purpose. Build and install it **only on a device or
 > emulator you own**. It has no network permission and every endpoint named in its source uses the
 > `.invalid` TLD, which is reserved by RFC 2606 and can never resolve. Uninstall it when you finish.
@@ -694,7 +694,7 @@ plaintext is nevertheless recoverable because the application persists an unencr
 `SharedPreferences`. Severity **High**. The finding is **storage**, and the biometric section of the
 report should say **pass**.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > This is the most important flag in the CTF and the least fun to take. The lesson is the whole
 > chapter's professional argument: *the biometric is usually not the weakest link, and a tester who
 > only knows how to attack the biometric will report the wrong finding — or report the app as secure

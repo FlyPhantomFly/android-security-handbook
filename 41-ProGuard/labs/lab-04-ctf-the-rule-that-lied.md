@@ -258,7 +258,7 @@ Then check all three properties:
 - The auditor reports no CRITICAL and no HIGH.
 
 **Task 4.3.** Run the auditor on the original and on yours, and paste the two summary lines side by
-side. The original measures `CRITICAL=0, HIGH=1, MEDIUM=1, LOW=0, INFO=4` — note that it does **not**
+side. The original measures `CRITICAL=0, HIGH=1, MEDIUM=1, LOW=0, INFO=4` —it does **not**
 flag the rule that lied, because the auditor scores *breadth*, and a rule that is too narrow is
 invisible to it.
 

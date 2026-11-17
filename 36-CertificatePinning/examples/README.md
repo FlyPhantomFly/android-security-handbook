@@ -34,7 +34,7 @@ Only example 2 produces a binary, and its build is documented in
 [`02-two-layer-pinning/README.md`](02-two-layer-pinning/README.md). It builds **outside this
 repository** — no `.so`, `.apk`, `.dex`, `.class`, key or certificate is ever committed here.
 
-> **✅ What has been verified about `native_pin.c`, and what has not.**
+> **What has been verified about `native_pin.c`, and what has not.**
 > `02-two-layer-pinning/native_pin.c` and the CTF's
 > [`../labs/ctf-pin-that-moved/pin_gate.c`](../labs/ctf-pin-that-moved/pin_gate.c) both **compile
 > clean** with `-Wall -Wextra -O2`, cross-targeting `aarch64-linux-android21` with

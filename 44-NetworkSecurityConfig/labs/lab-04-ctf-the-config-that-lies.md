@@ -204,7 +204,7 @@ Then check the two things a static read can never fully settle:
    milliseconds. Convert it. Does it match your Q3 answer?
 2. **The anchor sources** for `api.vaultpay.io`, and whether the user entry carries `[overridePins]`.
 
-> **✅ Verification checkpoint**
+> **Verification checkpoint**
 > If `nsc-runtime.js` prints a pin-set expiry for `img.cdn.vaultpay.io` that is not
 > `2023-03-01T00:00:00` in your device's local time, one of your assumptions about the platform's
 > date parsing is wrong, and finding out which is worth more than the flag.
@@ -221,7 +221,7 @@ Read them one at a time, and only when stuck.
 The nested `<domain-config>` declares a `<pin-set>` and nothing else. What does it declare about
 cleartext? What does it declare about trust anchors? Now re-read
 [README §3.3](../README.md#3-deep-internal-working) on what happens to a property that is not
-declared, and note that the resolution walks to the **enclosing `<domain-config>`** before it reaches
+declared, and confirm that the resolution walks to the **enclosing `<domain-config>`** before it reaches
 `<base-config>`.
 </details>
 
@@ -238,7 +238,7 @@ what a lenient calendar does with a field that is out of range. It does not thro
 
 The pin-set is live — its expiry really is in 2031. So the pins are enforced. Now read
 `NetworkSecurityTrustManager.isPinningEnforced()` in
-[README §3.6](../README.md#3-deep-internal-working) again, and note that it has **three** exit
+[README §3.6](../README.md#3-deep-internal-working) again, and confirm that it has **three** exit
 conditions, not one. Then look at the `<certificates>` element next to the pinned domain and read
 every one of its attributes.
 </details>
@@ -392,7 +392,7 @@ the correct thing to put in a report.
 
 **Three.**
 
-Note that `nsc-audit.py`'s `NSC-002` finding says "cleartext permitted for 2 specific domain(s)",
+`nsc-audit.py`'s `NSC-002` finding says "cleartext permitted for 2 specific domain(s)",
 because it counts `<domain-config>` elements that *declare* `true`. Two declarations, three effective
 scopes. Counting declarations rather than effective values is exactly the mistake the nested config
 is built to catch, and the tool's own output is not the answer here — the effective-policy table

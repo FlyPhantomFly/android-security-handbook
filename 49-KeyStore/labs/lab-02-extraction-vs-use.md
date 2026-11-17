@@ -33,16 +33,16 @@ broken."* It is not — you had code execution in the process, which is a much s
 position than the Keystore was ever designed to defend against, and you would probably have got the
 token without touching the crypto at all.
 
-> **📖 Definition — non-extractability**
+> **Definition — non-extractability**
 > The guarantee that key material never enters the application's process. The app holds an alias and a
 > handle; `getEncoded()` returns `null`; the bytes live in `keystore2` and then in secure hardware. It
 > is a real, strong property and it holds against root.
 
-> **📖 Definition — non-usability**
+> **Definition — non-usability**
 > A guarantee the Keystore does **not** make by default. Any code in the app's process can command any
 > key the app owns, for any operation the key's authorization list permits.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > The Keystore is a safe bolted to the floor of the app's office, with a slot in the door. You cannot
 > carry the safe away — that is non-extractability, and it is genuinely useful, because it means a
 > compromise of one device does not yield a transferable secret. But anyone standing in the office can
@@ -486,7 +486,7 @@ authorised, so either the app fails outright, or (much more commonly) the develo
 key's binding to make it work, and you are back to Finding 4.
 
 The instructive middle case: if the app keeps the bound key but obtains its authorisation through a
-*different* `CryptoObject` and then decrypts with an unrelated `Cipher`, it simply throws. That is why
+*different* `CryptoObject` and then decrypts with an unrelated `Cipher`, it throws. That is why
 the `CryptoObject` pattern is not merely a convention — the platform enforces it.
 
 What this tells you: the control lives in **two places that must agree**. The key's authorization list
@@ -543,7 +543,7 @@ the prerequisite is part of the finding, not a footnote.**
 > that it was not documented as one, and that the same pattern is used for longer-lived credentials.
 >
 > **Detection — static.**
-> `grep -rn 'setUserAuthenticationRequired' out/sources/` — note that the significant result is its
+> `grep -rn 'setUserAuthenticationRequired' out/sources/` —the significant result is its
 > *absence* from a builder chain, which is why the dynamic check below is more reliable.
 >
 > **Detection — dynamic.**

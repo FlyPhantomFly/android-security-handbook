@@ -30,7 +30,7 @@ device is readable" into "one APK download compromises every user" — a differe
 Third, static analysis is what a client's own build pipeline could have caught, so it is the finding
 they can most easily prevent next time.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Encryption moves a secret. It does not remove one. If the app can decrypt without asking anyone
 > anything, then everything needed to decrypt is inside the app, and you can have it too. Your first
 > question about any local encryption scheme is always: **where does the key come from, and who else
@@ -132,7 +132,7 @@ buildTypes {
 }
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > Enabling R8 is the point of this setup. Half the value of the lab is watching the key survive
 > obfuscation completely intact, which is what tells you that "we obfuscate our app" is not an answer
 > to "where is your key".

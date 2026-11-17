@@ -144,7 +144,7 @@ Described by class rather than by citation where this chapter has not read the p
 | [33-Storage](../../33-Storage/README.md) | Reading `app_webview/`. Read its false-positive numbers before reporting a `localStorage` hit |
 | [35-SSL](../../35-SSL/README.md) | TLS and trust **generally**. Its tracer's silence is this chapter's diagnostic; its browser-widget note points here |
 | [36-CertificatePinning](../../36-CertificatePinning/README.md) | Pinning in the Java stack — and why none of it transfers to WebView traffic |
-| [40-Obfuscation](../../40-Obfuscation/README.md) | What survives R8. Bridge method names must be kept, which makes WebView auditing unusually robust |
+| [40-Obfuscation](../../40-Obfuscation/README.md) | What survives R8. Bridge method names must be kept, which makes WebView auditing unusually high-yield |
 | [44-NetworkSecurityConfig](../../44-NetworkSecurityConfig/README.md) | **The XML.** It governs cleartext inside WebViews; it cannot express `onReceivedSslError`. Run its auditor alongside this chapter's, always |
 | [45-OAuth](../../45-OAuth/README.md) | Why an embedded user agent is the wrong place for an authorisation flow, in depth |
 | [53-Frida](../../53-Frida/README.md) | The instrumentation used throughout §7 |

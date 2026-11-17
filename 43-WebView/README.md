@@ -82,7 +82,7 @@ This chapter is about those decisions.
 
 ### 1.2 What a WebView is, precisely
 
-> **📖 Definition — WebView**
+> **Definition — WebView**
 > `android.webkit.WebView` is a `View` — a rectangle in an app's user interface, like a button or an
 > image — that renders HTML, CSS and JavaScript. It is a **complete browser engine embedded as a UI
 > component**. On any modern Android device that engine is **Chromium**, the same engine underneath
@@ -99,7 +99,7 @@ settings it obeys are settings your app chose. The Java methods it can call are 
 published to it. The files it can read are files your app's UID can read. When a `content://` URI is
 fetched from a page inside it, the `ContentResolver` on the other end sees **your app** asking.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > A browser tab is *code you don't control, running somewhere you don't own*.
 > A WebView is *code you don't control, running somewhere you do own*.
 > Every WebView finding in this chapter is a consequence of that one sentence.
@@ -202,7 +202,7 @@ This repository divides the subject deliberately. Going to the wrong chapter was
 | What is `isolatedProcess` and how does the sandbox work? | [21-App-Sandbox](../21-App-Sandbox/README.md), [28-Services](../28-Services/README.md) |
 | **The renderer as its flagship user** | **Here, §3.3** |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > If you take one operational habit from this chapter, take this: **run the network security config
 > audit and the WebView audit together, always.** They answer different halves of "is this app's
 > traffic safe", and an app can pass one perfectly while failing the other completely. §5.3 is a
@@ -490,7 +490,7 @@ The practical consequences are unintuitive and worth listing explicitly:
 This is the first thing to establish about any WebView finding, and the thing most often left out of
 reports.
 
-> **📖 Definition — Mainline module**
+> **Definition — Mainline module**
 > A component of Android that is packaged as an APK or APEX and **updated through Google Play,
 > independently of the operating system**. The point is to let Google ship security fixes to
 > components like the media framework, DNS resolver and WebView without waiting for an OEM to build a
@@ -547,7 +547,7 @@ Read those two numbers together with `getprop ro.build.version.release`, which s
 | WebView version **actually in use** | **150.0.7871.181** (in `/data/app`) |
 | Provider APK's own `targetSdkVersion` | 36 |
 
-> **⚠️ Warning**
+> **Warning**
 > The Chromium executing inside every app on this Android 11 phone is **58 major versions newer than
 > the one the phone shipped with**. Any statement of the form "Android 11 WebViews behave like X" is
 > unverifiable without also stating the provider version. Record both, in every finding, every time.
@@ -625,7 +625,7 @@ adb shell "cat /proc/net/unix | grep -i webview"
     @com.android.internal.os.WebViewZygoteInit/1044db60-666b-4979-bec4-cab2f2a6ef03
 ```
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > Note the UUID suffix. The zygote's control socket name is **randomised per boot**. That is a
 > deliberate hardening measure: an abstract socket has no filesystem permissions
 > ([24-IPC](../24-IPC/README.md)), so anything that can guess the name can attempt to connect. A
@@ -639,7 +639,7 @@ adb shell "cat /proc/net/unix | grep -i webview"
 given up privilege. This chapter is consistent with that, and here is the platform's own best
 example.
 
-> **📖 Definition — isolated process**
+> **Definition — isolated process**
 > A process declared with `android:isolatedProcess="true"` on a `<service>`. The system runs it under
 > a **special, ephemeral UID in the 99000–99999 range**, in the SELinux domain `isolated_app`, with
 > essentially no permissions: no access to the app's data directory, no network, no ability to bind
@@ -702,7 +702,7 @@ renderer does not read the token — it sends a message, and the app process rea
 it back. The sandbox is not defeated, it is *used as designed*. The lab in §5.3 does exactly this and
 the renderer's isolation is irrelevant throughout.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > The renderer sandbox protects **the app from the page's engine**.
 > The bridge is the app volunteering to act on the page's behalf.
 > No sandbox protects you from your own deputy.
@@ -780,7 +780,7 @@ script in a very large fraction of Android apps can issue requests to `content:/
 with the host app's identity.** §3.8 measures exactly when that is exploitable, and the answer is
 narrower than most write-ups claim, which is why measuring mattered.
 
-> **⚠️ Warning — do not copy this table into a report without its version stamp.**
+> **Warning — do not copy this table into a report without its version stamp.**
 > These are the defaults for **WebView 150.0.7871.181**. Several are implemented in `AwSettings`,
 > which is provider code and updates independently of Android. Re-run the probe on the device you are
 > testing. It takes two minutes and it is the difference between a measurement and a rumour.
@@ -828,7 +828,7 @@ load `file://` URLs at all — including `file:///android_asset/` and `file:///a
 
 **When it becomes a finding:** an *explicit* `setAllowFileAccess(true)` in an app targeting 30 or
 above is a deliberate re-enable of something the platform switched off, and it deserves a reason.
-Below 30 it is simply the default and is only interesting in combination — with an attacker-influenced
+Below 30 it is the default and is only interesting in combination — with an attacker-influenced
 local file path, or with either of the two settings below.
 
 The combination that matters: **`file://` loading + a path an attacker can influence**. Where does an
@@ -836,7 +836,7 @@ attacker-controlled file come from? Downloads the app writes, files another app 
 directory that is world-writable through a different bug, or an `openFileOutput` reachable from a
 provider. Each is a separate finding and this setting is what makes it reach.
 
-Note that turning it off does **not** break `file:///android_asset/`… on all versions — behaviour
+turning it off does **not** break `file:///android_asset/`… on all versions — behaviour
 across provider versions differs, and `WebViewAssetLoader` from `androidx.webkit` is the supported
 way to serve packaged assets over an `https://` origin instead. That is the modern remediation:
 serve your own assets from a virtual `https` origin and leave `file://` off entirely.
@@ -910,7 +910,7 @@ by Chromium and changes across provider versions.
 
 #### `setSafeBrowsingEnabled(boolean)`
 
-**Default: `true`, measured at every targetSdk 14–35.** Note that this contradicts a common table
+**Default: `true`, measured at every targetSdk 14–35.** This contradicts a common table
 that ties it to API 26 — the *getter* exists only from API 26, but the underlying default was `true`
 in every row the probe measured, including targetSdk 14.
 
@@ -990,7 +990,7 @@ eight bridge methods measured in a real app in §5.4 have exactly that shape. It
 attack surface, because now there is a **parser** on the far side, taking attacker-controlled JSON,
 in the app's process.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > The bridge object is a **strong reference held by the WebView**. It keeps the object — and
 > transitively its `Context`, which is very often an `Activity` — alive for the WebView's lifetime.
 > `LeakyBridge` in `examples/vulnerable-webview/` holds a `Context` exactly as most real bridges do.
@@ -1056,7 +1056,7 @@ WebViewCompat.addWebMessageListener(
         listener);
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > "We use `@JavascriptInterface`, so the `addJavascriptInterface` vulnerability does not apply to us"
 > is a sentence you will hear in a remediation meeting. It is true and irrelevant. **The risk is the
 > bridge, not the annotation.** The annotation narrows *which* methods a page can call; it says
@@ -1173,7 +1173,7 @@ The error codes, from `android.net.http.SslError`:
 | `SSL_DATE_INVALID` | 4 | The date is invalid |
 | `SSL_INVALID` | 5 | A generic error |
 
-Note that only one code is delivered even when several apply — `getPrimaryError()` returns the most
+only one code is delivered even when several apply — `getPrimaryError()` returns the most
 severe. `SslError.hasError(int)` checks the others.
 
 **What "no XML can stop it" means, exactly.** The network security config
@@ -1211,7 +1211,7 @@ And from `scripts/trace-webview.js`, watching the same navigation:
 The page loaded. Its JavaScript called the bridge. The session token was exfiltrated. The
 configuration file was correct throughout and irrelevant throughout.
 
-> **⚠️ A device caveat that changes nothing here, and everything elsewhere**
+> **A device caveat that changes nothing here, and everything elsewhere**
 > The test device's **system CA store is modified** — an APatch `trustusercerts` module has
 > bind-mounted an interception CA into `/system/etc/security/cacerts`, where 139 certificates are
 > present and one of them is the proxy's. That is why this demonstration deliberately uses a
@@ -1333,7 +1333,7 @@ WebView.setWebContentsDebuggingEnabled(true);
 That one static call opens a **unix domain socket in the abstract namespace** speaking the Chrome
 DevTools Protocol.
 
-> **📖 Definition — abstract namespace socket**
+> **Definition — abstract namespace socket**
 > A unix socket whose name is not a filesystem path. It begins with a NUL byte, conventionally written
 > with a leading `@`. Because there is no file, there are **no filesystem permissions**: no owner, no
 > mode, no SELinux file label. Access control is whatever the SELinux policy says about the two
@@ -1629,7 +1629,7 @@ Which produces, on the device:
 [SSL]   --> app called handler.proceed()   THE LOAD CONTINUES, certificate error and all
 ```
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > The same boundary explains why the concrete settings class is
 > `com.android.webview.chromium.ContentSettingsAdapter` and why hooking the abstract
 > `android.webkit.WebSettings` still worked in the tracer: the platform's abstract class is in the
@@ -2049,7 +2049,7 @@ The table this chapter most wants a reader to internalise.
 | DOM storage enabled | INFO | Something sensitive found in the LevelDB → MEDIUM |
 | WebView provider several versions behind | INFO | It is the *user's* Play Store state, not the app's defect. Report as an environment note |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The last row catches people out. "The device is running WebView 92 and there are known Chromium
 > CVEs" is not a finding against the app — the app cannot choose the provider version. It is a finding
 > against the *device*, and it belongs in a device-posture section, not in the app's report. The
@@ -2202,7 +2202,7 @@ The settings block, real bytecode:
 0010d4: 6e20 1700 0400  |0044: invoke-virtual {v4, v0}, Landroid/webkit/WebSettings;.setDomStorageEnabled:(Z)V
 ```
 
-> **⚠️ The trap that defeats naive tooling, visible right here.**
+> **The trap that defeats naive tooling, visible right here.**
 > Four consecutive setters all pass **`v0`**, and `v0` is not set anywhere in this listing — the
 > compiler hoisted `const/4 v0, #int 1` far earlier and reused the register. A tool that reads "the
 > instruction immediately before the call" to find the argument gets `move-result-object v4` for the
@@ -2280,7 +2280,7 @@ grep -rB6 "Landroid/webkit/JavascriptInterface;" work/smali*/ | grep "^.*\.metho
 ### 6.4 What obfuscation does to it, and does not
 
 R8 and ProGuard ([41-ProGuard](../41-ProGuard/README.md), [42-R8](../42-R8/README.md)) rename the
-app's own classes and methods. What survives is what makes WebView analysis unusually robust:
+app's own classes and methods. What survives is what makes WebView analysis unusually high-yield:
 
 | Element | Survives obfuscation? | Why |
 |---|---|---|
@@ -2469,7 +2469,7 @@ Run the same navigation twice:
 Pass 1 alone shows a page loading. Pass 2 proves the app's decision is *why*. Without the pair you
 are asserting causation from one observation.
 
-> **⚠️ Measured trap: Chromium caches the proceed decision per host.**
+> **Measured trap: Chromium caches the proceed decision per host.**
 > Pass 2 had to target a **different hostname** (`localhost` instead of `127.0.0.1`, both resolving to
 > the same server) to fire at all. After an app proceeds once for a host, subsequent navigations to
 > that host do not re-invoke `onReceivedSslError`. If your second attempt produces silence, that is
@@ -2519,7 +2519,7 @@ is a HIGH.
 
 Attach [35-SSL](../35-SSL/README.md)'s `trace-tls-validation.js` to an app and load a page in its
 WebView. You will see **nothing**. Not a `checkServerTrusted`, not a `HostnameVerifier`, not an
-`SSLContext.init`. The script is correct; WebView traffic simply does not go through the Java stack
+`SSLContext.init`. The script is correct; WebView traffic does not go through the Java stack
 (§2.5).
 
 The same applies to bypasses. `53-Frida`'s `ssl-pinning-bypass.js` and objection's
@@ -2629,8 +2629,8 @@ sc.exports_sync.verdict()
 sess.detach()
 ```
 
-> **🔍 Pentester's Note**
-> `exports_sync` is frida-python 16's name for what older code calls `exports`. And note that
+> **Pentester's Note**
+> `exports_sync` is frida-python 16's name for what older code calls `exports`. And
 > `dev.spawn()` starts the *process*, not an Activity — the `am start` afterwards is what drives it,
 > and it lands in the already-spawned process, which is exactly the behaviour you want.
 
@@ -2753,7 +2753,7 @@ grep -rn "Intent;->parseUri" work/smali*/          # web page -> Intent escalati
 grep -rn -B6 "WebView;->loadUrl" work/smali*/ | grep -i "getIntent\|getData\|getQueryParameter"
 ```
 
-> **⚠️ The grep that matters most is the shortest one.**
+> **The grep that matters most is the shortest one.**
 > `grep -rn "SslErrorHandler;->proceed" work/smali*/`
 > A hit is a lead of the highest possible value, and it is invisible to every network-security-config
 > tool, every manifest scanner, and every pinning-bypass script. Chapter 44's README puts this exact
@@ -3075,7 +3075,7 @@ reachable from any origin, because origin is never consulted for bridge calls.
 **Q. How would you prove that an app's `proceed()` is what allowed a page to load, rather than the
 certificate having been acceptable?**
 Run the navigation twice with a runtime hook: once observing, once replacing `proceed()` with
-`cancel()`. Page loads then fails, with the same certificate, is causation. Note that Chromium caches
+`cancel()`. Page loads then fails, with the same certificate, is causation.Chromium caches
 the decision per host, so the second run needs a different hostname or a data clear.
 
 **Q. An app targets API 29. Which WebView defaults differ from an app targeting 30?**

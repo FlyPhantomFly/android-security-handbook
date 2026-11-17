@@ -23,8 +23,8 @@ the single most useful thing in this lab. It is the number you will quote in rep
 your career, and it is the number that makes the "cost, not prevention" argument in
 [README §1.3](../README.md#13-why-applications-care) concrete instead of rhetorical.
 
-> **⚠️ Authorised testing only**
-> You are building and attacking an app you wrote, on devices you own.
+> You are building and attacking an app you wrote, on devices you own. See
+> [SECURITY.md](../../SECURITY.md) for authorised-testing scope.
 
 ---
 
@@ -67,7 +67,7 @@ Threshold: **40**. Note what that arithmetic guarantees — no combination of th
 signals alone can reach it without a HARD signal or three SOFT ones. That is a design decision, not
 an accident, and you should be able to defend it.
 
-> **🧠 Mental Model — why include signals you know are broken**
+> **Mental Model — why include signals you know are broken**
 > A detector containing a DEAD signal and a NOISY one is not a badly built detector; it is an
 > *instrumented* one. You will get to watch a check that never fires and a check that fires on the
 > wrong device, in your own code, where you can see exactly why. That is far more instructive than
@@ -219,13 +219,13 @@ Run on both devices and record:
 Check your output against these questions:
 
 1. **Does `qemu_pipe` appear in `fired` on the emulator?** It should not — that is the DEAD signal
-   behaving as measured. Note that your detector lost 10 points of capability and told you nothing.
+   behaving as measured.your detector lost 10 points of capability and told you nothing.
    In a real app, nobody would ever find out.
 2. **Does `bootloader:unknown` appear in `fired` on the PHONE?** It should. Your detector just scored
    3 points against a real customer's device. It is below threshold on its own, which is exactly why
    the weighting matters — but imagine it weighted at 40.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > You have now reproduced, in your own code, the two most common defects in production emulator
 > detection: a check that cannot fire, and a check that fires on the wrong device. When you meet them
 > in a real assessment you will recognise the symptoms instantly, because you built them on purpose.
@@ -359,7 +359,7 @@ mkdir -p out/lib/arm64-v8a out/lib/x86_64
 # then zipalign and re-sign, exactly as build-probe-app.sh does
 ```
 
-> **⚠️ Warning — ship BOTH ABIs, and understand why**
+> **Warning — ship BOTH ABIs, and understand why**
 > If you ship only `arm64-v8a`, then on the x86_64 emulator your library runs under
 > `libndk_translation.so` — and your ABI-mismatch check fires **because of how you packaged the app**,
 > not because of anything it detected. That is a self-fulfilling check. Shipping both ABIs means the
@@ -496,7 +496,7 @@ your own work: effort spent adding checks *behind* a single entry point buys not
 Use [`../scripts/emu-bypass.js`](../scripts/emu-bypass.js) with `properties`, `build` and `sensors`
 enabled, `native` off. Note which signals stop firing and which do not.
 
-> **⚠️ The Build-field trap, and you should hit it deliberately**
+> **The Build-field trap, and you should hit it deliberately**
 > Try hooking **only** `SystemProperties.get` and observe that `Build.HARDWARE` still reads `ranchu`.
 > That is [README §4.1](../README.md#41-build--where-the-fields-come-from): the field is
 > `static final`, latched at class-init long before you attached. You must write the field. Spending
@@ -632,7 +632,7 @@ adb -s <phone> shell dumpsys sensorservice | grep -oE '\| [A-Za-z ]+ +\| ver' | 
 
 Some OEMs do vendor fused sensors to "AOSP" because they use the AOSP fusion implementation. If so,
 your majority test needs to look at *hardware* sensors specifically, or at the vendor **diversity**
-(how many distinct vendors) rather than the AOSP count. Diversity is the more robust signal: an
+(how many distinct vendors) rather than the AOSP count. Diversity is the stronger signal: an
 emulator has one or two, a phone has five or six.
 </details>
 

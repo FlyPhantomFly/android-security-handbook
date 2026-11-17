@@ -28,13 +28,11 @@ physical device named in §7.9.
 
 ---
 
-> **⚠️ Warning — scope and authorisation**
-> This chapter is written for **authorised testing**: an app you built, an app you are contracted to
-> assess, or a deliberately vulnerable lab target. Defeating an integrity check on software you have
-> no permission to test is unauthorised access in most jurisdictions, regardless of how trivial the
-> check was. Everything in `examples/` and `labs/` builds and attacks an app that this chapter ships
-> the source for. Third-party applications appear here only as *detection* targets — read with a
-> static analyser, never modified, never installed in a modified form.
+> This chapter targets an app you built, an app you are contracted to assess, or a deliberately
+> vulnerable lab target. Everything in `examples/` and `labs/` builds and attacks an app that this
+> chapter ships the source for. Third-party applications appear here only as *detection* targets —
+> read with a static analyser, never modified, never installed in a modified form. See
+> [SECURITY.md](../SECURITY.md) for authorised-testing scope.
 
 ---
 
@@ -80,7 +78,7 @@ holding the bottle, in their own kitchen, with a full toolbox.
 That is Android tamper detection. The app is the bottle. The seal is the APK signature. The sensor is
 a few lines of Java. And the toolbox belongs to the adversary.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Tamper detection is a **tamper-evident seal that the sealed object inspects itself**. Its value is
 > real but narrow: it makes modification *noticeable*, which raises the cost of the cheapest attacks
 > and makes the expensive attacks leave evidence. Its limit is structural and cannot be engineered
@@ -115,7 +113,7 @@ the Play Integrity platform side — belong to
 [20-Security-Architecture](../20-Security-Architecture/README.md) and, for hardware key attestation,
 to [49-KeyStore](../49-KeyStore/README.md) §3.7.
 
-> **⚠️ Warning — the distinction is not academic**
+> **Warning — the distinction is not academic**
 > The single most common conceptual error in this area is treating T‑A and T‑B as one problem. They
 > have *opposite* detection properties. A signature check catches T‑A perfectly and T‑B not at all,
 > because in T‑B the signature is genuinely correct. A `/proc/self/maps` scan catches T‑B and T‑A not
@@ -141,9 +139,9 @@ modified in place by another app**. What it does not solve is the problem this c
 The platform never asks "is this the APK the developer published?" It asks "is this APK internally
 consistent, and is it signed by the same key as the copy that was here before?" A repackaged APK,
 signed by an attacker's key and installed as a fresh package, satisfies both conditions completely.
-It is a valid, correctly signed, internally consistent Android application. It is simply not *yours*.
+It is a valid, correctly signed, internally consistent Android application. It is not *yours*.
 
-> **📖 Definition — repackaging**
+> **Definition — repackaging**
 > Taking a published APK, modifying its code, resources or manifest, re-signing it with a key the
 > attacker controls, and distributing the result. Because Android will not install a modified APK
 > under the original signature, re-signing is not optional — it is forced. That forced step is the
@@ -170,7 +168,7 @@ price is a control you cannot argue about.
 | **Elimination of the zero-effort attacker** | The person who found a modded APK on a forum, or who followed a four-step blog post, hits a wall and stops | Large in population terms, zero against anyone motivated. Most of the attack volume, almost none of the attack *risk* |
 | **Forced cost increase for everyone else** | Each tier — Java, JNI, ELF constructor — is a separate thing to find and defeat. The mapper in §8 exists because *finding* them is itself work | Minutes to hours per app version. Multiplied by every release, this is real money for an attacker running at scale |
 | **Detectability** | Even a defeated check can report before it dies. The evidence leaves the device and the server sees a population signal | This is the most under-used property in the whole field. See §5.8 |
-| **Legal and contractual clarity** | Circumventing a technical protection measure has a different legal character from using an API. Certification regimes (PCI MPoC, some banking supervisors) simply require the control to exist | Not a security property, and it is dishonest to present it as one. It is still a real reason apps ship these controls |
+| **Legal and contractual clarity** | Circumventing a technical protection measure has a different legal character from using an API. Certification regimes (PCI MPoC, some banking supervisors) require the control to exist | Not a security property, and it is dishonest to present it as one. It is still a real reason apps ship these controls |
 | **Attacker time spent on the wrong thing** | An attacker who spends an afternoon defeating twenty local checks is an attacker who did not spend that afternoon on your API | Real, and the most underrated item in the table |
 
 And what it does **not** buy, with equal precision:
@@ -203,7 +201,7 @@ Five attack points, and only the first two are affected by how clever the check 
 in hand-obfuscated ARM64 with whitebox crypto and inline syscalls still, eventually, produces a value
 that something branches on — and that branch is one instruction.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Hardening a local check is like reinforcing one link of a chain whose other four links you also
 > hold. The reinforcement is real; the chain still breaks at whichever link is cheapest. The only way
 > to change the outcome is to move a link **outside the attacker's reach**, which on Android means
@@ -213,7 +211,7 @@ This is the point where a lot of writing on the subject turns nihilistic — "cl
 impossible, don't bother". That conclusion does not follow, and §1.4's table is the reason. The
 correct conclusion is narrower and more useful:
 
-> **⚠️ Warning**
+> **Warning**
 > **Implement it, and do not believe it.** The failure mode is not writing the check. The failure
 > mode is writing the check and then designing the system as though the check were true. An app that
 > hides the "transfer money" button when it detects tampering, and whose `/api/transfer` endpoint
@@ -224,7 +222,7 @@ correct conclusion is narrower and more useful:
 This chapter states its most contested position in §1 rather than burying it in §5, because it is the
 thing readers most need and most often get wrong.
 
-> **🔍 Pentester's Note — absent tamper detection is usually NOT a finding**
+> **Pentester's Note — absent tamper detection is usually NOT a finding**
 > "The application does not implement anti-tampering controls" is, on its own, **not a
 > vulnerability**. It is the absence of a hardening measure. Hardening measures matter against a
 > specific threat model — one that includes an attacker in physical or root control of the device —
@@ -353,7 +351,7 @@ it determines what an analyst can and cannot observe.
 - **T0** — not on this diagram because it is not a runtime tier at all: it is the signing scheme,
   which constrains what the attacker had to do before the process existed.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > If a target has a T3 or T2 tier, a Frida script loaded at `Java.perform` time has **already lost**
 > the first round — the check ran, decided something, and possibly recorded it, before your script
 > existed. That is why `scripts/tamper-surface-map.py` reports the earliest tier present as its
@@ -542,7 +540,7 @@ Failure [INSTALL_FAILED_UPDATE_INCOMPATIBLE: Existing package
 com.pentest.ch38.integrity signatures do not match newer version; ignoring!]
 ```
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > That refusal is not a signature *verification* failure. `repacked.apk` verifies perfectly — it is
 > correctly signed, by a different key. The failure is the **continuity** check comparing the new
 > package's `SigningDetails` against the recorded ones, taking the rotation lineage into account. The
@@ -600,7 +598,7 @@ if (si.hasMultipleSigners()) {
 }
 ```
 
-> **⚠️ Warning — the single most common implementation bug**
+> **Warning — the single most common implementation bug**
 > `sigs[0]` is *not* "the certificate". On a single-signer rotated app, `sigs[0]` is the **oldest**
 > certificate in the lineage and `sigs[sigs.length - 1]` is the current one. Code that hardcodes
 > index 0 works perfectly until the day the developer rotates their key, and then breaks in a way
@@ -611,7 +609,7 @@ if (si.hasMultipleSigners()) {
 Despite the name, `android.content.pm.Signature` is **not a signature**. It is a wrapper around the
 **DER encoding of an X.509 certificate**.
 
-> **📖 Definition — DER**
+> **Definition — DER**
 > Distinguished Encoding Rules: the canonical binary encoding for ASN.1 structures, including X.509
 > certificates. "Canonical" is the important part — a given certificate has exactly one DER encoding,
 > which is what makes hashing it a stable identifier. See
@@ -646,7 +644,7 @@ D1 self-signature = PASS | getSigningCertificateHistory -> 1 cert(s):
 Three independent tools, one number. That equivalence is worth verifying yourself once, because it is
 what lets you compute the expected value at build time without ever running the app.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > `Signature.hashCode()` returns a **32-bit** hash of the certificate bytes. You will meet apps that
 > compare against it, and `dumpsys` prints it (`signatures:[b448b773]`). It is not a security-grade
 > identifier — 32 bits is far too few to rely on for collision resistance — but in practice nobody
@@ -753,7 +751,7 @@ control is worth something and why it is not worth much:
 Steps 7 through 10 do not care how sophisticated the check is. That is §1.5's five attack points,
 made concrete.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > When you report a bypassed signature check, name the **link** you broke. "Signature verification
 > can be bypassed" is unactionable. "The verdict is a single `boolean` returned by
 > `c.d.e.a.b(Context)` and consumed by one `if` in `LoginActivity.onCreate`; inverting it is one
@@ -822,7 +820,7 @@ digest does not cover, and there are exactly three places:
 | **An asset injected after dexing** | The build pipeline dexes, hashes, then writes `assets/integrity.bin` into the zip | Cheap to find, cheap to edit | Adds a custom build step that breaks silently when someone changes the pipeline |
 | **The server** | The app sends its computed digest; the server compares | The attacker must lie over the network, which is at least visible | Requires connectivity; and if the app sends a value it computed, it can send any value |
 
-> **🧠 Mental Model**
+> **Mental Model**
 > The bootstrap problem is a small instance of the whole chapter's problem. Wherever you put the
 > baseline, it is on the attacker's device — *unless* you put it on the server, at which point the
 > question becomes "why is the client computing the answer at all?" Follow that thought to its end
@@ -900,7 +898,7 @@ PPid:   729
 TracerPid:      0
 ```
 
-> **📖 Definition — procfs**
+> **Definition — procfs**
 > A virtual filesystem in which files are generated by the kernel at the moment they are read. There
 > is no `/proc/self/status` on disk; reading it runs kernel code that formats the current state of
 > the calling process. The formatting for this file lives in `fs/proc/array.c` in the Linux tree.
@@ -945,7 +943,7 @@ adb shell "run-as com.pentest.ch38.integrity cat /proc/$PID/status | grep Tracer
 TracerPid:      0
 ```
 
-> **⚠️ Warning — measured, and it contradicts a very common table**
+> **Warning — measured, and it contradicts a very common table**
 > **A JDWP debugger does not set `TracerPid`.** JDWP is a protocol spoken by ART over a socket, not a
 > `ptrace` attach, so the kernel's tracer field is untouched. An app that relies on `TracerPid` to
 > detect "debugging" will happily run under Android Studio's debugger.
@@ -1012,9 +1010,9 @@ This is the anti-T‑B half of the chapter. Everything here answers "is somethin
 | **Breakpoint scan** | Look for `BRK`/`SVC` patterns in your own `.text` | Software breakpoints planted | High |
 | **Timing** | Measure your own checks; a hooked function is orders of magnitude slower | Something is intercepting | Low to evade, and false-positive-prone in the other direction |
 
-> **⚠️ Warning — the port check is the canonical example of "correct but cheap"**
+> **Warning — the port check is the canonical example of "correct but cheap"**
 > A loopback connect to 27042 is not *wrong*. The mechanism is sound and it really does detect a
-> default frida-server. It is simply worth about ten seconds of an attacker's time. Knowing the
+> default frida-server. It is worth about ten seconds of an attacker's time. Knowing the
 > difference between a check that is **incorrect** and a check that is **correct but cheap to evade**
 > is most of what makes a good report — the remediation is completely different. You do not fix the
 > port check; you stop relying on it.
@@ -1055,7 +1053,7 @@ techniques; none is a one-liner in the way the port check is.
 the Java layer is the easiest. The native version in `examples/tamper_check.c` is the same check one
 tier down, where `Java.perform` cannot reach it.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > A single hook on `libc.so!openat` catches **both** tiers at once, because the Java filesystem stack
 > ultimately calls libc. That is the same observation
 > [37-RootDetection](../37-RootDetection/README.md) makes about filesystem-based root checks, and it
@@ -1095,7 +1093,7 @@ the fact that on modern Android an `.so` with `extractNativeLibs="false"` is not
 all — `dli_fname` is the APK path with the entry appended, and `fopen` on it fails. `tamper_check.c`
 returns `UNKNOWN` in that case and says why, rather than pretending.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > [18-ARM](../18-ARM/README.md) records the other side of this from a measurement: a check function
 > was patched to `return 1`, verified as returning 1, and the protected routine *still* refused —
 > because the compiler had inlined the check and the patched copy was called by nobody. Integrity
@@ -1182,7 +1180,7 @@ here matters more than the checks do.
 | **Report and continue** | Attacker may not notice at all | Low | Underrated. The server learns; the attacker learns nothing |
 | **Server decides** | The client is not a participant in the decision | High | The only one that is actually a control |
 
-> **⚠️ Warning — delayed consequences cut both ways**
+> **Warning — delayed consequences cut both ways**
 > A delayed, silent failure is attacker-hostile *and* user-hostile. When it misfires on an honest
 > user — an OEM that reports a surprising flag, a device where `/proc` reads fail — that user gets an
 > unexplained failure minutes after the real cause, and your support team gets a ticket nobody can
@@ -1212,7 +1210,7 @@ This table is the chapter in one page. `cheatsheet.md` carries a printable versi
 | **D14** | Peer-app signature | T1 | Another package's certificate | That the peer is behaving | Minutes |
 | **D15** | Play Integrity / attestation | T4 | **A Google-signed statement about the device and app** | Nothing, if the verdict is evaluated on the client | **Hours to impossible** if server-verified with a server nonce; **seconds** if not |
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Read the rightmost column top to bottom. Fourteen rows cost minutes. One row — D15, and only when
 > implemented correctly — costs more. That is not an argument for skipping the other fourteen; it is
 > an argument for knowing which one you are relying on.
@@ -1255,7 +1253,7 @@ The parts worth reading, and what each tells you:
 structure lives: the current signers, the `pastSigningCertificates` lineage, the signature scheme
 version, and the per-certificate capability flags.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > `SigningDetails` used to be a nested class inside `PackageParser` and was promoted to a top-level
 > class in the Android 13 (T) timeframe. If you are reading an older tree, or an older write-up, look
 > for `PackageParser.SigningDetails`. The `CertCapabilities` constants — the `flags: 17` seen in §3.2.3
@@ -1342,7 +1340,7 @@ Android's kernel is Linux, so this is the mainline path:
 - `fs/proc/task_mmu.c` — the `maps` file. Each VMA is formatted on read; there is no cached copy to
   race against.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > Because these files are generated on read, there is no "stale" answer and no cache to poison. That
 > is genuinely good for the defender — and completely irrelevant, because the attacker does not need
 > to poison the kernel's answer. They intercept the read. The kernel's honesty stops at the syscall
@@ -1389,7 +1387,7 @@ The controls themselves are attacked, and they are also *used* by attackers. Bot
 | Patch the consequence | `System.exit`, the dialog, `finish()` | Works without ever finding the check |
 | Attach before the check | `frida -U -f` | Defeats the entire T2/T3 tier advantage and `ptrace(TRACEME)` outright |
 
-> **🔍 Pentester's Note — "patch both or neither"**
+> **Pentester's Note — "patch both or neither"**
 > [37-RootDetection](../37-RootDetection/README.md) repeats this and it is worth stating from this
 > side. If you patch an app's root check statically, you must re-sign, which changes the certificate,
 > which trips its signature check — so you now have to patch that too. If instead you hook at
@@ -1460,7 +1458,7 @@ enforcing a rule against its own user).
 
 > **This is the real finding, and it is usually High.** See §5.4.
 
-> **⚠️ Warning — the severity trap that gets tools and juniors every time**
+> **Warning — the severity trap that gets tools and juniors every time**
 > An automated scanner reports "no root/tamper detection" as Medium on every app it sees. It is
 > nearly always wrong, and repeating it uncritically damages your credibility on the findings that
 > *are* real. If you cannot state the threat model in which the absence matters, you do not have a
@@ -1482,7 +1480,7 @@ absence of a client check.
 | **UI-only enforcement** | High | Call the API directly with a valid session. If the operation succeeds while the UI hides it, there is no control |
 | **The integrity signal is never recorded** | Low–Medium | A defeated control that also produces no telemetry is a control with zero residual value |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Notice that **seven of those eight can be demonstrated without bypassing a single client-side
 > check**. Several need only a proxy. That is the practical argument for spending your time on the
 > server: the findings are more severe, easier to prove, and cannot be argued away with "the user
@@ -1576,7 +1574,7 @@ and recorded.
 | Device has no Play Services | Block | Allow — but then say so in the threat model, because it is a documented bypass route |
 | Check threw an unexpected exception | FAIL | PASS — never do this silently |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > When you find fail-open behaviour, the finding is **not** "the app fails open". It is *"the server
 > accepts requests carrying no integrity token"*. The first is a design opinion the developer can
 > argue with; the second is a request you can paste into the report.
@@ -1653,7 +1651,7 @@ Every technique in §3 appears in malware, for the mirror-image reason: analysts
 | Packing plus a runtime integrity check on the unpacked payload | Make static analysis useless and detect unpacking |
 | Timing | Detect single-stepping |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > When a sample refuses to run, the tracer script in §7 is exactly the right first move, and its
 > "report, do not bypass" default is exactly the right default: on malware you want to know what it
 > checked before you change anything, because the check itself is intelligence about who wrote it.
@@ -1781,7 +1779,7 @@ Three lines. That is the honest measure of a Java-tier signature check's resista
 patch — and the reason the interesting engineering question is not "how do I make the check better"
 but "what should happen when it fails".
 
-> **⚠️ Warning**
+> **Warning**
 > Patching Smali means rebuilding and **re-signing**, which changes the certificate, which is exactly
 > what this check detects. So a static patch of *this* method must also handle every other place the
 > app checks its signature. This is the "patch both or neither" rule
@@ -2131,7 +2129,7 @@ other device, a rooted Redmi at API 30, was not attached during this work.
 | Frida-based bypasses in §6.6 and §7.3 | **Not executed.** The device is unrooted and has no `frida-server`. The scripts are syntax-checked (`node --check`) and written against documented APIs. **Treat them as unverified against a live target** |
 | Anti-Frida checks firing under a real Frida session | **Not measured**, same reason |
 
-> **⚠️ Warning**
+> **Warning**
 > That last block is the honest limit of this chapter's empirical half. The *controls* were built,
 > installed and observed. The *bypasses* were not run against a live instrumented process. A reader
 > with a rooted device should re-run §7.2 and §7.3 and record what actually happens — and if the
@@ -2175,7 +2173,7 @@ patterns — an unanchored `getPackageInfo` matched the Kotlin lambda class
 `CoreFeature$getPackageInfo$2`, and an unanchored `frida` would match a package called
 `fridayplanner`.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > This is the same lesson chapters 33, 36 and 52 measured independently: **a sweep produces leads,
 > not findings, and a checker that flags everything flags nothing.** The mapper now prints WEAK rows
 > under a banner that says not to put them in a report. Believe the banner.

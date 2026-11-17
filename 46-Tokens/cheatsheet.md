@@ -30,15 +30,15 @@ python3 -B scripts/jwt-analyse.py --token "$T"
 
 | Member | Req | Meaning | Risk |
 |---|---|---|---|
-| `alg` | ✅ | Signing algorithm | **Attacker-controlled.** §5.1, §5.2 |
+| `alg` | | Signing algorithm | **Attacker-controlled.** §5.1, §5.2 |
 | `typ` | — | `JWT`, `at+jwt` (RFC 9068), `dpop+jwt` | `at+jwt` ⇒ RS must check `aud` |
 | `kid` | — | Key identifier | **Attacker-controlled lookup key.** §5.3 |
 | `cty` | — | Content type | Present ⇒ nested JWT |
 | `crit` | — | Extensions the verifier MUST understand | Ignored ⇒ silent control skip |
-| `jku` | — | **URL** to a JWKS | 🔴 Key injection + SSRF |
-| `x5u` | — | **URL** to an X.509 chain | 🔴 Key injection + SSRF |
-| `jwk` | — | **Embedded** public key | 🔴 Token names its own key |
-| `x5c` | — | **Embedded** cert chain | 🔴 Same |
+| `jku` | — | **URL** to a JWKS | Key injection + SSRF |
+| `x5u` | — | **URL** to an X.509 chain | Key injection + SSRF |
+| `jwk` | — | **Embedded** public key | Token names its own key |
+| `x5c` | — | **Embedded** cert chain | Same |
 | `zip` | — | `DEF` compression | Compression-ratio side channels |
 
 ---
@@ -49,8 +49,8 @@ python3 -B scripts/jwt-analyse.py --token "$T"
 |---|---|---|---|
 | `iss` | string | Issuer | Any issuer accepted. §5.6 |
 | `sub` | string | Subject, unique **within** `iss` | Account key is `(iss, sub)`, never `sub` alone |
-| `aud` | string \| array | Intended recipient | 🔴 "Sign in with X" takeover. §5.6 |
-| `exp` | NumericDate | Refuse after | 🔴 Permanent credential. §5.5 |
+| `aud` | string \| array | Intended recipient | "Sign in with X" takeover. §5.6 |
+| `exp` | NumericDate | Refuse after | Permanent credential. §5.5 |
 | `nbf` | NumericDate | Refuse before | Low impact |
 | `iat` | NumericDate | Minted at | Enables a max-age policy stricter than `exp` |
 | `jti` | string | Unique id | No hook for replay detection / denylist |
@@ -103,24 +103,24 @@ Minimum HS key: **32 bytes** for HS256 (RFC 7518 §3.2), from a CSPRNG (RFC 8725
 
 | # | Failure class | Attack | Command / construction | Severity |
 |---|---|---|---|---|
-| 5.1 | `alg: none` accepted | Rewrite header, empty sig | `hdr.payload.` ← **keep the trailing dot** | 🔴 Critical |
-| 5.1 | Case-variant bypass | `NoNe` `NONE` `nOnE` | Same, different capitalisation | 🔴 Critical |
-| 5.2 | HS/RS confusion | Re-sign HS256 with the **public key bytes** | `HMAC(pub_pem, hdr+"."+payload)` | 🔴 Critical |
-| 5.3 | `kid` traversal | Point at a file you know | `kid: ../../../../dev/null` (empty key) | 🔴 Critical |
-| 5.3 | `kid` SQLi | Return a key you chose | `kid: ' UNION SELECT 'k' --` | 🔴 Critical |
-| 5.3 | `jku` / `x5u` | Host your own JWKS | `jku: https://you/jwks.json` + SSRF | 🔴 Critical |
-| 5.3 | `jwk` / `x5c` | Embed your own key | Sign with your private key | 🔴 Critical |
-| 5.4 | Weak HMAC secret | Crack offline, forge | `jwt-weak-secret.py`, `hashcat -m 16500` | 🔴 Critical |
-| 5.5 | No / unenforced `exp` | **Replay an old token** | One `curl`. No forgery | 🔴 Critical |
-| 5.5 | `exp` checked only if present | Delete the claim | Requires a signing path | 🟠 High |
-| 5.6 | `iss` unchecked | Token from another issuer | | 🟠 High |
-| 5.6 | `aud` unchecked | Token minted for **your own** client | Register a client, sign in as yourself | 🔴 Critical |
-| 5.7 | Pure bearer | Replay from anywhere | Amplifier, not a standalone finding | ⚪ Context |
-| 5.8 | Claim trusted as authorisation | Low-priv token → high-priv endpoint | Needs no forgery | 🟠 High / 🟡 Med |
-| 3.9 | No rotation / no reuse detection | Use RT1 twice, then RT2 | 3 requests | 🟠 High |
-| 3.10 | Logout does not revoke | Capture → logout → replay | 3 requests, 1 button | 🟠 High |
-| 3.11 | DPoP not enforced | Strip proof, send `Bearer` | **The test that matters** | 🟠 High |
-| 3.12 | Scope escalation on refresh | Ask for more scope | `-d scope="... admin"` | 🟠 High |
+| 5.1 | `alg: none` accepted | Rewrite header, empty sig | `hdr.payload.` ← **keep the trailing dot** | Critical |
+| 5.1 | Case-variant bypass | `NoNe` `NONE` `nOnE` | Same, different capitalisation | Critical |
+| 5.2 | HS/RS confusion | Re-sign HS256 with the **public key bytes** | `HMAC(pub_pem, hdr+"."+payload)` | Critical |
+| 5.3 | `kid` traversal | Point at a file you know | `kid: ../../../../dev/null` (empty key) | Critical |
+| 5.3 | `kid` SQLi | Return a key you chose | `kid: ' UNION SELECT 'k' --` | Critical |
+| 5.3 | `jku` / `x5u` | Host your own JWKS | `jku: https://you/jwks.json` + SSRF | Critical |
+| 5.3 | `jwk` / `x5c` | Embed your own key | Sign with your private key | Critical |
+| 5.4 | Weak HMAC secret | Crack offline, forge | `jwt-weak-secret.py`, `hashcat -m 16500` | Critical |
+| 5.5 | No / unenforced `exp` | **Replay an old token** | One `curl`. No forgery | Critical |
+| 5.5 | `exp` checked only if present | Delete the claim | Requires a signing path | High |
+| 5.6 | `iss` unchecked | Token from another issuer | | High |
+| 5.6 | `aud` unchecked | Token minted for **your own** client | Register a client, sign in as yourself | Critical |
+| 5.7 | Pure bearer | Replay from anywhere | Amplifier, not a standalone finding | Context |
+| 5.8 | Claim trusted as authorisation | Low-priv token → high-priv endpoint | Needs no forgery | High / Med |
+| 3.9 | No rotation / no reuse detection | Use RT1 twice, then RT2 | 3 requests | High |
+| 3.10 | Logout does not revoke | Capture → logout → replay | 3 requests, 1 button | High |
+| 3.11 | DPoP not enforced | Strip proof, send `Bearer` | **The test that matters** | High |
+| 3.12 | Scope escalation on refresh | Ask for more scope | `-d scope="... admin"` | High |
 
 ### Attack cheat-constructions
 
@@ -268,9 +268,9 @@ curl -s -o /dev/null -w '%{http_code}\n' -H "Authorization: Bearer $READ_ONLY" \
 
 | Test | RT1 2nd use | RT2 | Verdict |
 |---|---|---|---|
-| Rotation | Success | — | ❌ None. Permanent access |
-| Rotation | Fail | Success | ⚠️ Rotation, no reuse detection |
-| Rotation | Fail | Fail | ✅ Correct |
+| Rotation | Success | — | None. Permanent access |
+| Rotation | Fail | Success | Rotation, no reuse detection |
+| Rotation | Fail | Fail | Correct |
 
 ---
 
@@ -283,7 +283,7 @@ curl -s -o /dev/null -w '%{http_code}\n' -H "Authorization: Bearer $READ_ONLY" \
 | Access token, write/payment | **5–15 min** | Highest-value ⇒ shortest-lived |
 | Refresh, consumer | 30–90 days **with rotation** | Without rotation = a 90-day password |
 | Refresh, high assurance | Hours–days | |
-| No `exp` | — | 🔴 **Critical, always** |
+| No `exp` | — | **Critical, always** |
 
 Clock skew: 60 s generous · >300 s needs justification · >3600 s is a finding.
 
@@ -334,8 +334,8 @@ mismatch 401. Neither DPoP nor mTLS stops in-process code execution.
 | 4 | Accepted without verification | The forged token **and the server's 200** |
 | 5 | Readable by another app | Path + modes + SELinux labels + zero-permission PoC |
 
-❌ *"The app stores a token in SharedPreferences."*
-✅ *"The refresh token is stored plaintext at `<path>` **and remains valid after logout**
+*"The app stores a token in SharedPreferences."*
+*"The refresh token is stored plaintext at `<path>` **and remains valid after logout**
 (HTTP 200 replaying it 4 min later). With a 90-day lifetime and no rotation, any copy grants
 3 months of access. Retrieval required `run-as`, available because the build ships
 `debuggable="true"`."*

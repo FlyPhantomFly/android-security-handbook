@@ -18,7 +18,7 @@ the same token appear in four different places with four different severities, a
 §5.10's five conditions to each. You will also have written the sentence that most mobile
 reports get wrong, correctly.
 
-> **⚠️ Safety**
+> **Safety**
 > Every token here is one you minted (Lab 01 and Lab 02's issuer) and installed into an app
 > you built. Do not sweep an app signed into a real account, and on a daily-driver phone do
 > not enumerate apps beyond the one you are testing. Read-only commands only: this lab runs
@@ -193,7 +193,7 @@ no-Gradle pipeline — `aapt2 link`, `javac --release 8`, `d8`, `zipalign`, `apk
 that builds **out of tree** so no `.apk` or `.dex` reaches this repository. Copy its
 approach rather than re-deriving it.
 
-> **⚠️ The install trap, measured**
+> **The install trap, measured**
 > On the Redmi device in this estate, `adb install` fails with
 > `INSTALL_FAILED_USER_RESTRICTED: Install canceled by user` even though nobody cancelled
 > anything. It is MIUI's "Install via USB" policy. `adb shell "su -c 'pm install -r
@@ -453,7 +453,7 @@ with the highest severity"?
 
 **Q23.** Write the single sentence that most mobile reports get wrong:
 
-> ❌ *"The application stores an authentication token in SharedPreferences."*
+> *"The application stores an authentication token in SharedPreferences."*
 
 Replace it with a version that a competent reviewer would accept. It must name the
 condition, cite the evidence, and state the access level required.

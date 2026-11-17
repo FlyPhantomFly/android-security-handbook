@@ -77,7 +77,7 @@ python3 -B auth_server.py --mode vulnerable --port 8047
 python3 -B auth_server.py --mode secure --port 8048
 ```
 
-> **⚠️ It binds to loopback and refuses to do otherwise**
+> **It binds to loopback and refuses to do otherwise**
 > The server will not bind to a routable address without
 > `--i-understand-this-is-vulnerable`. It contains twelve deliberate authentication defects.
 > Both accounts in it are created by it at startup; it talks to nothing and stores nothing
@@ -259,7 +259,7 @@ is it worthless?
 
 There isn't one — and that is the answer. The client already honours the flag. An attacker
 does not need to modify the app at all: a proxy rule rewriting `true` to `false` in the
-response, or simply using the token from `curl`, is enough.
+response, or using the token from `curl`, is enough.
 
 Any client-side hardening — obfuscating the branch, adding root detection, pinning the
 certificate — leaves the token equally usable from a laptop. **The fix is exclusively on the
@@ -372,7 +372,7 @@ curl -s localhost:8047/api/v1/me -H "Authorization: Bearer $S2"
 > end the attacker's access. The attacker remains logged in for as long as their session
 > lasts, and in this application sessions do not expire.
 
-Note that it combines D8 with D11. Chaining is what turns two Medium findings into one High
+it combines D8 with D11. Chaining is what turns two Medium findings into one High
 one, and the chain is the honest description of the situation.
 </details>
 
@@ -583,7 +583,7 @@ Only against a target you are authorised to assess, in writing.
 Six steps, two accounts you own, no reverse engineering. In practice this finds more
 High-severity issues per hour than any other activity in a mobile assessment.
 
-> **⚠️ Do not run the probe's `T2` against an account you cannot afford to lock yourself out
+> **Do not run the probe's `T2` against an account you cannot afford to lock yourself out
 > of.** It changes the password and changes it back; an interrupted run leaves the temporary
 > password in place, and the script prints it if it cannot restore. Use `--skip-password-change`
 > on anything that matters.

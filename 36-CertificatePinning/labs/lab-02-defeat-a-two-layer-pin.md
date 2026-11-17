@@ -120,7 +120,7 @@ store by default, and you want the proxy's chain to be *valid* so that the only 
 is the pin. Chapter [35-SSL](../../35-SSL/README.md) owns the trust-store mechanics; chapter
 [62-Magisk](../../62-Magisk/README.md) has the module that does it without remounting `/system`.
 
-> **⚠️ Warning — remember to undo this**
+> **Warning — remember to undo this**
 > `http_proxy` is a global setting on a daily-driver phone. Write down that you set it. The cleanup
 > in §10 is not optional.
 
@@ -203,7 +203,7 @@ Both layers reject. The proxy shows the TLS handshake for the OkHttp request and
 connection; it shows the native request's handshake too, or nothing at all, depending on whether the
 native code reaches your proxy — see §7.3.
 
-> **🔬 Under the Hood — what a pin failure proves**
+> **Under the Hood — what a pin failure proves**
 > OkHttp's message lists the presented pin *and* the expected pins. That the message exists at all
 > means the chain was **already accepted by the trust manager**: `CertificatePinner.check` runs after
 > validation, not instead of it. So "I get a pinning error" is proof that your CA installation
@@ -306,7 +306,7 @@ llvm-readelf --dyn-syms /tmp/lab02/libnativepin.so | grep -i 'custom_verify\|set
 ```
 
 - **Symbol present** (dynamically linked against a shared `libssl.so`, or exported): the bypass
-  script's layer 6 catches it and everything works. Good — but note that it worked by *luck of the
+  script's layer 6 catches it and everything works. Good — but it worked by *luck of the
   build configuration*, not because the script understood the app.
 - **Symbol absent** (statically linked and the linker dropped the name): the script's layer 6 finds
   nothing, reports "no BoringSSL/OpenSSL verify symbols in any loaded module", and you are exactly
@@ -351,7 +351,7 @@ Interceptor.replace(setCustomVerify, new NativeCallback(function (ctx, mode, cb)
 }, 'void', ['pointer', 'int', 'pointer']));
 ```
 
-> **⚠️ Warning — the GC trap**
+> **Warning — the GC trap**
 > `alwaysOk` and `original` must stay reachable from JavaScript for the lifetime of the process.
 > A `NativeCallback` created inside a function and not stored anywhere is collected, and BoringSSL
 > then calls freed memory — which crashes minutes later, in a place with no relationship to the
@@ -378,7 +378,7 @@ arguments, an `int` return, and it calls `SSL_get_peer_full_cert_chain`. Even st
 computation and there is not much else it could be.
 
 **By tracing the handshake.** Attach to `SSL_do_handshake` or `SSL_connect` and use Frida's
-`Stalker`, or simply set a breakpoint and step. Heavy, but it always works.
+`Stalker`, or set a breakpoint and step. Heavy, but it always works.
 
 Once you have the address:
 
@@ -396,7 +396,7 @@ Interceptor.replace(cb, keep);
 console.log('[+] replaced native verify callback at ' + cb);
 ```
 
-Much more robust variant, and the one to reach for in the field — do not replace, just change the
+Much more reliable variant, and the one to reach for in the field — do not replace, just change the
 return value:
 
 ```javascript
@@ -448,7 +448,7 @@ and an integrity check that verifies "the pinning code is intact" passes.
 
 **Patch the branch.** Find the conditional after the `strcmp` and invert or NOP it.
 
-> **⚠️ Warning — chapter 18's lesson applies here**
+> **Warning — chapter 18's lesson applies here**
 > `18-ARM` §5.4 records a patch that provably worked against a function that provably no longer
 > mattered: `lc_verify_signature` was patched to `return 1`, verified returning 1, and the caller
 > still refused — because clang had **inlined** the check, and the patched copy was called by
@@ -496,7 +496,7 @@ not — and the fix is not another hook. It is a transparent redirect:
 adb shell "su -c 'iptables -t nat -A OUTPUT -p tcp --dport 443 -j DNAT --to-destination 192.168.1.10:8080'"
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > That rule affects the **whole device**, including apps you are not testing, on a daily-driver
 > phone. Restrict it by uid (`-m owner --uid-owner <app uid>`) and remove it immediately afterwards.
 > `adb shell "su -c 'iptables -t nat -F OUTPUT'"` flushes the chain — check what else was in it first.

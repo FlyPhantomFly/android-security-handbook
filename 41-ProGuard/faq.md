@@ -53,7 +53,7 @@ testing. Budget a full regression pass, not a smoke test.
 
 ---
 
-### 3. Why is one of my classes still named clearly when everything else is `a`?
+### 3. Why does one of my classes still have its real name when everything else is `a`?
 
 Six causes, in the order they are usually the right one:
 
@@ -238,7 +238,7 @@ informational paragraph.
 
 Two things make it a finding worth writing:
 
-- **An over-broad `-keep` that defeats a control the team clearly intended.** That is specific, it is
+- **An over-broad `-keep` that defeats a control the team intended.** That is specific, it is
   evidence of intent, and the fix is cheap.
 - **Retained dead code that contains something.** Non-public endpoints, staging constants,
   credentials. That is a separate finding at its own severity, and it is usually the more valuable

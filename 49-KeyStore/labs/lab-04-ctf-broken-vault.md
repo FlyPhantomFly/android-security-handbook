@@ -602,7 +602,7 @@ Java.perform(function () {
 **Prerequisite: code execution in the process.** Which is the point: the check exists to detect exactly
 that adversary, and is implemented in a place that adversary controls.
 
-Findings 8 and 9 in §5.2. The write-up should be sympathetic and precise: the developers clearly
+Findings 8 and 9 in §5.2. The write-up should be sympathetic and precise: the developers
 understood what attestation is *for* and then spent the entire effort on the side of the wire where it
 cannot work. The fix is not more client-side checking — it is moving the verifier to the server, with a
 server-issued single-use challenge. See [lab 03](lab-03-attestation-analysis.md).

@@ -45,7 +45,7 @@ Two standing rules for this chapter's sources:
 | AOSP Security — *StrongBox* / *Keystore* | What a StrongBox implementation is required to provide |
 | AOSP Security — *Remote Key Provisioning* | Why chains got longer and intermediates short-lived, and why pinning an intermediate breaks |
 | **Android Compatibility Definition Document (CDD)**, cryptography section | Where "hardware-backed keystore required" actually comes from. When a developer asks "is my device *supposed* to have this?", this is the answer, per Android version |
-| Android developer reference — `KeyGenParameterSpec`, `KeyInfo`, `KeyProperties` | The API surface. Note that documented API levels are promises about AOSP, not about shipping devices — see the `setMaxUsageCount` measurement in [README §2.3](../README.md) |
+| Android developer reference — `KeyGenParameterSpec`, `KeyInfo`, `KeyProperties` | The API surface.documented API levels are promises about AOSP, not about shipping devices — see the `setMaxUsageCount` measurement in [README §2.3](../README.md) |
 | Android developer reference — `PackageManager.FEATURE_STRONGBOX_KEYSTORE`, `FEATURE_HARDWARE_KEYSTORE` | Including `getSystemFeatureVersion`, which carries the Keymaster/KeyMint version |
 | Android developer reference — `BiometricPrompt.CryptoObject` | The object that turns a prompt into a cryptographic fact |
 

@@ -181,7 +181,7 @@ in this challenge, and it is available in thirty seconds.
 Run the universal bypass, tap **Get flag**, and you have a `CTF{...}` string in about ninety seconds.
 
 Now ask the question that separates a solver from a script runner: **what did the server have to
-verify in order to give me that?** Read the response. Read `/ping` again. Compare what each endpoint
+verify to give me that?** Read the response. Read `/ping` again. Compare what each endpoint
 required.
 
 If a response arrives no matter what you did, it is not evidence about what you did.
@@ -326,7 +326,7 @@ not involve the app at all?
 
 1. `pinning-surface.py` finds two pin values in the DEX and none in the `.so`, plus a verify entry
    point in the `.so`. **Two Java pins, one native pin that is hidden.**
-2. Bypass Java, tap *Get flag*, receive the decoy. Note that `/flag` required nothing.
+2. Bypass Java, tap *Get flag*, receive the decoy.`/flag` required nothing.
 3. `pin-attribution.js` plus logcat: the Claim request involves no Java layer, and the native gate
    rejects the leaf, logging its SPKI.
 4. Recover the gate's expected pin — from the XOR loop in Ghidra, or from memory at comparison time.
@@ -432,7 +432,7 @@ The server in this challenge refuses to accept "I disabled it" as an answer and 
 which key was accepted, and why". That is the same question a good report answers, and the same one
 a bypass script cannot.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > A pin is a claim about a key. Defeating the pin is easy on a device you own. Understanding *which*
 > key, *which* layer, and *why the app expected that one* is the part that survives contact with a
 > developer who wrote the code.

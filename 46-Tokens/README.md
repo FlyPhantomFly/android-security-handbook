@@ -75,7 +75,7 @@ authentication and it is still, occasionally, out there. Think about what it mea
 Every one of those problems is solved by exchanging the durable credential for a
 disposable one, exactly once, and using the disposable one thereafter.
 
-> **🧠 Mental Model — the cloakroom ticket**
+> **Mental Model — the cloakroom ticket**
 > When you hand your coat to a cloakroom you receive a small numbered ticket. Two things
 > about that ticket are worth thinking about carefully, because they are the two halves
 > of this entire chapter.
@@ -103,7 +103,7 @@ disposable one, exactly once, and using the disposable one thereafter.
 
 ### 1.2 What a token is, precisely
 
-> **📖 Definition — token**
+> **Definition — token**
 > A **token** is a string that a client presents to a server as evidence that some
 > authorisation decision was already made in the client's favour. It is issued by a party
 > the server trusts, it names what it permits, and it stops working at some point.
@@ -124,7 +124,7 @@ that is cheap. This is the entire performance argument for tokens and it is a go
 different shape. Section 5.5 treats a missing `exp` as a critical finding for exactly this
 reason.
 
-> **📖 Definition — bearer token**
+> **Definition — bearer token**
 > A token where **possession alone is sufficient**. The holder need not prove anything
 > else — no key, no certificate, no device. RFC 6750 defines the HTTP mechanism:
 > `Authorization: Bearer <token>`.
@@ -132,7 +132,7 @@ reason.
 That word "bearer" is the most consequential word in this chapter, so it gets its own
 warning.
 
-> **⚠️ Warning — what "bearer" actually means for your report**
+> **Warning — what "bearer" actually means for your report**
 > A bearer token is a **bearer instrument**, in the same sense as cash or a bearer bond.
 > The bytes *are* the authorisation. There is no second factor, no binding to a device, no
 > binding to an IP address, no binding to a TLS connection. A token copied out of a
@@ -169,7 +169,7 @@ And the app must **persist** the token, because a user who is logged out every t
 close the app will uninstall it. So the token cannot live only in memory, and the moment
 it is written down, chapters 33, 49 and this one intersect.
 
-> **🔍 Pentester's Note — the sentence that turns a token into a finding**
+> **Pentester's Note — the sentence that turns a token into a finding**
 > The most common error in mobile reports is: *"The application stores an authentication
 > token in SharedPreferences."*
 >
@@ -323,7 +323,7 @@ the *issuer* did; only sending a forgery tells you what the *verifier* accepts.
 (section 3.10).
 
 The three red boxes and the dotted leak arrows are chapters 33, 21 and this one working
-together. Note that the leak paths bypass every control on the storage decision: an
+together.the leak paths bypass every control on the storage decision: an
 `EncryptedSharedPreferences`-backed token that is also written to logcat is not protected
 by anything.
 
@@ -416,7 +416,7 @@ into everything:
 | Size | 20–60 characters | 500–2000+ characters, sometimes far more |
 | What you test | Replay, entropy, revocation, introspection caching | All of that, **plus** eight verification failure classes |
 
-> **🔍 Pentester's Note — the first thing you do with any token**
+> **Pentester's Note — the first thing you do with any token**
 > Count the dots. Three segments separated by two dots and starting `eyJ` is a JWT and
 > section 5's whole catalogue applies. Anything else is opaque and **none of it applies** —
 > no `alg:none`, no algorithm confusion, no secret cracking, because there is no signature
@@ -532,7 +532,7 @@ a JWE.
 In practice, "JWT" almost always means "JWS with a JSON claims set", because JWE is rare.
 Count the segments to be sure: three means JWS, five means JWE.
 
-> **📖 Definition — compact serialisation**
+> **Definition — compact serialisation**
 > The `a.b.c` form. JWS and JWE both also define a **JSON serialisation** — a JSON object
 > with named members, supporting multiple signatures over one payload. You will essentially
 > never see it in mobile. When someone says "a JWT" they mean compact serialisation.
@@ -554,7 +554,7 @@ Count the segments to be sure: three means JWS, five means JWE.
 | `x5c` | No | An embedded certificate chain | Same, with certificate parsing attached. |
 | `zip` | No | Compression, `DEF` | Compression before encryption enables compression-ratio side channels. Rare and worth noting. |
 
-> **⚠️ Warning — the four headers that must be ignored**
+> **Warning — the four headers that must be ignored**
 > `jku`, `x5u`, `jwk` and `x5c` all let the **token** tell the **verifier** which key to
 > trust. Every one of them is a complete authentication bypass if honoured naively: the
 > attacker generates a keypair, signs a token they wrote with the private half, and points
@@ -583,7 +583,7 @@ optional in a verifier is a mistake.
 | `iat` | Issued at | NumericDate | When it was minted | Enables a max-age policy stricter than `exp`. |
 | `jti` | JWT ID | string | Unique identifier | The only hook a denylist or replay detector can hang on. §3.10 |
 
-> **📖 Definition — NumericDate**
+> **Definition — NumericDate**
 > Seconds since 1970-01-01T00:00:00Z, as a **JSON number**, ignoring leap seconds. Not
 > milliseconds — a four-figure error that makes a token valid for fifty thousand years.
 > Not a string. A verifier that accepts `"exp": "1786539271"` is running a lenient parser,
@@ -637,7 +637,7 @@ it is available to be accepted by mistake.
 
 ### 3.3 Opaque tokens, and why the distinction changes everything
 
-> **📖 Definition — opaque token**
+> **Definition — opaque token**
 > A token with **no internal structure the client can interpret**. It is a lookup key. All
 > the state it refers to lives in the issuer's database. A random 32-byte value,
 > base64url-encoded, is the canonical form.
@@ -668,14 +668,14 @@ The table that decides which you would recommend:
 
 | Question | Opaque wins | JWT wins |
 |---|---|---|
-| Must a token be killable **immediately**? | ✅ Delete the row | ❌ Valid until `exp` unless you add a denylist |
-| Must the resource server work when the AS is down? | ❌ | ✅ |
-| Many resource servers, high request volume? | ❌ Introspection cost | ✅ |
-| Do the claims contain anything sensitive? | ✅ Nothing is readable | ❌ The payload is public to the holder |
-| Is the estate a single monolith? | ✅ Simplest thing that works | Over-engineering |
-| Regulated, needs an audit trail per use? | ✅ The AS sees every use | ❌ The AS sees nothing after issuance |
+| Must a token be killable **immediately**? | Delete the row | Valid until `exp` unless you add a denylist |
+| Must the resource server work when the AS is down? | | |
+| Many resource servers, high request volume? | Introspection cost | |
+| Do the claims contain anything sensitive? | Nothing is readable | The payload is public to the holder |
+| Is the estate a single monolith? | Simplest thing that works | Over-engineering |
+| Regulated, needs an audit trail per use? | The AS sees every use | The AS sees nothing after issuance |
 
-> **🧠 Mental Model — the trade in one sentence**
+> **Mental Model — the trade in one sentence**
 > A JWT buys you **a network round trip per request** and pays for it with **the ability to
 > change your mind**. Everything else follows.
 
@@ -690,7 +690,7 @@ thought about this.
 This deserves its own subsection because it is the single most common misunderstanding
 about JWTs, held by developers and testers alike.
 
-> **⚠️ Warning — the payload is ENCODED, not ENCRYPTED**
+> **Warning — the payload is ENCODED, not ENCRYPTED**
 > Base64url is a *transport encoding*. Its purpose is to represent arbitrary bytes using
 > characters that survive URLs and HTTP headers. It provides **no confidentiality
 > whatsoever**. There is no key. Reversing it is one function call.
@@ -736,7 +736,7 @@ is the origin of an entire class of vulnerability.
 | If stolen | Access until `exp` | **Mint new access tokens indefinitely** | Impersonate the user at any backend that does not check `aud` |
 | Value to an attacker | Medium | **Highest** | High, and often the easiest |
 
-> **⚠️ Warning — the two mistakes that follow from the table**
+> **Warning — the two mistakes that follow from the table**
 >
 > **Mistake 1: sending the `id_token` to an API.** Its `aud` is the client. An API that
 > accepts it is an API that does not check `aud`, which means it will accept **any** token
@@ -844,7 +844,7 @@ is detected).
 | Does not protect against | **Code execution in the process.** The attacker calls `prefs.getString("refresh_token", null)` and receives the plaintext, exactly as the app does. This is [49-KeyStore §1.3](../49-KeyStore/README.md)'s extraction-versus-use distinction and it is the single most important sentence in that chapter. |
 | **Finding severity** | Finding a token here on a rooted device with Frida is **not** a finding. It is a demonstration. Say what you learned that you did not already have. |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > When a developer says "the token is safe, we use the Keystore", ask **what is in the
 > Keystore**. Nine times in ten it is an AES key that wraps a token in SharedPreferences,
 > with no authentication binding, in an app with no anti-instrumentation. That is a
@@ -899,7 +899,7 @@ decision** — no amount of client-side care shortens it.
 | Refresh token, high assurance | Hours to days, with rotation and reuse detection | |
 | Anything with no `exp` | — | **Permanent.** Critical, always. |
 
-> **🧠 Mental Model — why short lifetimes work even though refresh tokens are long**
+> **Mental Model — why short lifetimes work even though refresh tokens are long**
 > It looks like a contradiction: the access token expires in 15 minutes, but the refresh
 > token that mints new ones lasts 90 days, so what was gained?
 >
@@ -960,7 +960,7 @@ sequenceDiagram
     Note over App: The user is forced to re-authenticate.<br/>Loud, immediate, self-limiting.
 ```
 
-> **🧠 Mental Model — why revoking the whole family is correct**
+> **Mental Model — why revoking the whole family is correct**
 > When `RT1` is presented twice, exactly one of two things happened: the legitimate client
 > used it and an attacker replayed it, or an attacker used it and the legitimate client
 > then tried. **The server cannot tell which, and does not need to.** It knows a copy
@@ -995,12 +995,12 @@ curl -s -X POST "$AS" -d grant_type=refresh_token -d refresh_token="$RT2" \
 
 | Step 1 returned a new RT? | Step 2 | Step 3 | Verdict |
 |---|---|---|---|
-| No | Success | — | ❌ **No rotation.** A stolen refresh token is permanent access. High, and it raises the severity of every storage finding you have. |
-| Yes | Success | — | ❌ Rotation is cosmetic — the old token still works. Same impact as no rotation. |
-| Yes | Fail | Success | ⚠️ **Rotation without reuse detection.** Better: the attacker must win a race. But whoever refreshes first keeps the account and the other party is silently logged out, which is also the *only* signal the victim gets. Medium. |
-| Yes | Fail | Fail | ✅ **Rotation with reuse detection.** Correct. Record it as a positive. |
+| No | Success | — | **No rotation.** A stolen refresh token is permanent access. High, and it raises the severity of every storage finding you have. |
+| Yes | Success | — | Rotation is cosmetic — the old token still works. Same impact as no rotation. |
+| Yes | Fail | Success | **Rotation without reuse detection.** Better: the attacker must win a race. But whoever refreshes first keeps the account and the other party is silently logged out, which is also the *only* signal the victim gets. Medium. |
+| Yes | Fail | Fail | **Rotation with reuse detection.** Correct. Record it as a positive. |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Run this on a **test account you own** and expect to be logged out of it. That is the
 > control working. Note the timing: some servers implement a short grace window (a few
 > seconds) so that a client which retried a dropped request is not punished. A grace window
@@ -1012,7 +1012,7 @@ curl -s -X POST "$AS" -d grant_type=refresh_token -d refresh_token="$RT2" \
 This is the most reliably productive test in the chapter, it takes ninety seconds, and it
 is skipped constantly.
 
-> **⚠️ Warning — what "log out" means in most Android apps**
+> **Warning — what "log out" means in most Android apps**
 > ```java
 > public void logout() {
 >     prefs.edit().clear().apply();
@@ -1058,7 +1058,7 @@ Interpreting it fairly, because this is where reports overreach:
 | "Log out of all devices" leaves tokens alive | **Higher.** The user was given an explicit security control and it does nothing. |
 | Tokens survive a **password change** | **Highest.** A user changing their password after a suspected compromise is the canonical incident response, and it did not work. |
 
-> **🧠 Mental Model — why revoking a JWT is genuinely hard**
+> **Mental Model — why revoking a JWT is genuinely hard**
 > A JWT is verified locally, using a cached public key, with no call to the issuer. That is
 > the entire point and the entire performance win. Revocation asks the resource server to
 > know something that happened *after* the token was minted — which means asking somebody.
@@ -1085,7 +1085,7 @@ Everything so far assumed bearer semantics. This is the family of mechanisms tha
 that assumption, and it is the only thing on this list that changes the severity of a
 stolen token from "account compromise" to "an inert string".
 
-> **📖 Definition — sender-constrained token**
+> **Definition — sender-constrained token**
 > A token that is bound to a **key the legitimate client holds**. Presenting the token is
 > not enough; the presenter must also demonstrate possession of the key. RFC 7800 defines
 > the `cnf` ("confirmation") claim that carries the binding.
@@ -1124,7 +1124,7 @@ What each check stops, precisely:
 | `jti` unseen | Replaying the *same* proof verbatim within the window. |
 | `ath == SHA256(token)` | Using a captured proof with a *different* token. |
 
-> **⚠️ Warning — what DPoP does not do, and why saying otherwise damages a report**
+> **Warning — what DPoP does not do, and why saying otherwise damages a report**
 > DPoP protects against an attacker who obtained the **token** but not the **key**. That is
 > a large and realistic class: a leaked log, a stolen backup, a proxy, a compromised
 > resource server, a token in a URL.
@@ -1157,7 +1157,7 @@ these; they are repeated here because they are the point.
 1. **Baseline.** Normal request with a fresh proof. Expect 200.
 2. **Downgrade.** Same token, `Authorization: Bearer <token>`, no `DPoP` header. **Expect
    401.** A 200 means the binding is optional, which means it is absent — an attacker
-   simply does not send a proof. *This is the test that matters and the one most often
+   does not send a proof. *This is the test that matters and the one most often
    skipped.*
 3. **Proof replay.** Reuse a captured proof verbatim. Expect 401 on `jti`.
 4. **Mismatch.** A valid proof from key A with a token bound to key B. Expect 401 on
@@ -1207,7 +1207,7 @@ to store and carry them.
 | `adb backup` deprecated / restricted | API 31+ and OEM-dependent | Often unavailable in practice. Do not conclude "not backed up" from `adb backup` failing. |
 | `SafetyNet` → Play Integrity | API 21 / ongoing | Where apps attest before the server issues a high-value token. |
 
-> **⚠️ Warning — a version note that costs an afternoon**
+> **Warning — a version note that costs an afternoon**
 > `java.util.Base64` is **API 26**. `android.util.Base64` is API 8. Code copied from a
 > server-side JWT example uses the former and crashes with `NoClassDefFoundError` on any
 > device below Oreo unless the build has core library desugaring enabled. When you see
@@ -1265,9 +1265,9 @@ Everything else — the 6-bit grouping, the padding rules, the line wrapping —
 That is the whole of base64url: **two characters**, plus the convention of stripping `=`.
 
 The decoder is more interesting from a security standpoint, because its table maps *both*
-`+` and `-` to 62 and *both* `/` and `_` to 63. The consequence is worth stating clearly:
+`+` and `-` to 62 and *both* `/` and `_` to 63. The consequence is worth stating:
 
-> **🔬 Under the Hood — Android's base64 decoder accepts both alphabets**
+> **Under the Hood — Android's base64 decoder accepts both alphabets**
 > `android.util.Base64.decode(s, Base64.URL_SAFE)` will happily decode a segment containing
 > `+` and `/`, because the decode table accepts both. That is convenient and it is also a
 > **parser-differential hazard**: a token whose segments contain `+` may be rejected by a
@@ -1348,7 +1348,7 @@ adb shell "cmd package query-services --brief android.accounts.AccountAuthentica
   || adb shell "dumpsys package | grep -A3 AccountAuthenticator" | head -40
 ```
 
-> **🔬 Under the Hood — why `AccountManager` is not "more secure"**
+> **Under the Hood — why `AccountManager` is not "more secure"**
 > Developers reach for `AccountManager` because it sounds official, and some assume the
 > system encrypts the token specially. It does not do anything the app's own private
 > directory does not already do — both live under file-based encryption, both are
@@ -1415,7 +1415,7 @@ adb shell dumpsys account | grep -A5 "com.example"
 #    Watch for which token goes in the Authorization header.
 ```
 
-> **⚠️ Warning — measured on the device attached while this chapter was written**
+> **Warning — measured on the device attached while this chapter was written**
 > The device is an **i9000S, Android 13 / API 33, not rooted**. Every one of the three
 > doors into private storage was shut:
 >
@@ -1524,7 +1524,7 @@ if not isinstance(alg, str) or alg not in ALLOWED_ALGS:
     return False, None, f"alg {alg!r} is not in the allow-list"
 ```
 
-Note that this one comparison also closes §5.2 and every future algorithm nobody has
+this one comparison also closes §5.2 and every future algorithm nobody has
 reviewed. It is the highest-value four lines in the file.
 
 **Honest severity.** **Critical** where it works. It requires no key, no cryptography, and
@@ -1556,7 +1556,7 @@ if alg.startswith("rs"):
     pub.verify(...)
 ```
 
-**Why developers write it.** Because a single `key` variable is obviously good design in
+**Why developers write it.** Because a single `key` variable looks like good design in
 every other context, and because the two branches were written weeks apart by different
 people. It also arises from a genuinely reasonable requirement — "we need to support both
 RS256 from the IdP and HS256 from the legacy service" — implemented as one verifier with a
@@ -1588,7 +1588,7 @@ print(si + "." + sig)
 PY
 ```
 
-> **🔍 Pentester's Note — the variants that make this work when the first attempt fails**
+> **Pentester's Note — the variants that make this work when the first attempt fails**
 > The attack hinges on matching the exact byte sequence the verifier uses as its key. Try,
 > in this order:
 > 1. The **PEM text** including `-----BEGIN PUBLIC KEY-----`, the newlines, and the
@@ -1631,7 +1631,7 @@ def key_for(self, alg, kid):
 
 The second control is what the gauntlet actually exercises. Its measured rejection reason
 for attack A3 is `key selection failed: unknown HMAC kid 'rsa-2026-08'` — the RSA key
-simply is not present in the map the HMAC path reads.
+is not present in the map the HMAC path reads.
 
 **Honest severity.** **Critical** where it works, for the same reasons as §5.1, with the
 additional weight that it defeats a system whose designers believed asymmetric signing made
@@ -1662,7 +1662,7 @@ with open(path, "rb") as fh:
 | A NUL byte or a shell metacharacter | Depends entirely on the sink. Try them. |
 
 **The self-describing headers.** `jku`, `x5u`, `jwk` and `x5c` are worse, because they do
-not require the verifier to have a lookup bug — the token simply carries the key, or a URL
+not require the verifier to have a lookup bug — the token carries the key, or a URL
 to it, and a verifier that honours the header accepts anything:
 
 ```
@@ -1715,7 +1715,7 @@ if "crit" in header:
 
 The gauntlet's measured rejection for attack A5 is
 `key selection failed: unknown HMAC kid '../public/jwks.json'` — the traversal string is
-simply a dictionary miss.
+a dictionary miss.
 
 **Honest severity.** **Critical** for `jku`/`jwk` acceptance and for a `kid` sink that
 yields a controllable key. **High** for a `kid` traversal that reaches a file whose contents
@@ -1959,7 +1959,7 @@ if len(aud_list) > 1 and claims.get("azp") not in (None, trust.audience):
     return False, None, f"multi-audience token whose azp is {claims.get('azp')!r}"
 ```
 
-> **⚠️ Warning — prefix matching on `iss` is not a check**
+> **Warning — prefix matching on `iss` is not a check**
 > `if (iss.startsWith("https://issuer.example.com"))` is defeated by
 > `https://issuer.example.com.attacker.example/`. `if (iss.contains(...))` is defeated by
 > `https://attacker.example/?x=https://issuer.example.com`. Use `==` on the whole string,
@@ -2049,7 +2049,7 @@ each.
 
 ### 5.10 Honest severity — the section that matters most
 
-> **⚠️ Warning — a captured token from your own test account is not a finding**
+> **Warning — a captured token from your own test account is not a finding**
 > You logged in as your own test user. You proxied the traffic, or you rooted the device
 > and read the app's preferences file, or you attached Frida and hooked a getter. You now
 > hold a token that grants access to **your own account**, which you already had access to,
@@ -2078,7 +2078,7 @@ Three worked comparisons, so the calibration is concrete:
 | Extracted a hardcoded HMAC secret from the APK and minted an admin token | **Critical.** | The secret is in every installation. One extraction, from a store download, on a laptop, forges tokens for **every user**. No device access needed. Break-once-run-everywhere. |
 | Captured your own token, logged out, replayed it, got 200 | **High.** | The impact is not about *your* token. It is that **every** token this app issues survives logout, so any token obtained by any means — a leaked log, a shared device, a stolen backup — remains live indefinitely. |
 
-> **🧠 Mental Model — the question that settles every severity argument**
+> **Mental Model — the question that settles every severity argument**
 > **"What did I learn that I did not already have?"**
 >
 > Ask it out loud before writing any token finding. Your own token from your own account:
@@ -2312,7 +2312,7 @@ grep -rn "putString" work/smali*/ | grep -iE "token|auth|session|jwt" | head -20
 | Field names | `refreshToken` becomes `f`. Navigate by the string constant used as the preference key. |
 | Small helper methods | R8 inlines them, so the decode may be spliced into its caller. |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The claim names are the thing to anchor on, and it is worth saying why they are
 > obfuscation-proof: they are part of a **contract with the server**. Rename `"exp"` and the
 > server rejects every token. So `const-string vN, "exp"` is present in the DEX of any app
@@ -2384,7 +2384,7 @@ adb logcat -c && echo "log in now" && sleep 30 && \
   adb logcat -d | grep -oE 'eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]*' | sort -u
 ```
 
-> **⚠️ Warning — the device this chapter was written against**
+> **Warning — the device this chapter was written against**
 > The i9000S (Android 13 / API 33) attached here is **not rooted** and has **no
 > frida-server**: `su` reports "inaccessible or not found". Neither of the two commands
 > above returns anything for a non-debuggable app on it, and the Frida material in §7.6
@@ -2443,7 +2443,7 @@ Real output, against a token minted by this chapter's local issuer:
   cnf       absent: this is a PURE BEARER TOKEN.
 ```
 
-> **⚠️ Warning — never paste a token into a website**
+> **Warning — never paste a token into a website**
 > Public "JWT decoder" sites receive the token you paste into them. Pasting a client's
 > token into one is a data-handling incident and it has ended engagements. There is no
 > version of this that is acceptable, including "it was only a test token" — you will not
@@ -2563,7 +2563,7 @@ Reading the responses, which is where judgement enters:
 | **500** | The forgery broke the parser. Not a token finding, but a bug — and the stack trace, if returned, names the library and version. |
 | **400** | Usually malformed input. Check your encoding before concluding anything; a `+` in a segment (standard base64 rather than base64url) produces exactly this. |
 
-> **🔍 Pentester's Note — the 403 is the one to chase**
+> **Pentester's Note — the 403 is the one to chase**
 > A 401 means the token was rejected. A 403 means it was **accepted** and the authorisation
 > decision then failed. That is a completely different result, and it means your forgery
 > worked. Change `sub` to another user, or add the scope the endpoint wants, and try again.
@@ -2598,7 +2598,7 @@ value is the credential in use -- without either of them ever being printed.
 That correlation is exactly what a finding needs and it is safe to paste into a report,
 which a screenshot of a live token is not.
 
-> **⚠️ Warning — honesty about what was and was not run**
+> **Warning — honesty about what was and was not run**
 > `scripts/token-hooks.js` was **not executed** against the device attached while this
 > chapter was written, because that device (i9000S, API 33) is not rooted and has no
 > frida-server. It is written against documented APIs and follows the hook shapes used
@@ -2702,7 +2702,7 @@ cat work/res/xml/backup_rules.xml 2>/dev/null
 cat work/res/xml/data_extraction_rules.xml 2>/dev/null
 ```
 
-> **⚠️ Warning — the exclusion rule that only covers half the exposure**
+> **Warning — the exclusion rule that only covers half the exposure**
 > On API 31+ `dataExtractionRules` has **two** independent sections. An app that excludes
 > its token store from `<cloud-backup>` but not from `<device-transfer>` has protected it
 > from Google's servers and not from a device-to-device migration. Check both. This is a
@@ -2936,7 +2936,7 @@ if now > exp + max_skew:
     return False, None, "expired"
 ```
 
-> **🧠 Mental Model — read the diff, not the files**
+> **Mental Model — read the diff, not the files**
 > The correct verifier is about 40% longer, and most of that is comments. The security
 > difference is: one frozenset, two dictionaries instead of one variable, four string
 > comparisons, one `isinstance` check, and `hmac.compare_digest` instead of `==`.
@@ -3023,7 +3023,7 @@ fun exchangeIdTokenForSession(idToken: String, backend: String): Result<String> 
 }
 ```
 
-> **🧠 Mental Model — why the client should not verify**
+> **Mental Model — why the client should not verify**
 > "The client should verify the id_token properly" sounds like the right lesson and it is
 > the wrong one. A client that verifies locally and then tells the backend *"the user is
 > alice@example.com"* has built a backend that trusts the client's conclusion. The
@@ -3402,7 +3402,7 @@ is the thing to do first if you only do one.
 | 03 | [Tokens at rest](labs/lab-03-tokens-at-rest.md) | Intermediate | A vulnerable Android token store, and the sweep that finds it | Where tokens actually land on a device, and how to grade a hit by reachability rather than presence |
 | 04 | [CTF: The token that outlived its owner](labs/lab-04-ctf-the-token-that-outlived-its-owner.md) | Advanced | The whole system: issuer, resource server, app | Four independent paths to the flag, each failing at a different layer. Honest severity under pressure |
 
-> **⚠️ Safety rule for every lab in this chapter**
+> **Safety rule for every lab in this chapter**
 > **Every token you handle is one you minted yourself.** All four labs run against a local
 > issuer you build ([`labs/gauntlet/issuer.py`](labs/gauntlet/issuer.py)), with a keypair
 > generated at the start of the run and destroyed at the end. Do not extract, decode or

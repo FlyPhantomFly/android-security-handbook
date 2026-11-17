@@ -8,7 +8,7 @@
 
 ---
 
-## ⛔ The rule, before anything else
+## The rule, before anything else
 
 **This lab works against a third-party application and stops at *detection*.**
 
@@ -28,7 +28,7 @@ That table is not bureaucracy. It is also the *methodologically* correct boundar
 engagement: everything on the left is repeatable, deniable-proof and produces evidence a client can
 verify. Everything on the right needs a signed scope document naming the application.
 
-> **🔍 The tracer has two halves and this lab uses one.**
+> **The tracer has two halves and this lab uses one.**
 > [`../scripts/trace-webview.js`](../scripts/trace-webview.js) reports (`settings()`, `bridges()`,
 > `verdict()`) and it mutates (`forceCancel()`, `eval()`). Lab 02 used the mutating half against an
 > app you built, because a control was needed. Here you use only the reporting half. Knowing which
@@ -109,7 +109,7 @@ done
 ls -la
 ```
 
-> **🔍 If `adb` says "more than one device/emulator"**, you have a second device or a running emulator
+> **If `adb` says "more than one device/emulator"**, you have a second device or a running emulator
 > attached. Pin every command with `-s <serial>`, taken from `adb devices -l`. Doing this by accident
 > — auditing an APK from an emulator and tracing a process on a phone — produces a reconciliation
 > table that disagrees with itself for no discoverable reason.
@@ -143,7 +143,7 @@ and the DEX check agrees: **a 57 MB APK containing one `classes.dex` of about 72
 `versionName` is literally the word **`stub`**. `com.vendor.professionalnet` on the same device is a 334 KB
 `base.apk`.
 
-> **📖 What a clean report means, and does not.** `webview-audit.py` produced a completely empty
+> **What a clean report means, and does not.** `webview-audit.py` produced a completely empty
 > finding list for `com.vendor.socialmedia`. That report is correct and worthless: the real application
 > code is downloaded at runtime and was never in the file. **"No findings" is not "secure".** If the
 > DEX total is a few tens of kilobytes for a large app, stop, and go and find where the code actually
@@ -255,7 +255,7 @@ sc.exports_sync.verdict()
 sess.detach()
 ```
 
-> **⚠️ You have to drive the app by hand, and that is the point.** A WebView that is never opened is
+> **You have to drive the app by hand, and that is the point.** A WebView that is never opened is
 > never configured. Most of the interesting screens in a real app are three taps deep behind a login.
 > If `settings()` prints nothing, you did not reach a WebView — that is a coverage problem, not a
 > finding, and it must be stated as one.
@@ -345,7 +345,7 @@ Measured on this device across the whole corpus, as root: **nothing**. Zero live
 **20 static `setWebContentsDebuggingEnabled` call sites**. Every one of those calls is guarded — by
 `ApplicationInfo.FLAG_DEBUGGABLE`, by a build flavour, by a remote config.
 
-> **📖 This is the single best example in the chapter of why a static hit is a lead and not a finding.**
+> **This is the single best example in the chapter of why a static hit is a lead and not a finding.**
 > Report those 20 without checking and 20 of your findings are wrong. One command, ten seconds.
 
 If you *do* find a socket, then you have a real finding, and you can prove its impact without touching
@@ -360,7 +360,7 @@ curl -s http://127.0.0.1:9222/json/list
 Listing the targets is detection. Evaluating script in the page through that socket is not, and this
 lab does not do it.
 
-> **🔍 The socket name is not what most guides say.** It is `@webview_devtools_remote_<pid>` — not
+> **The socket name is not what most guides say.** It is `@webview_devtools_remote_<pid>` — not
 > `@<package>_devtools_remote`, and not `@chrome_devtools_remote`, which belongs to Chrome. Grep for
 > `devtools` and you will find it whatever it is called on your provider version.
 
@@ -375,7 +375,7 @@ is the correct output — a branch might be a hand-rolled certificate comparison
 decompiler, or in the smali, where [README §6.3](../README.md) shows exactly what the pattern looks
 like. That is the number to quote at anyone who claims automated WebView scanning is a solved problem.
 
-> **⛔ And note what you must *not* do here.** In lab 02 you resolved this question by running
+> **And note what you must *not* do here.** In lab 02 you resolved this question by running
 > `forceCancel(true)` and pointing the app at your own HTTPS listener. Against a third-party app both
 > halves of that are out of scope: one modifies the app's behaviour, the other requires you to control
 > what it loads. Read the method statically, and if you cannot resolve it, **report it as unresolved**

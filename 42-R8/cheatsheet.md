@@ -146,7 +146,7 @@ Source file for an inlined frame comes from the **owner's** class entry; if the 
 
 **Rule of thumb:** every `$$` marks a compiler-constructed name; the developer's identifier is to the **left** of the marker.
 
-> **⚠️ These spellings are version-dependent.** `$$Lambda$Foo$0` (older) became `Foo$$ExternalSyntheticLambda0`. Read `# compiler_version:` or run `ExtractMarker` before trusting a name-shape heuristic or diffing two builds.
+> **These spellings are version-dependent.** `$$Lambda$Foo$0` (older) became `Foo$$ExternalSyntheticLambda0`. Read `# compiler_version:` or run `ExtractMarker` before trusting a name-shape heuristic or diffing two builds.
 
 ---
 
@@ -258,7 +258,7 @@ For `k=3` the payload is a bare `ProtoBuf.Function`. For `k=4` `d1` is **not** e
 
 > **Why properties leak:** R8 renames JVM members. A Kotlin function maps 1:1 to a JVM method, so R8 rewrites `Function.name`. A Kotlin **property** is backed by up to three JVM members, so there is no single new name for `Property.name` — R8 updates the JVM signature extension and leaves the Kotlin name alone.
 
-> **⚠️ `grep -rn 'Lkotlin/Metadata;'` is not a test.** A string in the DEX string table proves a reference exists, not that any class carries the annotation with data.
+> **`grep -rn 'Lkotlin/Metadata;'` is not a test.** A string in the DEX string table proves a reference exists, not that any class carries the annotation with data.
 
 ---
 

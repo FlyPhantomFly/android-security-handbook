@@ -33,7 +33,7 @@ There is also a professional reason. The universal script is loud: it prints eve
 hundreds of crypto operations the TLS stack performs on every network call. Real work is mostly
 targeted hooks — five lines that answer one question — and knowing which five lines is the skill.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Obfuscation renames what the app owns. It cannot rename `javax.crypto.Cipher`, because the platform
 > owns that name and the app must use it to reach the provider. Every hook in this lab exploits that
 > asymmetry: **hook the boundary the app cannot move.**
@@ -138,7 +138,7 @@ public class CryptoZoo extends Activity {
 adb install -r app/build/outputs/apk/release/app-release.apk
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > If your hooks install but never fire, the method was inlined by the optimizing compiler. Force
 > interpretation before you debug anything else:
 > ```bash
@@ -398,7 +398,7 @@ JS
 export fewer symbols than upstream OpenSSL, and what does that mean for your tooling?
 
 **Question 14.** You attach to an app and the Java hooks show *no* cryptographic activity, yet the app
-clearly stores encrypted data. List four explanations, in the order you would test them.
+still stores encrypted data. List four explanations, in the order you would test them.
 
 ---
 
@@ -566,7 +566,7 @@ application data under a key also used elsewhere; the attacker needs only two ci
 observable on disk or on the wire with no privileged access; and exploitation yields the XOR of two
 plaintexts *and* recovery of the GHASH subkey H, permitting forgery of arbitrary authenticated
 messages under that key. It outranks the hardcoded key in mechanism severity — though in practice you
-would report both, and note that the hardcoded key makes the nonce-reuse finding moot since the
+would report both, and confirm that the hardcoded key makes the nonce-reuse finding moot since the
 attacker already has the key. Saying that explicitly is what distinguishes an analysis from a list.
 
 **13.** BoringSSL is a fork that removed large parts of OpenSSL's API and does not maintain ABI

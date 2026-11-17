@@ -149,7 +149,7 @@ by falling back to an unbound key.
 ### 13. Somebody could just enrol their own fingerprint. Doesn't that defeat everything?
 
 It would, which is why `setInvalidatedByBiometricEnrollment(true)` exists: adding an enrolment
-destroys keys created with the flag. Note that enrolling a biometric itself requires the device
+destroys keys created with the flag.enrolling a biometric itself requires the device
 credential, so the attack has a real precondition.
 
 Two traps. First, apps turn the flag off because users lose their saved credentials when adding a
@@ -224,7 +224,7 @@ loses its reader.
 ### 18. `forge()` succeeded against a correctly-implemented app. Did I break it?
 
 No, and this is the single most misread result in the topic. `forge()` calls a public Java method;
-of course it returns. Frida reports no error because nothing errored.
+naturally it returns. Frida reports no error because nothing errored.
 
 The difference appears one step later. Watch the `Cipher.init`. If it throws
 `UserNotAuthenticatedException`, the keystore refused and your forged callback bought a screen that
@@ -342,7 +342,7 @@ lock screen offers.**
 
 It works, but the guarantee is weaker than the code suggests. On API 23–27 there was no system
 biometric dialog to delegate to, so `androidx.biometric` **draws its own** on top of
-`FingerprintManager`. The "the system draws the pixels, so an app cannot phish them" property simply
+`FingerprintManager`. The "the system draws the pixels, so an app cannot phish them" property
 does not exist there.
 
 The key binding still works on those versions. It is the anti-phishing half that is missing, and it

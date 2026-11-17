@@ -41,14 +41,14 @@ applies. That is a Gradle-plugin version matrix, not an Android one, and section
 Two sentences, before anything else, because everything in this chapter depends on both being
 understood.
 
-> **⚠️ Warning**
+> **Warning**
 > **ProGuard is largely historical on Android.** Since **Android Gradle Plugin 3.4** (2019) the
 > default code shrinker has been **R8**, and since AGP 7.0 the flag that let you switch back to
 > ProGuard was removed entirely. If you set `minifyEnabled true` in a modern Android project, the
 > tool that runs is R8. ProGuard is not part of the Android SDK, and nothing in a stock Gradle build
 > invokes it.
 
-> **⚠️ Warning**
+> **Warning**
 > **Absent or weak obfuscation is not, by itself, a vulnerability.** It is a hardening control. It
 > makes an attacker's work slower; it does not make anything safe, and its absence does not make
 > anything unsafe. Reporting "the application is not obfuscated" as a standalone finding, without a
@@ -78,7 +78,7 @@ There are three more reasons that are not merely historical:
    The rules file is where somebody decided, line by line, which parts of the application would keep
    their names. That is the artefact worth reading, and it is the artefact this chapter owns.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > ProGuard is to R8 roughly what `make` is to a modern build system: superseded as an engine, but its
 > *file format* became the interface everyone standardised on, so you still have to be fluent in it.
 > Learning "ProGuard" today means learning **the keep language**.
@@ -90,7 +90,7 @@ Before shrinking existed on Android, three separate pressures pushed in the same
 **Pressure one: the 65,536 method limit.** A single DEX file addresses methods with a 16-bit index,
 so one `classes.dex` can reference at most 65,536 methods — the famous "64K limit", covered in
 [12-DEX-Internals](../12-DEX-Internals/README.md). Before multidex existed (and even after, because
-multidex was slow on pre-Lollipop devices), an app that pulled in a couple of large libraries simply
+multidex was slow on pre-Lollipop devices), an app that pulled in a couple of large libraries
 would not build. The fix was to **delete the code you were not using**, automatically. That is
 *shrinking*, and it is the original reason ProGuard shipped with the Android SDK.
 
@@ -108,7 +108,7 @@ ProGuard addressed all three with one pass. That coupling is still visible in th
 it is the source of a persistent confusion: **shrinking and obfuscation are the same switch**, so
 turning off "obfuscation" for a debugging reason also turns off the dead-code removal you wanted.
 
-> **📖 Definition**
+> **Definition**
 > **Shrinking** (also *tree shaking*) removes classes, methods and fields that nothing reachable
 > refers to. **Obfuscation** (also *minification*, *renaming*, *name mangling*) replaces the names of
 > what remains with short meaningless ones. **Optimisation** rewrites the code itself — inlining
@@ -136,7 +136,7 @@ developer wrote would still be there.
 
 ### 1.4 What this is, precisely
 
-> **📖 Definition**
+> **Definition**
 > **ProGuard** is a Java class-file **shrinker, optimiser, obfuscator and preverifier**. It reads
 > `.class` files (in directories, JARs, WARs, APKs), computes which entities are reachable from a set
 > of declared entry points, deletes the rest, optimises the bytecode, renames what remains, and
@@ -169,7 +169,7 @@ Three properties of that definition do most of the work later:
 | **2021 (AGP 7.0)** | The escape hatch is removed. ProGuard cannot be selected through AGP any more | An Android project that runs ProGuard today does so via a hand-written Gradle task or Guardsquare's own plugin |
 | **AGP 8.0** | **R8 "full mode" becomes the default** (`android.enableR8.fullMode=true` is implied) | Several rules that worked for a decade changed meaning. Section 3.15 |
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > The coincidence in row two is worth a moment: ProGuard entered the SDK in **tools release r8**, and
 > the tool that eventually replaced it is called **R8**. They are unrelated. Google's R8 is named for
 > being the successor to **D8**, the dexer, which is itself named for **DEX**.
@@ -187,7 +187,7 @@ This chapter is deliberately narrow. It owns **the rules language and the ProGua
 | Identifying shaded and repackaged libraries | [17-Libraries](../17-Libraries/README.md) |
 | DEX layout, the string pool, the 64K limit | [12-DEX-Internals](../12-DEX-Internals/README.md) |
 
-> **⚠️ Warning**
+> **Warning**
 > At the time this chapter was written, `42-R8` had not been started. Every reference to it is a
 > forward reference by directory name and resolves when that chapter lands. Where a fact about R8 is
 > needed *here* to keep this chapter honest — full-mode keep semantics, the fact that R8 rewrites
@@ -311,7 +311,7 @@ argument removal). From the outside the phases look the same and the same direct
 — but you should not assume the *boundaries* are the same. A concrete example, measured in
 [examples/keeplab](examples/keeplab/):
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > The fixture's `Analytics.record()` is called exactly once. R8 did not merely rename it — it
 > **inlined the whole method into `MainActivity.onCreate`** and deleted the class, recording the
 > outcome in `mapping.txt` as `com.pentest.ch41.Analytics -> R8$$REMOVED$$CLASS$$0`. In the same
@@ -363,7 +363,7 @@ enum `valueOf` — all of them are runtime lookups by name, and all of them are 
 bytecode reachability analysis. Understanding this converts "why is this rule here?" from a mystery
 into a checklist.
 
-> **🔬 Under the Hood — measured, and it contradicts the model above**
+> **Under the Hood — measured, and it contradicts the model above**
 > **R8 8.6.2 does see some of these strings.** Deleting the `ReflectionEntry` keep from
 > [`examples/02-tightened-rules.pro`](examples/02-tightened-rules.pro) and rebuilding does *not*
 > produce a `ClassNotFoundException`. R8 resolves the constant string argument to `Class.forName`,
@@ -390,7 +390,7 @@ into a checklist.
 > The safe rule, and the one this chapter teaches: **write the keep.** R8 may make it redundant; it
 > will never make it wrong, and you cannot tell from the source which idioms are covered.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > A keep rule is not an instruction to *protect* something. It is a declaration that **something
 > outside the bytecode will look this up by name**. Read every rule that way and the good ones
 > become obvious: they name the thing that is looked up, and nothing else. The bad ones name a
@@ -588,7 +588,7 @@ Before the grammar, the boring mechanics — each of which has bitten somebody.
 | Duplicate rules | Legal and harmless. They are a strong signal that the file grew by accretion |
 | Rule that matches nothing | Legal. ProGuard emits a *note*; R8 usually stays silent. This is why dead rules survive for years |
 
-> **⚠️ Warning**
+> **Warning**
 > Because there is no statement terminator, a typo in a class name does not produce a parse error —
 > it produces a rule that silently matches nothing. `-keep class com.example.MainActivty` is
 > perfectly valid configuration for a class that does not exist. Nothing will tell you. This is what
@@ -622,7 +622,7 @@ Every part is optional except the class name. Worked through, piece by piece:
 | class name | `com.example.Foo`, `com.example.**` | Fully qualified, dot-separated, with wildcards. Inner classes use `$`: `com.example.Outer$Inner` |
 | `extends` / `implements` | `-keep public class * extends android.app.Activity` | Match only subtypes. **The two words are synonyms in this grammar** — `extends` matches interface implementation too. Matching is transitive: a class extending a subclass of `Activity` matches |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `extends` and `implements` being synonyms surprises people, and it matters when you are reading
 > somebody's rules to predict coverage. `-keep class * implements java.io.Serializable` and
 > `-keep class * extends java.io.Serializable` do the same thing. Neither is a syntax error.
@@ -655,7 +655,7 @@ these wrong silently changes what a rule covers.
 | `<methods>` | member specification | every method of the matched class | | |
 | `<1>`, `<2>`, … | class names, in `-if` rules | back-reference to the *n*-th wildcard in the `-if` condition | | |
 
-> **⚠️ Warning — the documented special case that catches everybody**
+> **Warning — the documented special case that catches everybody**
 > The class name **`*` on its own matches every class, irrespective of package.** The ProGuard manual
 > states this explicitly, as a convenience and for backward compatibility. So:
 >
@@ -705,12 +705,12 @@ other two are the same substitution. That is the whole of it.
 
 | Directive | Keeps class from removal | Keeps class name | Keeps matched members from removal | Keeps matched member names | Condition |
 |---|---|---|---|---|---|
-| `-keep` | ✅ | ✅ | ✅ | ✅ | class matches |
-| `-keepclassmembers` | ❌ | ❌ | ✅ | ✅ | class matches |
-| `-keepclasseswithmembers` | ✅ | ✅ | ✅ | ✅ | class matches **and has all named members** |
-| `-keepnames` | ❌ | ✅ | ❌ | ❌ | class matches |
-| `-keepclassmembernames` | ❌ | ❌ | ❌ | ✅ | class matches |
-| `-keepclasseswithmembernames` | ❌ | ✅ | ❌ | ✅ | class matches **and has all named members** |
+| `-keep` | | | | | class matches |
+| `-keepclassmembers` | | | | | class matches |
+| `-keepclasseswithmembers` | | | | | class matches **and has all named members** |
+| `-keepnames` | | | | | class matches |
+| `-keepclassmembernames` | | | | | class matches |
+| `-keepclasseswithmembernames` | | | | | class matches **and has all named members** |
 
 Worked examples of the distinction that matters most:
 
@@ -735,7 +735,7 @@ Worked examples of the distinction that matters most:
 -keepnames class com.example.analytics.Event
 ```
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Ask two questions of every keep rule and you have decoded it:
 > **(a)** Does the directive name contain `names`? If yes, it cannot stop deletion — only renaming.
 > **(b)** Does it contain `classmembers`? If yes, it does not protect the class at all.
@@ -876,7 +876,7 @@ Without line two, every class in the DEX carries its original filename — and j
 filenames to *name the classes*, via `--use-source-name-as-class-name-alias`, recovering a large
 part of what renaming removed. See [56-JADX §3.9](../56-JADX/README.md).
 
-> **🔬 Under the Hood — measured, and it contradicts the usual advice**
+> **Under the Hood — measured, and it contradicts the usual advice**
 > The paragraph above describes ProGuard's behaviour and is what almost every guide says. **R8 8.6.2
 > does not behave that way.** In [examples/keeplab](examples/keeplab/), build C sets
 > `-keepattributes *` and `-dontobfuscate` and contains **no** `-renamesourcefileattribute` — and the
@@ -967,7 +967,7 @@ Read as: "calls to these methods may be deleted". The optimiser then removes the
 expressions that computed their arguments**, which is the point — it is how you strip verbose logging
 from a release build without `if (BUILD_DEBUG)` everywhere.
 
-> **⚠️ Warning**
+> **Warning**
 > Three ways this goes wrong, all of them seen in the wild:
 >
 > 1. **It applies to the return value too.** A method assumed side-effect-free whose result is used
@@ -1005,7 +1005,7 @@ live.
 | `-repackageclasses` with no argument | moves to root package | yes | yes |
 | Kotlin metadata rewriting | none | yes | yes |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The row that changes what you see in an app is the last block. R8's enum unboxing and class merging
 > mean that **classes present in the source are not merely renamed but absent entirely**, with their
 > code folded into callers. When you cannot find the class that must exist, consider that it does not
@@ -1045,7 +1045,7 @@ Five sources, merged by R8 in this order (later rules do not override earlier on
 4. **Your `proguardFiles`**, i.e. `app/proguard-rules.pro`.
 5. **R8's own built-in assumptions**, which are not expressed as text.
 
-> **⚠️ Warning**
+> **Warning**
 > There is **no way to remove a keep rule** that a dependency imposes on you. Keep rules only add.
 > If a library ships `-keep class com.thelib.** { *; }` in its consumer rules, that rule is in your
 > build and you cannot delete it from your own file. The only remedies are to remove the dependency,
@@ -1105,7 +1105,7 @@ are assigned **per scope** and reused as aggressively as the JVM's resolution ru
 | `-repackageclasses [<pkg>]` | Move every renamed class into a single package | The most genuinely effective anti-reading directive in the language, because the package structure often survives renaming and is a large part of what an analyst reads first |
 | `-flattenpackagehierarchy [<pkg>]` | Collapse the hierarchy to one level under `<pkg>` | Weaker sibling of the above |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `-repackageclasses` is worth recognising because of what its *absence* tells you. If an obfuscated
 > app still has a package structure that mirrors its architecture — `a.b.c.d` with the same shape as
 > `com.app.ui.login` — then nobody enabled it, and you can use the shape itself as a map: package
@@ -1535,7 +1535,7 @@ discloses.
 |---|---|
 | Whole packages unrenamed while others are mangled | An over-broad `-keep` names those packages. They were chosen deliberately, so they are probably important |
 | Original `.java` filenames in `SourceFile` | `-keepattributes SourceFile` without `-renamesourcefileattribute`, or minification off entirely |
-| Every class unrenamed but dead code clearly removed | `-dontobfuscate` with shrinking left on |
+| Every class unrenamed but dead code visibly removed | `-dontobfuscate` with shrinking left on |
 | A `mapping.txt` full of `X -> X` identity lines | Same as above, and now you have proof |
 | Model classes unrenamed, everything else mangled | A `implements Serializable` or annotation-driven keep |
 | One class unrenamed that has native methods | The standard JNI rule. Also: that class matters |
@@ -1618,12 +1618,12 @@ and there are five signals:
 | Signal | How to check | What it means |
 |---|---|---|
 | Package structure intact, names intact | `python3 -B scripts/what-survived.py app.apk --package com.the.app` | Either minification is off or a package keep is in force |
-| Names intact **but dead code obviously removed** | Compare against the vendor's own public SDK class list, or look for a library present but stripped to a handful of classes | `-dontobfuscate` with shrinking on |
+| Names intact **but dead code visibly removed** | Compare against the vendor's own public SDK class list, or look for a library present but stripped to a handful of classes | `-dontobfuscate` with shrinking on |
 | A *subset* of packages intact while the rest is `a.b.c` | The package table in `what-survived.py`'s section 2 | A targeted over-broad keep. Read which packages — that is where the developers thought the risk was |
 | Original filenames in `SourceFile` | `what-survived.py` section 6 | Minification off, or ProGuard without `-renamesourcefileattribute` |
 | A `mapping.txt` full of identity lines | If you find the file at all | Renaming was disabled |
 
-> **🔬 Under the Hood — the identity-mapping tell**
+> **Under the Hood — the identity-mapping tell**
 > Build C of the fixture writes a `mapping.txt` whose every line reads
 > `com.pentest.ch41.Analytics -> com.pentest.ch41.Analytics:`. A mapping file that maps names to
 > themselves is a mapping file for a build that renamed nothing. If you are ever handed a
@@ -1656,7 +1656,7 @@ informational. Say which one you are looking at.
 
 ### 5.5 What this does not protect, stated so a developer cannot misread it
 
-> **⚠️ Warning**
+> **Warning**
 > **Renaming does not touch string constants.** Not at any setting, not with any rule, not in
 > ProGuard and not in R8. A hardcoded API key is in the DEX string pool in plain text after
 > `minifyEnabled true` exactly as it was before. `strings classes.dex | grep -i key` finds it in
@@ -1733,7 +1733,7 @@ is a finding, and it points straight at the rule that caused it.
 | **MASVS-STORAGE / MASVS-CRYPTO** | Where "we obfuscated the key" gets correctly rejected. The key is a storage/crypto finding regardless of naming |
 | **MASTG resilience tests** | The procedures for assessing obfuscation. Refer to them by name rather than by number; the identifiers have been renumbered between MASTG versions |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Keep the mapping honest in both directions. An app with perfect obfuscation still fails
 > MASVS-STORAGE if it writes a token to `SharedPreferences`, and an app with no obfuscation at all
 > passes every category except RESILIENCE. Do not let a resilience gap contaminate the severity of
@@ -1856,7 +1856,7 @@ enum, three fields, two methods and a nested annotation. In the DEX:
 
 Six observations, and each one is a rule (or the absence of one) made visible:
 
-1. **The class is `a.a`.** It kept nothing — no rule named it. Note that it also *moved*: the
+1. **The class is `a.a`.** It kept nothing — no rule named it.it also *moved*: the
    package `com.pentest.ch41` became `a`. This is why scoping an analysis by the original package
    name systematically undercounts renaming.
 2. **`Serializable` is still in the interface list.** Framework and JDK types are library classes;
@@ -1897,7 +1897,7 @@ unboxed, the constant propagated, and the call to `name()` evaluated at build ti
 reading this method learns the business vocabulary of the app from a class called `a.a` — and the
 `amountMinor`/`currency`/`"GBP"` triple next to it makes the domain unmistakable.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Renaming removes *labels*. It does not remove *shapes*, and it does not remove *values*. A
 > `StringBuilder` fed a constant, a colon, a `long` and a `String`, on a `Serializable` class with a
 > field called `currency`, is a payment record no matter what the class is called.
@@ -1975,7 +1975,7 @@ What happened, and it is a genuine insight into how the phases compose:
 Verified by deleting exactly that one rule and rebuilding: `LicenseValidator -> a.a`, and the empty
 shell is renamed like everything else. Nothing else in the rules file changed.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Two lessons. For the **developer**: keep conditions are evaluated on the *input* program, so a rule
 > can preserve a name whose justification the build then removes. For the **analyst**: an unrenamed
 > class with an empty or near-empty body is a strong tell that a wildcard `-keepclasseswithmembernames`
@@ -2075,7 +2075,7 @@ Seven things to read out of that listing, in the order you should notice them:
    with types `String`, `String`, `J`, `String` tell you the shape of the output string without any
    names at all.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > That is the whole chapter in fifty lines of Smali. Renaming removed the labels. It did not remove
 > the **shape** (a `Serializable` value type with a currency and a minor-unit amount), the **values**
 > (`4999`, `"GBP"`, `"PURCHASE"`), or the **framework vocabulary**. An analyst who reads only the
@@ -2166,7 +2166,7 @@ Obfuscation is a build-time property, so there is nothing to hook *in the shrink
 analysis buys you here is **ground truth about names**: the runtime knows every class's real
 (post-rename) name, it knows the class hierarchy, and it will happily tell you.
 
-> **⚠️ Warning — what was and was not run**
+> **Warning — what was and was not run**
 > The device attached while this chapter was written is the **`i9000S`, Android 13 / API 33**, and it
 > is **not rooted and has no frida-server**. Every ADB-based command in this section was executed on
 > it. The Frida script in 7.2 was **written and syntax-checked but not executed on a device**,
@@ -2559,7 +2559,7 @@ adb shell pm path com.google.android.feedback
 adb pull /system/system_ext/priv-app/GoogleFeedback/GoogleFeedback.apk .
 ```
 
-> **⚠️ Warning — a Git Bash trap that costs half an hour**
+> **Warning — a Git Bash trap that costs half an hour**
 > Under MSYS, `adb pull` rewrites a device path beginning with `/` into a Windows path and fails with
 > `failed to stat remote object 'C:/Program Files/Git/system/...'`. Prefix the command with
 > `MSYS_NO_PATHCONV=1`, and give the *local* destination as a Windows-style path. This is not an adb
@@ -2719,7 +2719,7 @@ And the row that turns this from a naming exercise into a security one:
 names in place; it leaves dead code and its constants in the shipped APK.** That is the version of
 this finding that a development team will act on.
 
-> **🔬 Under the Hood — the surprise in build B**
+> **Under the Hood — the surprise in build B**
 > `com.pentest.ch41.LicenseValidator` keeps its original name in build B, which looks wrong for a
 > file whose whole point is narrow rules. It is kept by the standard JNI rule
 > `-keepclasseswithmembernames,includedescriptorclasses class * { native <methods>; }`, because the

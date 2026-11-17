@@ -216,7 +216,7 @@ public final class S {
 }
 ```
 
-Then `BASE_URL` becomes `S.a(0)`, `API_KEY` becomes `S.a(1)`, and so on. Note that the constants must
+Then `BASE_URL` becomes `S.a(0)`, `API_KEY` becomes `S.a(1)`, and so on.the constants must
 become *method calls at the point of use*, not `static final` fields — a `static final String`
 initialised once would leave a single decryption at class-init time and only one call site, which is
 much easier than the real thing.
@@ -499,7 +499,7 @@ enough. In combination they are conclusive.
 
 **Q4.** A handful of classes, none of which are the app's. The `Application` class is the packer's
 stub. The original name is stashed in a `<meta-data>` element, because the stub must eventually
-instantiate the real `Application` and forward the lifecycle to it — the packer cannot simply discard
+instantiate the real `Application` and forward the lifecycle to it — the packer cannot discard
 that name, and that necessity is what makes it recoverable.
 
 **Q5.** Hypothesis: packed. The one alternative to rule out is **multidex with the real code in

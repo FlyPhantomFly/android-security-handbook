@@ -236,4 +236,4 @@ Count classes whose simple name is three characters or fewer. Above 80% means it
 
 No. That is a fact about how compilers work, not a vendor mistake, and there is no remediation a developer could apply. Use it during analysis; leave it out of the findings.
 
-The related thing that *is* worth a sentence is the pattern of keep rules: if the classes that kept their names are the reflective entry points, note that keep-rule review is warranted, at informational severity.
+The related thing that *is* worth a sentence is the pattern of keep rules: if the classes that kept their names are the reflective entry points,keep-rule review is warranted, at informational severity.

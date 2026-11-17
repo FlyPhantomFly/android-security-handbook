@@ -120,10 +120,10 @@ What matters is the **combination**:
 
 | Lifetime | Rotation | Scope | Storage | Verdict |
 |---|---|---|---|---|
-| 90 days | Yes, with reuse detection | Narrow | Encrypted | ✅ Fine |
-| 90 days | **No** | Narrow | Encrypted | 🟠 One theft is three months of access |
-| 90 days | No | `payments.write` | Plaintext, survives logout | 🔴 Four findings |
-| 15 min | n/a | Narrow | Plaintext prefs | ⚪ Informational at most |
+| 90 days | Yes, with reuse detection | Narrow | Encrypted | Fine |
+| 90 days | **No** | Narrow | Encrypted | One theft is three months of access |
+| 90 days | No | `payments.write` | Plaintext, survives logout | Four findings |
+| 15 min | n/a | Narrow | Plaintext prefs | Informational at most |
 
 The one absolute: **a token with no `exp` at all is always Critical.** That is not a
 long-lived token, it is a permanent credential, and one leak — a log line, a backup, a
@@ -407,7 +407,7 @@ otherwise in a report is wrong.
 
 **The test that decides whether a deployment is real:** strip the DPoP header, change the
 scheme to `Bearer`, and send the same token. If it still works, the binding is optional,
-which means it is absent — an attacker simply does not send a proof.
+which means it is absent — an attacker does not send a proof.
 
 ---
 

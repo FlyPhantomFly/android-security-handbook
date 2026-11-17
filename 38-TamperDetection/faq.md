@@ -381,7 +381,7 @@ The signature check is not the problem. The problem is that the API still works.
 If `/api/transfer` accepts the request regardless of what the UI shows, there is no control — there
 is a UI preference. A repackaged client, or `curl` with a valid session cookie, transacts happily.
 
-Report it as **High**, and note that you proved it *without bypassing anything*: a proxy and a
+Report it as **High**, and confirm that you proved it *without bypassing anything*: a proxy and a
 replayed request are enough. That is the strongest kind of finding, because it cannot be argued away
 with "the user would have to root their phone".
 

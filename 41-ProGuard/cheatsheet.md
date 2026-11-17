@@ -14,12 +14,12 @@ Engine assumed: **R8** (the AGP default since 3.4). ProGuard-only behaviour is m
 
 | Directive | Class kept | Class name kept | Members kept | Member names kept | Condition |
 |---|---|---|---|---|---|
-| `-keep` | ✅ | ✅ | ✅ | ✅ | class matches |
-| `-keepclassmembers` | ❌ | ❌ | ✅ | ✅ | class matches |
-| `-keepclasseswithmembers` | ✅ | ✅ | ✅ | ✅ | class matches **and has all named members** |
-| `-keepnames` | ❌ | ✅ | ❌ | ❌ | class matches |
-| `-keepclassmembernames` | ❌ | ❌ | ❌ | ✅ | class matches |
-| `-keepclasseswithmembernames` | ❌ | ✅ | ❌ | ✅ | class matches **and has all named members** |
+| `-keep` | | | | | class matches |
+| `-keepclassmembers` | | | | | class matches |
+| `-keepclasseswithmembers` | | | | | class matches **and has all named members** |
+| `-keepnames` | | | | | class matches |
+| `-keepclassmembernames` | | | | | class matches |
+| `-keepclasseswithmembernames` | | | | | class matches **and has all named members** |
 
 **Two-question decoder.** Contains `names` → cannot stop deletion. Contains `classmembers` → does not
 protect the class.
@@ -61,13 +61,13 @@ Appended with commas, no space: `-keep,allowobfuscation class …`
 
 | Pattern | `com.app.MainActivity` | `com.app.ui.LoginActivity` | `MainActivity` (default pkg) | every class |
 |---|---|---|---|---|
-| `com.app.*` | ✅ | ❌ | ❌ | ❌ |
-| `com.app.**` | ✅ | ✅ | ❌ | ❌ |
-| `*Activity` | ❌ | ❌ | ✅ | ❌ |
-| `**Activity` | ✅ | ✅ | ✅ | ❌ |
-| `com.app.**Activity` | ✅ | ✅ | ❌ | ❌ |
-| `com.app.?ain*` | ✅ | ❌ | ❌ | ❌ |
-| **`*`** | ✅ | ✅ | ✅ | **✅ documented special case** |
+| `com.app.*` | | | | |
+| `com.app.**` | | | | |
+| `*Activity` | | | | |
+| `**Activity` | | | | |
+| `com.app.**Activity` | | | | |
+| `com.app.?ain*` | | | | |
+| **`*`** | | | | **documented special case** |
 
 > `*` alone matches **every class irrespective of package**. `*` inside a longer pattern does not
 > cross `.`. Both are documented; the combination is what catches people.
@@ -441,14 +441,14 @@ frida -U -f com.the.app -l scripts/frida-keep-census.js              # runtime c
 
 | Behaviour | ProGuard | R8 compat | R8 full |
 |---|---|---|---|
-| `-keep class Foo` keeps default constructor | ✅ | ✅ | **❌** |
-| `-optimizations`, `-optimizationpasses` | ✅ | ignored | ignored |
-| `-overloadaggressively` | ✅ | ignored | ignored |
+| `-keep class Foo` keeps default constructor | | | **** |
+| `-optimizations`, `-optimizationpasses` | | ignored | ignored |
+| `-overloadaggressively` | | ignored | ignored |
 | Missing classes | warning | warning | **error** unless `-dontwarn` |
-| Enum unboxing, class merging, argument removal | limited | ✅ | ✅ more |
-| Kotlin metadata rewriting | ❌ | ✅ | ✅ |
-| `Class.forName(<constant>)` resolved and rewritten | ❌ | ✅ | ✅ *(measured, R8 8.6.2)* |
-| `getDeclaredField(<constant>)` modelled | ❌ | ❌ | **❌** *(measured — write the keep)* |
+| Enum unboxing, class merging, argument removal | limited | | more |
+| Kotlin metadata rewriting | | | |
+| `Class.forName(<constant>)` resolved and rewritten | | | *(measured, R8 8.6.2)* |
+| `getDeclaredField(<constant>)` modelled | | | **** *(measured — write the keep)* |
 
 ---
 

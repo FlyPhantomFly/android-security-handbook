@@ -355,7 +355,7 @@ A CTF flag is worth nothing to a client. Turn what you found into two findings a
 The merge bug. Your write-up must contain:
 
 - the exact line of code;
-- what an attacker needs in order to exploit it (be honest: what does it actually cost them?);
+- what an attacker needs to exploit it (be honest: what does it actually cost them?);
 - a demonstration — `device-bravo` is your proof of concept;
 - the fix as code;
 - a severity, with justification.
@@ -406,7 +406,7 @@ The merge bug. Your write-up must contain:
 
 ### Finding B — the replayable challenge
 
-`device-delta`. Note that this one has *two* independent problems (the constant challenge and
+`device-delta`.this one has *two* independent problems (the constant challenge and
 `origin: IMPORTED`) and that they have different fixes. Decide whether they are one finding or two,
 and be able to defend the choice.
 

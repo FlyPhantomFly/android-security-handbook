@@ -433,7 +433,7 @@ scope = " ".join(sorted(requested & granted)) if requested else record["scope"]
 **The layer:** the verifier.
 **Who fixes it:** the API team, in three lines.
 
-The simplest path, and the one everybody dismisses because the token "obviously expired".
+The simplest path, and the one everybody dismisses because the token "must have expired".
 
 ```bash
 # host — the artefact, unmodified, straight from the file

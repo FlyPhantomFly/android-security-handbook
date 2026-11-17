@@ -74,7 +74,7 @@ APatch on /system/etc/security/cacerts type tmpfs (rw,seclabel,relatime,size=283
 139
 ```
 
-> **⚠️ This device's *system* CA store is contaminated.**
+> **This device's *system* CA store is contaminated.**
 > An APatch `trustusercerts` module has bind-mounted a tmpfs over `/system/etc/security/cacerts` and
 > promoted an interception CA into the **system** store — the store `<certificates src="system"/>`
 > names, the store an app trusts by default, the store no config can opt out of. 139 certificates are
@@ -211,7 +211,7 @@ Measured:
 because gating at MEDIUM drowns teams in scoped-cleartext rows — passes this app's transport posture.
 Green tick, merged.
 
-> **📖 What you just proved.** The auditor is not wrong and the config is not wrong. The tool read the
+> **What you just proved.** The auditor is not wrong and the config is not wrong. The tool read the
 > file correctly and the file says something true. The gap is that the file is **silent** on the
 > failure path, and silence in a policy document reads as "fine" to every reviewer and every gate.
 
@@ -370,7 +370,7 @@ token     | {"user":"lab@example.invalid",
 **The session token left the device over a TLS connection that failed validation.** The network
 security config was correct throughout and irrelevant throughout.
 
-> **📖 Two mechanisms had to cooperate for that last line to exist.** The page's origin is `https://`;
+> **Two mechanisms had to cooperate for that last line to exist.** The page's origin is `https://`;
 > the collector is `http://`. That is **mixed content**, permitted by two independent things: the
 > app's `setMixedContentMode(MIXED_CONTENT_ALWAYS_ALLOW)` (`[V7]`, this chapter — Chromium's
 > willingness to mix schemes in one document) **and** the config's `127.0.0.1` cleartext exception
@@ -471,7 +471,7 @@ sc.exports_sync.force_cancel(True)            # frida maps forceCancel -> force_
 dev.resume(pid)
 ```
 
-> **⚠️ The trap that will make you think you imagined the whole thing.**
+> **The trap that will make you think you imagined the whole thing.**
 > **Chromium caches the proceed decision per host.** Once the app has proceeded for `127.0.0.1`,
 > later navigations to `127.0.0.1` do **not** re-invoke `onReceivedSslError` at all. Run pass 2
 > against the same host and you see no `[SSL]` block, no proceed, no cancel, and conclude your hook
@@ -529,7 +529,7 @@ CH43VULN: loading https://127.0.0.1:8443/evil.html
 ...and nothing else. No `SSL error ignored`. No `bridge:` lines. Terminal 1 shows a handshake torn
 down; terminal 2 receives nothing; the phone shows Chromium's own error page.
 
-> **📖 The base implementation is the security control.** `WebViewClient.onReceivedSslError` in AOSP
+> **The base implementation is the security control.** `WebViewClient.onReceivedSslError` in AOSP
 > calls `handler.cancel()`. The correct implementation of this method is **not to write it** — there
 > is no safer body than absence, because every body is an opportunity to be wrong on some path. See
 > [README §4.3](../README.md).
@@ -637,7 +637,7 @@ same WebView you just intercepted completely. So: may a cleartext request be mad
 are nominated — **the config**. What happens when validation fails — **`onReceivedSslError`, and
 nothing else**.
 
-> **🧠 Mental Model** — the network security config is the **guest list**. `onReceivedSslError` is the
+> **Mental Model** — the network security config is the **guest list**. `onReceivedSslError` is the
 > doorman deciding what to do about someone who is not on it. A correct guest list and a doorman who
 > waves everyone through are not in contradiction; they answer different questions, and only one of
 > them is written down where an auditor can see it.

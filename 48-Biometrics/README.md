@@ -60,7 +60,7 @@ signature requires being inside the basement.
 **Almost every biometric login on Android is the first door.** This chapter is about how to tell
 which one you are looking at, and about how to build the second.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > A biometric prompt does not *authenticate*. It *witnesses*. Whether that witness statement is
 > worth anything depends entirely on whether something outside your app's process demanded a signed
 > receipt. The prompt is the receptionist. The signed slip is a **hardware auth token**. The safe is
@@ -109,7 +109,7 @@ shipped, the modal Android biometric implementation is still a one-argument
 
 Read this once slowly, because everything else in the chapter is a consequence of it.
 
-> **📖 Definition — the only definition of "biometric authentication" that means anything**
+> **Definition — the only definition of "biometric authentication" that means anything**
 > An app has performed biometric authentication when a **cryptographic operation succeeded that
 > would otherwise have failed**. If, after the biometric, the app could have done exactly what it
 > did anyway, then no authentication occurred — a dialog was displayed.
@@ -250,7 +250,7 @@ The `Cipher` object at the bottom right is shaded as attacker-controlled because
 object in your heap. But an *uninitialised* Cipher is worthless, and the only thing that can
 initialise it against a keystore key is KeyMint. That is the seam the whole design turns on.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > Notice that the Gatekeeper TA and the biometric TA both feed KeyMint the same kind of token. That
 > is why a key configured with a validity window can be satisfied by a PIN — the key does not know
 > or care which trusted application signed the token, only that the token is valid, fresh and of an
@@ -366,7 +366,7 @@ choice an app can override — the framework rejects the combination. An app tha
 A **Class 3** authenticator satisfies `BIOMETRIC_STRONG`, drives the prompt, **and** has a hardware
 trust chain to KeyMint. Only Class 3 can make the second door work.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `BIOMETRIC_WEAK` (`0x00FF`) is a **superset** of `BIOMETRIC_STRONG` (`0x000F`) — every strong
 > sensor also satisfies weak. So "the app asks for WEAK" does not mean "the app uses a weak sensor";
 > it means "the app will *accept* a weak sensor". On a phone whose only sensor is Class 3, an app
@@ -442,7 +442,7 @@ are on is the first move in any assessment.
 | `BiometricPrompt` (platform) | `android.hardware.biometrics` | 28 | Yes | Yes | API 29+ | Current, but version-gated |
 | `BiometricPrompt` (AndroidX) | `androidx.biometric` | library | Yes (delegates or back-ports) | Yes | Yes | **What real apps use** |
 
-> **📖 Definition — AndroidX**
+> **Definition — AndroidX**
 > AndroidX is Google's set of libraries that ship *inside* the app rather than in the OS, so that
 > new APIs work on old devices. `androidx.biometric.BiometricPrompt` presents one modern API and,
 > at runtime, either delegates to the platform `BiometricPrompt` (API 28+) or emulates it on top of
@@ -450,7 +450,7 @@ are on is the first move in any assessment.
 > system had none to draw.
 
 That last clause matters and is widely missed. **On API 23–27, `androidx.biometric` draws an
-in-process dialog.** The system-dialog guarantee from §1.5 simply does not exist there; the pixels
+in-process dialog.** The system-dialog guarantee from §1.5 does not exist there; the pixels
 are drawn by the app. An app with `minSdk 23` therefore has a lower security ceiling on old devices
 than its code suggests, and that is worth a line in a report even though the developer wrote
 entirely modern code.
@@ -499,7 +499,7 @@ canAuthenticate(BIOMETRIC_WEAK   | DEVICE_CREDENTIAL) ->  0   BIOMETRIC_SUCCESS
 canAuthenticate()   [API 29 no-arg form]              -> 11   ERROR_NONE_ENROLLED
 ```
 
-> **⚠️ Warning — the OR trap, measured**
+> **Warning — the OR trap, measured**
 > `canAuthenticate(BIOMETRIC_STRONG)` returned **11** and
 > `canAuthenticate(BIOMETRIC_STRONG | DEVICE_CREDENTIAL)` returned **0**, on the same device, in
 > the same process, milliseconds apart. `canAuthenticate` answers *"can **any** of these
@@ -560,7 +560,7 @@ policy update can *downgrade* it in the field without a firmware change. When th
 differ, a sensor has been demoted, and any app that captured "this device is Class 3" at install
 time is now wrong.
 
-> **🔍 Pentester's Note — `dumpsys biometric` is not portable**
+> **Pentester's Note — `dumpsys biometric` is not portable**
 > On the **API 30 Redmi it produced no output at all** — an empty response with exit status 0 — even
 > though `service list` shows `biometric: [android.hardware.biometrics.IBiometricService]`
 > registered. `dumpsys auth` was also empty. The command that *did* work there was
@@ -581,7 +581,7 @@ that differ between Class 2 and Class 3, and it revises them between Android ver
 CDD for the version you are testing rather than a remembered number; the structure (three classes,
 only Class 3 hardware-attested) is stable, the numbers are not.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Class is not "how good is the sensor". Class is "how much does the platform let this sensor
 > *authorise*". A very accurate sensor with no hardware path to KeyMint is Class 2 forever, and a
 > mediocre one with a proper trust chain can be Class 3. The distinction is architectural, and it is
@@ -625,7 +625,7 @@ Three consequences follow directly, and each one is a test you can run:
 3. **If the app never calls a two-argument `authenticate()`, none of this happens.** There is no
    partial credit. The `CryptoObject` is either present or the prompt is decorative.
 
-> **⚠️ Warning**
+> **Warning**
 > A `CryptoObject` wrapping a key that is **not** auth-bound is legal, compiles, runs, and provides
 > nothing. The framework does not require the key to have `setUserAuthenticationRequired(true)`.
 > Seeing `CryptoObject` in a decompiled app is therefore evidence of *intent*, not of *binding* —
@@ -763,7 +763,7 @@ Lock credential verified successfully
 | **30 s** | **`OK — encrypted 20 bytes with NO authentication`** |
 | **86,400 s** | **`OK — encrypted 20 bytes with NO authentication`** |
 
-> **🔬 Under the Hood — what those six results prove**
+> **Under the Hood — what those six results prove**
 >
 > 1. **The window is real and is enforced by the key, not the app.** The only variable between the
 >    three keys was the integer. One refused, one flipped from refused to allowed, one always
@@ -778,7 +778,7 @@ Lock credential verified successfully
 >    window to sit inside.
 
 The uncomfortable implication for testing: **an app can pass every static check — auth-bound key,
-`CryptoObject`, two-argument `authenticate()` — and still be defeated by an attacker who simply
+`CryptoObject`, two-argument `authenticate()` — and still be defeated by an attacker who merely
 unlocks the phone normally and then runs their code.** That attacker does not need to bypass the
 biometric at all. They need the device unlocked once, which for a stolen-phone or evil-maid scenario
 is often the premise rather than the challenge.
@@ -836,7 +836,7 @@ ciphertext**, and require full re-authentication against the server. That is a p
 much as a security one, and it should be made deliberately rather than by whoever wrote the catch
 block.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > This is directly testable with no tooling. Note what the app can do, enrol a second fingerprint in
 > Settings, relaunch, and see whether the app still opens its vault. If it does, either the flag is
 > `false` or the key is time-bound (§3.5's measurement showed the flag is *ignored* on time-bound
@@ -887,7 +887,7 @@ The token structure and the Gatekeeper chain that produces the credential-side t
 this same hardware; this chapter deliberately does not restate them. What matters here is the one
 sentence: **the token is the only thing KeyMint believes, and your process cannot produce one.**
 
-> **🔬 Under the Hood — a measured OEM surprise**
+> **Under the Hood — a measured OEM surprise**
 > On the Redmi, `pm list features` reports **only** `android.hardware.fingerprint`. There is no
 > `android.hardware.biometrics.face`. Yet the device has face unlock: `miui.face.FaceService` is a
 > registered system service, `com.miui.face` is a running process, `lockscreen.options` contains
@@ -1012,7 +1012,7 @@ dumpsys auth           # AuthService view
 HAL deaths since last reboot: 0
 ```
 
-> **🔍 Pentester's Note — the platform counts crypto-bound authentications separately, and you can
+> **Pentester's Note — the platform counts crypto-bound authentications separately, and you can
 > read the counter**
 >
 > Look at those field names. `accept` / `reject` / `acquire` / `lockout` are the plain counters.
@@ -1130,7 +1130,7 @@ holds:
 If the check fails, KeyMint returns `ErrorCode.KEY_USER_NOT_AUTHENTICATED`, which `keystore2`
 translates into the `UserNotAuthenticatedException` you see in Java.
 
-> **🔬 Under the Hood — where §3.6's measurement lives in this list**
+> **Under the Hood — where §3.6's measurement lives in this list**
 > The three keys in §3.6 differed only in `AUTH_TIMEOUT`. Everything else — `USER_SECURE_ID`,
 > `USER_AUTH_TYPE` — was identical. The 24-hour key succeeded with no authentication because
 > `AUTH_TIMEOUT` is compared against the *most recent token of an accepted type*, and the PIN set
@@ -1498,7 +1498,7 @@ MASTG's biometric tests decompose into exactly the three passes in §7.1: confir
 confirm whether a `CryptoObject` is passed, and confirm whether the key is auth-bound. A tester who
 completes all three has satisfied MASVS-AUTH-3 either way — with a pass or with a finding.
 
-> **⚠️ Warning**
+> **Warning**
 > MASVS-AUTH-3 is one of the requirements most often marked "pass" on the basis of a screenshot of a
 > fingerprint dialog. A screenshot is evidence that a dialog exists. Attach the `KEYSPEC` line from
 > `hook-biometric-prompt.js`, or the `acceptCrypto` counter from §3.12, or nothing.
@@ -1514,7 +1514,7 @@ prompt to appear, because a prompt is a credible-looking request.
   mitigation, and it is why the deprecated path is worth flagging even when its key binding is sound.
 - **Accessibility-service abuse.** Malware with `BIND_ACCESSIBILITY_SERVICE` can observe and
   sometimes drive the UI around a prompt. It cannot forge the token, but it does not need to if the
-  target app is callback-only — and it does not need to at all if it can simply wait for the user to
+  target app is callback-only — and it does not need to at all if it can wait for the user to
   authenticate and then act inside the time window of a time-bound key.
 - **Coerced enrolment.** Device-admin or profile-owner malware that can reach Settings can enrol a
   biometric. §3.7's invalidation is the control that stops this being total.
@@ -1561,7 +1561,7 @@ with one artefact.
 That is a useful pair of sentences. "We bypassed the biometric with a photo" is not, because it
 tells the reader nothing about which of the two systems failed.
 
-> **⚠️ Warning — ethics**
+> **Warning — ethics**
 > Do not collect, photograph or retain anyone's biometric characteristics without explicit written
 > consent, and do not retain them afterwards. In many jurisdictions biometric data is a special
 > category of personal data with its own legal regime. A presentation-attack assessment is a
@@ -1719,7 +1719,7 @@ full signature. There is no ambiguity to resolve.
     #  ^ 0x15180 = 86400 = twenty-four hours. THE DEFECT. Grade B, and this literal is the evidence.
 ```
 
-> **🔍 Pentester's Note — read the constant, not the method name**
+> **Pentester's Note — read the constant, not the method name**
 > `setUserAuthenticationValidityDurationSeconds` is present in both a correct and a broken
 > implementation; only the argument differs. `0x15180` is 86,400. `0xffffffff` / `-0x1` is `-1`, the
 > per-use sentinel. `0x0` is per-use on the API 30 setter. Decode the hex. A grep for the method
@@ -1961,7 +1961,7 @@ android heap search instances androidx.biometric.BiometricPrompt$CryptoObject
 
 `--dump-args` on `authenticate` gives you the pass-1 answer directly: one argument or two.
 
-> **⚠️ Warning**
+> **Warning**
 > Chapter 54 measured that objection's `android sslpinning disable` reports successful hooks against
 > an app with no network code at all, because the hooks target platform classes. The same caution
 > applies here: `android hooking watch class` succeeding means a class was found in the loaded
@@ -2125,7 +2125,7 @@ private const val VALIDITY_SECONDS = 86_400
 A regex hunting for a literal argument found none, concluded there was no window, and graded the
 **worst** file **A**. Real code names its constants; only a decompiler inlines them.
 
-> **⚠️ Warning — the general form**
+> **Warning — the general form**
 > A static grader that cannot see a value reports **the absence of a problem**, not the absence of
 > evidence — unless someone made it say so out loud. The fix here was not only to resolve same-file
 > constants but to make the tool grade **C** with the unresolved symbol printed when it still
@@ -2161,7 +2161,7 @@ Four caveats keep it a lead count rather than a finding count, and
    an auth-bound key can be gated on the device credential, or the flag can sit unused in an SDK.
 4. One app's `base.apk` is **326 KB**. Its code is not in the package that was scanned.
 
-> **⚠️ Warning — the sweep had a bug that produced a clean, confident, wrong answer**
+> **Warning — the sweep had a bug that produced a clean, confident, wrong answer**
 > The first version of this scan piped each inflated DEX through `strings`. The `strings` on `PATH`
 > was a Windows Sysinternals-style binary that does not behave like GNU `strings` on a pipe, and
 > **all 43 apps reported zero for every signal.** The second version held the DEX in a shell
@@ -2227,7 +2227,7 @@ MobSF flags biometric API usage. Treat every such flag as a **lead**:
 | "App uses Android KeyStore" | `AndroidKeyStore` appears | Read `setUserAuthenticationRequired` and the validity window |
 | No biometric finding | Nothing matched | Could be true; could be reflection, native code, or a split APK |
 
-Chapter 55 owns MobSF. The mapping here is simply: MobSF answers §8.1 question 1 and never questions
+Chapter 55 owns MobSF. The mapping here is: MobSF answers §8.1 question 1 and never questions
 2 or 3, which are the ones that matter.
 
 ---
@@ -2417,7 +2417,7 @@ Afterwards, a biometric unwraps the vault key. The master password is never stor
 | Copy a password to the clipboard? | Time-limited, flagged sensitive | The gate is pointless if the secret lands somewhere unprotected |
 | Screenshot of the unlocked vault? | `FLAG_SECURE` | Same reasoning |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > When you assess a password manager, the biometric is rarely the weakest link — the KDF parameters,
 > the clipboard behaviour, the backup export path and the autofill service usually are. Check the
 > binding (it takes four minutes with §5.7's checklist) and then spend your time where the finding
@@ -2618,7 +2618,7 @@ lifecycle itself belongs to [47 — Authentication](../47-Authentication/README.
 separates two different threats — the user being phished by an app, and the app being subverted by
 an attacker — and it addresses each with a mechanism at the correct layer. The token design means
 the security boundary is the TEE, not the OS, so the guarantee survives root. And it degrades
-honestly: a Class 2 sensor simply cannot reach the key path.
+honestly: a Class 2 sensor cannot reach the key path.
 
 *Against:* the default is wrong. `authenticate(promptInfo)` compiles, runs, demos beautifully and
 provides nothing, and it is the shorter overload. Ten years of documentation have not moved the

@@ -32,7 +32,7 @@ says "SSL" in 2026 they almost always mean TLS 1.2 or 1.3. It is not worth corre
 `getInstance("SSLv3")` has asked for something specific and deprecated — that is a real finding, and
 it is different from someone saying "SSL" in a meeting.
 
-> **📖 Definition**
+> **Definition**
 > **Protocol version negotiation.** The client offers a maximum version; the server picks one it
 > supports. In TLS 1.3 the version moved into the `supported_versions` extension and the legacy
 > version field is frozen at `0x0303`, specifically because middleboxes had learned to reject
@@ -95,7 +95,7 @@ consequences follow, and they are the reason this question matters:
 3. **Adding a file adds a CA.** Which is exactly what an interception proxy does, and also exactly
    what a hostile MDM profile does. The mechanism is identical; only the intent differs.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > A trust store is a guest list, not a lie detector. It cannot tell you whether a certificate is
 > honest. It can only tell you whether someone on the list vouched for it. Your job as a tester is
 > to notice who is on the list and who put them there.
@@ -128,7 +128,7 @@ That is the whole teaching point. The rule you are fighting is:
 | User | trusted | **not trusted** without an explicit config |
 
 So the operation is *promotion*, not *installation*. And promotion is awkward, because `/system` is
-mounted read-only and is protected by dm-verity, so you cannot simply copy a file into it.
+mounted read-only and is protected by dm-verity, so you cannot copy a file into it.
 
 **[M]** What the module actually does, visible in `mount`, is build an overlay:
 
@@ -510,7 +510,7 @@ The severity depends on what caused it:
 (`notAfter 2015-04-12`) and an expired intermediate — which is exactly the second and third rows in
 one target, and makes it a good fixture for the deliberate-bad-certificate test.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > An expired certificate is a superb probe. Point the app at `expired.badssl.com`. If the request
 > succeeds, validation step 3 is not running, which almost always means steps 1 and 2 are not either.
 > It costs nothing to try and needs no proxy.
@@ -586,7 +586,7 @@ transparent redirect (`iptables`, or a router-level rule) instead.
 
 No, and this is the mistake that produces the most embarrassing false positives in this chapter.
 
-You *made* the app trust your CA. Of course it accepted your certificate — the certificate was
+You *made* the app trust your CA. Naturally it accepted your certificate — the certificate was
 signed by a CA in the device's system store, so the chain terminated in a trusted anchor and
 validation succeeded. Correctly. That is validation working exactly as designed.
 
@@ -606,7 +606,7 @@ The findings are:
 Each one isolates a different validation step. Remove your CA from the trust store before running
 them, or you are testing your own configuration.
 
-> **⚠️ Warning**
+> **Warning**
 > A `TrustManager` that never threw during your session proves nothing whatsoever, because you never
 > gave it anything to reject. Silence is not evidence. The deliberate-bad-certificate test is not
 > optional — it is the only part of this chapter that produces proof.
@@ -638,14 +638,14 @@ Three consequences follow, and they explain why review does not catch it:
    right up until someone is on the path.
 
 The interface contract also requires an `IllegalArgumentException` for a null or zero-length chain,
-which an empty body obviously does not do. **[M]** That is what makes the empty-chain oracle
+which an empty body does not do. **[M]** That is what makes the empty-chain oracle
 decisive: `RootTrustManager`, `NetworkSecurityTrustManager` and
 `com.android.org.conscrypt.TrustManagerImpl` all throw
 `java.lang.IllegalArgumentException: null or zero-length parameter`,
 while `android.net.SSLCertificateSocketFactory$1` — AOSP's *own* deliberately-insecure TrustManager,
 returned by `SSLCertificateSocketFactory.getInsecure()` — returns normally.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > AOSP ships a trust-nothing `TrustManager` in the platform. `SSLCertificateSocketFactory.getInsecure()`
 > is documented as insecure and exists for internal callers that handle verification themselves. When
 > you find an app calling it, the app did not write the bug — it borrowed one from the framework.

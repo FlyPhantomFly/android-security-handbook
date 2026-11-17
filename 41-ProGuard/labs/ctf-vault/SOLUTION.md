@@ -118,7 +118,7 @@ $ dexdump -d /tmp/ch41ctf/classes.dex
       name : '<init>'  type : '()V'
 ```
 
-The field name survived, and note that its *value* (`value-is-not-the-flag`) is a decoy for anybody
+The field name survived, and confirm that its *value* (`value-is-not-the-flag`) is a decoy for anybody
 who grabbed the first string they saw next to the field.
 
 **Which rule kept it?** Rule 3:

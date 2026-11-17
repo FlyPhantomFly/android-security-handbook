@@ -17,7 +17,7 @@ The point is not that interception is clever. It takes about fifteen lines of co
 **it is this easy**, that the target app cannot detect it, and that whether it *matters* is decided
 entirely by a server setting the app has no control over.
 
-> **⚠️ Warning — scope**
+> **Warning — scope**
 > Perform this only against an app and account you own, or a target you have written authorisation to
 > test. Intercepting another person's authorisation code is unauthorised access to a computer system
 > in essentially every jurisdiction, and the fact that it is trivially easy is not a defence. Build
@@ -252,8 +252,8 @@ curl -s -w '\nHTTP %{http_code}\n' -X POST "$TOKEN_EP" \
 
 | Result | Meaning | Severity |
 |---|---|---|
-| `400 invalid_grant` | PKCE is enforced. The stolen code is inert. | 🟡 Medium — fix the redirect, but there is no takeover |
-| `200` with tokens | PKCE is not enforced. **You have taken over the account** with an app the user installed for photo filters. | 🔴 Critical |
+| `400 invalid_grant` | PKCE is enforced. The stolen code is inert. | Medium — fix the redirect, but there is no takeover |
+| `200` with tokens | PKCE is not enforced. **You have taken over the account** with an app the user installed for photo filters. | Critical |
 
 **Q9.** Which happened? If tokens came back, use one against the API to demonstrate access, and note
 that the refresh token gives you persistence that survives a password change.

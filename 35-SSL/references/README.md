@@ -126,7 +126,7 @@ file's directory.
 | [Certificate Pinning Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Pinning_Cheat_Sheet.html) | For the handoff to chapter 36 |
 | [MASTG test apps](https://mas.owasp.org/MASTG/apps/) | Legal practice targets |
 
-> **⚠️ Warning**
+> **Warning**
 > Cite the MASVS **control**, not a MASTG test id. Control identifiers are stable across MASTG
 > refactors; test identifiers have been renumbered more than once, and a stale test id in a report is
 > an easy thing for a client to use to discredit the rest of it.
@@ -139,7 +139,7 @@ file's directory.
 |---|---|
 | [**CVE-2014-3566** — POODLE](https://nvd.nist.gov/vuln/detail/CVE-2014-3566) | The SSL 3.0 CBC padding oracle. Plaintext recovered a byte at a time from any CBC suite under SSL 3.0. **The one identifier this chapter cites**, and the reason `tls-posture.py` probes SSL 3.0 at all — even though no current Android client negotiates it by default |
 
-> **⚠️ Warning**
+> **Warning**
 > Do not cite any other CVE number here without verifying it against the vendor's own advisory first.
 > For the well-known TLS attacks that do not need an identifier — BEAST, CRIME, Lucky 13, FREAK,
 > Logjam, Sweet32, ROBOT, Heartbleed — **name the attack**, which is unambiguous and cannot be
@@ -176,7 +176,7 @@ to find the paper and are safer than a link that may have moved.
 | [Burp Suite](https://portswigger.net/burp/documentation/desktop/mobile/config-android-device) | host | PortSwigger's own Android configuration guide, including the CA export step |
 | [mitmproxy](https://docs.mitmproxy.org/stable/) | host | Scriptable, free, and its `mitmproxy-ca-cert.cer` is easy to convert to the DER the trust store wants |
 | [**badssl.com**](https://badssl.com/) | host | **The fastest deliberate-bad-certificate fixture there is.** `expired.`, `wrong.host.`, `self-signed.`, `untrusted-root.`, `revoked.` — one subdomain per validation step, and measured in this chapter |
-| [testssl.sh](https://testssl.sh/) | host | The comprehensive server-side scanner. Use it to cross-check `tls-posture.py`; where they disagree, find out why before reporting either |
+| [testssl.sh](https://testssl.sh/) | host | The wide-coverage server-side scanner. Use it to cross-check `tls-posture.py`; where they disagree, find out why before reporting either |
 | [SSLyze](https://github.com/nabla-c0d3/sslyze) | host | The Python alternative, with a stable machine-readable output format |
 | [SSL Labs Server Test](https://www.ssllabs.com/ssltest/) | browser | The grade a client will quote at you. Know what it does and does not measure — it says nothing about the app |
 | [Wireshark](https://www.wireshark.org/) | host | Read the actual `ClientHello`, the SNI, and the alert byte when nothing else agrees |

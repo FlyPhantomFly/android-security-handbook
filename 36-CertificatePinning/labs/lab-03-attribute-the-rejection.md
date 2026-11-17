@@ -67,7 +67,7 @@ openssl req -x509 -new -key ca.key -sha256 -days 3650 \
     -subj "//CN=ch36 lab CA" -out ca.pem
 ```
 
-> **⚠️ Note on the double slash**
+> **Note on the double slash**
 > On Git Bash for Windows, MSYS rewrites a leading `/` in an argument into a Windows path, so
 > `-subj "/CN=x"` becomes something like `-subj "C:/Program Files/Git/CN=x"` and `openssl` reports a
 > baffling error about the subject. `//CN=x` survives the rewrite. On Linux and macOS use a single
@@ -117,7 +117,7 @@ openssl s_server -accept 8443 -cert server-v1.pem -key server-v1.key \
 ```
 
 Point the device at your host's IP. `lab.local` must resolve — either add it to the device's
-`/etc/hosts` (needs root and a remount, so probably not worth it on a daily driver) or simply use
+`/etc/hosts` (needs root and a remount, so probably not worth it on a daily driver) or use
 the IP and set the certificate's CN and SAN to the IP instead. The second is less realistic and much
 less painful; if you take it, remember that hostname verification then checks an IP SAN, which is a
 real difference in behaviour.
@@ -376,7 +376,7 @@ Restart the server with `server-v2.pem` / `server-v2.key`, and run the app.
 hostname, well within its validity window. The server is healthy. Every installed copy of the app
 stopped working at the same instant, and no server-side change fixes it.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > A pin is a bet that a specific private key will still be in use. Certificate renewal does not
 > break that bet. Key rotation does. Every automated issuance pipeline you did not configure
 > yourself rotates the key by default, because that is the safer default *for the certificate* — and

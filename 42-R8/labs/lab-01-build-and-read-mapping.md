@@ -32,7 +32,7 @@ So this lab makes you produce the file from source you wrote, and then read it. 
 | Kotlin compiler jars | To compile the source | See below |
 | Python 3.8+ | For the chapter's scripts | `python3 --version` |
 
-> **⚠️ The JDK trap that will cost you twenty minutes**
+> **The JDK trap that will cost you twenty minutes**
 > If your default `java` is 22 or newer, R8 fails with `Unsupported class file major version 68` (or 67, 66…) and reports it as *"Compilation failed with an internal error"*, which sounds like an R8 bug and is not. It is R8 refusing to read class files it does not know. Android Studio ships a JDK 21 at `<studio>/jbr`; use that:
 > ```bash
 > export JAVA21="/c/Program Files/Android/Android Studio/jbr/bin/java.exe"
@@ -82,7 +82,7 @@ meta2-full            22804        578             14  rewritten
 meta2-compat          23280        558             14  rewritten
 ```
 
-> **✅ Checkpoint 1.** You have four builds and four mapping files. If `DEX_BYTES` for `full` is dramatically smaller than for `compat`, R8 is working as expected — you are seeing full mode's more aggressive optimisation, which [§3.9](../README.md#39-full-mode-and-what-it-actually-changes) quantifies.
+> **Checkpoint 1.** You have four builds and four mapping files. If `DEX_BYTES` for `full` is dramatically smaller than for `compat`, R8 is working as expected — you are seeing full mode's more aggressive optimisation, which [§3.9](../README.md#39-full-mode-and-what-it-actually-changes) quantifies.
 
 The source you just built is [`../examples/LicenceVault.kt`](../examples/LicenceVault.kt). Read it now, before looking at any mapping. It declares a data class, an enum, a sealed class hierarchy, a class with a companion object and an inner class, two lambdas and a top-level extension function. Eleven types in about 130 lines. Keep that number in mind.
 
@@ -150,7 +150,7 @@ And a fourth, which is the surprising one:
 
 | **Invented** | `LicenceTier$EnumUnboxingSharedUtility -> a.b` | R8 *created* this class. It corresponds to nothing the developer wrote |
 
-> **✅ Checkpoint 2.** You can now explain why "count the lines in `mapping.txt` to get the class count" is wrong in *both* directions: the file contains classes that are not in the APK (removed), and the APK contains classes that were not in the source (synthetic).
+> **Checkpoint 2.** You can now explain why "count the lines in `mapping.txt` to get the class count" is wrong in *both* directions: the file contains classes that are not in the APK (removed), and the APK contains classes that were not in the source (synthetic).
 
 Verify with the chapter's tool, which separates the categories:
 
@@ -227,7 +227,7 @@ Work through it:
 5. **Numbers before the return type** — obfuscated line ranges. Numbers after the parentheses — source lines.
 6. **`residualsignature` `()V` on the constructor** — the shipped constructor takes **no arguments**. R8 determined all three were constant or unused after inlining and removed them.
 
-> **✅ Checkpoint 3.** You can state, without running anything, that a Frida script hooking `a.a.$init` with three arguments will not match this class, and explain why using the residual signature.
+> **Checkpoint 3.** You can state, without running anything, that a Frida script hooking `a.a.$init` with three arguments will not match this class, and explain why using the residual signature.
 
 ### Step 2.3 — The line-number arithmetic
 
@@ -284,7 +284,7 @@ Exception in thread "main" java.lang.IllegalStateException: vault detonated
 	at com.pentest.ch42.vault.VaultEntryPoint.main(SourceFile:16)
 ```
 
-**One frame.** Note that before you retrace it — it is the point of the next step.
+**One frame.** This is the frame you retrace next — it is the point of the following step.
 
 ### Step 3.2 — Retrace it by hand
 
@@ -317,7 +317,7 @@ Exception in thread "main" java.lang.IllegalStateException: vault detonated
 	at com.pentest.ch42.vault.VaultEntryPoint.main(LicenceVault.kt)
 ```
 
-> **✅ Checkpoint 4.** Your hand-retrace matches. More importantly: **the one-frame trace was two frames.** A release stack trace's frame count tells you about the optimiser, not about the program. Any conclusion of the form "the call stack was shallow, so it must have failed early" is unfounded on an R8 build.
+> **Checkpoint 4.** Your hand-retrace matches. More importantly: **the one-frame trace was two frames.** A release stack trace's frame count tells you about the optimiser, not about the program. Any conclusion of the form "the call stack was shallow, so it must have failed early" is unfounded on an R8 build.
 
 ### Step 3.4 — Retrace with no Android tooling at all
 
@@ -394,7 +394,7 @@ Read the output as an intelligence product rather than a statistic:
 | `top packages disclosed` | The internal package structure, including packages flattened away in the APK |
 | `sourceFile` comments | Original file names, restoring what the DEX erased |
 
-> **✅ Checkpoint 5.** You can now argue, concretely, why a leaked `mapping.txt` is worse than an app that was never obfuscated: the unobfuscated app discloses names; the mapping file discloses names **plus** deleted classes, original file names, the inlining record, the synthetic/authored split, and a hash tying it all to one build.
+> **Checkpoint 5.** You can now argue, concretely, why a leaked `mapping.txt` is worse than an app that was never obfuscated: the unobfuscated app discloses names; the mapping file discloses names **plus** deleted classes, original file names, the inlining record, the synthetic/authored split, and a hash tying it all to one build.
 
 ### Optional — try the lookups
 

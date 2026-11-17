@@ -19,7 +19,7 @@ attack looks like on the wire, and — the part that transfers to real work — 
 what a *correct* verifier's rejection message looks like for each one, so you can recognise
 it in someone else's logs.
 
-> **⚠️ Safety — read this before you start**
+> **Safety — read this before you start**
 > Every token in this lab is minted by an issuer you build, from an RSA keypair generated
 > at the start of the run and destroyed at the end. `issuer.py` **refuses** to write key
 > material into any directory containing a `.git` folder or a `STYLE-GUIDE.md`, so it

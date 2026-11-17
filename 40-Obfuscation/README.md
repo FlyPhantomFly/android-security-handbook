@@ -45,7 +45,7 @@ restrictions; W^X enforcement) this is stated in a Version Matrix.
 
 Before a single technique is described, the most important sentence in this chapter:
 
-> **⚠️ Warning**
+> **Warning**
 > **Obfuscation raises the cost of understanding an application. It does not create a security
 > boundary.** A security boundary is a place where a component with privilege refuses to do
 > something on behalf of a component without privilege — the kernel refusing a syscall, `system_server`
@@ -81,7 +81,7 @@ is a *product*, deployed identically across thousands of applications. The first
 publishes a tool. From then on, every application using that packer costs an attacker one command.
 Obfuscation applied uniformly by a vendor has a **shared fate**.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Think of obfuscation as a **combination lock on a glass door**. The lock is real, and picking it
 > takes effort. But the door is glass, you are standing next to it holding a brick, and nobody is
 > watching. The value of the lock is that a casual passer-by cannot open it *casually*. The value is
@@ -116,7 +116,7 @@ Point 4 is the one that gets abused in security discussions. Obfuscation does no
 API key. It hides it from a `strings` command. The key is still in the application, still extractable,
 and still a finding.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > "The secret is obfuscated" is never an acceptable remediation for a hardcoded secret. Write the
 > finding as: *the credential is recoverable by any party in possession of the application binary;
 > obfuscation delays but does not prevent recovery; the credential must be treated as public and the
@@ -223,10 +223,10 @@ to*:
   does not understand the program at all. Its only options are to encrypt the whole thing and arrange
   for something to decrypt it at runtime. This is what a **packer** is, and it is why packers are
   simultaneously the most intimidating protection to encounter and the most mechanically defeatable —
-  because the packer must hand the runtime a complete, valid, plaintext DEX file, and you can simply
+  because the packer must hand the runtime a complete, valid, plaintext DEX file, and you can
   take it at that moment.
 
-> **📖 Definition**
+> **Definition**
 > **Packer.** A post-build tool that replaces an application's real DEX with an encrypted blob plus a
 > small "stub" DEX. The stub contains a replacement `Application` class which, at process start,
 > decrypts the real DEX and loads it into the running ART instance. The original code never touches
@@ -333,7 +333,7 @@ This section is the taxonomy. Each technique is presented in the same shape:
 
 ### 3.1 Identifier renaming
 
-> **📖 Definition**
+> **Definition**
 > **Identifier renaming** (also called *name mangling* or, loosely, "obfuscation") replaces
 > developer-chosen names of classes, methods and fields with short, meaningless names — usually `a`,
 > `b`, `c`, then `aa`, `ab`, and so on. It is a *semantics-preserving* rename: every reference to the
@@ -417,7 +417,7 @@ This table is the single most useful artefact in this chapter. Everything in it 
 | **Method signatures and the class hierarchy** | Required for verification and dispatch. | `extends android.app.Activity` tells you what a class is regardless of its name. |
 | **The `mapping.txt` file, if shipped** | It should never be in the APK, but it sometimes is. | Total, instant deobfuscation. Always check. |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Run this on every obfuscated app before doing anything clever:
 > ```bash
 > # host — unzip the APK first
@@ -438,7 +438,7 @@ evidence you rename from is exactly the survivors table above. Section 6 gives t
 
 This is the technique that matters most, so it gets the most space.
 
-> **📖 Definition**
+> **Definition**
 > **String encryption** replaces every (or selected) string literal in the bytecode with an encrypted
 > byte array or an encrypted string, plus a call to a decryption routine that reconstructs the
 > original at runtime. The literal `"https://api.example.com/v1"` never appears in the DEX string
@@ -508,7 +508,7 @@ tight loop containing an `^` operator. **In Smali** the tell is unmistakable:
 .end method
 ```
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > `xor-int/lit8` with a small literal, inside a loop over a byte array, returning a `String` — that
 > is a string decryptor with essentially no false-positive rate. Grep your Smali for
 > `xor-int/lit8` and look at every enclosing method that returns `Ljava/lang/String;`. Also look for
@@ -534,7 +534,7 @@ public final class c {
 }
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > This is *not* stronger than XOR in any meaningful sense. The threat model of string encryption is
 > "an attacker holds the app". If the attacker holds the app, they hold the key, because the key must
 > be in the app for the app to work. AES here buys you exactly one thing: you cannot recover the
@@ -571,7 +571,7 @@ call. Which brings us to the universal counter.
 
 #### THE UNIVERSAL COUNTER — hook or invoke the decryption routine at runtime
 
-> **🧠 Mental Model**
+> **Mental Model**
 > The decrypted string must exist in memory for the program to use it. Therefore there is always a
 > moment, and always a specific function, at which plaintext exists. You do not need to break the
 > cipher, understand the key schedule, or reimplement anything. You need to **be present at that
@@ -629,7 +629,7 @@ Java.perform(function () {
 });
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > When you dump strings, **always capture the call site**, not just the string. A list of 4,000
 > decrypted strings is a haystack. A list of 4,000 strings each annotated with
 > `com.example.b.c.d()` is a map. In Frida, get it with
@@ -656,7 +656,7 @@ in a loop. It is legal in a testing context, mechanically simple, and needs no e
 
 ### 3.3 Control flow obfuscation
 
-> **📖 Definition**
+> **Definition**
 > **Control flow obfuscation** rewrites a method so that it computes the same result but its
 > *control flow graph* (CFG — the graph whose nodes are straight-line blocks of code and whose edges
 > are the possible jumps between them) no longer resembles the source structure. Decompilers
@@ -665,7 +665,7 @@ in a loop. It is legal in a testing context, mechanically simple, and needs no e
 
 #### 3.3.1 Opaque predicates
 
-> **📖 Definition**
+> **Definition**
 > An **opaque predicate** is a boolean expression whose value is known to the obfuscator at build
 > time but is difficult for an analyser to determine. `if (x * x >= 0)` is always true for integers
 > in the absence of overflow reasoning; a decompiler that does not reason about arithmetic keeps both
@@ -712,7 +712,7 @@ instantly, which is precisely the weakness — opaque predicates are aimed at *t
 
 #### 3.3.2 Control-flow flattening — the important one
 
-> **📖 Definition**
+> **Definition**
 > **Control-flow flattening** destroys the nesting structure of a method. All the original basic
 > blocks are placed side by side as cases of a single `switch` statement inside an infinite loop. A
 > variable — the **state variable** or **dispatcher variable** — holds a number identifying which
@@ -861,7 +861,7 @@ decompiler correctly emits the only thing it can: a `switch` in a loop.
    Sort by reachability from the entry and the original program falls out.
 
 2. **Trace it.** Hook the method with Frida and log the state variable at each iteration — or, more
-   simply, log the method's inputs and outputs and treat it as a black box. Very often you do not
+   cheaply, log the method's inputs and outputs and treat it as a black box. Very often you do not
    need to understand a flattened method at all; you need to know what it returns for a given input,
    and one hook answers that.
 
@@ -874,7 +874,7 @@ decompiler correctly emits the only thing it can: a `switch` in a loop.
    original structure automatically. This is well-developed for native code (LLVM-based deobfuscators)
    and less mature for DEX. Know it exists; do not start here.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The correct first question about a flattened method is not "how do I deflatten this?" It is
 > "**do I need to?**" You are usually looking for one specific behaviour — where the API key is built,
 > whether root detection returns true. Hooking the method boundary answers that in five minutes.
@@ -882,7 +882,7 @@ decompiler correctly emits the only thing it can: a `switch` in a loop.
 
 #### 3.3.3 Bogus control flow and junk code
 
-> **📖 Definition**
+> **Definition**
 > **Bogus control flow** inserts branches that are never taken, guarded by opaque predicates, whose
 > bodies contain plausible-looking but never-executed code. **Junk code** (or *dead code insertion*)
 > adds instructions that execute but have no effect on the result — computing values into variables
@@ -903,7 +903,7 @@ behaviour-based analysis ignores it for free.
 
 #### 3.3.4 Irreducible loops and decompiler-breaking CFGs
 
-> **📖 Definition**
+> **Definition**
 > A loop is **reducible** if it has a single entry point (a *header*) that dominates every node in the
 > loop. Java source can only express reducible loops. Bytecode, however, can express **irreducible**
 > loops — loops with two or more entry points, created by `goto` into the middle of a loop body.
@@ -921,7 +921,7 @@ When the decompiler fails, you have not lost information, you have lost formatti
 
 ### 3.4 API hiding via reflection and dynamic resolution
 
-> **📖 Definition**
+> **Definition**
 > **Reflection** is the ability of a program to inspect and invoke classes and methods by *name at
 > runtime*, rather than by a *reference resolved at compile time*. `Runtime.getRuntime().exec("su")`
 > is a direct call; `Class.forName("java.lang.Runtime").getMethod("exec", String.class).invoke(...)`
@@ -952,7 +952,7 @@ String imei = (String) m.invoke(tm, new Object[0]);
 `setAccessible(true)` and `invoke` calls with no readable arguments. In Smali, look for
 `Ljava/lang/reflect/Method;->invoke`.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Reflection is also how apps reach **hidden and greylisted framework APIs** that the SDK does not
 > expose. Since Android 9 (API 28) the runtime enforces hidden-API restrictions and logs
 > `Accessing hidden API` warnings to logcat. Watching logcat while an app starts is therefore a
@@ -984,7 +984,7 @@ essentially transparent to *dynamic* analysis — a general property worth inter
 
 ### 3.5 Dynamic code loading
 
-> **📖 Definition**
+> **Definition**
 > **Dynamic code loading** is loading executable code that was not part of the DEX files ART opened at
 > process start. On Android this means a `ClassLoader` — usually `DexClassLoader`,
 > `PathClassLoader`, or (API 26+) `InMemoryDexClassLoader` — being handed a DEX or APK from the app's
@@ -1065,7 +1065,7 @@ Java.perform(function () {
 });
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > Hooking `InMemoryDexClassLoader.$init` only works if you are attached **before** it runs. In a
 > packed app it runs inside `attachBaseContext`, which is one of the first things that happens in the
 > process. Use `frida -f com.target.app --pause`, install your hooks, then `%resume`. Attaching to an
@@ -1074,7 +1074,7 @@ Java.perform(function () {
 
 ### 3.6 Native code migration
 
-> **📖 Definition**
+> **Definition**
 > **Native code migration** is moving security-relevant logic out of Java/Kotlin into C or C++
 > compiled to a shared object (`.so`) and called through JNI (Java Native Interface). The premise is
 > that ARM machine code is harder to read than DEX bytecode.
@@ -1114,7 +1114,7 @@ strings -n 8 lib/arm64-v8a/libcore.so | sort -u | head -100
 own TLS (which usually means certificate pinning implemented natively — see
 [36-CertificatePinning](../36-CertificatePinning/README.md)).
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > When logic moves native, **your first move is not Ghidra.** It is
 > `frida-trace -U -f com.target -j '*!*'` for the Java side and
 > `frida-trace -U -f com.target -i 'Java_*'` for the JNI exports. Ten minutes of tracing tells you
@@ -1159,7 +1159,7 @@ resolution — including the resolution of the real `Application` class named in
 the real code. The stub then instantiates the real `Application` and forwards every lifecycle
 callback to it.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > `.init_array` is an ELF section holding an array of function pointers that the dynamic linker
 > (`/apex/com.android.runtime/bin/linker64` on modern Android) calls during `dlopen`, after
 > relocations are applied and before `dlopen` returns. In C you get an entry by writing
@@ -1238,7 +1238,7 @@ Process.getModuleByName("libart.so").enumerateExports()
   .forEach(function (e) { console.log(e.address + "  " + e.name); });
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > Do not hardcode `libart.so` symbol names from a blog post. ART's internal C++ symbols are not a
 > stable ABI; they change between Android versions and even between security patch levels, and on
 > release builds many are not exported at all. Always enumerate at runtime, as above, and fall back
@@ -1291,7 +1291,7 @@ a DEX whose method bodies are empty — see the "method-level" note below.
 in-memory copy has been modified by ART (for example, some fields are patched, or the region has been
 partially rewritten by the JIT). Fixes, in order:
 
-1. Recompute the Adler-32 checksum and the SHA-1 signature over the correct ranges, or simply tell
+1. Recompute the Adler-32 checksum and the SHA-1 signature over the correct ranges, or tell
    your tools to ignore them (`jadx --no-verify-checksum`-style options, or `baksmali`'s tolerance).
 2. If the map section is corrupt, `baksmali` often still parses what `jadx` rejects — go to Smali.
 3. If method bodies are missing, you are facing **method-level protection** (bodies are decrypted
@@ -1299,7 +1299,7 @@ partially rewritten by the JIT). Fixes, in order:
    to hook the JIT/interpreter entry point and dump each method's code item as it is prepared. This is
    the hardest common case and it is where per-product tooling exists.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Unpacking is not code-breaking. It is **timing**. The whole skill is choosing the moment at which
 > the data you want is in its most complete, least protected state, and being present at that moment
 > with a way to write it down. Everything else — the specific hook, the specific tool — is detail.
@@ -1309,7 +1309,7 @@ partially rewritten by the JIT). Fixes, in order:
 What follows is a *field guide*, written from the point of view of what a tester **observes in an
 APK**. It deliberately does not speculate about proprietary internals.
 
-> **⚠️ Warning**
+> **Warning**
 > Products change. Artefacts listed here are what has commonly been observed and are useful as
 > *hypotheses*, not as identification certainties. Vendors rename libraries, change packaging, and
 > ship different tiers to different customers. Confirm by behaviour, and never write a vendor's name
@@ -1373,7 +1373,7 @@ compatibility while the analysis tools were written to a stricter reading of the
 | **Manifest binary-XML abuse** | Extra unused string-pool entries, unusual chunk ordering, attributes ART's parser skips | `apktool` decode errors | `aapt2 dump xmltree` reads what the platform reads; compare against `apktool`'s view |
 | **Missing / bogus `resources.arsc` structures** | Package IDs, type strings, or config chunks that AAPT2 rejects but the runtime tolerates | `apktool d` fails | `aapt2 dump resources`, or a purpose-written arsc parser |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > When a tool fails on an APK that installs and runs, **that is a finding about the app, not a
 > failure on your part** — it is deliberate anti-analysis, and it belongs in the report as an
 > observation. It is also a signal about effort: an app that bothers to break `apktool` is an app
@@ -1381,7 +1381,7 @@ compatibility while the analysis tools were written to a stricter reading of the
 >
 > The universal escape hatch: install the app on a device and **dump the DEX from memory** (§3.7.3).
 > Whatever tricks were played on the file format, ART has already normalised the in-memory form,
-> because ART had to in order to run it.
+> because ART had to to run it.
 
 **A worked example of the mindset.** Suppose `apktool d app.apk` fails with a resource error but
 `adb install app.apk` succeeds. The platform parsed `resources.arsc` and `apktool` did not. Therefore
@@ -1394,7 +1394,7 @@ scriptable parser. All three take minutes. None requires you to fix `apktool`.
 
 Resources are the column that most testers forget, and they leak more than developers expect.
 
-> **📖 Definition**
+> **Definition**
 > **`resources.arsc`** is the compiled resource table in an APK. It maps 32-bit resource IDs (of the
 > form `0xPPTTEEEE`: package, type, entry) to values, per configuration (language, density,
 > orientation). It also contains a **string pool of resource names**, because `getIdentifier(name,
@@ -1436,7 +1436,7 @@ apktool d -f -o out target.apk >/dev/null 2>&1
 grep -rl 'textPassword\|numberPassword' out/res/layout/ 2>/dev/null
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `res/xml/network_security_config.xml` is referenced from the manifest by resource ID, and the
 > filename can be mangled — but the manifest tells you the ID, and `aapt2 dump xmltree` on the
 > resolved file tells you whether cleartext is permitted and whether a debug trust anchor was left in.
@@ -1545,7 +1545,7 @@ private static native Object openInMemoryDexFilesNative(ByteBuffer[] bufs,
 These are the Java/native boundary. Everything above them is Java you can hook with
 `Java.use`; everything below is native you hook with `Interceptor`.
 
-> **⚠️ Warning**
+> **Warning**
 > `DexFile` has been progressively hidden and, in newer releases, restructured. Do not assume the
 > exact method set above exists on the device in front of you. Verify at runtime:
 > ```javascript
@@ -1656,7 +1656,7 @@ sequenceDiagram
     STUB->>STUB: load real Application class, forward onCreate
 ```
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > This is why `Application.attachBaseContext` is such a valuable Frida hook in general, not only
 > against packers. It is the earliest Java code in an app process that you can name in advance,
 > because the framework calls it, so it is the correct place to install hooks that must be in place
@@ -1719,7 +1719,7 @@ Obfuscation is used by attackers at least as often as by defenders.
 | **MASVS-STORAGE / MASVS-CRYPTO** | Where a "protected" secret ends up being a finding regardless of obfuscation. |
 | **MASTG resilience tests** | The test procedures for assessing obfuscation quality. |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > MASVS-RESILIENCE is explicitly a **defence-in-depth** category, and the MASVS documentation is
 > clear that it should only be assessed when the threat model justifies it (apps handling high-value
 > assets, DRM, payments). Reporting "the app is not obfuscated" as a standalone high-severity finding
@@ -1743,7 +1743,7 @@ found. The classes most commonly discovered *after* deobfuscation are:
 - **Insecure IPC surfaces** — exported components discovered from the manifest, whose handlers are
   only understandable after deobfuscation. See [26-Intent](../26-Intent/README.md).
 
-> **⚠️ Warning**
+> **Warning**
 > Do not cite specific CVE identifiers for "obfuscation weaknesses". Obfuscation strength is not
 > tracked as a CVE class; CVEs are assigned to specific software defects. If you need to reference
 > prior work, reference the vendor's own documentation, the OWASP MASTG, or published conference
@@ -1883,7 +1883,7 @@ manifest's component names. Until that is true, you have not unpacked.
 
 #### Phase 4 — RECOVER STRINGS FIRST
 
-> **🧠 Mental Model**
+> **Mental Model**
 > After renaming, **strings are the only remaining semantics**. A method called `a` that contains the
 > string `"/v2/payments/authorize"` is not called `a` any more — it is `authorizePayment`, and you
 > now know it, and you can rename it, and everything that calls it is now also partly understood.
@@ -1922,7 +1922,7 @@ The procedure:
 3. **Correlate back to the DEX.** For index-based decryptors, every call site in the Smali passes a
    literal index. So a `sed`/`python` pass over the Smali can substitute the recovered plaintext as a
    comment next to each call. This turns unreadable code into annotated code *at scale*, and it is
-   the highest-leverage twenty lines of scripting in Android RE. `scripts/annotate-smali-strings.py`
+   the highest-value twenty lines of scripting in Android RE. `scripts/annotate-smali-strings.py`
    in this chapter does exactly that.
 
 4. **Triage the strings.** Grep the dump for the categories that matter:
@@ -2001,7 +2001,7 @@ and the act of writing reliably surfaces the gap you were about to miss.
 | Renaming | `p001a.b.c`, classes named `a`–`zz`, many overloads named `a` |
 | Renaming with `-repackageclasses` | Everything in one flat package, often the default package |
 | String encryption | `byte[]` literals; small static `String`-returning helpers; no readable URLs |
-| Opaque predicates | `if` conditions on arithmetic that is obviously always true |
+| Opaque predicates | `if` conditions on arithmetic that is always true |
 | Flattening | `while (true) { switch (i) { ... } }` |
 | Junk code | Locals assigned and never read; allocations discarded |
 | Reflection hiding | Clusters of `Class.forName`/`getDeclaredMethod`/`invoke` |
@@ -2104,7 +2104,7 @@ frida -U -f com.target.app -l scripts/frida-string-decryptor.js --pause
 | LSPosed / Xposed module | At `handleLoadPackage`, before app code | Persistent, survives restarts, needs a rooted device with LSPosed |
 | `am set-debug-app -w pkg` + debugger | At process start, waiting for a JDWP debugger | Debuggable builds only |
 
-> **⚠️ Warning**
+> **Warning**
 > `--pause` (spawn gating) is not the same as `-f` alone. With `-f` and no pause, Frida spawns and
 > resumes immediately, and a fast packer can beat your script. Always pause when the target is
 > protected, and confirm your hooks installed before you type `%resume`.
@@ -2190,9 +2190,9 @@ if (ptrace) {
 }
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Neutralising `ptrace` blindly can break apps that legitimately use it. Log first, replace second.
-> Also note that a determined protector calls `ptrace` via a raw `svc` instruction rather than the
+> A determined protector calls `ptrace` via a raw `svc` instruction rather than the
 > libc wrapper, precisely to dodge this hook — if your `Interceptor.replace` never fires but the app
 > still detects you, that is what is happening, and you move to hooking at the syscall level or
 > patching the `.so`. See [67-BypassingProtections](../67-BypassingProtections/README.md).
@@ -2245,7 +2245,7 @@ adb shell "su -c 'tcpdump -i any -s0 -w /sdcard/cap.pcap'"
 ```
 
 If the app pins certificates you will need to defeat pinning first
-([36-CertificatePinning](../36-CertificatePinning/README.md)). But note the leverage: knowing the
+([36-CertificatePinning](../36-CertificatePinning/README.md)). But note the payoff: knowing the
 endpoint and payload shape tells you what the obfuscated code *produces*, which is often the entire
 question. Analysts frequently spend two days deobfuscating a request builder that a proxy would have
 shown them in two minutes.
@@ -2298,7 +2298,7 @@ grep -rn 'DexClassLoader\|InMemoryDexClassLoader\|System/load\|getDeclaredMethod
 grep -rEn 'AIza[0-9A-Za-z_-]{35}|AKIA[0-9A-Z]{16}|-----BEGIN [A-Z ]*PRIVATE KEY-----' out apktool_out | head
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Command 4 is the most informative single line in the list. An app of any size with **zero readable
 > URLs** in its DEX either has no network code (unlikely) or has string encryption (very likely). An
 > app with hundreds of readable URLs has no string protection at all and everything below becomes
@@ -2371,7 +2371,7 @@ MobSF will tell you an app uses reflection, loads DEX dynamically, and contains 
 That is useful triage. What it will not do is unpack, decrypt strings, or tell you whether a finding
 matters.
 
-> **⚠️ Warning**
+> **Warning**
 > Automated tools report **capability**, not **behaviour**. "Uses `DexClassLoader`" is a fact about the
 > code, not evidence of malice — a plugin framework does it legitimately. Every automated finding on
 > an obfuscated app must be manually confirmed, and the confirmation is the work. A report that
@@ -2763,8 +2763,8 @@ hardware, expressed as keys the client cannot extract. Everything else in the cl
 cost-imposition. A mature architecture states, per asset, which of the three protects it, and never
 lists obfuscation for anything in the first two categories.
 
-**Q: Design an anti-tamper strategy that is robust against the techniques in this chapter.**
-It is not possible to make the client robust, so make the *system* robust: bind sessions to
+**Q: Design an anti-tamper strategy that survives the techniques in this chapter.**
+It is not possible to make the client unbreakable, so make the *system* resilient: bind sessions to
 attestation results verified server-side (Play Integrity or equivalent), keep secrets in
 hardware-backed key storage with per-use authentication, make client-side checks *signals* that feed
 a server-side risk engine rather than *decisions*, and design so that a fully compromised client

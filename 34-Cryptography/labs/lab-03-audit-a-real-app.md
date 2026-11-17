@@ -27,7 +27,7 @@ which fifteen minutes of the eight hours produce ninety percent of the findings,
 negative result is informative and when it just means you did not look properly, and knowing how to
 write "we found nothing in this area, and here is what that does and does not mean".
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The fastest way to lose a mobile client is a report full of unconfirmed grep hits. The second fastest
 > is "hardcoded encryption key — Critical" for a key that encrypts a UI preference cache. Everything in
 > this lab is oriented around not doing either.
@@ -46,12 +46,10 @@ Pick something you are **legally permitted to test**. In order of preference:
 3. **An open-source app from F-Droid.** Real, legal, and you can check your reading against the
    source afterwards — which is an unusually good feedback loop.
 
-> **⚠️ Warning**
-> Do not test an app you have no authorisation to test. Reverse engineering an application may violate
-> its terms of service and, depending on jurisdiction, computer misuse law. "It was for research" is
-> not a defence you want to test. If you intend to report a genuine finding in a third-party app, go
-> through that vendor's published vulnerability disclosure process, and read
-> [70-VulnerabilityResearch](../../70-VulnerabilityResearch/README.md) first.
+> Target only apps you own or apps published as open source. If you intend to report a genuine
+> finding in a third-party app, go through that vendor's published vulnerability disclosure process,
+> and read [70-VulnerabilityResearch](../../70-VulnerabilityResearch/README.md) first. See
+> [SECURITY.md](../../SECURITY.md) for authorised-testing scope.
 
 Record the target's identity precisely before you start: package name, `versionName`, `versionCode`,
 APK SHA-256, the device model and Android build, and the date. Findings without a version are not
@@ -221,7 +219,7 @@ jca.keys()
 ```
 
 **Question 5.** Which static candidates did the runtime confirm? Which never fired? For each that never
-fired, decide: unreachable, or did you simply not walk the right path?
+fired, decide: unreachable, or did you not walk the right path?
 
 Test the AndroidKeyStore claim directly if the app uses it:
 

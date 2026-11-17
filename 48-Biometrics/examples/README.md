@@ -87,7 +87,7 @@ dependencies {
 // minSdk 23; the API 30+ branches are taken at runtime, not at compile time
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > `01-CallbackOnlyVault.java` and `03-TimeBoundTrap.kt` are deliberately vulnerable. Install them
 > only on a device or emulator you own. Neither contacts the network; the only data either handles
 > is a hard-coded string. Do not lift either into production code, and do not lift file 02 either

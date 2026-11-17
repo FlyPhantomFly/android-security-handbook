@@ -20,7 +20,7 @@ Matrix tables. Measurements in this chapter were taken on Android 11 / API 30 un
 
 ---
 
-> **⚠️ Warning — scope and authorisation**
+> **Warning — scope and authorisation**
 > **Only bypass pinning on applications you own or are contracted to assess.** Every technique here
 > works identically against an app you have no right to touch, and the technique is not what makes
 > it lawful. Detection is different: reading an APK that is already on your own device is not an
@@ -80,19 +80,19 @@ That is the whole idea. Everything else in this chapter is mechanism.
 
 ### 1.2 The same story with the real words
 
-> **📖 Definition — Certificate Authority (CA)**
+> **Definition — Certificate Authority (CA)**
 > An organisation whose own certificate is pre-installed in your device's **trust store**, and whose
 > signature on somebody else's certificate causes your device to accept it. Android ships with
 > roughly 130–150 of them depending on version and OEM. Any one of them can issue a valid
 > certificate for any domain name.
 
-> **📖 Definition — TLS certificate**
+> **Definition — TLS certificate**
 > A signed document binding a **public key** to a name (`api.example.com`). The server proves it
 > holds the matching private key during the handshake. Chapter [35-SSL](../35-SSL/README.md) covers
 > the handshake and the trust decision in full; this chapter starts at the point where an app
 > decides that a valid chain is not sufficient.
 
-> **📖 Definition — Certificate pinning**
+> **Definition — Certificate pinning**
 > The practice of an application accepting **only a specific, pre-known key or certificate** for a
 > given host, rejecting every other certificate no matter how validly it chains to a trusted CA.
 
@@ -479,14 +479,14 @@ two-argument overload structurally cannot.
 
 **It returns the cleaned chain.** This is the important one and it is the reason this API exists.
 
-> **📖 Definition — chain cleaning**
+> **Definition — chain cleaning**
 > The server sends a list of certificates. That list may be in the wrong order, may contain
 > certificates irrelevant to the path being built, may omit an intermediate the client has cached,
 > and may present a root that the client replaces with a cross-signed alternative it prefers. The
 > **cleaned chain** is the path the trust manager actually built and validated — which can differ,
 > certificate for certificate, from what arrived on the wire.
 
-> **🔍 Pentester's Note — the hand-rolled pin's classic bug**
+> **Pentester's Note — the hand-rolled pin's classic bug**
 > A pin that compares against the **wire chain** lets the attacker choose which certificates the app
 > inspects. Add a certificate whose key matches the pin but which plays no part in the validated
 > path, and a naive implementation matches it and accepts. A pin that compares against the
@@ -510,7 +510,7 @@ the thing you get from `TrustManagerFactory.getInstance(...).init(null)`.
 **Why it matters for pinning.** Modern OkHttp does not go through `SSLContext.init` for
 verification. It obtains the platform trust manager and calls it **directly**, which means:
 
-> **⚠️ Warning**
+> **Warning**
 > A bypass that only hooks `SSLContext.init` and `TrustManagerFactory.getTrustManagers` — layer 1 —
 > misses Conscrypt entirely on a modern app. This is the single most common reason a bypass script
 > written for Android 6 does nothing on Android 11.
@@ -547,7 +547,7 @@ A pin, in both OkHttp's `sha256/` format and Android's `<pin-set>`, is:
 base64( SHA-256( DER encoding of the certificate's SubjectPublicKeyInfo ) )
 ```
 
-> **📖 Definition — SubjectPublicKeyInfo (SPKI)**
+> **Definition — SubjectPublicKeyInfo (SPKI)**
 > An ASN.1 structure inside every X.509 certificate containing exactly two things: an
 > `AlgorithmIdentifier` (which algorithm and parameters, e.g. `id-ecPublicKey` with `prime256v1`)
 > and a `BIT STRING` holding the public key itself. It is the *key*, plus enough metadata to
@@ -613,10 +613,10 @@ Cross-checked against the canonical one-liner
 
 | Pin target | Survives leaf renewal | Survives key rotation | Who else can impersonate you | Typical lifetime |
 |---|---|---|---|---|
-| Leaf key | ✅ if the key is reused | ❌ | nobody | Weeks to years, depending on the issuer |
-| Your own private intermediate | ✅ | ✅ | anybody who can get a certificate from *your* intermediate — i.e. you | Years |
-| A public CA's intermediate | ✅ | ✅ | **any customer of that CA** | Years, but CAs rotate them without announcement |
-| A public CA root | ✅ | ✅ | **any customer of that CA** | Decades |
+| Leaf key | if the key is reused | | nobody | Weeks to years, depending on the issuer |
+| Your own private intermediate | | | anybody who can get a certificate from *your* intermediate — i.e. you | Years |
+| A public CA's intermediate | | | **any customer of that CA** | Years, but CAs rotate them without announcement |
+| A public CA root | | | **any customer of that CA** | Decades |
 
 The third row is the trap. Pinning a public CA's intermediate feels safe because the value is stable
 — and it reduces your protection to "the attacker must obtain a certificate from this one CA", which
@@ -628,7 +628,7 @@ whose certificate happens to chain to that root passes your pin.
 
 #### 3.4.4 Backup pins
 
-> **📖 Definition — backup pin**
+> **Definition — backup pin**
 > A pin over a key pair that has been generated, pinned, and **never used**. It has no certificate.
 > It sits offline until the primary key must be replaced.
 
@@ -707,7 +707,7 @@ Certificate pinning failure!
 ```
 
 Read **both** lists. If none of the computed values resembles your configured value, you hashed the
-wrong thing (§3.4.1). If the computed leaf is stable across runs and simply is not in your list, your
+wrong thing (§3.4.1). If the computed leaf is stable across runs and is not in your list, your
 pin is stale.
 
 **Where the pins are readable at runtime.** The `CertificatePinner` object holds them, and
@@ -772,7 +772,7 @@ The consequences are stark and every one of them contradicts a habit:
 | `settings put global http_proxy` | Nothing — Dart's `HttpClient` does not read it |
 
 **And none of that is pinning.** Flutter's default behaviour is ordinary certificate validation
-against a bundled root list. There is no pin. It simply happens to be immune to everything you do to
+against a bundled root list. There is no pin. It happens to be immune to everything you do to
 the Android trust store, which produces symptoms identical to a pin and gets written up as one.
 
 **What does work**, in rough order of effort:
@@ -805,7 +805,7 @@ in `classes24.dex`). Two stacks, two trust decisions, one reachable from Java an
 the OkHttp pin would yield the Java traffic and none of the Dart traffic — and the bypass script
 would report success.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > If some of an app's traffic appears in your proxy and some does not, stop hooking and start
 > counting stacks. Two networking stacks in one process is a far more common explanation than a
 > failed hook, and it is visible in the APK listing in five seconds.
@@ -862,12 +862,12 @@ mile of it.
 | Route | When to use it | Fragility |
 |---|---|---|
 | `Interceptor.replace` on `SSL_CTX_set_custom_verify` | The symbol is exported | Breaks if statically linked and stripped |
-| `Interceptor.attach` on the callback, `retval.replace(0)` in `onLeave` | You located the callback | Robust: the original body still runs |
+| `Interceptor.attach` on the callback, `retval.replace(0)` in `onLeave` | You located the callback | Stable: the original body still runs |
 | `Interceptor.replace` on the callback | Last resort | Skips the original's bookkeeping — a classic source of a crash three screens later |
 | Patch the pin constant in `.rodata` | You want no runtime instrumentation | Survives Frida detection; needs repackaging |
 | Patch the comparison branch | The constant is computed | Watch for inlining |
 
-> **⚠️ Warning — inlining, and chapter 18's measured lesson**
+> **Warning — inlining, and chapter 18's measured lesson**
 > [18-ARM §5.4](../18-ARM/README.md) records a patch that provably worked against a function that
 > provably no longer mattered: `lc_verify_signature` was patched to `return 1`, verified returning
 > 1, and the caller still refused — because clang had **inlined** the check and the patched copy was
@@ -875,7 +875,7 @@ mile of it.
 > inlined. If your patch is correct and the pin still rejects, check for inlining before assuming
 > the patch failed.
 
-> **⚠️ Warning — the `NativeCallback` GC trap**
+> **Warning — the `NativeCallback` GC trap**
 > A `NativeCallback` must remain reachable from JavaScript for as long as native code might invoke
 > it. Created inside a function and not stored, it is collected, and BoringSSL later calls freed
 > memory — crashing at a moment and place with no visible relationship to your hook.
@@ -928,15 +928,15 @@ layer".
 
 | # | Layer | Where | Hookable from Java | Bypassing only this leaves |
 |---|---|---|---|---|
-| 1 | `SSLContext` / custom `X509TrustManager` | app DEX | ✅ | Conscrypt, OkHttp's pin, `<pin-set>`, native |
-| 1b | `X509TrustManagerExtensions` | platform + app | ✅ | the same, minus layer 1 |
-| 2 | Conscrypt `TrustManagerImpl` | APEX | ✅ | OkHttp's pin, `<pin-set>` if a custom context is used, native |
-| 3 | `okhttp3.CertificatePinner` | app DEX | ✅ | everything below it, and every non-OkHttp stack |
-| 4 | `HostnameVerifier` | app + platform | ✅ | not a pin at all |
-| 5 | `<pin-set>` / `NetworkSecurityTrustManager` | `framework.jar` | ✅ | OkHttp's pin, native |
-| 6 | WebView `onReceivedSslError` | `framework.jar` | ✅ | everything else |
-| 7 | Native BoringSSL / OpenSSL | app `.so` | ❌ | — this is the floor |
-| — | Flutter's bundled root list | `libflutter.so` | ❌ | — not a pin, behaves like one |
+| 1 | `SSLContext` / custom `X509TrustManager` | app DEX | | Conscrypt, OkHttp's pin, `<pin-set>`, native |
+| 1b | `X509TrustManagerExtensions` | platform + app | | the same, minus layer 1 |
+| 2 | Conscrypt `TrustManagerImpl` | APEX | | OkHttp's pin, `<pin-set>` if a custom context is used, native |
+| 3 | `okhttp3.CertificatePinner` | app DEX | | everything below it, and every non-OkHttp stack |
+| 4 | `HostnameVerifier` | app + platform | | not a pin at all |
+| 5 | `<pin-set>` / `NetworkSecurityTrustManager` | `framework.jar` | | OkHttp's pin, native |
+| 6 | WebView `onReceivedSslError` | `framework.jar` | | everything else |
+| 7 | Native BoringSSL / OpenSSL | app `.so` | | — this is the floor |
+| — | Flutter's bundled root list | `libflutter.so` | | — not a pin, behaves like one |
 | — | Certificate Transparency | app DEX | partly | fails *after* the pin, so it is misattributed |
 
 **Measured distribution.** Across fourteen third-party applications on the reference device
@@ -957,7 +957,7 @@ silently.
 | 30 | 11 | The reference device for this chapter. `TrustManagerImpl.checkTrustedRecursive` is the live path |
 | 31+ | 12+ | Further APEX updates change Conscrypt internals without an OS release — do not assume a method signature from a device you tested last year |
 
-> **⚠️ Warning**
+> **Warning**
 > Because Conscrypt is an APEX, **two devices on the same Android release can have different
 > `TrustManagerImpl` internals.** A bypass that works on one may find a missing overload on the
 > other. This is why every hook in `ssl-pinning-bypass.js` is individually guarded and a missing
@@ -968,7 +968,7 @@ silently.
 Certificate Transparency deserves its own subsection here for one practical reason: **when it
 rejects, people blame the pin.**
 
-> **📖 Definition — Certificate Transparency (CT)**
+> **Definition — Certificate Transparency (CT)**
 > A public, append-only, cryptographically verifiable log of issued certificates. A CA submits a
 > certificate to one or more logs and receives a **Signed Certificate Timestamp (SCT)**, a promise
 > that the certificate has been logged. A client can require that a certificate carry valid SCTs
@@ -1026,7 +1026,7 @@ Pinning is usually discussed as the client checking the server. The reverse — 
 is common in banking, healthcare, and any app with a hardware-backed identity, and it changes what
 you can do.
 
-> **📖 Definition — mutual TLS (mTLS)**
+> **Definition — mutual TLS (mTLS)**
 > Both ends present certificates. The server requests a client certificate during the handshake
 > (`CertificateRequest`), and the client proves possession of the matching private key. The server
 > then applies its own policy to the client certificate — which may itself be a pin.
@@ -1298,7 +1298,7 @@ argues; a developer who reads "this will take your app down on renewal day" acts
 
 **And the finding to never write:**
 
-> ❌ The application does not implement certificate pinning. **Severity: Medium.**
+> The application does not implement certificate pinning. **Severity: Medium.**
 
 with no threat-model sentence. That is the most common bad finding in mobile network testing, and
 the reason clients stop reading mobile reports.
@@ -1315,7 +1315,7 @@ the reason clients stop reading mobile reports.
 | A build flag that disables pinning, wired to a constant | Pinning is absent in the release build | The pin string is absent from the release DEX although the code is present |
 | Catching the pin exception and retrying without pinning | The control is decorative | `catch (SSLPeerUnverifiedException)` followed by a second client |
 | An unauthenticated remote kill switch for pinning | Pinning can be turned off by the network | Remote config that gates the pinner without a signature check |
-| No `expiration` on a `<pin-set>` | A permanent commitment to a key | The attribute is simply absent |
+| No `expiration` on a `<pin-set>` | A permanent commitment to a key | The attribute is absent |
 
 The last-but-one is worth dwelling on. [Example 5](examples/05-enterprise-pin-rotation.kt) builds a
 *correct* remotely-configurable pinning engine, and the thing that makes it correct is that the
@@ -1359,7 +1359,7 @@ genuinely exist in this area are:
 | **Pinning implemented against the wire chain** | §3.2 | Attacker-chosen certificates satisfy the pin |
 | **CA ecosystem incidents** | Historical mis-issuance and CA distrust events — the reason pinning and Certificate Transparency exist | Not app bugs; they are the threat pinning addresses |
 
-> **⚠️ Warning — do not invent identifiers**
+> **Warning — do not invent identifiers**
 > There are well-known historical CA incidents that motivate pinning, and there are many CVEs in
 > individual apps for improper certificate validation. Cite the **class** (CWE-295) and describe the
 > issue rather than attaching a CVE number you are not certain of. A wrong CVE in a report is worse
@@ -1390,7 +1390,7 @@ the device.** A bypass that requires root is not that.
 | **MASVS-NETWORK-2** | The app performs identity pinning for all remote endpoints **under the developer's control** | The whole chapter. Note the qualifier — this is not a universal requirement |
 | **MASVS-RESILIENCE-*** | Impede dynamic analysis and tampering | Pinning as a *resilience* control, which is where a pin against a rooted device actually belongs |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Cite the **control id**, not the MASTG test id. Control ids are stable across MASTG refactors;
 > test ids have moved more than once, and a report citing a retired test id looks stale.
 >
@@ -1430,7 +1430,7 @@ first row that matches decides.
 | The app is a **general consumer app** with no unusual exposure, targeting a modern SDK with cleartext disabled and no user-CA trust | **Do not pin.** Say so, in writing | Standard validation is an adequate control. Pinning adds operational risk for no threat in the model |
 | Someone proposed pinning to stop **users rooting their phones** | **Do not pin, and correct the premise** | Pinning does nothing against an attacker with root. This is a category error, and the control they want is server-side authorisation or attestation |
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Pinning trades **availability** for **integrity against one specific adversary**. If you cannot
 > name that adversary in a sentence, you are paying the availability cost for nothing. If you can,
 > the cost is worth budgeting for properly — which means a backup key, an expiry, and a rehearsed
@@ -1622,7 +1622,7 @@ for the **structure** instead. In Ghidra: find the call to `SHA256` (or the inli
 `0x428a2f98`, `0x71374491`, … which give away an inlined SHA-256), then follow the output buffer to
 the comparison. The buffer it is compared against is the pin.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > You can obfuscate a constant. You cannot obfuscate the need to do the work. A pin must hash a key
 > and compare the result to something; the hash and the comparison are structural and they survive
 > every string-level obfuscation. That is why `pinning-surface.py` reports the verify entry point
@@ -2009,7 +2009,7 @@ are the last chokepoint before the socket, and they see **plaintext**:
 });
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > This is often the *right* answer rather than a fallback. You wanted the traffic, not the bypass.
 > Reading it at the TLS boundary gives you request and response bodies without touching a single
 > trust decision, without a proxy, and without the app being able to tell. What it does **not** give
@@ -2037,7 +2037,7 @@ adb shell "su -c 'iptables -t nat -A OUTPUT -p tcp --dport 443 \
     -m owner --uid-owner 10123 -j DNAT --to-destination 192.168.1.10:8080'"
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > Without `-m owner --uid-owner`, that rule affects **the whole device**, including apps you are not
 > testing, on a phone somebody uses. Get the uid from `adb shell dumpsys package com.example.app |
 > grep userId`. Remove your rule specifically afterwards; check what else is in the chain first:
@@ -2288,7 +2288,7 @@ Four things that table establishes, none of which is folklore:
    (`sha256/V5L96iSCz0XLFgvKi7YVo6M4SIkOP9zSkDjZ0EoU6b8=`, `classes24.dex`). Two stacks, two
    decisions, one hookable from Java.
 
-> **⚠️ Warning — read the first two rows honestly**
+> **Warning — read the first two rows honestly**
 > `com.vendor.professionalnet` and `com.vendor.streaming` report 1 dex and 0 native libraries because
 > what is installed is a **stub APK** (the professional-network app's `base.apk` measured 334 KB). Those two rows
 > describe the *install*, not the application, and the table would be misleading if it did not say

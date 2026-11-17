@@ -41,16 +41,16 @@ Where? The application's private directory, `/data/data/com.bank.app/`, is prote
 2. **A backup, a bug, or a leak.** Files get copied into `adb backup` archives, into crash-report attachments, into cloud backup, into a world-readable log, into external storage by an over-broad "export data" feature.
 3. **Offline analysis of the flash chip.** If the device is powered off and the attacker desolders the storage, file permissions are metadata in a filesystem they now control.
 
-The obvious next thought is: *encrypt the token before writing it*. Good — but with what key? If the encryption key is a constant in your code, an attacker reads it out of the APK in ninety seconds. If it is derived from a device identifier, the attacker computes it. If it is randomly generated at first run and saved to a file, you have simply moved the problem: now the attacker steals the key file instead of the token file.
+The obvious next thought is: *encrypt the token before writing it*. Good — but with what key? If the encryption key is a constant in your code, an attacker reads it out of the APK in ninety seconds. If it is derived from a device identifier, the attacker computes it. If it is randomly generated at first run and saved to a file, you have moved the problem: now the attacker steals the key file instead of the token file.
 
 This is the **key storage regress**. Every layer of encryption you add on top of a file needs a key, and that key needs storage, and that storage needs protection. The regress only terminates when you reach something that is *not a file* — something that can perform cryptographic operations on your behalf without ever handing you the key material.
 
 That thing is the **Android Keystore**.
 
-> **📖 Definition — key material**
+> **Definition — key material**
 > The actual bytes of a cryptographic key: for AES-256, thirty-two specific bytes; for RSA, the modulus and the private exponent. Key material is the thing that must never leak. Everything else about a key — its algorithm, its size, its allowed uses — is metadata and is not secret.
 
-> **📖 Definition — Android Keystore**
+> **Definition — Android Keystore**
 > A system service that generates, stores and *operates* cryptographic keys on behalf of applications, in such a way that the key material is never returned to the calling application and, on the overwhelming majority of modern devices, never exists in any form inside the phone's main operating system at all. The application holds only a *handle* — an alias string and a Java object that refers to a key it can command but cannot read.
 
 ### 1.2 The physical-world analogy
@@ -69,7 +69,7 @@ The Android Keystore is that machine. The limits it can enforce are the `KeyGenP
 
 This is the single most important paragraph in the chapter, and the one that decides the severity rating of roughly half the findings you will ever write in this area. Read it twice.
 
-> **🧠 Mental Model — extraction versus use**
+> **Mental Model — extraction versus use**
 > The Android Keystore protects the **confidentiality of key material**. It does not, by itself, protect the **use of the key**.
 >
 > An attacker who achieves code execution inside your application's process — through Frida, through a Zygote-injected module, through LSPosed, through a malicious dynamically loaded library, or through a memory-corruption bug in your own native code — **cannot extract the key**, and **can freely use it**. They will call the same `Cipher` object your code calls, with the same key handle, and receive the same plaintext your code receives.
@@ -85,7 +85,7 @@ Write this out in your own words before you continue. Then hold it against these
 
 If you rate the second finding as "High — cryptographic key compromise" you will be corrected by any competent reviewer, and rightly. If you rate the first as "Low — requires reverse engineering" you have failed the client. The distinction is not pedantry; it is the job.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The corollary is that hooking a Keystore-backed `Cipher` is not, on its own, a *finding*. It is a *demonstration*. It becomes a finding when the plaintext you recover is something the current user should not have — a shared secret, an HMAC key used for server-side authorisation, a licence key, another user's data, or a value that lets you forge requests the server trusts. Always answer the question: **what did I learn that I did not already have?**
 
 ### 1.4 What would break if the Keystore did not exist
@@ -173,7 +173,7 @@ The KeyMint HAL is vendor code. Its job is to marshal the request across whateve
 
 Inside the secure world, the KeyMint trusted application decrypts the key blob using a hardware-unique key that software has never seen and cannot read, checks the authorisations attached to the blob, performs the AES operation, and returns only the ciphertext or plaintext.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > Notice what crosses the trust boundary in each direction. **Into** the secure world: the encrypted key blob, the operation parameters, your data. **Out of** the secure world: the result of the operation, and never the key. That asymmetry is the entire security property. Everything in the app process — including your `Cipher` object, your `SecretKey` handle, and your plaintext buffers — is on the attacker's side of the line the moment the attacker has code execution in your process.
 
 ### 2.2 The lifecycle of one key, as a sequence
@@ -257,12 +257,12 @@ Inside a blob (conceptual, vendor-specific):
 └───────────────────────────────────────────────────────────────┘
 ```
 
-> **📖 Definition — key blob**
+> **Definition — key blob**
 > The on-disk representation of a Keystore key. It is *ciphertext*: the key material encrypted, with an authenticated cipher, under a key derived from the device's hardware-unique key (HUK) — a value fused into the SoC at manufacture, readable only by the secure world's crypto engine, and different on every single device. The authorization list is included in the authentication tag, so an attacker cannot flip "requires fingerprint" to "does not require fingerprint" and have the blob still verify.
 
 This explains a fact that surprises people: **a stolen key blob is worthless.** Copy `persistent.sqlite` to another phone, to a laptop, to a cluster of GPUs — the HUK is not there. There is no password to guess, no KDF to attack, no reduced key space. The blob decrypts on exactly one piece of silicon, and only from inside its secure world.
 
-> **⚠️ Warning**
+> **Warning**
 > "Worthless off-device" is not "worthless". A blob plus the original device plus root is still an oracle: root can ask `keystore2` to use keys belonging to other UIDs only if SELinux and the namespace checks allow it, which on a stock policy they largely do not — but root can also inject into the owning process, which is the easier path. See §5.2, Finding 9.
 
 ### 2.4 Trust boundaries, drawn explicitly
@@ -311,7 +311,7 @@ Note the column that stays "No" almost all the way down. That is what you are bu
 
 The Android Keystore is exposed through the standard Java Cryptography Architecture. That is a deliberate design decision with a security consequence, so it is worth being precise about the pieces.
 
-> **📖 Definition — JCA provider**
+> **Definition — JCA provider**
 > The Java Cryptography Architecture is a plug-in system. A *provider* registers implementations of abstract "service provider interface" (SPI) classes — `KeyStoreSpi`, `CipherSpi`, `SignatureSpi`, `KeyGeneratorSpi`, `KeyPairGeneratorSpi`, `MacSpi` — under names. When you call `Cipher.getInstance("AES/GCM/NoPadding")`, the framework searches registered providers in priority order for one that offers that transformation. When you call `Cipher.getInstance("AES/GCM/NoPadding", "AndroidKeyStore")` you demand a specific provider.
 
 | Class | Package | Role |
@@ -328,7 +328,7 @@ The Android Keystore is exposed through the standard Java Cryptography Architect
 | `KeyInfo` | `android.security.keystore` | Read-back of a key's actual, as-created properties |
 | `KeyProtection` | `android.security.keystore` | Policy object used when *importing* a key |
 
-> **🧠 Mental Model**
+> **Mental Model**
 > `KeyGenParameterSpec` is what you *ask for*. `KeyInfo` is what you *got*. They can differ — most importantly in security level, if you asked for StrongBox and did not get it, or if you did not ask for hardware at all and the device silently gave you software. Never audit an app by reading its `KeyGenParameterSpec` alone; read back the `KeyInfo` on a real device. §7.3 gives the script.
 
 ### 3.2 The `keystore2` daemon
@@ -344,7 +344,7 @@ On Android 12 (API 31) and later, the daemon is `keystore2`, written in Rust, st
 | Access model | UID-based, `KeyStore` grants | *Namespaces* defined in SELinux policy, plus per-key grants |
 | Notable additions | — | `PURPOSE_AGREE_KEY`, `PURPOSE_ATTEST_KEY`, device-properties attestation, per-key `SecurityLevel` reporting |
 
-> **🔬 Under the Hood — why Rust matters here**
+> **Under the Hood — why Rust matters here**
 > `keystore2` sits between untrusted app input and a vendor HAL that talks to secure hardware. Historically that position produced memory-safety bugs; the Android Keystore has had at least one publicly documented stack buffer overflow reachable from an app-controlled alias string (CVE-2014-3100, reported by IBM's X-Force research team against the KitKat-era daemon — verify the NVD entry before citing it in a report). Rewriting the daemon in Rust removes that entire bug class from the parsing layer. It does not remove logic bugs, and it does not touch the vendor HAL or the TA, which remain C.
 
 ### 3.3 Namespaces, ownership and grants
@@ -358,7 +358,7 @@ Every key belongs to a **namespace**. For ordinary applications the namespace is
 
 The `grant()` API lets an app hand another specific UID the right to use one specific key. It is rare in third-party apps; when you see it, follow it, because it is an explicit widening of the trust boundary.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `android:sharedUserId` in the manifest is deprecated but still present in older enterprise and OEM apps. If the target shares a UID with a second, weaker APK — a "companion", a "plugin", an old "lite" version — then compromising the weaker one gives you the stronger one's Keystore namespace without any root at all. That is a genuine, non-root, cross-application key-use finding, and it is worth Medium to High. Check `adb shell dumpsys package <pkg> | grep -i userId` and compare across the vendor's whole portfolio.
 
 ### 3.4 Algorithms, sizes and what the hardware will actually do
@@ -372,7 +372,7 @@ The `grant()` API lets an app hand another specific UID the right to use one spe
 | 3DES | `KEY_ALGORITHM_3DES` | 168 | API 28+, and often only in software. Avoid; flag its use. |
 | Ed25519 / X25519 | via `setAlgorithmParameterSpec` | 256 | Support is device-dependent even on recent releases. Verify on the target, do not assume. |
 
-> **⚠️ Warning**
+> **Warning**
 > "Supported" is a property of the device's KeyMint implementation, not of the API level. A `KeyGenParameterSpec` that works on a Pixel may throw on a low-cost device with a minimal TEE, and the app may silently fall back to a software key. That fallback path is where the vulnerability lives, and it is invisible in static analysis of the happy path. Always read `KeyInfo.getSecurityLevel()` at runtime on the actual target hardware.
 
 ### 3.5 `KeyGenParameterSpec` — every builder option
@@ -435,7 +435,7 @@ new KeyGenParameterSpec.Builder(
 
 The enforcement is not a Java check. The purpose bitmask becomes `Tag::PURPOSE` entries in the blob's authenticated authorization list, and KeyMint refuses the `begin()` call if the requested purpose is absent. This survives every kind of in-process tampering: hooking will not turn a decrypt-only key into a signing key, because the rejection happens on the other side of the trust boundary.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Everything in `KeyGenParameterSpec` splits into two categories. **Cryptographic constraints** (purpose, algorithm, padding, digest, block mode, key size, validity, usage count) are enforced *inside the secure hardware* and cannot be bypassed by in-process code. **The auth-binding constraints** (`setUserAuthenticationRequired` and friends) are also enforced inside the hardware, but the *user interface that produces the authentication* is in your process and is fully attacker-controlled. So an attacker cannot make a decrypt key sign, but an attacker who can trick the user into authenticating once — or who is the user — gets everything the key can do.
 
 #### 3.5.3 The `-1` versus positive-timeout distinction, in detail
@@ -464,13 +464,13 @@ new KeyGenParameterSpec.Builder(alias, PURPOSE_DECRYPT)
 
 Form (A) is the strong one. The hardware issues an authentication token bound to a specific operation handle; there is no window in which unrelated code can ride along. Form (B) creates a window: for thirty seconds after the user unlocks the device for *any reason*, a hooked call can use the key with no prompt at all.
 
-> **🔬 Under the Hood — this is now measured, not asserted**
+> **Under the Hood — this is now measured, not asserted**
 > [48 — Biometrics](../48-Biometrics/README.md) §3.6 built three keys on an API 35 device, identical except for the window — 1 s, 30 s and 86,400 s — and tried each with **no authentication performed at all**. The 24-hour key encrypted successfully; the other two threw `UserNotAuthenticatedException`. A single `adb shell locksettings verify` was then issued **by an unrelated process**, and the 30-second key flipped to allowed while the 1-second key stayed refused. Two corrections to the intuition above, both in the direction of *worse*: no hook is required — ordinary app code walks through the window — and the authenticating process need have no relationship to the key's owner at all.
 
 ---
 
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > When you see `BiometricPrompt.authenticate(promptInfo)` with **no** `CryptoObject` argument, and the app then decrypts something, you are looking at form (B) or at no binding at all. The prompt is a UI event whose result is a boolean in the app's memory. Hook the callback's `onAuthenticationSucceeded` and call it yourself — if the decryption then works, the biometric was decorative. This is a reliable, repeatable, high-value demonstration. See [48 — Biometrics](../48-Biometrics/README.md) §7 for the full technique, and §7.5 below for the Keystore-side proof.
 
 ### 3.6 Importing keys, and why importing is a confession
@@ -496,7 +496,7 @@ After this call the key is protected exactly like a generated one. But look at t
 - It was in memory, so it was hookable, dumpable, and potentially swapped or included in a heap dump.
 - `KeyInfo.getOrigin()` / the attestation `Tag::ORIGIN` will report `IMPORTED` rather than `GENERATED`, and that difference is visible to a verifying server. A server that accepts attestations should reject imported keys for anything that claims device-binding.
 
-> **📖 Definition — key origin**
+> **Definition — key origin**
 > A KeyMint tag recording whether the key material was created inside the secure hardware (`GENERATED`), imported from outside (`IMPORTED`), or derived (`DERIVED`). It is hardware-enforced and appears in attestation. `IMPORTED` means "at some point, software saw this key".
 
 **Secure key import** (API 28+, `WrappedKeyEntry`) closes this gap. The server wraps the key under a Keystore-generated wrapping key whose public half was attested, and the plaintext key material never exists in the app's process at all. It is uncommon, and finding it is a sign of a mature team.
@@ -619,7 +619,7 @@ The fields that actually decide things:
 | `noAuthRequired` / `userAuthType` / `authTimeout` | The key's auth binding | If you require a biometric-bound key, verify it here rather than trusting the client |
 | `purpose`, `algorithm`, `keySize`, `digest`, `padding` | The key's cryptographic policy | Verify it matches what you demanded |
 
-> **⚠️ Warning — the softwareEnforced trap**
+> **Warning — the softwareEnforced trap**
 > Every `AuthorizationList` field appears twice: once in `softwareEnforced` and once in `hardwareEnforced`. Values in `softwareEnforced` were asserted by the Android framework, which is on the attacker's side of the line. **A verifier that reads `rootOfTrust` or `origin` from the software-enforced list is trivially defeated.** This is a genuine, recurring server-side vulnerability. When you review an attestation verifier, the first thing to check is which list it reads from. Any parser that merges both lists into one dictionary has this bug.
 
 #### 3.7.5 How a server verifies, step by step
@@ -668,7 +668,7 @@ The longer-term answer is **Remote Key Provisioning (RKP)**, introduced in Andro
 | The chain proves the *manufacturer's* claim | It inherits any compromise of that manufacturer's provisioning process or TEE |
 | Not all devices are provisioned correctly | Real-world false negatives exist; a hard-fail policy has support-cost consequences that push teams towards soft-fail, which attackers then abuse |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > When an app uses attestation, split your testing in two. On the **client**, confirm the challenge is server-issued and single-use — replay the same attestation blob twice and see if the server accepts it. On the **server**, if you have access, review which authorization list it reads and whether it pins the root or an intermediate. The client side is usually fine; the server side is where the exploitable bug is.
 
 ### 3.8 Determining the security level at runtime
@@ -701,8 +701,8 @@ For an asymmetric key the same information comes from `KeyFactory.getInstance(al
 | `SECURITY_LEVEL_UNKNOWN` (-1) | The platform could not determine it; treat as software | Investigate; often a legacy Keymaster |
 | `SECURITY_LEVEL_UNKNOWN_SECURE` (-2) | Secure, but the exact level is unreported | Acceptable |
 
-> **⚠️ Warning**
-> `isInsideSecureHardware()` returning `true` on an old device tells you only "not pure software". It does not distinguish a robust TEE from a minimal one, and it says nothing about whether the TA has known bugs. It is a floor, not a grade.
+> **Warning**
+> `isInsideSecureHardware()` returning `true` on an old device tells you only "not pure software". It does not distinguish a strong TEE from a minimal one, and it says nothing about whether the TA has known bugs. It is a floor, not a grade.
 
 ### 3.9 Version Matrix
 
@@ -721,16 +721,16 @@ For an asymmetric key the same information comes from `KeyFactory.getInstance(al
 | 14 | 34 | KeyMint v3; stricter attestation requirements on new launches |
 | 15–16 | 35–36 | Continued RKP rollout; curve and algorithm additions are device-dependent |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > An app with `minSdkVersion` below 23 usually contains a *second* crypto implementation for old devices — a software fallback with a key in `SharedPreferences`. That fallback path is almost always the weakest code in the app, it is almost never tested, and it is often reachable on a modern device by making the version check fail. Search for `Build.VERSION.SDK_INT` near crypto code. This is one of the highest-yield greps in this chapter.
 
 ### 3.10 Interaction with the wider system
 
 **With the kernel.** Every Keystore call is a Binder transaction: an `ioctl(BINDER_WRITE_READ)` on `/dev/binder`. The kernel copies your parcel into `keystore2`'s address space. See [25 — Binder](../25-Binder/README.md). This matters because it means Keystore calls are visible to anything that can trace syscalls, and because large `doFinal()` payloads have a real cost — Binder transaction buffers are finite (about 1 MB per process), which is why streaming AES through the Keystore is slower than doing it in-process with an unwrapped key. That performance fact is why some apps use the Keystore only to wrap a locally held data-encryption key, which is a perfectly sound design and creates the "the real key is in the heap" situation you will meet in §5.
 
-**With SELinux.** The `keystore_key` object class governs which domains may perform which operations on which key namespaces. A third-party app in domain `untrusted_app` gets a specific allow-set. Even as root, you cannot simply ask `keystore2` for another app's key unless policy permits it; you inject into the app instead. See [22 — SELinux](../22-SELinux/README.md).
+**With SELinux.** The `keystore_key` object class governs which domains may perform which operations on which key namespaces. A third-party app in domain `untrusted_app` gets a specific allow-set. Even as root, you cannot ask `keystore2` for another app's key unless policy permits it; you inject into the app instead. See [22 — SELinux](../22-SELinux/README.md).
 
-**With ART.** Nothing special — but note that `AndroidKeyStoreKey` handles are ordinary Java objects on the ART heap, and they are exactly what a Frida script enumerates. See [13 — ART](../13-ART/README.md).
+**With ART.** Nothing special — but `AndroidKeyStoreKey` handles are ordinary Java objects on the ART heap, and they are exactly what a Frida script enumerates. See [13 — ART](../13-ART/README.md).
 
 **With Gatekeeper and biometrics.** The hardware auth token (HAT) that satisfies `setUserAuthenticationRequired` is produced by Gatekeeper (PIN/pattern/password) or by the biometric HAL, signed with a key shared with KeyMint, and carries a timestamp, an authenticator ID and a challenge. That signature is what makes the auth binding real rather than a boolean. See [50](../50-HardwareBackedSecurity/README.md) §3 and [48 — Biometrics](../48-Biometrics/README.md).
 
@@ -803,7 +803,7 @@ and the operation interface `IKeyMintOperation` has `updateAad`, `update`, `fini
 
 `KeyStoreCryptoOperationChunkedStreamer` is the helper that performs the chunking. The security consequence is direct and testable: **your plaintext is copied, in the clear, from your process into `keystore2` and then into the HAL process.** A root user tracing Binder or reading `keystore2`'s memory sees it. The Keystore is not a confidentiality boundary for *data*; only for *keys*.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > This is also why apps that encrypt megabytes with a Keystore key are slow, and why the common pattern is: generate a random AES data-encryption key (DEK) in the app, encrypt the bulk data with it locally using Conscrypt, and use the Keystore key only to wrap the DEK. That design is sound — but it means the DEK is a plain `byte[]` in the app heap while in use, and *that* is what you dump with Frida. See §7.6.
 
 ### 4.4 The exception paths, and what they tell an attacker
@@ -833,7 +833,7 @@ Before the catalogue, fix the rating framework, because Keystore findings are th
 | Does it require **physical possession plus root plus instrumentation**, and yield only the attacker's own data? | Severity is Low or Informational |
 | Is the affected control the **only** thing standing between an attacker and money? | Severity rises |
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Ask: *after this attack, what does the attacker have that they did not have before?* If the answer is "their own data, which they already had", it is not a High. If the answer is "a key that decrypts every user's backup", it is Critical, and the fact that a hardware Keystore was involved somewhere in the app is irrelevant.
 
 ### 5.2 The findings catalogue
@@ -972,7 +972,7 @@ new KeyGenParameterSpec.Builder("payment_key",
     .build();
 ```
 
-**Why developers do it.** Auth-bound keys break background work. The app wants to refresh the session at 3 a.m., pre-fetch content, or show a balance on a widget. Requiring authentication makes those features fail with `UserNotAuthenticatedException`, and the fastest fix is to remove the requirement. Sometimes it is worse: the requirement was never there, and the team simply believed the Keystore itself implies user presence. It does not.
+**Why developers do it.** Auth-bound keys break background work. The app wants to refresh the session at 3 a.m., pre-fetch content, or show a balance on a widget. Requiring authentication makes those features fail with `UserNotAuthenticatedException`, and the fastest fix is to remove the requirement. Sometimes it is worse: the requirement was never there, and the team believed the Keystore itself implies user presence. It does not.
 
 **Detection.** Static: find every `KeyGenParameterSpec.Builder` and check for the call. Dynamic: hook the builder (§7.2) and log each key's full configuration — this is far more reliable than reading obfuscated code. Also readable from attestation: the `noAuthRequired [503]` tag present in `hardwareEnforced` means exactly this.
 
@@ -1012,7 +1012,7 @@ and split the design: a *separate*, non-auth-bound key for genuinely background-
 
 **Detection.** Static grep for `setInvalidatedByBiometricEnrollment`. Dynamic: the builder hook. From attestation: it is not a distinct tag, so verify on-device rather than from a certificate.
 
-**Exploitation.** Given a device that is unlocked or whose PIN you know (shoulder-surfed, coerced, or simply a family member's), go to Settings, add your own fingerprint, return to the app, and authenticate as yourself. The key still works. You now have persistent, biometric-gated access with *your* finger.
+**Exploitation.** Given a device that is unlocked or whose PIN you know (shoulder-surfed, coerced, or a family member's), go to Settings, add your own fingerprint, return to the app, and authenticate as yourself. The key still works. You now have persistent, biometric-gated access with *your* finger.
 
 **Secure fix.** Remove the call, or set it to `true`. Handle `KeyPermanentlyInvalidatedException` gracefully: detect it, wipe the local ciphertext, and take the user through re-authentication once. That is a UX cost worth paying, and it is the intended design.
 
@@ -1173,7 +1173,7 @@ Publicly documented work in the second category includes:
 | CVE-2015-6639, CVE-2016-2431 | Privilege escalation into Qualcomm's Secure Execution Environment, used in published research to extract Keymaster-derived key material on affected devices — the class where the *TEE itself* is the target |
 | CVE-2021-25444, CVE-2021-25490 | Issues in a Samsung Keymaster trusted application analysed in the 2022 USENIX Security paper "Trust Dies in Darkness: Shedding Light on Samsung's TrustZone Keymaster Design": an IV-reuse flaw allowing key material recovery, and a downgrade path back to the vulnerable version |
 
-> **⚠️ Warning**
+> **Warning**
 > Verify every identifier above against the NVD or the Android Security Bulletin before putting it in a client report. Identifiers are quoted here to point you at the *class* of research, not as a substitute for checking. Never invent one; a fabricated CVE number in a report destroys your credibility permanently, and it is trivially checkable by the reader.
 
 The practical lesson from that body of work is the one in §2.4: the TEE is a strong boundary and it is not a magic one. It is code, written in C, running with high privilege, parsing attacker-influenced structures. See [50 — Hardware-Backed Security](../50-HardwareBackedSecurity/README.md) §5.
@@ -1286,7 +1286,7 @@ Crucially, native code **cannot** hold a Keystore key either. It must come back 
 | The app's own wrapper class and method names | No | Fully renamed |
 | The *shape* of the call sequence | Yes | `getInstance` → `load` → `getKey` → `Cipher.init` is a recognisable idiom |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > This asymmetry is why Keystore review is one of the few areas where a heavily obfuscated app is barely harder to audit than a clear one. Grep for the framework class names, hook the framework methods, and the app's obfuscation is irrelevant. Say so in the report when a client claims obfuscation as a mitigating control.
 
 ---
@@ -1404,7 +1404,7 @@ Java.perform(function () {
 
 If that prints the token while the app has never shown a biometric prompt, you have proven three things at once: the key has no authentication binding, the Keystore does not constrain *who* in the process may use it, and the app's local security decision is not enforceable. Screenshot it. Put it in the report next to the developer's claim.
 
-> **⚠️ Warning**
+> **Warning**
 > If the key *is* correctly bound with per-use authentication, this script fails with `UserNotAuthenticatedException` — and that failure is a *positive* result for the app that you should report as such. Testers who only report what they broke give clients no way to know which controls worked.
 
 ### 7.6 Finding the data-encryption key in the heap
@@ -1452,7 +1452,7 @@ adb shell "su -c 'ls -laR /data/data/com.target.app/'"
 adb logcat -d | grep -Ei 'token|bearer|secret|password|key='
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `pm list features | grep hardware_keystore` reports the *feature version* the device declares, which tells you the Keymaster/KeyMint generation. It is a fast, root-free way to confirm whether a device could possibly satisfy an app's hardware claims — useful when you are testing on a device the client supplied and want to know whether a software fallback is even in play.
 
 ### 7.8 Objection

@@ -250,7 +250,7 @@ nrb.status()
 one? What does the C source tell you about why both mattered?
 
 **Q8.** Comment out the `stat` hook (use `nrb.observe()` then re-run with only `access` in the
-`PATH_INT_ARG0` list, or simply reason it through from the C source). Does the check still fire?
+`PATH_INT_ARG0` list, or reason it through from the C source). Does the check still fire?
 Explain in terms of the "two syscalls per path" comment in `integrity.c`.
 
 **Q9.** The script sets `errno = ENOENT` before returning `-1`. Write a three-line C function a
@@ -331,7 +331,7 @@ if (m === null) {
 ```
 
 **Q14.** Compare `Interceptor.replace` on the JNI export with the libc interposition of step 3. Which
-is more robust against the app adding an eleventh check, and which is more robust against the app
+is more durable against the app adding an eleventh check, and which is more durable against the app
 adding string obfuscation? They are not the same answer.
 
 **Q15.** Write the equivalent `Memory.patchCode` version using `Arm64Writer` to emit `MOV X0, #0; RET`
@@ -635,7 +635,7 @@ architecture; hard-coding one is exactly the kind of brittleness the chapter's s
    Frida is itself detected. Two to six hours, and it trips signature verification, so read
    [38-TamperDetection](../../38-TamperDetection/README.md) first.
 
-Note that steps 3 and 4 do not care how clever the check is. The check still ends in a comparison, and
+steps 3 and 4 do not care how clever the check is. The check still ends in a comparison, and
 the comparison is one instruction.
 </details>
 

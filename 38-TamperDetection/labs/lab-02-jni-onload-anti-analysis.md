@@ -54,7 +54,7 @@ Part E makes that concrete.
 | `adb` and a device (for Part D) | `adb devices -l` |
 | Optionally Ghidra, for Part F | [57-Ghidra](../../57-Ghidra/README.md) |
 
-> **⚠️ Never commit a `.so`**
+> **Never commit a `.so`**
 > `.so`, `.o` and executables are on this repository's artefact blocklist. Everything you build here
 > goes to `/tmp`. The last section has the sweep command.
 
@@ -203,7 +203,7 @@ print('entry points:', [s for s in e.exports if 'JNI' in s or s.startswith('ch38
 PY
 ```
 
-> **⚠️ Use `python3 -B`.** `importlib.util.module_from_spec` writes bytecode regardless of
+> **Use `python3 -B`.** `importlib.util.module_from_spec` writes bytecode regardless of
 > `PYTHONDONTWRITEBYTECODE`, and this repository must never contain a `__pycache__`. Sweep afterwards
 > if in doubt.
 
@@ -318,7 +318,7 @@ extracted to disk**. It is mapped directly out of the (uncompressed, aligned) AP
 reports a path like `/data/app/…/base.apk!/lib/arm64-v8a/libch38.so`, which `fopen` cannot open
 because it is not a file.
 
-So the naive "hash my own file" check simply cannot run on a modern packaging configuration. A real
+So the naive "hash my own file" check cannot run on a modern packaging configuration. A real
 implementation must either parse the APK zip to find its own entry, or hash the mapped pages instead.
 
 `tamper_check.c` returns `UNKNOWN` and says why, rather than returning PASS and pretending. That is

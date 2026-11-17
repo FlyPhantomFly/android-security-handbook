@@ -81,7 +81,7 @@ Browse at <https://cs.android.com/> or <https://android.googlesource.com/>.
 - MASVS-RESILIENCE — <https://mas.owasp.org/MASVS/09-MASVS-RESILIENCE/>
 - MASTG Android RESILIENCE tests — <https://mas.owasp.org/MASTG/tests/android/MASVS-RESILIENCE/>
 
-> **⚠️ MASTG test identifiers drift**
+> **MASTG test identifiers drift**
 > The MASTG has been reorganised more than once and test numbers have moved between schemes. Cite the
 > **test title** alongside any number and check it against the current MASTG before it goes in a
 > report. The MASVS control identifiers are stable; the MASTG numbers are not.

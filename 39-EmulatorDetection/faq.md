@@ -278,7 +278,7 @@ of `/proc/cpuinfo`, but you cannot change what the CPU reports.
 
 **One critical caveat**: there is no ARM equivalent. An arm64 emulator image has no such bit, so a
 `false` here is meaningless on arm64. Gate the check on `Build.SUPPORTED_ABIS` containing an x86 ABI,
-or it is correct on one architecture and simply wrong on the other.
+or it is correct on one architecture and wrong on the other.
 
 ---
 
@@ -375,7 +375,7 @@ If your trace comes back completely empty, this is the first thing to check.
 
 ---
 
-### 21. My trace shows nothing but the app clearly refuses. What now?
+### 21. My trace shows nothing but the app still refuses. What now?
 
 In order:
 

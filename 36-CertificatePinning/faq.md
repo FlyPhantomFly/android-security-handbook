@@ -28,7 +28,7 @@ world.** Not just for their own customers — for anybody's domain.
 
 So the security of every TLS connection is the security of the *weakest* of those 140
 organisations. That has failed repeatedly: CAs have been breached, have been compelled by
-governments, and have simply been careless. When it fails, the resulting certificate is genuine and
+governments, and have been careless. When it fails, the resulting certificate is genuine and
 your device accepts it happily.
 
 Pinning removes the CAs from the decision for one specific host. Instead of "was this signed by
@@ -121,7 +121,7 @@ openssl ecparam -genkey -name prime256v1 -noout -out backup.key
 
 **Set an expiration.** In a `<pin-set>`, past the expiry Android ignores the pins and falls back to
 normal validation. That is weaker, and it is much better than an app nobody can use. Choose a date
-shorter than your slowest realistic update rollout. Note that OkHttp's `CertificatePinner` has **no**
+shorter than your slowest realistic update rollout.OkHttp's `CertificatePinner` has **no**
 expiry mechanism — if you pin in code, you must build the escape hatch yourself.
 
 ---
@@ -355,7 +355,7 @@ succeeded.
 
 **Map the surface before you touch a hook.** Ten minutes of `unzip` and `grep` turns "the bypass
 didn't work" — an observation with six possible causes and no way to distinguish them — into "this
-app pins at layers 3 and 7, my script covers 1 through 6, so of course the native pin is still
+app pins at layers 3 and 7, my script covers 1 through 6, so the native pin is still
 running."
 
 It is the cheapest ten minutes in mobile network testing and it is the step almost everybody skips.

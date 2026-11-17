@@ -15,7 +15,7 @@ that does not present a matching `code_verifier`.
 This is the single highest-value test in mobile OAuth, and it is the one most commonly skipped —
 because everything the tester can see from the client says PKCE is working.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > `code_challenge=...&code_challenge_method=S256` in the request proves that the **client** implements
 > PKCE. It proves nothing whatsoever about the **server**. PKCE's entire security value comes from the
 > server refusing a token request that does not present a matching verifier. A server that accepts the
@@ -66,7 +66,7 @@ Otherwise run the full tracer:
 frida -U -f com.example.lab -l ../scripts/oauth-flow-tracer.js
 ```
 
-Or simply read the `/token` request body in Burp — the verifier is right there in a successful
+Or read the `/token` request body in Burp — the verifier is right there in a successful
 exchange. Reading it from a *successful* exchange is fine for learning the value's shape, but for the
 actual test you need a code that has **not** been redeemed.
 
@@ -105,7 +105,7 @@ adb shell am start -a android.intent.action.VIEW -d \
 Catch the redirect either in Burp or with `adb logcat` if you have a hijacker installed
 ([Lab 03](lab-03-scheme-hijack.md)).
 
-> **⚠️ Warning**
+> **Warning**
 > Authorisation codes are short-lived — typically 30 to 600 seconds. Have your `curl` commands
 > prepared in a shell script with variables before you capture the code, so you are pasting one value
 > rather than composing a command under time pressure.
@@ -187,7 +187,7 @@ variant_C "$CODE_3"
 
 **Q3.** Did B and C behave the same way? A server that rejects C but accepts B is *checking the
 verifier when present and not requiring it when absent* — which is the most common shape of this bug,
-and it is fully exploitable, because an attacker simply omits the parameter.
+and it is fully exploitable, because an attacker omits the parameter.
 
 ### Step 4 — Variant D, code reuse
 

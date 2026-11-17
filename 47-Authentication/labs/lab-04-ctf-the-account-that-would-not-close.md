@@ -58,7 +58,7 @@ python3 -B vault_auth.py
 ==================================================================
 ```
 
-> **⚠️ The server console is the out-of-band channel, not a shortcut**
+> **The server console is the out-of-band channel, not a shortcut**
 > OTPs and password-reset tokens are printed on the server's terminal because
 > that terminal stands in for the user's SMS inbox and mailbox. **Reading a value there is
 > not a solution to any flag.** Two of the flags are specifically designed so that a player

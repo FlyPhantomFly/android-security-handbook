@@ -3,7 +3,7 @@
 Build instructions and **instructor notes** for
 [Lab 04](../lab-04-ctf-the-pin-that-moved.md).
 
-> **⚠️ Spoilers below §3.** If you are solving the challenge, read §1 and §2 only.
+> **Spoilers below §3.** If you are solving the challenge, read §1 and §2 only.
 
 | File | Role |
 |---|---|

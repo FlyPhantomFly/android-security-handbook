@@ -56,7 +56,7 @@ Think about what you have just done.
 This was the actual state of the world. It had a name — the "password anti-pattern" — and it was
 everywhere.
 
-> **🧠 Mental Model — the valet key**
+> **Mental Model — the valet key**
 > Many cars ship with two keys. The **owner's key** opens everything: doors, boot, glovebox, and it
 > starts the engine with no restriction. The **valet key** starts the engine and opens the driver's
 > door, but it will not open the boot or the glovebox, and on some cars the engine management limits
@@ -72,7 +72,7 @@ everywhere.
 
 ### What OAuth is, precisely
 
-> **📖 Definition — OAuth 2.0**
+> **Definition — OAuth 2.0**
 > OAuth 2.0 (RFC 6749) is an **authorisation delegation framework**. It defines how a piece of
 > software can obtain limited, scoped, time-bounded access to a resource owned by a user, on that
 > user's behalf, without ever handling the user's primary credentials.
@@ -110,10 +110,10 @@ confusion) exist precisely because a resource server forgot that a token might h
 
 ```mermaid
 flowchart LR
-    RO(["👤 Resource Owner<br/>the user"])
-    C["📱 Client<br/>the Android app"]
-    AS["🏛️ Authorization Server<br/>issues tokens"]
-    RS["🗄️ Resource Server<br/>holds the data"]
+    RO(["Resource Owner<br/>the user"])
+    C["Client<br/>the Android app"]
+    AS["Authorization Server<br/>issues tokens"]
+    RS["Resource Server<br/>holds the data"]
 
     RO -- "1. wants the app to<br/>access their data" --> C
     C -- "2. redirects the user to" --> AS
@@ -138,7 +138,7 @@ JavaScript needs to exchange an authorisation code for a token, the exchange hap
 
 An Android app has no such place.
 
-> **⚠️ Warning — the fundamental mobile truth**
+> **Warning — the fundamental mobile truth**
 > **A mobile app cannot hold a client secret.** Any byte sequence compiled into an APK, stored in
 > `strings.xml`, hidden in a native `.so`, split across three arrays and XOR-ed at runtime, or fetched
 > at first launch and cached, is available to anyone who owns the device. It is not "hard to find". It
@@ -324,14 +324,14 @@ shared-device banking app. Know the mechanism so you can argue either way with e
 ```mermaid
 flowchart TD
     Start["Which OAuth grant<br/>should this Android app use?"] --> Q1{"Is there a human<br/>at the device?"}
-    Q1 -- "No — app acting as itself" --> CC["client_credentials<br/>❌ NOT for mobile apps<br/>requires a client secret"]
+    Q1 -- "No — app acting as itself" --> CC["client_credentials<br/>NOT for mobile apps<br/>requires a client secret"]
     Q1 -- "Yes" --> Q2{"Does the device<br/>have a browser and<br/>a keyboard?"}
-    Q2 -- "No — TV, watch,<br/>car head unit" --> DEV["Device Authorization Grant<br/>RFC 8628 ✅"]
-    Q2 -- "Yes" --> ACP["Authorization Code + PKCE<br/>RFC 6749 + RFC 7636 ✅✅<br/>THE ANSWER"]
+    Q2 -- "No — TV, watch,<br/>car head unit" --> DEV["Device Authorization Grant<br/>RFC 8628 "]
+    Q2 -- "Yes" --> ACP["Authorization Code + PKCE<br/>RFC 6749 + RFC 7636 <br/>THE ANSWER"]
 
-    ACP --> Never1["❌ implicit — removed in OAuth 2.1"]
-    ACP --> Never2["❌ ROPC — sends the password<br/>through the app"]
-    ACP --> Never3["❌ bare code without PKCE"]
+    ACP --> Never1["implicit — removed in OAuth 2.1"]
+    ACP --> Never2["ROPC — sends the password<br/>through the app"]
+    ACP --> Never3["bare code without PKCE"]
 
     style CC fill:#f9d0d0
     style Never1 fill:#f9d0d0
@@ -370,7 +370,7 @@ Before the grants, learn the URLs. Every authorisation server exposes some subse
 | `/par` | POST | Pushed Authorisation Request — the client pushes parameters to the AS and gets back a one-time `request_uri` | The client | RFC 9126 |
 | `/device_authorization` | POST | Start a device grant | The client | RFC 8628 |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The discovery document is the fastest reconnaissance you will ever do. One `curl` gives you every
 > endpoint, every supported grant type, every supported signing algorithm, and — crucially —
 > `code_challenge_methods_supported`. If that array contains `"plain"`, note it. If the document
@@ -409,7 +409,7 @@ sequenceDiagram
     U->>AS: Approve
     AS->>B: 302 Location: exampleapp://cb?code=AUTH_CODE&state=...
     B->>A: Intent delivered by PackageManagerService
-    Note over B,A: ⚠️ ANY app registering exampleapp:// can receive this
+    Note over B,A: ANY app registering exampleapp:// can receive this
     A->>A: Verify state matches
     A->>AS: POST /token (back channel)<br/>grant_type=authorization_code<br/>&code=AUTH_CODE&redirect_uri&client_id
     AS->>A: {access_token, refresh_token, expires_in}
@@ -433,7 +433,7 @@ scheme.
 | Front-channel token exposure | None — good |
 | Requires a client secret to be secure | Yes — **fatal on mobile** |
 | Protects against code interception | No |
-| **Mobile suitability** | ❌ **Not sufficient on its own. Must be combined with PKCE.** |
+| **Mobile suitability** | **Not sufficient on its own. Must be combined with PKCE.** |
 
 ### 3.3 Grant type 2 — Authorisation Code with PKCE (the correct choice)
 
@@ -469,7 +469,7 @@ That diagram is the most important one in the chapter. Read the `alt` block agai
 stolen authorisation code into a worthless string**, because redeeming a code requires proving
 knowledge of a secret that never left the legitimate app's memory.
 
-> **📖 Definition — PKCE**
+> **Definition — PKCE**
 > Proof Key for Code Exchange (RFC 7636, pronounced "pixy"). The client invents a fresh random secret
 > per authorisation request, called the **code_verifier**. It sends only a *transformation* of that
 > secret — the **code_challenge** — through the front channel. At token exchange it presents the
@@ -513,10 +513,10 @@ back to `plain`.
 
 | `code_challenge_method` | Challenge value | Attacker who sees the front channel learns | Verdict |
 |---|---|---|---|
-| `S256` | `BASE64URL(SHA256(ASCII(verifier)))` | Nothing useful — a hash | ✅ Required for anything real |
-| `plain` | The verifier itself, unchanged | **The verifier** | ❌ Nearly useless |
+| `S256` | `BASE64URL(SHA256(ASCII(verifier)))` | Nothing useful — a hash | Required for anything real |
+| `plain` | The verifier itself, unchanged | **The verifier** | Nearly useless |
 
-> **⚠️ Warning — why `plain` is nearly useless**
+> **Warning — why `plain` is nearly useless**
 > `plain` was included in RFC 7636 only for constrained clients that genuinely could not compute
 > SHA-256, and the RFC explicitly says S256 is mandatory to implement for servers and that clients
 > must use S256 if they can. With `plain`, the code_challenge *is* the code_verifier, travelling in
@@ -547,7 +547,7 @@ precise about this in reports. "The app implements PKCE" does not mean "the app 
 | Needs a client secret | No — this is the point |
 | Front-channel token exposure | None |
 | Protects against code interception | **Yes, if enforced server-side** |
-| **Mobile suitability** | ✅ **The correct choice. RFC 8252 mandates it.** |
+| **Mobile suitability** | **The correct choice. RFC 8252 mandates it.** |
 
 ### 3.4 Grant type 3 — Implicit (dead, and why)
 
@@ -563,7 +563,7 @@ sequenceDiagram
     B->>AS: GET /authorize
     U->>AS: Authenticate + consent
     AS->>B: 302 exampleapp://cb#access_token=eyJ...&token_type=Bearer&expires_in=3600
-    Note over AS,B: ⚠️ The ACCESS TOKEN itself is in the URL fragment,<br/>travelling through the front channel
+    Note over AS,B: The ACCESS TOKEN itself is in the URL fragment,<br/>travelling through the front channel
     B->>A: Intent carrying the full URI
     A->>A: Parse the fragment, extract the token
 ```
@@ -585,7 +585,7 @@ Everything about that is wrong on mobile:
 The IETF's *OAuth 2.0 Security Best Current Practice* and the OAuth 2.1 draft both remove the
 implicit grant. RFC 8252 forbade it for native apps years earlier.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > You will still find it. The tell is `response_type=token` or `response_type=id_token token` in the
 > `/authorize` request, and a redirect whose **fragment** (after `#`) contains `access_token=`. When
 > you see it, the finding is not "the app uses a deprecated grant" — that is a hygiene note. The
@@ -595,7 +595,7 @@ implicit grant. RFC 8252 forbade it for native apps years earlier.
 
 | Property | Verdict for Android |
 |---|---|
-| **Mobile suitability** | ❌ **Dead. Removed from OAuth 2.1. Report its use.** |
+| **Mobile suitability** | **Dead. Removed from OAuth 2.1. Report its use.** |
 
 ### 3.5 Grant type 4 — Resource Owner Password Credentials (ROPC) (dead, and why apps still ship it)
 
@@ -607,7 +607,7 @@ sequenceDiagram
     participant AS as Authorization Server
 
     U->>A: Types username and password INTO THE APP
-    Note over U,A: ⚠️ The app now holds the user's primary credential.<br/>This is the exact anti-pattern OAuth was invented to abolish.
+    Note over U,A: The app now holds the user's primary credential.<br/>This is the exact anti-pattern OAuth was invented to abolish.
     A->>AS: POST /token<br/>grant_type=password&username=u&password=p&client_id=...&scope=...
     AS->>A: {access_token, refresh_token}
 ```
@@ -640,7 +640,7 @@ should know them so your report addresses the actual constraint rather than lect
 | Credential stuffing is easy | The token endpoint becomes a high-throughput, script-friendly password oracle. |
 | Removed from OAuth 2.1 | And explicitly forbidden by RFC 8252 for native apps. |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > When you find ROPC, do not stop at "deprecated grant type". Chain it:
 > 1. Hook the login method with Frida and confirm the plaintext password is in the app's process
 >    memory and in the HTTP body.
@@ -654,7 +654,7 @@ should know them so your report addresses the actual constraint rather than lect
 
 | Property | Verdict for Android |
 |---|---|
-| **Mobile suitability** | ❌ **Dead. Its presence is a finding; its MFA bypass is often a high-severity one.** |
+| **Mobile suitability** | **Dead. Its presence is a finding; its MFA bypass is often a high-severity one.** |
 
 ### 3.6 Grant type 5 — Client Credentials
 
@@ -676,7 +676,7 @@ microservice calling another. There is no resource owner, no browser, no redirec
 **It has no legitimate place in a mobile app**, for the reason established in section 1: it requires
 a client secret, and a mobile app cannot hold one.
 
-> **⚠️ Warning**
+> **Warning**
 > Finding `grant_type=client_credentials` in an Android app is close to an automatic finding. It
 > means a secret capable of minting tokens is sitting in the APK. Extract it, use it from `curl` on
 > your laptop, and enumerate what it grants. The severity depends entirely on the scope attached to
@@ -695,7 +695,7 @@ a client secret, and a mobile app cannot hold one.
 
 | Property | Verdict for Android |
 |---|---|
-| **Mobile suitability** | ❌ **Never. Its presence proves a shipped secret.** |
+| **Mobile suitability** | **Never. Its presence proves a shipped secret.** |
 
 ### 3.7 Grant type 6 — Device Authorization Grant (RFC 8628)
 
@@ -739,7 +739,7 @@ answer, because the phone has a perfectly good browser.
 | No binding between the polling device and the approving user | The device that polls is not proven to be the device the user is looking at. This enables the **device-code phishing** attack: an attacker starts a device flow, sends the victim the `user_code` in a convincing message ("enter this code to verify your account"), the victim approves it, and the attacker's poll returns a token for the victim's account. This is a real, actively exploited social-engineering technique against enterprise tenants. |
 | `interval` and `slow_down` | Without server-side enforcement, a client can poll aggressively and mount a `device_code` guessing attack. |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > On a TV or automotive engagement, test the device-code phishing path explicitly: start a flow with
 > the app's `client_id` from `curl` on your laptop, take the `user_code`, approve it in a browser as
 > a "victim" account, and confirm your laptop receives tokens. If the AS does not display a strong,
@@ -749,7 +749,7 @@ answer, because the phone has a perfectly good browser.
 
 | Property | Verdict for Android |
 |---|---|
-| **Mobile suitability** | ✅ On input-constrained Android (TV, Wear, Automotive). ❌ On phones and tablets. |
+| **Mobile suitability** | On input-constrained Android (TV, Wear, Automotive). On phones and tablets. |
 
 ### 3.8 Grant type 7 — Refresh Token
 
@@ -787,7 +787,7 @@ the crown jewel. Chapter [46-Tokens](../46-Tokens/README.md) covers extraction a
 sender-constraining) for public clients. Under rotation, every use of a refresh token issues a new
 one and invalidates the old. The security value comes from what happens next:
 
-> **🧠 Mental Model — reuse detection**
+> **Mental Model — reuse detection**
 > Rotation on its own only limits the window. The real value is **reuse detection**. If refresh token
 > `RT1` is used twice, exactly one of two things has happened: either the legitimate client used it
 > and an attacker replayed it, or an attacker used it and the legitimate client then tried. The AS
@@ -815,13 +815,13 @@ Interpret the results with this table:
 
 | Step 2 result | Step 3 result | Verdict |
 |---|---|---|
-| Success | — | ❌ No rotation. Stolen refresh token = permanent access. |
-| Fail | Success | ⚠️ Rotation without reuse detection. Better, but a race lets an attacker keep the family alive. |
-| Fail | Fail | ✅ Rotation with reuse detection. Correct. |
+| Success | — | No rotation. Stolen refresh token = permanent access. |
+| Fail | Success | Rotation without reuse detection. Better, but a race lets an attacker keep the family alive. |
+| Fail | Fail | Rotation with reuse detection. Correct. |
 
 | Property | Verdict for Android |
 |---|---|
-| **Mobile suitability** | ✅ Necessary — but **must** use rotation with reuse detection, or be sender-constrained (DPoP / mTLS, see [46-Tokens](../46-Tokens/README.md)). |
+| **Mobile suitability** | Necessary — but **must** use rotation with reuse detection, or be sender-constrained (DPoP / mTLS, see [46-Tokens](../46-Tokens/README.md)). |
 
 ### 3.9 Custom Tabs versus WebView
 
@@ -833,24 +833,24 @@ control**. There are three options on Android and they are not equivalent.
 
 ```mermaid
 flowchart TD
-    subgraph Bad["❌ In-app WebView — the app is the browser"]
+    subgraph Bad["In-app WebView — the app is the browser"]
         W1["App process"] --> W2["WebView"]
         W2 --> W3["Login page from the IdP"]
         W1 -. "onPageFinished + evaluateJavascript<br/>can read the DOM, including<br/>the password field" .-> W3
         W1 -. "WebViewClient.shouldInterceptRequest<br/>sees every request body" .-> W3
         W1 -. "CookieManager reads the<br/>IdP session cookie" .-> W3
     end
-    subgraph Good["✅ Custom Tab — a real browser, out of process"]
+    subgraph Good["Custom Tab — a real browser, out of process"]
         C1["App process"] -- "Intent" --> C2["Browser process<br/>separate UID"]
         C2 --> C3["Login page from the IdP"]
-        C1 -. "❌ cannot read DOM<br/>❌ cannot read cookies<br/>❌ cannot inject JS" .-x C3
+        C1 -. "cannot read DOM<br/>cannot read cookies<br/>cannot inject JS" .-x C3
     end
 
     style W1 fill:#f9d0d0
     style W2 fill:#f9d0d0
 ```
 
-> **⚠️ Warning — using a WebView for an OAuth flow is itself a finding**
+> **Warning — using a WebView for an OAuth flow is itself a finding**
 > When the login page renders inside a `WebView` that the client app owns, the app can do all of the
 > following with a handful of lines of code:
 >
@@ -947,7 +947,7 @@ The app declares a scheme in its manifest:
 
 The redirect URI is then `exampleapp://oauth/callback`.
 
-> **⚠️ Warning — custom schemes are first-come-nobody-served**
+> **Warning — custom schemes are first-come-nobody-served**
 > Android has **no registry, no ownership, and no verification** for custom URI schemes. Any APK on
 > the device may declare `<data android:scheme="exampleapp"/>`. When a redirect to that scheme is
 > resolved, `PackageManagerService` finds every matching activity. If there is more than one, the
@@ -977,7 +977,7 @@ sequenceDiagram
     M->>M: Extracts AUTH_CODE
     alt No PKCE, or PKCE not enforced
         M->>AS: POST /token code=AUTH_CODE&client_id=...&redirect_uri=...
-        AS->>M: 🔓 access_token + refresh_token — ACCOUNT TAKEOVER
+        AS->>M: access_token + refresh_token — ACCOUNT TAKEOVER
     else PKCE enforced with S256
         M->>AS: POST /token code=AUTH_CODE&client_id=... (no valid verifier)
         AS->>M: 400 invalid_grant — the code is worthless
@@ -992,7 +992,7 @@ That `alt` block is the entire commercial value of PKCE and the reason
 you must use a private-use URI scheme, it should be a **reverse-DNS name you control**, for example
 `com.example.bank://oauth/callback` rather than `exampleapp://`. This does not make hijacking
 impossible — nothing does — but it makes accidental collisions vanishingly unlikely and makes a
-deliberate collision much more obviously malicious in a Play Store review. Note that the scheme must
+deliberate collision plainly malicious in a Play Store review. The scheme must
 be lowercase; `PackageManager` matching is case-sensitive in ways that bite people.
 
 #### 3.10.2 App Links / verified HTTPS redirects — the secure option
@@ -1035,19 +1035,19 @@ The redirect URI becomes `https://login.example.com/android/callback`.
 certificate SHA-256** of the installing APK against the fingerprints listed. A malicious app can
 declare the same intent filter, but verification fails for it because its signing certificate is not
 in the file it does not control. Unverified apps do not get to handle the link at all — from Android
-12 (API 31) onward, an app that fails verification is simply not offered as a handler for that domain
+12 (API 31) onward, an app that fails verification is not offered as a handler for that domain
 by default, where earlier versions would still show a chooser.
 
 | Property | Custom scheme | App Link (verified https) | Loopback |
 |---|---|---|---|
-| Ownership proven | ❌ No | ✅ Yes — cryptographically, via signing cert | ⚠️ Port ownership only |
-| Another app can claim it | ✅ Trivially | ❌ Not without your signing key | ⚠️ Race for the port |
-| Works if the app is not installed | ❌ Fails or opens a chooser | ✅ Falls back to the website | ❌ |
+| Ownership proven | No | Yes — cryptographically, via signing cert | Port ownership only |
+| Another app can claim it | Trivially | Not without your signing key | Race for the port |
+| Works if the app is not installed | Fails or opens a chooser | Falls back to the website | |
 | User sees a chooser | Sometimes | No | No |
 | Complexity for the developer | Low | Medium — needs domain control and CI wiring | Medium |
-| **Verdict** | Acceptable **only** with enforced PKCE | ✅ **Preferred** | For desktop; rare on Android |
+| **Verdict** | Acceptable **only** with enforced PKCE | **Preferred** | For desktop; rare on Android |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Verify the claim rather than believing the manifest. Two commands:
 > ```bash
 > # host — does the file actually exist and list this app's real signing cert?
@@ -1082,7 +1082,7 @@ match, which would break the pattern.
 
 ### 3.11 The `state` parameter, and CSRF
 
-> **📖 Definition — `state`**
+> **Definition — `state`**
 > An opaque, unguessable value the client generates before sending the user to `/authorize`. The AS
 > echoes it back unchanged in the redirect. The client compares the returned value against the one it
 > stored, and aborts if they differ.
@@ -1124,7 +1124,7 @@ sequenceDiagram
 | Single use, cleared after comparison | Prevents replay |
 | Not derived from user data | `state = base64(username)` is guessable and leaks the username |
 
-> **🔍 Pentester's Note — the three-step `state` test**
+> **Pentester's Note — the three-step `state` test**
 > Presence is trivially visible. Enforcement is what you test.
 > 1. **Omit it.** Deliver the callback with `state` removed entirely. If the app proceeds, it does not
 >    validate.
@@ -1151,7 +1151,7 @@ OAuth 2.0 does not tell you who the user is. If you build a login system on raw 
 doing something like "call `/userinfo` with the access token and trust whatever comes back", and that
 turns out to be exploitable in several ways.
 
-> **📖 Definition — OpenID Connect**
+> **Definition — OpenID Connect**
 > An identity layer on top of OAuth 2.0. It adds a new token type — the **ID token**, always a signed
 > JWT — with a specified set of claims about the authentication event, plus a standard `/userinfo`
 > endpoint, standard scopes (`openid`, `profile`, `email`, `address`, `phone`), and a discovery
@@ -1165,11 +1165,11 @@ turns out to be exploitable in several ways.
 | **Audience (`aud`)** | The **client** (your app's `client_id`) | The **resource server** |
 | **Intended consumer** | The client that requested it | The API |
 | **Format** | Always a signed JWT (OIDC mandates it) | Anything — opaque string or JWT |
-| **Should be sent to an API?** | ❌ **No.** It is not a credential for a resource server. | ✅ Yes, as `Authorization: Bearer` |
+| **Should be sent to an API?** | **No.** It is not a credential for a resource server. | Yes, as `Authorization: Bearer` |
 | **Contains user claims** | Yes — `sub`, `name`, `email`, `nonce`, `auth_time`, `acr`, `amr` | Not necessarily |
 | **Must be validated by** | The client, and by anything that consumes it | The resource server |
 
-> **⚠️ Warning — the single most common OIDC vulnerability**
+> **Warning — the single most common OIDC vulnerability**
 > The pattern is: the Android app performs "Sign in with Google", receives an `id_token`, and POSTs it
 > to its own backend at `/api/v1/social-login`. The backend base64-decodes the JWT payload, reads
 > `email`, and issues a session for that user.
@@ -1193,7 +1193,7 @@ normative source.
 ```mermaid
 flowchart TD
     S["Receive id_token"] --> A1{"Parse: exactly 3<br/>base64url segments?"}
-    A1 -- No --> F["❌ Reject"]
+    A1 -- No --> F["Reject"]
     A1 -- Yes --> A2{"header.alg is in MY<br/>allow-list?<br/>(never trust the token's own alg)"}
     A2 -- No --> F
     A2 -- Yes --> A3["Fetch the AS's JWKS from the<br/>discovery document (cached, over TLS).<br/>Select the key by header.kid"]
@@ -1211,7 +1211,7 @@ flowchart TD
     A9 -- No --> F
     A9 -- Yes --> A10{"acr / amr / auth_time<br/>meet my policy?"}
     A10 -- No --> F
-    A10 -- Yes --> OK["✅ Accept. sub is the user's<br/>stable identifier — use sub,<br/>NOT email."]
+    A10 -- Yes --> OK["Accept. sub is the user's<br/>stable identifier — use sub,<br/>NOT email."]
 
     style F fill:#f9d0d0
 ```
@@ -1231,7 +1231,7 @@ land in the victim's account.
 
 #### `nonce`
 
-> **📖 Definition — `nonce`**
+> **Definition — `nonce`**
 > A client-generated random value sent in the `/authorize` request and echoed by the AS **inside the
 > signed `id_token`**. The client compares the value in the token against the one it generated.
 
@@ -1271,7 +1271,7 @@ feature is showing your account balance, requesting `payments.write`, has conver
 disclosure into a funds-transfer capability. Second, consent fatigue: users approve a wall of
 permissions they cannot evaluate, which erodes the meaning of consent everywhere.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Build a two-column table for the report: every scope requested, and the specific app feature that
 > requires it. Any row where the second column is empty is a finding. Then test the reverse
 > direction: strip scopes from the `/authorize` request one at a time and see whether the app still
@@ -1387,7 +1387,7 @@ override fun onActivityResult(rc: Int, res: Int, data: Intent?) {
 }
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `authState.jsonSerializeString()` is the string you are hunting for on disk. It is a JSON object
 > containing `accessToken`, `refreshToken`, `idToken`, `accessTokenExpirationTime`, and the full
 > configuration. If it is in a plain `SharedPreferences` XML file, you have your storage finding in
@@ -1453,7 +1453,7 @@ Every arrow in that diagram is code you can read.
 | Package parsing | `frameworks/base/core/java/android/content/pm/parsing/` (varies by release) | How `autoVerify` and `<data>` elements become in-memory structures |
 | Custom Tabs (AndroidX, not AOSP) | `androidx.browser.customtabs.CustomTabsIntent` | It is *just* an `ACTION_VIEW` intent with extras — see below |
 
-> **⚠️ Warning on AOSP paths**
+> **Warning on AOSP paths**
 > Android's package-manager code has been restructured several times (the `parsing` and
 > `pm/verify/domain` trees in particular moved between Android 11, 12 and 13). Treat the paths above as
 > "where to start looking on a recent AOSP checkout" and confirm on https://cs.android.com/ for the
@@ -1525,7 +1525,7 @@ sandbox ([21-App-Sandbox](../21-App-Sandbox/README.md)), which is a kernel-enfor
 a library API contract. A library cannot be "bypassed" into leaking the password because the library
 never had it.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > The `EXTRA_SESSION` binder token is what lets the app receive *navigation callbacks*
 > (`onNavigationEvent`: started, finished, failed) and pre-warm the browser. It is worth knowing that
 > these callbacks tell the app **when** navigation happened and give it a coarse event code — they do
@@ -1710,7 +1710,7 @@ sequenceDiagram
 ```
 
 **The defence** is the `iss` parameter in the authorisation response (RFC 9207), or per-AS distinct
-redirect URIs, or simply tracking the AS identity alongside the `state` value. On Android, the
+redirect URIs, or tracking the AS identity alongside the `state` value. On Android, the
 practical test is: does the app use a *single* `state`/verifier store shared across providers, and
 does it record which provider a pending request belongs to? In JADX, look for a single
 `pendingAuthRequest` field rather than a map keyed by issuer.
@@ -1740,7 +1740,7 @@ sequenceDiagram
     alt Backend checks aud == its own client_id
         BE->>Atk: 401 — correct behaviour
     else Backend only checks the signature
-        BE->>Atk: 🔓 Session cookie for the VICTIM's account
+        BE->>Atk: Session cookie for the VICTIM's account
     end
 ```
 
@@ -2053,7 +2053,7 @@ String encryption (DexGuard, commercial packers) does hide the literals. Two ans
    almost irrelevant to OAuth analysis for this reason — which is worth remembering when a client
    claims their obfuscation mitigates an OAuth finding. It does not.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > A client will sometimes argue "the `client_secret` is safe because the app is obfuscated and the
 > string is encrypted". The rebuttal is one command: hook the point where the decrypted string is
 > used. If you can show the secret printed in a Frida console on a stock device in thirty seconds, the
@@ -2096,7 +2096,7 @@ API 24 an app that does not opt into user CAs will not trust yours. If the app p
 [36-CertificatePinning](../36-CertificatePinning/README.md); `objection -g <pkg> explore -s "android
 sslpinning disable"` handles the common cases and a Frida script handles the rest.
 
-> **⚠️ Warning — the Custom Tab is a separate app**
+> **Warning — the Custom Tab is a separate app**
 > The `/authorize` request is made by the **browser**, not by your target app. That has two
 > consequences testers regularly trip over. First, a Frida script attached to the target app will
 > never see it. Second, if you are proxying selectively by package, you must include the browser.
@@ -2128,14 +2128,14 @@ Then fill in this table for the report. Every engagement produces one.
 
 | Parameter | Value | Assessment |
 |---|---|---|
-| `response_type` | `code` | ✅ Correct grant |
+| `response_type` | `code` | Correct grant |
 | `client_id` | `android-prod-4471` | Note it; check whether the same ID is used by the web client |
-| `redirect_uri` | `exampleapp://oauth/callback` | ⚠️ Custom scheme — hijackable; check PKCE enforcement |
-| `scope` | `openid profile accounts.read accounts.write` | ⚠️ Is `accounts.write` used by any feature? |
-| `state` | `8f2c1a` | ⚠️ Only 24 bits — too short. And is it *checked*? |
-| `code_challenge` | 43 chars, base64url | ✅ Present |
-| `code_challenge_method` | `S256` | ✅ Correct — **but presence ≠ enforcement** |
-| `nonce` | *absent* | ⚠️ OIDC flow with no nonce |
+| `redirect_uri` | `exampleapp://oauth/callback` | Custom scheme — hijackable; check PKCE enforcement |
+| `scope` | `openid profile accounts.read accounts.write` | Is `accounts.write` used by any feature? |
+| `state` | `8f2c1a` | Only 24 bits — too short. And is it *checked*? |
+| `code_challenge` | 43 chars, base64url | Present |
+| `code_challenge_method` | `S256` | Correct — **but presence ≠ enforcement** |
+| `nonce` | *absent* | OIDC flow with no nonce |
 | `prompt` / `max_age` | *absent* | Note: no forced re-authentication for sensitive operations |
 
 ### 7.3 Replaying the callback by hand
@@ -2239,7 +2239,7 @@ paste them straight into `curl` for the enforcement test below.
 
 Everything above is preparation for this.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > `code_challenge=...&code_challenge_method=S256` in the request proves that the **client** implements
 > PKCE. It proves nothing whatsoever about the **server**. PKCE's entire security value comes from the
 > server refusing a token request that does not present a matching verifier. A server that accepts the
@@ -2300,12 +2300,12 @@ of outcome. That is itself worth testing — variant D below.
 | Variant | Expected | If it succeeds instead |
 |---|---|---|
 | A — correct verifier | 200 with tokens | (control) |
-| B — verifier omitted | `400 invalid_grant` | 🔴 **Critical. PKCE is not enforced. Code interception yields account takeover.** |
-| C — wrong verifier | `400 invalid_grant` | 🔴 **Critical. Verification is not performed.** |
-| D — code reused | `400 invalid_grant` | 🟠 High. Codes are not single-use; replay window. |
-| E — plain downgrade | `400 invalid_request` | 🟠 High. PKCE can be downgraded by an interceptor. |
+| B — verifier omitted | `400 invalid_grant` | **Critical. PKCE is not enforced. Code interception yields account takeover.** |
+| C — wrong verifier | `400 invalid_grant` | **Critical. Verification is not performed.** |
+| D — code reused | `400 invalid_grant` | High. Codes are not single-use; replay window. |
+| E — plain downgrade | `400 invalid_request` | High. PKCE can be downgraded by an interceptor. |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > When variant B succeeds, the finding writes itself, and the business impact statement is the part
 > that gets it fixed: *"Any application installed on the user's device can register the redirect scheme
 > `exampleapp://`, receive the authorisation code during a legitimate login, and exchange it for a full
@@ -2388,7 +2388,7 @@ curl -s $D | jq '{
 | `response_types_supported` contains `token` | Implicit still enabled |
 | `code_challenge_methods_supported` missing | The AS may not support PKCE at all |
 | `code_challenge_methods_supported` contains `plain` | Downgrade possible |
-| `id_token_signing_alg_values_supported` contains `none` | 🔴 Serious — see [46-Tokens](../46-Tokens/README.md) |
+| `id_token_signing_alg_values_supported` contains `none` | Serious — see [46-Tokens](../46-Tokens/README.md) |
 | `id_token_signing_alg_values_supported` contains `HS256` for a public client | Algorithm-confusion surface |
 | No `revocation_endpoint` | Logout cannot invalidate tokens server-side |
 
@@ -2781,7 +2781,7 @@ not appear to use — a second finding.
 | 2 | Redirect URI uses an unverifiable custom scheme rather than a verified App Link | Medium (High without #1's fix) | Manifest excerpt; `cmd package query-activities` output showing two handlers |
 | 3 | Over-scoped grant: `payments.initiate` requested but unused | Medium | Scope table; feature walk-through |
 
-Note that finding 2 alone would be Low. It is the *combination* that is Critical, and structuring the
+finding 2 alone would be Low. It is the *combination* that is Critical, and structuring the
 report this way lets the client fix one thing (server-side PKCE enforcement) and immediately drop the
 risk, while still understanding why the redirect should also change.
 
@@ -2904,7 +2904,7 @@ listening for:
 | The **redirect URI becomes the primary trust anchor** | It is the only thing tying the flow to the right app, which is why its verification matters so much |
 | Anything genuinely secret must live **server-side** | A backend-for-frontend, not the app |
 
-> **🧠 Mental Model**
+> **Mental Model**
 > "Can this app keep a secret?" is the single question from which the whole of mobile OAuth design
 > follows. The answer is no. Every correct design choice in this chapter is a consequence of that no.
 
@@ -3011,11 +3011,11 @@ appears at all. The malicious activity receives the `Intent`, reads `getIntent()
 the authorisation code.
 
 The correct mitigations, in order: use a **verified App Link** so the platform enforces exclusivity
-via `assetlinks.json` over HTTPS; and ensure the AS **enforces PKCE**, so a stolen code is inert.
-Note that these are independent controls at different layers, and the second is the one that turns a
+via `assetlinks.json` over HTTPS; and check that the AS **enforces PKCE**, so a stolen code is inert.
+these are independent controls at different layers, and the second is the one that turns a
 successful interception into a non-event.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The evidence for this finding is two commands. Before installing your hijacker,
 > `adb shell cmd package query-activities -a android.intent.action.VIEW -d "exampleapp://oauth/callback"`
 > lists one activity. After installing it, the same command lists two. That output plus a logcat line
@@ -3122,7 +3122,7 @@ A strong answer names the choice, the reason, and the enforcement point.
 The framing that separates a staff-level answer: **biometrics are a local gate, not an
 authentication factor to the server.** A biometric prompt unlocks a Keystore key; the *server* sees
 the resulting signed proof, not the fingerprint. An architecture where the app decides locally that
-biometrics succeeded and then simply uses a stored token has a client-side authorisation check, and
+biometrics succeeded and then uses a stored token has a client-side authorisation check, and
 it is bypassed with a one-line Frida hook. The Keystore binding is what makes it real.
 
 **Q: You find that PKCE is not enforced, but the app uses a verified App Link so the redirect cannot
@@ -3137,7 +3137,7 @@ appear in browser history, in `Referer` headers when the redirect target loads t
 in server access logs, in crash reports and in screen recordings; App Link verification can fail
 silently if the domain's `assetlinks.json` becomes unreachable, at which point the platform falls
 back to disambiguation; and a future change to the redirect strategy silently re-arms the full
-attack. Report it as a **High** with the caveat stated explicitly, note that the fix is a single
+attack. Report it as a **High** with the caveat stated explicitly,the fix is a single
 server configuration flag, and be clear that the App Link is what is currently holding the line
 rather than the token endpoint.
 
@@ -3397,7 +3397,7 @@ one needs.
 | [Lab 03 — Scheme hijacking with a competing app](labs/lab-03-scheme-hijack.md) | Build and install an app that registers the target's redirect scheme, intercept a real authorisation code, and then chain it with Lab 02 to demonstrate account takeover | Advanced |
 | [Lab 04 — CTF: The Borrowed Identity](labs/lab-04-ctf-the-borrowed-identity.md) | A challenge app and mock authorisation server containing several deliberately layered flaws; recover the flag and explain which control failed at which layer | Advanced |
 
-> **⚠️ Warning**
+> **Warning**
 > Every technique in these labs must be performed only against the deliberately vulnerable
 > environment supplied with the labs, or against a system you have written authorisation to test.
 > Intercepting authorisation codes belonging to another person's account is unauthorised access to a

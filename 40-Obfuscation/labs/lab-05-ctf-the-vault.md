@@ -440,7 +440,7 @@ open("vault.bin", "wb").write(iv + enc.update(pt) + enc.finalize())
 print(f"seed={seed:#x} mixed={mixed:#x} -> vault.bin")
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > Run this from a scratch directory, outside the repository. It writes `vault.bin` and nothing else.
 
 ### Part 4 — assemble
@@ -569,7 +569,7 @@ python3 ../scripts/annotate-smali-strings.py --smali v_out --json strings-dump.j
 grep -rn '\[str\]' v_out/ | head -30
 ```
 
-Which method is obviously the crypto now? How long did that take, and how long would it have taken
+Which method is the crypto now? How long did that take, and how long would it have taken
 without Phase 4?
 
 ### Phase 5 — recover control flow
@@ -750,7 +750,7 @@ Interceptor.attach(f, {
 });
 ```
 
-Note that this is a *native* hook for a *native* check. No Java hook could ever see it — the same
+this is a *native* hook for a *native* check. No Java hook could ever see it — the same
 structural fact as
 [37-RootDetection §3.12](../../37-RootDetection/README.md#312-native-stat--access-checks-that-bypass-java-hooks).
 
@@ -1000,7 +1000,7 @@ The flag:
 OBFLAB{strings_before_control_flow}
 ```
 
-Which is, of course, the entire point of the lab.
+Which is the entire point of the lab.
 </details>
 
 ---

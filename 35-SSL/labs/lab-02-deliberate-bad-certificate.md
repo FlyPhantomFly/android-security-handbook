@@ -15,14 +15,14 @@ it does. The output is a five-row result matrix, a per-host severity rating, and
 a finding that no developer can argue with, because it is a behaviour rather than an opinion about
 code.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Reading code proves **intent**. Running the deliberate-bad-certificate test proves **behaviour**.
 > The two disagree far more often than anyone expects: a `TrustManager` that looks correct is bypassed
 > because the app builds its `SSLContext` somewhere else; a `TrustManager` that looks catastrophic is
 > never installed on the client that matters. Only one of these two methods produces evidence, and it
 > is the one where you hand the app something it should reject and watch.
 
-> **⚠️ Warning**
+> **Warning**
 > A clean report from `../scripts/trace-tls-validation.js` proves **nothing on its own**. The script's
 > own header says so: "Anything conclusive from silence — a TrustManager that never threw during your
 > session is only interesting if you presented it something it should have rejected." Lab 01 ends with
@@ -55,14 +55,14 @@ manager has returned. Because they are different objects, written and configured
 break separately. An app that passes step 1 and fails step 4 is fully interceptable by anyone holding
 any certificate from any public CA — and its `TrustManager` will look immaculate under review.
 
-> **📖 Definition**
+> **Definition**
 > **Hostname verification** is the check that the name you dialled appears in the certificate's
 > `subjectAltName` (SAN) extension. It is *not* part of certificate chain validation and it is *not*
 > performed by the `TrustManager`. A certificate for `evil.example.net` issued by a real, trusted CA is
-> a perfectly valid certificate — it is simply not a valid certificate *for* `api.example.com`, and it
+> a perfectly valid certificate — it is not a valid certificate *for* `api.example.com`, and it
 > is hostname verification, alone, that notices.
 
-> **⚠️ Warning — the common-name trap**
+> **Warning — the common-name trap**
 > A certificate carrying only a `CN=api.example.com` and **no SAN extension** fails hostname
 > verification on every current client, Android included. `CN` as a hostname source was deprecated by
 > RFC 2818 and removed from practice years ago. If your hand-made certificate is rejected by
@@ -75,7 +75,7 @@ any certificate from any public CA — and its `TrustManager` will look immacula
 
 ### The scratchpad rule
 
-> **⚠️ Warning — never commit a key or a certificate**
+> **Warning — never commit a key or a certificate**
 > Everything you generate below is key material. It goes in a scratch directory outside the
 > repository, it is never committed, and it is deleted at the end of the lab. This lab deliberately
 > ships **no** certificates and **no** keys: you generate your own so that no reader of these notes
@@ -162,7 +162,7 @@ mode `644`, owner `root:root` and the SELinux context
 `u:object_r:system_security_cacerts_file:s0`. Then confirm it with Lab 01's Stage 6 Frida probe: the
 anchor count should go up by exactly one.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > You could sign the "wrong hostname" certificate with Burp's own CA instead — Burp can export its CA
 > as a PKCS#12 including the private key, and `openssl pkcs12 -in burp.p12 -nocerts -nodes` extracts
 > it. Using your own `labca` is better for one reason: at the end of the lab you delete a key that
@@ -224,7 +224,7 @@ ninety seconds.
 
 #### Certificate 3 — valid chain, correct hostname, expired
 
-> **⚠️ Warning — you cannot backdate with `-days`**
+> **Warning — you cannot backdate with `-days`**
 > `-days` counts forward from the current time, so `-days -100` does not produce an expired
 > certificate; it produces an error or a nonsense validity window. Backdating needs one of the three
 > approaches below. Check which your OpenSSL supports before you start: `openssl x509 -help 2>&1 |
@@ -303,7 +303,7 @@ are not the same test, and the difference is diagnostic. Certificate 1 is a sing
 Certificate 4 is a well-formed two-level chain with a real signature on the leaf, correct extensions,
 a correct SAN, and valid dates. Its **only** defect is the identity of the root.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > Home-grown `TrustManager` implementations fail these two differently, which is why both are worth
 > presenting. A common broken pattern checks that `chain.length > 1`, or that the leaf's issuer
 > distinguished name is non-empty, or that the leaf's signature verifies against `chain[1]` — and then
@@ -386,7 +386,7 @@ resolve through their own DNS, is Burp in **invisible proxying** mode with a per
 configured to your bad certificate; it is slower to set up and it puts Burp's own logic in the path,
 which is why it is the last resort rather than the first.
 
-> **⚠️ Warning**
+> **Warning**
 > Undo the `mount --bind` on the hosts file at the end of the lab. A leftover hosts entry pointing a
 > real API domain at a dead address is a confusing failure for whoever uses that device next, and if
 > it points at a live host of yours, it is worse than confusing.
@@ -441,7 +441,7 @@ place** than the other two: the trust manager returned successfully and the veri
 afterwards, which is exactly the separation drawn in the first diagram. Second, the expiry failure
 names the date, which makes it trivially self-documenting evidence for a report.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Capture the raw logcat lines, not a screenshot of an error toast. "The app displayed 'network
 > error'" is weak evidence; `CertPathValidatorException: Trust anchor for certification path not
 > found`, with a timestamp that matches your `s_server` log, is strong evidence, and it also proves
@@ -464,7 +464,7 @@ it does not.
 | 1 rejected, 4 accepted | The app performs a **structural** chain check without evaluating a trust anchor. Interceptable by any attacker who can present a two-level chain, which is everyone. |
 | Control rejected | Your rig is wrong. Fix it; report nothing. |
 
-> **⚠️ Warning — one host is not the app**
+> **Warning — one host is not the app**
 > Every row above is a statement about **one hostname**. Apps routinely validate correctly on their
 > main API host and sloppily on an analytics, CDN or crash-reporting host, because those go through a
 > different library with a different `SSLContext`. Run the matrix per host, and say which host each
@@ -524,7 +524,7 @@ If `$new()` is refused because the anonymous class takes an outer instance, forc
 first by calling `android.net.SSLCertificateSocketFactory.getInsecure(0, null)`, then pick a live
 instance off the heap with `Java.choose`, exactly as the script's own `oracle()` does.
 
-> **⚠️ Warning — what the oracle does not prove**
+> **Warning — what the oracle does not prove**
 > A positive oracle result proves **that trust manager is permissive**. It does not prove the app is
 > interceptable. The app may never use that trust manager for the endpoint you care about; a
 > `network_security_config` pin set is enforced somewhere else entirely; and a permissive trust manager
@@ -571,7 +571,7 @@ Then apply the modifiers, each of which moves the rating by roughly one step:
   outlives the network position.
 - **Breadth.** Every user on every version, or one legacy code path on one screen?
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Write the severity sentence with the host in it. "The application accepts certificates signed by an
 > untrusted CA on `analytics.vendor.example`, which carries a device identifier and no credentials —
 > Low" and "The application accepts certificates signed by an untrusted CA on `api.example.com`, which
@@ -613,7 +613,7 @@ adb shell settings put global http_proxy :0
 rm -rf ~/labs/tls-scratch                 # every private key you made dies here
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > `rm -rf` on the scratch directory is the point at which `labca.key` and `evilca.key` stop existing.
 > Until you run it, your machine holds a key for a CA that a device trusts. Record in your engagement
 > notes that you created and removed it, exactly as Lab 01 required for the proxy CA.

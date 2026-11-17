@@ -26,7 +26,7 @@ script cannot distinguish between them, because it only ever reports on the hook
 
 The fix is embarrassingly simple and almost nobody does it: **find out what the app pins at before
 you try to defeat it.** Ten minutes of static work turns "the bypass didn't work" into "the bypass
-addressed layers 1 through 6 and this app pins in a statically-linked BoringSSL, so of course it
+addressed layers 1 through 6 and this app pins in a statically-linked BoringSSL, so it
 didn't".
 
 By the end of this lab you will have a measured, per-app map of the pinning surface for every app on
@@ -64,7 +64,7 @@ adb shell getprop ro.build.version.sdk
 The reference device for this chapter is a Redmi `M2101K6P` (`sweetin`), Android 11 / API 30, MIUI
 12.5, rooted with Magisk. Nothing in this lab needs root except the optional `--live` step in §7.
 
-> **⚠️ Warning — this may be your daily driver**
+> **Warning — this may be your daily driver**
 > Every command in this lab is a read. `adb pull` copies an APK to your host; `pm list packages` and
 > `pm path` only query. Nothing is installed, nothing is force-stopped, no setting is written. If a
 > step in this lab asks you to change device state, you have misread it.
@@ -107,7 +107,7 @@ column:
 | `MED` | The app **took control of trust**. Might be a pin, might be the opposite | A custom `X509TrustManager`; `X509TrustManagerExtensions` |
 | `LOW` | A library that **contains** pinning code is on the classpath | `okhttp3.CertificatePinner` appears in the type pool |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The `LOW` row is the one that matters for your report. `okhttp3.CertificatePinner` is referenced by
 > `OkHttpClient` itself, so it lands in the DEX of **every app that uses OkHttp**, pinned or not.
 > Any tool that reports "certificate pinning detected" on that basis is reporting "this app uses
@@ -203,7 +203,7 @@ decisions, one of them reachable by a Java hook and one not. Bypassing the OkHtt
 the Java traffic and precisely none of the Dart traffic — and the bypass script would report total
 success.
 
-> **⚠️ Warning — stop here**
+> **Warning — stop here**
 > You have now detected a pin in a third-party application. **Do not proceed to bypass it.** You are
 > not authorised to test `com.vendor.loyalty`, and neither was the author of this chapter.
 > Detection on an APK sitting on your own disk is not an attack; instrumenting a running third-party
@@ -277,7 +277,7 @@ aapt2 dump xmltree --file res/xml/network_security_config.xml target.apk
 `aapt2` gives you the actual pins, the `expiration` attribute and the domains. That last one is what
 turns "the app pins" into "the app pins `api.example.com` and not the four other hosts it talks to".
 
-> **📖 Definition — `<pin-set>`**
+> **Definition — `<pin-set>`**
 > A declaration in `res/xml/network_security_config.xml` naming SHA-256 SPKI digests for a domain.
 > The XML itself is chapter [44-NetworkSecurityConfig](../../44-NetworkSecurityConfig/README.md)'s
 > subject. What happens at runtime when one of those pins does not match — which platform class
@@ -372,7 +372,7 @@ The template that is defensible:
 
 The template that is not:
 
-> ❌ The application implements certificate pinning.
+> The application implements certificate pinning.
 
 Nothing in a static scan supports that sentence unless you found a pin value, and even then it
 supports "a pin is configured" rather than "pinning is enforced on the paths that matter". The

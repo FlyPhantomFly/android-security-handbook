@@ -60,7 +60,7 @@ Your artefacts:
 | `out/cf/crash.txt` | A genuine obfuscated stack trace |
 | `out/cf/mapping.txt` | The mapping matching the runnable build |
 
-> **⚠️ Two mappings, and they are not interchangeable.**
+> **Two mappings, and they are not interchangeable.**
 > `out/dex/mapping.txt` and `out/cf/mapping.txt` come from two separate R8 invocations over the same input. Their name assignments differ, because [§3.6](../README.md#36-the-minifiers-naming-scheme) — R8 names are not stable across builds. **Retrace `crash.txt` with `out/cf/mapping.txt`.** Using the DEX one will give you a confident, wrong answer, which is exactly the failure mode the chapter warns about, and this lab will let you make it.
 
 > **A note on names.** Your obfuscated names may differ from the transcript below. That is expected and is itself a lesson. Reason from structure, not from the literal `a.g`.
@@ -189,7 +189,7 @@ $ python3 -B ../42-R8/scripts/kotlin-metadata-recover.py out/dex/classes.dex --m
 
 Among the recovered Kotlin property names is one leetspeak token, and one deliberate decoy that is *not* a segment.
 
-> **Segment 2 checkpoint.** You have a property name that is clearly a flag token. Note also the JVM field beside it — a single letter. You have just reconstructed one row of `mapping.txt` from the APK alone.
+> **Segment 2 checkpoint.** You have a property name that is plainly a flag token. Note also the JVM field beside it — a single letter. You have just reconstructed one row of `mapping.txt` from the APK alone.
 
 > **Question 3.** Class names and function names came back obfuscated; property names came back original. Both are Kotlin-level names in the same protobuf, rewritten by the same R8 pass. Explain the difference **mechanically** — an answer that predicts the behaviour on a toolchain you have not tested.
 
@@ -283,7 +283,7 @@ You have three candidate findings, and they are **not** equal:
 | A class name exempted from renaming by a keep rule | Marginal | Informational |
 | The app uses R8 with high obfuscation coverage | **No** | — |
 
-> **Question 7.** Rank the three real observations by severity and justify each in one sentence. Then answer the harder question: **if the vendor fixed only one, which should it be, and why is that not simply "the most severe one"?**
+> **Question 7.** Rank the three real observations by severity and justify each in one sentence. Then answer the harder question: **if the vendor fixed only one, which should it be, and why is that not "the most severe one"?**
 
 > **Question 8.** The vendor replies: *"Obfuscation is defence in depth; the mapping file leak just removes one layer. Low severity."* Write a two-sentence rebuttal that is technically accurate and does not overstate the impact. (Careful: part of their claim is correct, and a rebuttal that denies all of it is wrong and will be dismissed.)
 
@@ -394,7 +394,7 @@ So the classes a developer had to exempt are disproportionately the ones worth r
 2. **Kotlin property names via `@kotlin.Metadata` — Informational to Low.** Real, but narrow; here it discloses member names in library and model code, not a secret.
 3. **A class name exempted by a keep rule — Informational.** Normal and often unavoidable; worth a sentence about reviewing keep rules, not a finding.
 
-**What to fix first, and why it is not simply the most severe:** fix the mapping-file exposure — which *is* number one — but the reason is not its rank. It is that it is the only one with a **complete, cheap, verifiable fix**: an access control plus a build check, with no functional risk. Number two may be unfixable without breaking reflection, and number three may be required for the app to work. Remediation priority is severity *weighted by whether a safe fix exists*; recommending the removal of `kotlin.Metadata` from an app that uses Kotlin reflection trades an informational finding for a production outage.
+**What to fix first, and why it is not the most severe:** fix the mapping-file exposure — which *is* number one — but the reason is not its rank. It is that it is the only one with a **complete, cheap, verifiable fix**: an access control plus a build check, with no functional risk. Number two may be unfixable without breaking reflection, and number three may be required for the app to work. Remediation priority is severity *weighted by whether a safe fix exists*; recommending the removal of `kotlin.Metadata` from an app that uses Kotlin reflection trades an informational finding for a production outage.
 </details>
 
 <details>

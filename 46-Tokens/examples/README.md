@@ -5,11 +5,11 @@ chapter: **read them as a diff, not as two files.**
 
 | File | Language | Runs? | What it is |
 |---|---|---|---|
-| [`01-broken-verifier.py`](01-broken-verifier.py) | Python 3 | ✅ Runs, and is driven by the gauntlet | A deliberately broken JWT verifier. Nine numbered flaws |
-| [`02-correct-verifier.py`](02-correct-verifier.py) | Python 3 | ✅ Runs, and is the gauntlet's control | The same verifier, written correctly |
-| [`03-BrokenTokenStore.java`](03-BrokenTokenStore.java) | Java (Android) | ⚠️ Compiles inside an Android project; **not built here** | The Android side, with nine flaws |
-| [`04-HardenedTokenStore.kt`](04-HardenedTokenStore.kt) | Kotlin (Android) | ⚠️ Same | The same class, fixed |
-| [`05-DpopInterceptor.kt`](05-DpopInterceptor.kt) | Kotlin (Android) | ⚠️ Same | Sender-constrained tokens, client side |
+| [`01-broken-verifier.py`](01-broken-verifier.py) | Python 3 | Runs, and is driven by the gauntlet | A deliberately broken JWT verifier. Nine numbered flaws |
+| [`02-correct-verifier.py`](02-correct-verifier.py) | Python 3 | Runs, and is the gauntlet's control | The same verifier, written correctly |
+| [`03-BrokenTokenStore.java`](03-BrokenTokenStore.java) | Java (Android) | Compiles inside an Android project; **not built here** | The Android side, with nine flaws |
+| [`04-HardenedTokenStore.kt`](04-HardenedTokenStore.kt) | Kotlin (Android) | Same | The same class, fixed |
+| [`05-DpopInterceptor.kt`](05-DpopInterceptor.kt) | Kotlin (Android) | Same | Sender-constrained tokens, client side |
 
 ---
 

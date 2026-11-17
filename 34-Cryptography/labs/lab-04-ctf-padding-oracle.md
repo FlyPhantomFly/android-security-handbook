@@ -50,7 +50,7 @@ Once you have done this by hand, three things become permanent:
 3. You will understand, at a level no explanation conveys, why AEAD modes exist and why
    encrypt-then-MAC is not a stylistic preference.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > An oracle is any mechanism that answers a question about a secret. It does not have to be a function
 > that returns data. A different exception type is an oracle. A different HTTP status code is an
 > oracle. A response that arrives 40 ms later is an oracle. **If the system's behaviour differs based
@@ -242,7 +242,7 @@ printf '%s %s\n' "<ivB64>" "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" | nc 127.0.0.1 900
 # -> ERR_PADDING   (almost certainly)
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > A localhost listener in an Android app is itself a finding, and a serious one — it is reachable by
 > **any** app on the device with the INTERNET permission, with no permission check and no caller
 > identity. That is the subject of [24-IPC](../../24-IPC/README.md) and its
@@ -283,7 +283,7 @@ strings challenge.apk | grep -i crypto || echo "not in strings"
 python3 ../scripts/detect-ecb.py out/sources/
 ```
 
-**Q1.** The flag is a string constant in the source. Why can you not simply grep for it in the
+**Q1.** The flag is a string constant in the source. Why can you not grep for it in the
 installed app, and what would you have to do to make that approach work? (Consider what
 [13-ART](../../13-ART/README.md) says about where installed bytecode lives.)
 
@@ -479,7 +479,7 @@ def oracle(iv: bytes, ct: bytes) -> bool:
 
 This is roughly a hundred times slower per query because of the `adb` round trip, so a full 48-byte
 recovery moves from seconds to tens of minutes. Two lessons: batch your queries where the API allows
-it, and note that **an attacker who is a malicious app on the same device does not pay this cost** —
+it, and confirm that **an attacker who is a malicious app on the same device does not pay this cost** —
 they call the receiver directly through Binder at microsecond latency. Do not let your own tooling's
 slowness mislead you about exploitability. See [24-IPC](../../24-IPC/README.md).
 
@@ -533,7 +533,7 @@ every forged block, and because the MAC is verified before the cipher is invoked
 logic never executes. The oracle answers "MAC failed" 256 times out of 256.
 
 **Against MAC-then-encrypt (Variant D, wrong ordering).** The attack works again. The receiver must
-decrypt in order to reach the MAC, so it must unpad first, so the padding check runs on
+decrypt to reach the MAC, so it must unpad first, so the padding check runs on
 attacker-controlled data — and any distinguishable outcome from that check is the oracle, whatever
 happens afterwards. This is precisely the ordering that produced Lucky 13 in TLS, and it is why the
 ordering is not a matter of taste.

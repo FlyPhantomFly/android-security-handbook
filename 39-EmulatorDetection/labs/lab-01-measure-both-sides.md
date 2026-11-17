@@ -23,10 +23,10 @@ set rots, and an analyst who can only recite last year's list will be wrong next
 will have found at least one place where your measurement disagrees with this chapter, and you will
 know which of you is right, because you will have the evidence.
 
-> **⚠️ Authorised testing only**
 > Everything here runs on your own emulator and your own phone. The probe app requests no
 > permissions, opens no network connection and writes nothing outside its own private directory.
-> Uninstall it when you are done (step 7).
+> Uninstall it when you are done (step 7). See [SECURITY.md](../../SECURITY.md) for
+> authorised-testing scope.
 
 ---
 
@@ -81,7 +81,7 @@ emulator -avd <YourAvdName> -no-snapshot-load -no-boot-anim &
 adb devices -l
 ```
 
-> **⚠️ Warning — with two devices attached, every unqualified `adb` command is ambiguous**
+> **Warning — with two devices attached, every unqualified `adb` command is ambiguous**
 > From here on, **always** pass `-s <serial>`. `adb devices -l` gives you the serials. Getting this
 > wrong produces results attributed to the wrong device, which is the single easiest way to ruin a
 > whole afternoon's measurements.
@@ -132,7 +132,7 @@ mkdir -p /tmp/ch39 && cd /tmp/ch39
 **Both must compile with zero warnings.** `-Wall -Wextra` is not decoration: a file that has never
 been through a compiler is not a verified example, and this repository has shipped such files before.
 
-> **⚠️ Warning — `-Wl,-z,max-page-size=16384` is not optional, and omitting it is maximally confusing**
+> **Warning — `-Wl,-z,max-page-size=16384` is not optional, and omitting it is maximally confusing**
 > NDK r25c defaults to 4 KiB ELF segment alignment. Android 15 emulator images tagged
 > `page_size_16kb` — the `sdk_gphone16k_*` family — run a **16 KiB-page kernel**, and the loader
 > cannot map a 4 KiB-aligned binary there. The binary dies with SIGSEGV *before reaching `main`*.
@@ -171,7 +171,7 @@ adb -s <phone> shell "chmod 755 /data/local/tmp/emu_probe; /data/local/tmp/emu_p
     | tee phone-shell.txt
 ```
 
-> **🔍 If `execve` is refused**
+> **If `execve` is refused**
 > Some vendor builds block execution from `/data/local/tmp`. Invoke the loader directly:
 > ```bash
 > adb -s <phone> shell "/system/bin/linker64 /data/local/tmp/emu_probe"
@@ -196,7 +196,7 @@ paste emu-shell.txt phone-shell.txt | less -S                  # values side by 
 4. What is the `timing` row on each? **Which device is faster?**
 5. Which rows say `UNKNOWN`, and why? (Look at the `errno` in the value column.)
 
-> **🧠 Mental Model — `UNKNOWN` is a real answer**
+> **Mental Model — `UNKNOWN` is a real answer**
 > The probe reports three verdicts, not two. `UNKNOWN` means "the file might be there; I was not
 > allowed to look". Java's `File.exists()` collapses that into `false`, which is a systematic bias
 > toward "not an emulator" in every Java filesystem check ever written. Noticing which rows are
@@ -225,7 +225,7 @@ export OUTDIR=/tmp/ch39-app-phone
 The script builds entirely **out of tree**: no `.apk`, `.dex` or `.class` is written next to the
 sources, because those are on this repository's artefact blocklist.
 
-> **🔍 If the install fails with `INSTALL_FAILED_USER_RESTRICTED`**
+> **If the install fails with `INSTALL_FAILED_USER_RESTRICTED`**
 > That is an OEM policy ("Install via USB" disabled), not a problem with the APK. It is not a dead
 > end: the script automatically retries through `su -c 'pm install'`, because root is not subject to
 > the gate. If you have no root, enable the toggle in Developer options.
@@ -329,7 +329,7 @@ For your disagreement, answer:
 4. **Which claim is more general?** Is the chapter wrong, or is it right about its devices and yours
    is a different case?
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Point 4 is the one that separates an analyst from someone running commands. "The chapter is wrong"
 > and "the chapter measured a different thing" are different conclusions with different consequences.
 > A DEAD grade that was measured on API 35 is not a claim about API 28 — and a table that does not

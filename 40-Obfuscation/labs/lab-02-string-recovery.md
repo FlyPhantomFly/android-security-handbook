@@ -502,7 +502,7 @@ position in the methodology.
 **Q15.** Renaming five things typically makes ten to twenty others partly readable, because renaming
 propagates through *use*: once `S.a(int)` is `decrypt(int)`, every call site reads as a string lookup;
 once the HTTP class is `ApiClient`, every field of type `ApiClient` names itself; once `transfer` has
-its name, its caller is obviously the payment flow.
+its name, its caller is the payment flow.
 
 The compounding is the point. Each rename is not one unit of understanding, it is one unit plus a
 fraction of every neighbour. Skipping Phase 6 is the difference between "I looked at it" and "I
@@ -529,7 +529,7 @@ The survivors table is a checklist of free information, and a good analyst uses 
 **Q18.** The commonest gap the writing surfaces is the "what have I not looked at" section: the native
 library nobody opened, the second `classes2.dex`, the exported receiver in the manifest, the
 `WebView` that loads a remote URL. Those are almost always where the real finding was, and the reason
-they get missed is that they were never *decided* against — they were simply never noticed, and
+they get missed is that they were never *decided* against — they were never noticed, and
 writing the model is the mechanism that notices them.
 </details>
 

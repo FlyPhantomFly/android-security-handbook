@@ -17,7 +17,7 @@ This lab produces no findings. It produces the evidence base that every later la
 skip it: almost every wrong conclusion in mobile OAuth testing comes from someone reasoning about a
 flow they only half-captured.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > One login is two conversations in two different processes. The `/authorize` leg happens in the
 > **browser**. The `/token` leg happens in the **app**. They have different TLS trust configurations
 > and you may need two different interception setups for one login. If you only see half the flow,

@@ -30,7 +30,7 @@ The finding is more useful than the folklore, and considerably more defensible i
 
 ## Background: what you are attacking
 
-> **📖 Definition — `@kotlin.Metadata`**
+> **Definition — `@kotlin.Metadata`**
 > A runtime-visible annotation that `kotlinc` attaches to every class it compiles. It exists because the JVM class file format cannot express Kotlin's type system — nullability, `val` versus `var`, properties as distinct from fields, default parameters, `suspend`. Kotlin reflection reads it to reconstruct the original declaration.
 
 Its elements ([05-Kotlin §8.3](../../05-Kotlin/README.md) owns the structure; this lab owns what R8 does to it):
@@ -113,7 +113,7 @@ verdict  : no-metadata
 
 > **Question 1.** `-keepattributes *Annotation*` was present, and the annotation was still removed. Why? (Hint: think about what an "attribute" is, and what would have to be true for R8 to keep an *instance* of an annotation.)
 
-> **✅ Checkpoint 1.** You have measured that **R8 strips `kotlin.Metadata` by default in both full and compatibility mode**, and that `-keepattributes *Annotation*` alone does not prevent it. That is already a correction to the folklore, and you produced it yourself.
+> **Checkpoint 1.** You have measured that **R8 strips `kotlin.Metadata` by default in both full and compatibility mode**, and that `-keepattributes *Annotation*` alone does not prevent it. That is already a correction to the folklore, and you produced it yourself.
 
 ---
 
@@ -194,7 +194,7 @@ And because the metadata records the JVM field and getter *beside* the Kotlin na
 
 That is a fragment of `mapping.txt`, reconstructed from the APK alone, with no mapping file.
 
-> **✅ Checkpoint 2.** You have recovered original member names from a build you obfuscated yourself, and you can show which JVM member each corresponds to.
+> **Checkpoint 2.** You have recovered original member names from a build you obfuscated yourself, and you can show which JVM member each corresponds to.
 
 > **Question 2.** R8 rewrote `Function.name` but not `Property.name`. Both are Kotlin-level names in the same protobuf. Why would a compiler rewrite one and not the other? The answer is mechanical, not accidental — and getting it right is what lets you predict this behaviour on toolchains you have not tested.
 
@@ -226,7 +226,7 @@ The payload is not base64. It is one of two schemes, and the **first code unit o
 
 Both are implemented in the script, ported from Kotlin's `BitEncoding.java` and `utfEncoding.kt` rather than guessed.
 
-> **⚠️ The trap that defeats most hand-rolled decoders**
+> **The trap that defeats most hand-rolled decoders**
 > DEX strings are **Modified UTF-8**: U+0000 is encoded as the two bytes `C0 80`, and a raw `00` byte terminates the string. The modern `d1` encoding stores arbitrary payload bytes `0x00`–`0xFF` as individual UTF-16 code units, and the payload *begins* with U+0000. Decode DEX strings with a standard UTF-8 library and you destroy exactly the bytes carrying the protobuf — usually failing on the first class. The script decodes to **code units**, not to a Python `str`, for this reason.
 
 ### Step 3.2 — What is inside once decoded
@@ -269,7 +269,7 @@ kotlin.Metadata  ->  kotlin.Metadata   [k=1 class]
 
 The Kotlin property is `data1`; the JVM getter is `d1()`. That is a correct decode against known ground truth, and it is the cleanest possible illustration of why Kotlin names and JVM names are different things.
 
-> **✅ Checkpoint 3.** You can explain the decode path end to end: DEX annotation → `d1` string array → code units → BitEncoding → length-delimited `StringTableTypes` → `ProtoBuf.Class` → name indices → resolved strings.
+> **Checkpoint 3.** You can explain the decode path end to end: DEX annotation → `d1` string array → code units → BitEncoding → length-delimited `StringTableTypes` → `ProtoBuf.Class` → name indices → resolved strings.
 
 ### Step 3.4 — Look at the raw string table
 
@@ -347,7 +347,7 @@ detail   : 1393 classes carry an @kotlin.Metadata annotation whose elements are 
 
 The annotation is present; every element is gone.
 
-> **⚠️ This is why `grep` is the wrong instrument.**
+> **This is why `grep` is the wrong instrument.**
 > Both [40-Obfuscation §8.2](../../40-Obfuscation/README.md) and common practice suggest `grep -rn 'Lkotlin/Metadata;' smali*/` as the detection. On this app that returns 1,393 hits and **every one is a false positive**. A string in the DEX string table proves a *reference* exists somewhere; it says nothing about whether any class carries the annotation with data. Parse the structure.
 
 ### Step 4.5 — Extract what actually leaks
@@ -418,7 +418,7 @@ From [§5.7](../README.md#57-severity-a-rubric-you-can-defend), metadata leakage
 # residual property-name disclosure on those classes.
 ```
 
-> **⚠️ Do not recommend `-checkdiscard` blindly.** Removing metadata from an app that uses Kotlin reflection causes runtime failures that are hard to attribute — `KotlinReflectionInternalError`, or a JSON library silently failing to map a field. The correct recommendation is *"verify whether reflection is used; if not, discard it and enforce that with `-checkdiscard`"*, and the verification is the developer's to do.
+> **Do not recommend `-checkdiscard` blindly.** Removing metadata from an app that uses Kotlin reflection causes runtime failures that are hard to attribute — `KotlinReflectionInternalError`, or a JSON library silently failing to map a field. The correct recommendation is *"verify whether reflection is used; if not, discard it and enforce that with `-checkdiscard`"*, and the verification is the developer's to do.
 
 ---
 

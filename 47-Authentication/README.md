@@ -107,7 +107,7 @@ what the mechanism is *for*, which is what tells you what a broken one costs.
 | Device binding | A credential copied off one phone works from a datacentre on another continent. |
 | Step-up | The session that was good enough to read your balance is good enough to empty it. |
 
-> **🧠 Mental Model — the hotel key card**
+> **Mental Model — the hotel key card**
 > A hotel is the closest physical analogue to a mobile authentication system, and almost
 > every concept in this chapter has a counterpart there.
 >
@@ -135,12 +135,12 @@ what the mechanism is *for*, which is what tells you what a broken one costs.
 These two words are confused constantly, including in security reports, and the confusion
 is expensive because the *fixes* are in different places.
 
-> **📖 Definition — authentication**
+> **Definition — authentication**
 > Establishing **which principal** is making a request. It answers "who". It is performed
 > once per session, produces a session credential, and its failures look like: logging in
 > as someone else, bypassing the login screen, resetting someone else's password.
 
-> **📖 Definition — authorisation**
+> **Definition — authorisation**
 > Deciding **whether that principal may perform this specific operation on this specific
 > object**. It answers "may they". It is performed on *every* request, produces an allow
 > or a deny, and its failures look like: reading another user's invoice by changing an id
@@ -150,7 +150,7 @@ The mobile-specific reason this matters: an app that authenticates perfectly can
 catastrophically broken, because the server authenticated the session and then trusted a
 client-supplied object identifier without checking it belongs to that session.
 
-> **📖 Definition — IDOR / BOLA**
+> **Definition — IDOR / BOLA**
 > **Insecure Direct Object Reference**, also called **Broken Object Level Authorization**.
 > The server returns or modifies an object because the request named it, without checking
 > that the authenticated principal owns it. `GET /api/v1/invoice/10412` returns invoice
@@ -190,12 +190,12 @@ An Android app is the opposite of all three.
   offered your password fields by design, and a credential manager that arrived only in
   API 34 and therefore is not there on most devices in circulation.
 
-> **🔍 Pentester's Note — the one sentence that turns a mobile authentication review into a finding**
+> **Pentester's Note — the one sentence that turns a mobile authentication review into a finding**
 > The question is never "does the app check?" It is **"what happens when the app's check
 > is removed?"**
 >
 > You do not need a clever exploit to answer it. Hook the method to return `true`, or
-> patch the smali, or simply send the request the app would have sent after a successful
+> patch the smali, or send the request the app would have sent after a successful
 > login and see whether the server serves it. If the server serves it, the app's check was
 > decoration and the severity is set by the data behind it. If the server refuses, the
 > app's check was a user-experience feature and the finding is at most Informational.
@@ -365,7 +365,7 @@ the view hierarchy in one direction and `Dataset` values in the other.
 Steps 6 onward are HTTPS, and every one of them is a request the attacker will replay,
 modify and repeat. Step 8 is the only place a password is ever compared; step 9's
 `argon2id$…` is a **verifier**, not a password, and the difference belongs to
-[34-Cryptography](../34-Cryptography/README.md). Note that step 10 folds the rate limit
+[34-Cryptography](../34-Cryptography/README.md).step 10 folds the rate limit
 into the same operation as the verify, and that the "no such user" branch must take the
 same time as the success branch or you have built the account-enumeration oracle of
 [§5.4](#54-account-enumeration).
@@ -497,14 +497,14 @@ answers three questions, and confusing them is how designs go wrong.
 | What does the system hand back? | **Session credential** | Server issues; client stores | Inventing a credential client-side |
 | How does the system stop believing it? | **Lifecycle** | Server decides; client cooperates | Deleting the local copy and calling it logout |
 
-> **📖 Definition — authentication factor**
+> **Definition — authentication factor**
 > A category of evidence. The three traditional categories are **something you know** (a
 > password, a PIN), **something you have** (a phone that receives an SMS, a hardware key,
 > a private key in a TEE) and **something you are** (a fingerprint, a face). Two factors
 > from the *same* category are not two-factor authentication — a password plus a security
 > question is one factor twice.
 
-> **⚠️ Warning — the category error that makes mobile MFA fake**
+> **Warning — the category error that makes mobile MFA fake**
 > On a phone, "something you have" and "something you know" frequently collapse into the
 > **same device**. If the password manager, the OTP app and the banking app are all on the
 > one handset, an attacker who compromises the handset has both factors. Multi-factor
@@ -531,7 +531,7 @@ which uses altitudes for integrity gates; the same ladder applies to authenticat
 | **D — a credential the app can only *use*** | Keystore-wrapped, hardware-backed, possibly auth-bound | Cannot extract; must run code in the process | Meaningfully higher bar. See [49-KeyStore](../49-KeyStore/README.md) |
 | **E — a decision the server makes per request** | Server verifies session and object ownership every time | Cannot be defeated on the device at all | Not bypassable client-side. This is the target state |
 
-> **🧠 Mental Model — altitude is about *who is asking*, not how hard the code is**
+> **Mental Model — altitude is about *who is asking*, not how hard the code is**
 > A common mistake is to think obfuscation moves an app up this ladder. It does not.
 > Obfuscation ([40-Obfuscation](../40-Obfuscation/README.md)) makes altitude A harder to
 > *find*; it leaves it at altitude A. The ladder measures **which process holds the
@@ -586,7 +586,7 @@ cannot erase it. A `char[]` can be filled with zeros the moment you are finished
 platform agrees: `EditText.getText()` returns an `Editable` precisely so you *can* clear
 it. In practice most apps call `.toString()` immediately and the point is lost. Note
 honestly that this matters against a memory-dumping attacker who is already running code
-in the process, so it is a defence-in-depth measure, not a primary control — and note that
+in the process, so it is a defence-in-depth measure, not a primary control — and
 [19-Memory](../19-Memory/README.md) measured that freed memory on Android is **not** zeroed
 and that there is **no allocator quarantine**, which makes the residue longer-lived than
 folklore assumes.
@@ -600,7 +600,7 @@ logcat and in a vendor's cloud. [69-MalwareAnalysis](../69-MalwareAnalysis/READM
 whole treatment; the short version is that storing a *password* for "remember me" is never
 correct, and storing a *long-lived session credential* is.
 
-> **⚠️ Warning — do not hash the password on the client**
+> **Warning — do not hash the password on the client**
 > Apps periodically compute `SHA-256(password)` in the app and send the digest, believing
 > this protects the password. It does the opposite of what the developer intends, in three
 > ways.
@@ -623,7 +623,7 @@ server verifies.** The client performs no cryptography on the password at all.
 
 ### 3.4 `AccountManager` — what is actually on disk
 
-> **📖 Definition — `AccountManager`**
+> **Definition — `AccountManager`**
 > A platform service, reached over Binder, that holds a device-wide database of user
 > accounts on behalf of *authenticator* apps, and hands cached authentication tokens to
 > *consumer* apps. It is how "Add account" in Settings works, how one Google sign-in
@@ -638,7 +638,7 @@ around this API.
 | **Consumer** | Any app that asks for a token for an account it does not own | Calls `AccountManager.getAuthToken(...)` |
 | **`AccountManagerService`** | The `system_server` component holding the database and enforcing who may see what | Binder service `account` |
 
-> **🔬 Under the Hood — measured on a physical device, not recited**
+> **Under the Hood — measured on a physical device, not recited**
 > Device: Redmi `M2101K6P` (`sweetin`), **Android 11 / API 30**, arm64-v8a, MIUI
 > V12.5.10.0, rooted with Magisk. Every figure below was read off that device.
 >
@@ -734,7 +734,7 @@ row anywhere granting blanket access. Meanwhile the legacy `grants` table had on
 rows, all for `com.android.AccountManager.ACCOUNT_ACCESS_TOKEN_TYPE`**, which is the
 special pseudo-token type used to grant *account access* rather than a real credential.
 
-> **🔍 Pentester's Note — `GET_ACCOUNTS` in a modern manifest tells you about the developer, not the app**
+> **Pentester's Note — `GET_ACCOUNTS` in a modern manifest tells you about the developer, not the app**
 > Seven of the seventeen real applications swept in [§8.6](#86-a-measured-sweep-of-17-real-apks)
 > still request `android.permission.GET_ACCOUNTS`, and five still request the long-removed
 > `AUTHENTICATE_ACCOUNTS`. On API 26+ neither grants visibility. Finding them tells you the
@@ -752,7 +752,7 @@ device.
 
 ### 3.5 The autofill framework — a third party is offered your password field
 
-> **📖 Definition — autofill service**
+> **Definition — autofill service**
 > An app, chosen by the user in Settings, that `system_server` consults whenever a fillable
 > view is focused in *any* application. It receives a description of the view hierarchy and
 > may return credential values to be inserted. Introduced in API 26.
@@ -799,7 +799,7 @@ that. This is a real malware pattern and it is one of the reasons
 [69-MalwareAnalysis](../69-MalwareAnalysis/README.md) treats a declared `AutofillService`
 as a high-signal capability.
 
-> **🔬 Under the Hood — the autofill service on the test device**
+> **Under the Hood — the autofill service on the test device**
 > ```
 > $ adb shell settings get secure autofill_service
 > com.google.android.gms/.autofill.service.AutofillService
@@ -833,7 +833,7 @@ The app-side controls that matter for a review:
 | `AutofillManager.disableAutofillServices()` | An app that *is* a service disables itself | — |
 | `setDataIsSensitive(false)` on a `ViewNode` | Marks data as safe to include in save requests | Set wrongly, the value is retained by the manager |
 
-> **⚠️ Warning — "disable autofill on the password field" is an anti-pattern**
+> **Warning — "disable autofill on the password field" is an anti-pattern**
 > It appears in hardening checklists and it is backwards. Disabling autofill on a password
 > field does not stop a malicious autofill service seeing the *rest* of the screen, does not
 > stop keyboards, and does stop legitimate password managers — which pushes users towards
@@ -842,13 +842,13 @@ The app-side controls that matter for a review:
 
 ### 3.6 Credential Manager and passkeys
 
-> **📖 Definition — Credential Manager**
+> **Definition — Credential Manager**
 > A unified API for retrieving *any* kind of sign-in credential — a saved password, a
 > passkey, or a federated identity token — through one call, with one system-drawn
 > bottom-sheet UI. `androidx.credentials` is the Jetpack library; `android.credentials` is
 > the platform service, added in **API 34**.
 
-> **📖 Definition — passkey**
+> **Definition — passkey**
 > A WebAuthn/FIDO2 credential: a public/private key pair where the private key lives in the
 > device's secure hardware or in a synced credential provider, and the site holds only the
 > public key. Signing in means signing a server-supplied challenge. **There is no shared
@@ -897,7 +897,7 @@ server-chosen challenge and nothing else. There is no bearer secret to extract f
 app's storage, which removes an entire family of findings — and, crucially for a report,
 means "the app stores no credential" can be *true* rather than aspirational.
 
-> **⚠️ Warning — a passkey authenticates the ceremony, not the session that follows**
+> **Warning — a passkey authenticates the ceremony, not the session that follows**
 > The output of a passkey ceremony is an assertion the server verifies once. What the
 > server hands back is an ordinary session credential with all the ordinary problems:
 > lifetime, revocation, storage, replay. **Passkeys fix login. They fix nothing after
@@ -905,7 +905,7 @@ means "the app stores no credential" can be *true* rather than aspirational.
 > not a well-authenticated app, and this is a genuinely common finding shape now that
 > passkey adoption is rising.
 
-> **🔬 Under the Hood — Credential Manager availability, measured**
+> **Under the Hood — Credential Manager availability, measured**
 > On the API 30 test device:
 >
 > ```
@@ -955,7 +955,7 @@ you can verify an app's server is sending the right one — a mismatch is a real
 manifests as "OTP autofill never works", and developers frequently *fix* it by adding
 `READ_SMS`.
 
-> **🔍 Pentester's Note — `READ_SMS` on an app whose only SMS need is an OTP**
+> **Pentester's Note — `READ_SMS` on an app whose only SMS need is an OTP**
 > Measured across the 17 real applications in [§8.6](#86-a-measured-sweep-of-17-real-apks):
 > **12 of 17 contained SMS Retriever markers and 9 of 17 contained `READ_SMS` or
 > `RECEIVE_SMS` markers in their DEX**, with 2 of 17 declaring full SMS access in the
@@ -973,7 +973,7 @@ manifests as "OTP autofill never works", and developers frequently *fix* it by a
 This is the part of authentication that mobile testers most often skip, and it is where the
 highest-severity findings live.
 
-> **📖 Definition — session**
+> **Definition — session**
 > Server-side state that records "this credential currently corresponds to this principal",
 > created after successful authentication and destroyed on logout, expiry or revocation.
 > **If there is no server-side state, there is no session** — there is only a credential
@@ -989,7 +989,7 @@ Three lifetimes, and an app needs all three:
 | **Absolute lifetime** | Time since login, regardless of activity | 8–24 h (finance), 30–90 d (consumer) | A credential stolen and used slowly |
 | **Elevation window** | Time since step-up | 2–15 min | A session being used for an operation it was not re-authorised for |
 
-> **⚠️ Warning — "the token expires in an hour" is not a session lifetime**
+> **Warning — "the token expires in an hour" is not a session lifetime**
 > A one-hour access token backed by a ninety-day refresh token is a **ninety-day session**.
 > The access token's expiry bounds how long a *stolen access token* works; it does nothing
 > about the refresh token, which is the credential worth stealing. When you write up
@@ -1031,7 +1031,7 @@ If step 3 succeeds, logout did not revoke, and the finding is usually High: a cr
 captured at any point — from a log, a backup, a shared device, a proxy — remains valid after
 the user has taken the only action the interface offers to stop it.
 
-> **🔍 Pentester's Note — the four logout variants, and why you must test all four**
+> **Pentester's Note — the four logout variants, and why you must test all four**
 > Applications frequently implement one and not the others, and the report is much stronger
 > when you enumerate them.
 >
@@ -1065,7 +1065,7 @@ The distinction that makes this easy to reason about: **a password is a credenti
 owns and reuses; a session credential is a credential your service owns and can destroy.**
 Persistent login must only ever write down the second kind.
 
-> **⚠️ Warning — "remember me" and *silent re-authentication* are different things**
+> **Warning — "remember me" and *silent re-authentication* are different things**
 > Silent re-auth means the app exchanges a stored long-lived credential for a fresh
 > short-lived one without user interaction. That is normal and correct. What is not correct
 > is silent re-auth that **cannot fail** — an implementation where the local credential's
@@ -1076,7 +1076,7 @@ Persistent login must only ever write down the second kind.
 
 ### 3.10 `FLAG_SECURE`, and what it does not do
 
-> **📖 Definition — `FLAG_SECURE`**
+> **Definition — `FLAG_SECURE`**
 > `WindowManager.LayoutParams.FLAG_SECURE` (value `0x2000`) marks a window's contents as
 > secure: they are excluded from screenshots, from screen recording, from the recents
 > thumbnail, and from being shown on non-secure external displays.
@@ -1092,7 +1092,7 @@ its limits before recommending it.
 | Screen recording, including by other apps | Anything at all once the process is compromised |
 | Mirroring to a non-secure display | Overlay attacks (that is `filterTouchesWhenObscured`) |
 
-> **🔬 Under the Hood — a measured correction to a very widely published check**
+> **Under the Hood — a measured correction to a very widely published check**
 > Nearly every mobile checklist says: *decompile the APK and grep for `FLAG_SECURE`.*
 >
 > **That check cannot work, and here is the proof.** I compiled an `Activity` that provably
@@ -1149,11 +1149,11 @@ protection.
 
 ### 3.11 Device binding
 
-> **📖 Definition — device binding**
+> **Definition — device binding**
 > Making a session credential useless on any device other than the one it was issued to, by
 > requiring proof of possession of a key that cannot leave that device.
 
-The reason this is a separate control rather than a stronger session is stated most clearly
+The reason this is a separate control rather than a stronger session is best shown
 by contrast. A bearer token stolen from a phone works from anywhere. A *sender-constrained*
 credential — one where each request is signed by a key resident in the device's secure
 hardware — does not, because the thief has the token and not the key.
@@ -1169,7 +1169,7 @@ The ladder, weakest to strongest:
 | The above plus **key attestation** verified server-side | The TEE, provably, to the server | Very little on the device; see [50-HardwareBackedSecurity](../50-HardwareBackedSecurity/README.md) |
 | The above plus `setUserAuthenticationRequired` | The TEE and a user presence check | See [48-Biometrics](../48-Biometrics/README.md) |
 
-> **⚠️ Warning — a device identifier in a header is not device binding, and calling it that in a report is a mistake in both directions**
+> **Warning — a device identifier in a header is not device binding, and calling it that in a report is a mistake in both directions**
 > An `X-Device-Id` header is trivially spoofable, so it must not be relied on as a control.
 > But it is also not *useless*: a server that records it can detect the same credential
 > arriving with a different device id, which is a genuinely useful fraud signal. The correct
@@ -1201,7 +1201,7 @@ fix for one frequently creates the others.
 | CAPTCHA after N failures | Automated guessing | Accessibility problems; and on mobile it is often skipped for "app" clients, creating a bypass |
 | Generic responses everywhere | Enumeration | Worse user experience, which product will push back on |
 
-> **🔍 Pentester's Note — the mobile-specific bypass to always test**
+> **Pentester's Note — the mobile-specific bypass to always test**
 > Many services apply their strictest anti-automation controls to the *web* login and a
 > weaker set to the *mobile API*, on the theory that the mobile client is trusted. It is
 > not. Take the login request the app sends, replay it from `curl` with the app's headers,
@@ -1263,7 +1263,7 @@ report classification is MASVS-PRIVACY-4 rather than AUTH.
 | **34** | **14.0** | **Platform `CredentialManager`.** Passkeys become a first-class platform concept |
 | 35–36 | 15–16 | Continued Credential Manager expansion; provider APIs for third-party passkey stores |
 
-> **⚠️ Warning — API 26 is the hinge, and old code hides it**
+> **Warning — API 26 is the hinge, and old code hides it**
 > Two of the changes in that row silently alter the meaning of code that still compiles.
 > `GET_ACCOUNTS` stops granting anything, so an app that "worked" continues to declare a
 > permission that does nothing. And the autofill framework starts offering every fillable
@@ -1389,7 +1389,7 @@ This chapter touches this stack at exactly one point: **an app can ask whether t
 has a screen lock, and can ask the system to prompt for it**. Both are local facts. The
 depth belongs to [48-Biometrics](../48-Biometrics/README.md).
 
-> **🔬 Under the Hood — the test device's posture, and an honest limit on what this chapter could measure**
+> **Under the Hood — the test device's posture, and an honest limit on what this chapter could measure**
 > ```
 > $ adb shell dumpsys lock_settings
 > User 0
@@ -1428,7 +1428,7 @@ depth belongs to [48-Biometrics](../48-Biometrics/README.md).
 
 The enforcement is in the compositor's screenshot path, not in the app, which is why the
 flag genuinely works against `screencap` and genuinely does nothing against a compromised
-process — a process that owns the app can simply read the view hierarchy itself.
+process — a process that owns the app can read the view hierarchy itself.
 
 ### 4.6 SMS token issuance
 
@@ -1454,7 +1454,7 @@ Every vulnerability below is presented the same way: the vulnerable code, **why 
 developer writes it** (this matters — nobody writes these on purpose), how to find it
 statically and dynamically, the exploit, the fix as code, and an honest severity.
 
-> **⚠️ Warning — why this section names CWEs and MASTG tests rather than CVEs**
+> **Warning — why this section names CWEs and MASTG tests rather than CVEs**
 > Authentication defects are overwhelmingly **application** defects, not platform defects.
 > They live in an app and its backend, they are fixed by a deployment, and they almost never
 > receive a CVE identifier. The handful of Android *platform* authentication CVEs that do
@@ -1757,7 +1757,7 @@ the server verifies — and not a shared secret in a DEX file.
 
 ### 5.4 Account enumeration
 
-> **📖 Definition — account enumeration**
+> **Definition — account enumeration**
 > Any observable difference in the system's behaviour between "this account exists" and
 > "this account does not exist". It is CWE-203, an observable discrepancy, and the
 > observable can be a message, a status code, a response length, a redirect, or **time**.
@@ -1821,7 +1821,7 @@ if not user or not ok:
 ```
 
 The dummy verifier is the whole trick: the expensive operation runs on both paths, so the
-timing is flat, and the message is identical, so there is no textual oracle. Note that the
+timing is flat, and the message is identical, so there is no textual oracle.the
 rate limiter must also treat both branches alike, or *it* becomes the oracle — an unknown
 account that is never rate-limited is distinguishable from a known one that is.
 
@@ -1832,7 +1832,7 @@ reach **Medium or High**; or where it is chained with missing rate limiting
 ([§5.5](#55-no-rate-limiting-or-lockout)), because enumeration turns a broad campaign into a
 targeted one and materially increases the success rate. Report it chained wherever possible.
 
-> **⚠️ Warning — ethics, stated once and meant throughout**
+> **Warning — ethics, stated once and meant throughout**
 > Enumeration and lockout testing are demonstrated in this chapter **against a lab server you
 > run locally** and, in an engagement, against **accounts you own with written authorisation**.
 > Confirming an oracle takes two accounts and a handful of requests. It never requires a list
@@ -1959,7 +1959,7 @@ authentication decision.
 Flaw 3 with a six-digit code is **High**. Flaws 4 and 5 are **Medium**. Flaw 10 is **Low to
 Medium** and depends entirely on what "remember" is bound to.
 
-> **🔍 Pentester's Note — test the SMS path for what it costs, not just what it does**
+> **Pentester's Note — test the SMS path for what it costs, not just what it does**
 > SMS OTP has two weaknesses no implementation can fix: SIM swap, and the fact that on the
 > same handset the "something you have" factor arrives on the same device as the "something
 > you know". Both belong in the report as a design observation rather than a defect — the
@@ -2071,7 +2071,7 @@ Enumeration through the reset response: **Low**, per [§5.4](#54-account-enumera
 [71-OWASP-Mobile](../71-OWASP-Mobile/cheatsheet.md) maps them to MASVS-AUTH-1. This is the
 section.
 
-**Vulnerable code**, server side, and note that the authentication is *perfect*:
+**Vulnerable code**, server side, and confirm that the authentication is *perfect*:
 
 ```python
 # DELIBERATELY BROKEN
@@ -2102,7 +2102,7 @@ Steps 3–5 are what makes it a defensible test: two accounts you own, no third-
 touched. [`scripts/session-lifecycle-probe.py`](scripts/session-lifecycle-probe.py) automates
 the replay bookkeeping against the lab server.
 
-> **🔍 Pentester's Note — the identifier does not have to be sequential**
+> **Pentester's Note — the identifier does not have to be sequential**
 > A common developer response is "our ids are UUIDs, so this is not exploitable". That is an
 > argument about *discoverability*, not about *authorisation*, and it fails whenever an
 > identifier is shared legitimately — in a URL, an invoice PDF, a support ticket, a referral
@@ -2167,7 +2167,7 @@ That is a dated record of which uid added or altered which account. For an incid
 investigation — "when was this account added to this device, and by what?" — it is often the
 only answer available.
 
-> **🔬 Under the Hood — `dumpsys account` redaction is cosmetic, and it fooled me first**
+> **Under the Hood — `dumpsys account` redaction is cosmetic, and it fooled me first**
 > Run as the ordinary adb shell, `dumpsys account` prints account names partially masked:
 >
 > ```
@@ -2224,7 +2224,7 @@ where the recents thumbnail therefore persists that value in a system-managed ca
 MASVS-AUTH-3, and [71-OWASP-Mobile](../71-OWASP-Mobile/cheatsheet.md) lists *"no step-up
 authentication on a money movement"* as an AUTH-3 pattern.
 
-> **📖 Definition — step-up authentication**
+> **Definition — step-up authentication**
 > Requiring additional evidence *at the moment of* a sensitive action, beyond the evidence
 > that established the session. The session says who you are; the step-up says you are present
 > and intend this specific thing.
@@ -2366,7 +2366,7 @@ frequently inconsistent — one screen checks, another does not.
 ([42-R8](../42-R8/README.md)), but it does not rename anything that overrides a framework
 method, so `onCreate` survives and reading down from it finds the gate regardless.
 
-> **🔍 Pentester's Note — read the `Application` subclass first**
+> **Pentester's Note — read the `Application` subclass first**
 > Session restoration is very often in `Application.onCreate` rather than in any `Activity`,
 > because it must happen before the first screen. That single method frequently contains the
 > whole session model: where the credential is read from, whether it is validated, and what
@@ -2425,7 +2425,7 @@ The equivalent smali, as `apktool d` would produce it, and the two-instruction p
 .end method
 ```
 
-> **⚠️ Warning — this patch can be perfect and still change nothing**
+> **Warning — this patch can be perfect and still change nothing**
 > [18-ARM §5.4](../18-ARM/README.md) measured exactly this failure mode in native code:
 > `lc_verify_signature` was patched to return 1, *verified* returning 1, and the program
 > still refused — because clang had inlined the check and the patched copy was called by
@@ -2461,7 +2461,7 @@ comparison is happening on the device:
 inside out with a one-byte change. That is the mechanical fact; the *analytical* fact is more
 useful:
 
-> **🔍 Pentester's Note — `String.equals` on a credential is a finding before you patch anything**
+> **Pentester's Note — `String.equals` on a credential is a finding before you patch anything**
 > Any `String.equals` comparing a user-entered secret is telling you two things. First, the
 > comparison is happening **on the device**, so the correct value is on the device, so it can
 > be recovered — hook `equals` and read the argument, which is far easier than patching.
@@ -2588,7 +2588,7 @@ adb shell settings put global http_proxy :0
 Certificate trust and pinning are [35-SSL](../35-SSL/README.md) and
 [36-CertificatePinning](../36-CertificatePinning/README.md), and both matter here.
 
-> **⚠️ Warning — a device posture check this repository learned the hard way**
+> **Warning — a device posture check this repository learned the hard way**
 > The test device used for this chapter has had its **system CA store replaced by a rooting
 > module**, with an interception CA promoted into `/system/etc/security/cacerts`. A successful
 > intercept on such a device **does not prove the app trusts user-installed CAs**. Before you
@@ -2640,7 +2640,7 @@ It hooks, and logs rather than modifies by default:
 Run it, use the app normally for two minutes, and read the log. In most applications that
 produces the entire authentication design without opening a decompiler.
 
-> **🔍 Pentester's Note — hook the platform, not the app**
+> **Pentester's Note — hook the platform, not the app**
 > Every hook in that table targets a **platform or library** class. That is deliberate and it
 > is the single most transferable technique in this chapter. Platform classes are not renamed
 > by R8, are not inlined out of existence from the app's perspective, and are identical across
@@ -2711,7 +2711,7 @@ gate was in the navigation rather than in the data path.
 [30-Activities](../30-Activities/README.md) covers what makes that launchable and
 [54-Objection](../54-Objection/README.md) covers the tool's real limits.
 
-> **⚠️ Warning — `android hooking set return_value` and the MIUI keyguard trap**
+> **Warning — `android hooking set return_value` and the MIUI keyguard trap**
 > On the test device, **any activity start originating from an app is refused while the
 > keyguard is up**, including an app starting its own `Activity`, and the refusal is logged at
 > debug level and never reaches the caller. `adb shell am start` still works, so roughly half
@@ -2746,7 +2746,7 @@ adb shell settings get secure autofill_service
 adb shell dumpsys lock_settings | grep -E 'CredentialType|Quality'
 ```
 
-> **🔬 Under the Hood — what `pm clear` does and does not reach**
+> **Under the Hood — what `pm clear` does and does not reach**
 > `pm clear` deletes the package's data directories. It therefore removes an app's own stored
 > credential — and it does **not** remove:
 >
@@ -2848,7 +2848,7 @@ Three specific defects visible in XML alone:
 - A password `EditText` with no `android:inputType="textPassword"` — the IME may learn it.
 - `android:importantForAutofill="no"` on a password field — the anti-pattern in
   [§3.5](#35-the-autofill-framework--a-third-party-is-offered-your-password-field).
-- Missing `autofillHints` on a form that clearly is a login form — password managers then fill
+- Missing `autofillHints` on a form that is plainly a login form — password managers then fill
   by heuristic, which fails in ways users work around by choosing weaker passwords.
 
 ### 8.3 DEX and Smali
@@ -2889,7 +2889,7 @@ The output is an inventory grouped into families — `AccountManager`, `Credenti
 `ScreenProtect`, `LOCAL-GATE` — with each marker rated STRONG or WEAK, plus a count of
 `const/16 vX, #int 8192` sites.
 
-> **⚠️ Warning — scan every split, or the result is meaningless**
+> **Warning — scan every split, or the result is meaningless**
 > The scanner prints a `THIN APK` verdict for anything under 200 KB of DEX for exactly this
 > reason. [38-TamperDetection](../38-TamperDetection/README.md) measured one large app showing
 > **zero** security controls in `base.apk` because its code shipped in splits. Pull every path
@@ -2976,7 +2976,7 @@ permissionless path and reads the inbox anyway is an easy, defensible privacy fi
 an app claims "device binding" in its documentation, the prior probability is that it means a
 spoofable string in a header.
 
-> **🔍 Pentester's Note — three independent measurements of the same lesson**
+> **Pentester's Note — three independent measurements of the same lesson**
 > [33-Storage](../33-Storage/README.md) got **132 hits, 132 false positives**.
 > [36-CertificatePinning](../36-CertificatePinning/README.md) found **12 of 14 apps with a
 > pinning surface and only 4 actually pinning**. [52-StaticAnalysis](../52-StaticAnalysis/README.md)
@@ -3052,7 +3052,7 @@ signature, the counter, and *what the server hands back afterwards*.
 
 That last one is the finding shape to watch as adoption rises:
 
-> **⚠️ Passkeys fix login. They fix nothing after login.**
+> **Passkeys fix login. They fix nothing after login.**
 > A passkey ceremony ends with an ordinary session credential carrying every ordinary problem.
 > An app with passkeys and a non-expiring bearer token in `SharedPreferences` is not a
 > well-authenticated app.
@@ -3430,7 +3430,7 @@ the only differences are the ones the chapter is about — and
 [`labs/ctf/vault_auth.py`](labs/ctf/vault_auth.py), which self-verifies all four flag paths with
 `--verify` before you invest an evening in it.
 
-> **⚠️ Safety and ethics for every lab here**
+> **Safety and ethics for every lab here**
 > Both servers bind to **loopback only** and refuse a routable address without an explicit
 > acknowledgement flag. Every account in them is created by them at startup; they talk to
 > nothing and persist nothing. Every endpoint in every example uses the **`.invalid`** TLD,

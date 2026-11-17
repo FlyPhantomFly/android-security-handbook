@@ -238,7 +238,7 @@ adb shell "su -c 'pm install -r /data/local/tmp/a.apk'"
 | One pin, no backup | "**Availability risk introduced by a security control.** Key rotation invalidates it for all installs simultaneously, no server-side remedy." |
 | Pins the API, not the token endpoint | "Does not cover the credential exchange it was presumably intended to protect." |
 | Bypassed with Frida on a rooted device | Not a finding. That is the expected property |
-| **Never** | ❌ "No certificate pinning. Severity: Medium." with no threat-model sentence |
+| **Never** | "No certificate pinning. Severity: Medium." with no threat-model sentence |
 
 ---
 

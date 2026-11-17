@@ -21,9 +21,8 @@ This lab drills the opposite discipline: **trace before you hook, and neutralise
 a time.** The constraint is deliberately harsh — you may not use a blanket bypass, and you must be
 able to name the signal that fired before you touch it.
 
-> **⚠️ Authorised testing only**
-> The target is an app you build yourself in Part 0, on an emulator you own. The method transfers to
-> client work; the target must always be something you are authorised to test.
+> The target is an app you build yourself in Part 0, on an emulator you own. The method transfers
+> to client work. See [SECURITY.md](../../SECURITY.md) for authorised-testing scope.
 
 ---
 
@@ -43,7 +42,7 @@ able to name the signal that fired before you touch it.
 You need a target with checks you did not choose. Build the one below **without reading it
 carefully**, install it, and then work from the binary only.
 
-> **🧠 How to make this honest**
+> **How to make this honest**
 > Copy the source into a scratch directory, build it, then **close the file and do not reopen it
 > until Part 6**. If you find yourself tempted, ask a colleague to pick three of the seven signals
 > below at random and delete the rest before you build. Working from a binary you wrote is a skill in
@@ -189,7 +188,7 @@ Record:
 3. Did the process die, or is it still running? (`adb shell pidof com.lab39.target`)
 4. Any tombstone? (`adb shell ls -t /data/tombstones | head -3` — needs root)
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > A refusal that leaves the process alive and shows a message is a **Java-layer** decision the app
 > handled gracefully. A process that vanishes with a tombstone naming a `.so` is a **native** check
 > calling `abort()`. You have narrowed the search before opening a single tool, and that inference
@@ -219,7 +218,7 @@ llvm-readelf --dyn-syms unpacked/lib/*/libguard.so | grep -E 'system_property|ac
 strings -a unpacked/lib/*/libguard.so | grep -aiE 'qemu|goldfish|ranchu|emulator'
 ```
 
-> **⚠️ Warning — a string is not a check**
+> **Warning — a string is not a check**
 > The map gives you **leads**. An analytics SDK reads `ro.hardware` too. Chapter 52 measured this
 > funnel at 16,836 hits → 168 leads → **2 survivors**. Do not go hooking every hit; go find out which
 > ones execute.
@@ -233,7 +232,7 @@ strings -a unpacked/lib/*/libguard.so | grep -aiE 'qemu|goldfish|ranchu|emulator
 frida -U -f com.lab39.target -l ../scripts/emu-trace.js -o trace-startup.txt
 ```
 
-> **⚠️ `-f`, not `-p`**
+> **`-f`, not `-p`**
 > Gate 1 runs in `onCreate`, and `System.loadLibrary` (with any `JNI_OnLoad`) runs even earlier, in
 > a static initialiser. Attaching to a running process means the decision was made before you got
 > there, and your trace comes back empty and you conclude the app has no checks. This is the single
@@ -304,7 +303,7 @@ Everything in that diff is a signal gate 2 reads and gate 1 did not.
 Gate 2 is a short-circuit `||` of three independent checks. That structure has a consequence you must
 reason about rather than brute-force:
 
-> **🧠 Mental Model — short-circuit evaluation hides the checks behind the first `true`**
+> **Mental Model — short-circuit evaluation hides the checks behind the first `true`**
 > `b() || c() || nativeGuard() != 0` stops at the first `true`. If `b()` fires, `c()` and
 > `nativeGuard()` **never execute** — so they never appear in your trace, and you will believe there
 > are fewer checks than there are. Every time you neutralise one, the next becomes visible for the
@@ -409,7 +408,7 @@ Interceptor.attach(Module.findExportByName("libc.so", "__system_property_get"), 
 });
 ```
 
-> **⚠️ Warning — if your hook installs and nothing changes**
+> **Warning — if your hook installs and nothing changes**
 > Before assuming the hook is broken, check that the function is actually *called*. Chapter 65
 > measured a perfectly installed hook on an exported symbol changing nothing because **zero `bl`
 > instructions targeted it** — the compiler had inlined the body into the caller. Chapter 18 patched
@@ -438,7 +437,7 @@ Then delete hooks one at a time and re-test. For each, record whether the app st
 script with unnecessary hooks in it is a script whose author did not trace — and it is fragile,
 because each unnecessary hook is a chance to break unrelated app behaviour.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > This is why the chapter's [`emu-bypass.js`](../scripts/emu-bypass.js) has a `CONFIG` block with
 > every family independently switchable, and why its default has `sensors`, `native` and `verdict`
 > **off**. A bypass tool that does everything at once is a tool that cannot answer "which check

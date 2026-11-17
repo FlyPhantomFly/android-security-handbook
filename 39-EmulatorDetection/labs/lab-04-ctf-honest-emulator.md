@@ -39,10 +39,10 @@ Check your answer on the host:
 printf '%s' 'FLAG{...}' | sha256sum
 ```
 
-> **⚠️ Authorised testing only**
 > You build this target yourself, from the source below, and run it on an emulator you own. It is
 > deliberately vulnerable and exists only as a teaching artefact. Do not install it on a device that
-> is not yours, and uninstall it when you are done.
+> is not yours, and uninstall it when you are done. See [SECURITY.md](../../SECURITY.md) for
+> authorised-testing scope.
 
 ---
 
@@ -53,7 +53,7 @@ succeeded.
 
 This one fails **quietly and plausibly**, which is the failure mode that actually costs people their
 findings. A successful, verified bypass of the visible control produces a well-formed, believable
-answer that is simply not correct. Nothing errors. Nothing logs. The only way to know you are wrong
+answer that is not correct. Nothing errors. Nothing logs. The only way to know you are wrong
 is to check — and in a real engagement, there is often nothing to check against.
 
 It is deliberately built on a different primitive from
@@ -62,7 +62,7 @@ feeds a key derivation consumed much later, so the crash you are debugging is no
 both paths **succeed immediately** and produce output of the same shape. The lie is not in the timing;
 it is in the *value*.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > "The bypass worked" and "the bypass produced the right result" are different claims, and only the
 > second matters. A tester who cannot distinguish them will eventually report a working exploit that
 > does nothing, or — worse — miss a control they never noticed was there.
@@ -374,7 +374,7 @@ Two questions the source answers immediately:
 1. Is there **any** branch that produces an error, or do both paths return a flag?
 2. What exactly goes into the digest?
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `MessageDigest` next to a boolean is the shape to learn. When a check's result feeds a
 > **derivation** rather than a **branch**, there is no `if (bad) { fail(); }` to find, no exception to
 > catch and no log line to grep. The control is invisible to every technique that looks for failures.
@@ -390,7 +390,7 @@ llvm-readelf --dyn-syms ctf-out/../unpacked/lib/*/libvault.so | grep -E 'system_
 strings -a unpacked/lib/*/libvault.so | grep -aiE 'qemu|emulator|hypervisor|cpuinfo|characteristics'
 ```
 
-Note that the native check reads a property key that **appears nowhere in the DEX**. If you only
+the native check reads a property key that **appears nowhere in the DEX**. If you only
 grepped the Java sources you missed it entirely.
 
 Also note the `||` in `synthetic() || (envClass() != 0)`: short-circuit evaluation means that while
@@ -425,7 +425,7 @@ Interceptor.attach(
 useful five lines in the whole lab, and it exists because the developer returned a diagnostic code
 the app throws away.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > A function that returns more information than its caller uses is a gift. `envClass()` could have
 > returned a boolean; it returns *which signal fired*, and the app collapses it to `!= 0`. Look for
 > this pattern — richly-typed internals feeding boolean call sites — because it turns a black box
@@ -492,8 +492,8 @@ Java.perform(function () {
 });
 ```
 
-> **⚠️ Do not "solve" it by hooking `derive()`**
-> You can of course hook `derive` to return the right string — but you would have to know the right
+> **Do not "solve" it by hooking `derive()`**
+> You can hook `derive` to return the right string — but you would have to know the right
 > string first, which is the entire problem. Hooking the digest inputs is equally circular. The
 > intended solution makes the **environment** produce the correct derivation, which is exactly what a
 > real attacker must do when a check feeds key material.

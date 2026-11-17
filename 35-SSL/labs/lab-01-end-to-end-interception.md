@@ -18,7 +18,7 @@ you are authorised to test, a stage-gate record saying which stage each attempt 
 statement of **which trust manager accepted your certificate**, taken from
 `../scripts/trace-tls-validation.js` rather than guessed.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > An interception proxy does not break TLS. It **terminates** one TLS connection and **originates**
 > another. There are two encrypted connections — device-to-proxy and proxy-to-server — and the proxy
 > holds the plaintext of both because it is an endpoint of both. Nothing is decrypted that was not
@@ -26,7 +26,7 @@ statement of **which trust manager accepted your certificate**, taken from
 > make the app encrypt to me? The answer never changes. The app must **trust** the certificate I
 > present. Interception is not a cryptographic attack; it is a trust-administration exercise.
 
-> **⚠️ Warning — authorisation**
+> **Warning — authorisation**
 > Do this against an application you own, one you have written permission to test, or a deliberately
 > vulnerable target. Installing a certificate authority on a device makes every application on it
 > interceptable by whoever holds the matching private key, including your banking app. Use a test
@@ -62,7 +62,7 @@ adb shell getprop ro.product.device
 adb shell "su -c id"          # must print uid=0(root), or Route 2 is unavailable to you
 ```
 
-> **🔍 Pentester's Note — the MIUI install trap**
+> **Pentester's Note — the MIUI install trap**
 > On the reference device `adb install app.apk` fails with `INSTALL_FAILED_USER_RESTRICTED`. That is
 > not a broken APK; it is MIUI's "Install via USB" policy. On a rooted device, push and install as
 > root instead, and use this form anywhere below that installs an APK:
@@ -114,7 +114,7 @@ frida-ps -U | head                                                  # host can s
 adb shell "cmd package compile -m verify -f com.example.app"        # stop the JIT inlining hooks away
 ```
 
-> **⚠️ Warning — Frida 16 command lines**
+> **Warning — Frida 16 command lines**
 > Frida 16.1.6 has **no `--no-pause` flag**. Spawning with `-f` resumes the process automatically;
 > `--pause` is the opt-in flag if you want it held. Pasting a 2019 blog post's
 > `frida -U --no-pause -f com.example.app` into a Frida 16 shell produces an argument error that is
@@ -216,7 +216,7 @@ Android's trust stores are **hash directories**: each certificate is stored in a
 hash of its *subject*, so the runtime finds the issuer of a given certificate with a single `open()`
 rather than a directory scan. The `.0` suffix is a collision counter.
 
-> **⚠️ Warning — `subject_hash` is the wrong hash**
+> **Warning — `subject_hash` is the wrong hash**
 > OpenSSL has two subject hashes. `-subject_hash` is the SHA-1-based one from OpenSSL 1.0.
 > `-subject_hash_old` is the MD5-based algorithm from OpenSSL 0.9.8. **Android uses the old one.** Get
 > this wrong and the file lands in the directory, looks perfectly correct in `ls`, and is never found,
@@ -245,7 +245,7 @@ head -c 2 /system/etc/security/cacerts/9a5ba575.0 | xxd
 `3082` means DER, an ASN.1 `SEQUENCE` with a two-byte length. `2d2d`, which is `--`, means PEM. Match
 whatever your device already uses.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > This layout is inherited from OpenSSL's `c_rehash`; Conscrypt implements the same convention in Java,
 > in
 > `external/conscrypt/repackaged/platform/src/main/java/com/android/org/conscrypt/TrustedCertificateStore.java`,
@@ -275,7 +275,7 @@ Conscrypt APEX — in **Android 14 (API 34)**, not before. Follow an Android 14 
 device and you will spend an hour bind-mounting a path that does not exist. Run the `ls -d` above on
 your own device and believe its output rather than any guide, this one included.
 
-> **📖 Definition**
+> **Definition**
 > An **APEX** (Android Pony EXpress) is a self-contained, versioned, signed filesystem image that lets
 > Google update a modular part of the platform — Conscrypt, media codecs, timezone data — through Play
 > system updates without a full OS image. Because it is mounted read-only from a signed image,
@@ -331,7 +331,7 @@ On any app whose `targetSdkVersion` is 24 or greater, the requests fail. `verdic
 `java.security.cert.CertPathValidatorException: Trust anchor for certification path not found`
 wrapped in a `javax.net.ssl.SSLHandshakeException`.
 
-> **📖 Definition**
+> **Definition**
 > From Android 7.0 (API 24), the **default network security configuration** for an app whose
 > `targetSdkVersion` is 24 or higher trusts **only** the system CA store. User-installed CAs are
 > excluded unless the app opts in with a `network_security_config` naming `user` as a trust anchor.
@@ -345,7 +345,7 @@ wrapped in a `javax.net.ssl.SSLHandshakeException`.
 **Q9.** Quote the exact exception text from your logcat. Which of the three classes named in Stage 1
 reported it?
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > "I installed the certificate and it still does not work" is this rule and nothing else, in the large
 > majority of cases. Before reaching for a pinning bypass, prove where the CA actually is. A pinning
 > bypass applied to a user-store problem does not work either, and now you have two uncontrolled
@@ -405,7 +405,7 @@ The `chcon` line is not optional and is the step most often skipped. A file with
 label is readable by root and invisible to the app process, producing the maddening symptom of a
 certificate that is plainly present in `ls` and plainly absent from the app's view of the world.
 
-> **⚠️ Warning — mount namespaces**
+> **Warning — mount namespaces**
 > A mount is only visible inside the mount namespace it was made in, and Android gives some processes
 > their own. If the overlay appears to do nothing, apply it in PID 1's namespace and restart the app,
 > then verify from inside the target process, which is the only view that matters:
@@ -436,7 +436,7 @@ Measured on the reference device: `mount` reports `APatch on /system/etc/securit
 certificate file, and `ls | wc -l` returns **139**. Stock for this device is 138; the 139th is the
 PortSwigger/Burp CA `9a5ba575.0`, promoted from the user store.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > Why one bind mount per file rather than one for the directory? A bare tmpfs over the directory hides
 > the originals, so the module would have to copy 138 certificates into RAM at every boot.
 > Bind-mounting each original file into the tmpfs keeps the page cache shared with the read-only
@@ -530,13 +530,13 @@ The XML itself, the `<trust-anchors>` element, the `debug-overrides` block and t
 between them are the subject of 44-NetworkSecurityConfig, and this lab deliberately does not duplicate
 them. Two points belong here, because they are interception concerns rather than XML concerns.
 
-> **⚠️ Warning — repackaging changes the thing you are testing**
+> **Warning — repackaging changes the thing you are testing**
 > Re-signing replaces the app's signing certificate, and everything depending on it changes: Play
 > Integrity attestation fails, `signature`-level permissions shared with the vendor's other apps stop
 > being granted, `AndroidKeyStore` material bound to the old signature becomes unusable, and integrity
 > self-checks fire. A finding produced against a repackaged build must be reported as such.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Route 3 has an honest advantage root does not: if it succeeds, it proves the app has **no pinning**,
 > because a pinned app rejects the proxy CA regardless of which store it sits in.
 
@@ -549,7 +549,7 @@ adb shell settings get global http_proxy          # verify it took
 adb shell am force-stop com.example.app           # many clients read the proxy once, at construction
 ```
 
-> **⚠️ Warning — what the global proxy does and does not do**
+> **Warning — what the global proxy does and does not do**
 > This setting is a system-wide **HTTP proxy** hint. It is honoured by `HttpURLConnection`, by OkHttp's
 > default `ProxySelector` and by most Java-level clients, because they all consult
 > `java.net.ProxySelector`, which reads it. It does **not** capture non-HTTP traffic such as raw TCP,
@@ -568,7 +568,7 @@ and the first line of the response body. That is your deliverable.
 extracted from the APK. A host that appears in the APK and never in Burp is either unused or using a
 stack the proxy cannot see; find out which.
 
-> **🔍 Pentester's Note — the keyguard false negative**
+> **Pentester's Note — the keyguard false negative**
 > On the reference device an app-originated Activity start is blocked while the keyguard is up, which
 > looks exactly like "the app never launched" or "the deep link did nothing". Before trusting a
 > negative result, run `adb shell "dumpsys trust" | grep -o "deviceLocked=[01]"`; `deviceLocked=1`
@@ -640,7 +640,7 @@ user-installed CA by hand, and **Clear credentials** removes all of them. Verify
 point of view by re-running the Stage 6 probe: the anchor count should return to your stock number and
 your CA should read `absent`. Reboot if the probe disagrees with `ls`.
 
-> **⚠️ Warning — record what you installed**
+> **Warning — record what you installed**
 > Write down in your engagement notes: the device, the date, the CA's subject, its `subject_hash_old`,
 > which store you put it in, and whether you removed it. A CA left behind on a device that later
 > returns to normal use is a real security incident that you caused; if the device is shared, tell
