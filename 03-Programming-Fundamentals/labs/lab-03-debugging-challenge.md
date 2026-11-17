@@ -15,7 +15,7 @@ them with a *method* rather than by staring.
 Time yourself on each one. Record which technique found it. At the end you will have data about your
 own debugging, which is far more useful than a general sense that you are "quite good at it".
 
-> **🧠 Mental Model — quit thinking and look.** The most expensive debugging habit is reasoning about
+> **Mental Model — quit thinking and look.** The most expensive debugging habit is reasoning about
 > what the code *should* do instead of observing what it *does*. Every technique in this lab is a way
 > of looking: printing a value, stopping at a line, halving the search space, letting the compiler
 > tell you. When you catch yourself thinking "but that can't be happening", that is the moment to
@@ -50,7 +50,7 @@ The full source of all six is in
 
 ## Bug 1 — Off by one (C)
 
-**Difficulty:** ★☆☆☆☆ — the warm-up.
+**Difficulty:** 1/5 — the warm-up.
 
 ```c
 /* bug1.c — build: gcc -O0 -g bug1.c -o bug1 */
@@ -92,7 +92,7 @@ stack-allocated buffer immediately below the saved return address?
 
 ## Bug 2 — Integer overflow (C)
 
-**Difficulty:** ★★☆☆☆
+**Difficulty:** 2/5
 
 ```c
 /* bug2.c — build: gcc -O0 -g bug2.c -o bug2 */
@@ -156,7 +156,7 @@ you would need before you could rate it in a real report.
 
 ## Bug 3 — Use after free (C)
 
-**Difficulty:** ★★★☆☆
+**Difficulty:** 3/5
 
 ```c
 /* bug3.c — build: gcc -O0 -g bug3.c -o bug3 */
@@ -218,7 +218,7 @@ defend it.)
 
 ## Bug 4 — Reference versus value (Java)
 
-**Difficulty:** ★★☆☆☆ — and it catches experienced people.
+**Difficulty:** 2/5 — and it catches experienced people.
 
 ```java
 // Bug4.java — build: javac Bug4.java && java Bug4
@@ -264,7 +264,7 @@ mutating the object in `promote` does?
 
 ## Bug 5 — The silent swallow (Java)
 
-**Difficulty:** ★★★☆☆ — the hardest to find, because nothing looks wrong.
+**Difficulty:** 3/5 — the hardest to find, because nothing looks wrong.
 
 ```java
 // Bug5.java
@@ -319,7 +319,7 @@ grep -rn 'catch *(.*) *{ *}' src/
 
 ## Bug 6 — The one that only fires sometimes (Python)
 
-**Difficulty:** ★★★★☆
+**Difficulty:** 4/5
 
 ```python
 # bug6.py — run: python3 bug6.py

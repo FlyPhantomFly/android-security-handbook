@@ -45,7 +45,7 @@ Start from a built AOSP tree (see [Lab 02](lab-02-build-and-boot-aosp.md)).
 **1. Plant the flag** where only UID 1000 can read it:
 
 ```bash
-# In the device's file_contexts / a prebuilt_etc module, or simply post-boot as root:
+# In the device's file_contexts / a prebuilt_etc module, or post-boot as root:
 echo 'FLAG{clear_calling_identity_before_the_check}' > /data/system/vendor_diag.txt
 chmod 600 /data/system/vendor_diag.txt
 chown system:system /data/system/vendor_diag.txt
@@ -379,7 +379,7 @@ The method takes a path. Two things follow:
 **Why the previous review missed it.** They looked at the applications. The vulnerability is in
 `system_server` — code the vendor added to the *framework*, not to an app. Neither an APK scan nor a
 manifest review would ever have reached it. It is found by diffing the service list and reading the
-framework, and both are two-minute operations that are simply not on most checklists.
+framework, and both are two-minute operations that are not on most checklists.
 
 </details>
 

@@ -9,7 +9,7 @@
 **Estimated time:** 3 hours
 **Prerequisite labs:** [Lab 01](lab-01-binary-hex-endianness.md), [Lab 02](lab-02-processes-memory-maps.md)
 
-> **⚠️ Warning — scope of this lab, read before starting**
+> **Warning — scope of this lab, read before starting**
 > This lab deliberately stops at the point where you have *demonstrated* control of the saved return
 > address by crashing the program at an address of your choosing. It contains **no shellcode, no ROP
 > chain, and no working exploit payload**, and none should be added to it. The educational goal is
@@ -47,7 +47,7 @@ By the end you will have:
 - Explained why the AArch64 story differs from the x86-64 story, and what that means for reading
   Android `.so` files.
 
-> **📖 Definition**
+> **Definition**
 > A **stack frame** (also *activation record*) is the block of stack memory belonging to one active
 > function call. It typically contains the function's local variables, saved copies of registers the
 > function is required to preserve, the saved frame pointer of its caller, and — on architectures
@@ -97,7 +97,7 @@ itself that you never have to guess.
  *
  * The bug: strcpy() copies until it finds a NUL byte in the source. It has no idea how
  * large the destination is. If argv[1] is longer than the destination array, the copy
- * simply keeps writing into whatever memory follows the array on the stack.
+ * keeps writing into whatever memory follows the array on the stack.
  */
 
 #include <stdio.h>
@@ -213,13 +213,13 @@ one command.
 **A3. Predict the frame.** Given the distance you measured, state — before you touch a debugger — how
 many bytes you must write past `name[0]` to reach the first byte of `authorised`.
 
-> **⚠️ Warning**
+> **Warning**
 > Do not assume `authorised` sits above `name` just because it was declared first. Different gcc and
 > clang versions, and different optimisation levels, order locals differently; some compilers
 > deliberately place arrays closest to the canary so that an overflow hits the canary before it hits
 > other scalars. Your printed distance is the truth for *your* binary. If the distance is negative,
 > `authorised` lies below the buffer and cannot be reached by a forward overflow — recompile with a
-> different `-O` level or reorder the declarations until it is positive, and note that you have just
+> different `-O` level or reorder the declarations until it is positive, and confirm that you have just
 > discovered a real mitigation technique.
 
 ---
@@ -317,7 +317,7 @@ opposition of directions is not a bug in any one program; it is a structural pro
 architecture, and it is why the stack buffer overflow has been the archetypal memory-safety bug for
 over thirty years.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > The `leave` instruction is a size optimisation for `mov rsp,rbp; pop rbp`, and it explains why
 > overwriting the saved `rbp` alone — a *one-byte* overflow past the array, the classic "off-by-one"
 > — is already dangerous. After `leave`, the caller's `rsp` is derived from the value you corrupted,
@@ -357,7 +357,7 @@ changes `authorised`. Confirm it equals your measured distance plus one, remembe
 also writes a terminating NUL byte — which means an input of length exactly *distance* still writes
 one byte into `authorised`.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > That trailing NUL is the most under-appreciated primitive in memory corruption. A "harmless"
 > off-by-one NUL write into an adjacent pointer, length or flag has produced a long line of real
 > vulnerabilities. When you review decompiled code and see `strcpy`, `sprintf`, `strcat`, or a
@@ -544,7 +544,7 @@ ret                              // branch to the address currently in x30 (LR)
 | Callee-saved registers | `rbx, rbp, r12–r15` | `x19`–`x28`, plus `x29`/`x30` by the frame convention |
 | Stack alignment requirement | 16 bytes at a `call` | 16 bytes at all times when `sp` is used as a base |
 
-> **🧠 Mental Model**
+> **Mental Model**
 > On x86-64, the return address is a piece of *data on the stack* from the instant of the call. On
 > AArch64 it starts life as a *value in a register* and only becomes data on the stack when the
 > function is a non-leaf and must save `x30` to make room for its own calls. That single design
@@ -767,7 +767,7 @@ Verify your own build's layout with:
    guard page.
 
 3. **Compare compilers.** Build `vuln.c` with `clang` and with `gcc`, at `-O0`, `-O1` and `-O2`.
-   Tabulate the frame layouts. Note that at `-O2` `authorised` may vanish entirely into a register
+   Tabulate the frame layouts.at `-O2` `authorised` may vanish entirely into a register
    and the bug in Part C becomes unreachable, which is a good illustration of why "it does not
    reproduce in release builds" is not evidence of correctness.
 

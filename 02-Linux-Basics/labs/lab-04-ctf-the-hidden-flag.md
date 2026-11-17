@@ -31,7 +31,7 @@ Each of the five flags is protected by exactly one of those. They are stacked, s
 what to attack next. Nothing is guessable, nothing needs brute force, and there are no rabbit holes
 that are not signposted as decoys once you reach them.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > A CTF stage is a single mechanism with the noise removed. A real target is the same mechanisms with
 > noise added. Learn to recognise the mechanism here, where it is clean, so that you can spot it later
 > when it is buried in ten thousand lines of decompiled code.
@@ -50,7 +50,7 @@ that are not signposted as decoys once you reach them.
 If you have no `sudo`, the setup script says so, skips stage 5's mount, and leaves that flag sitting
 in the open. Stages 1 to 4 are unaffected. Do stage 5 later on a machine where you have privilege.
 
-> **⚠️ Warning**
+> **Warning**
 > The challenge is built entirely inside one directory that you own. It starts three
 > `while :; do sleep 5; done` background shells and, if it can, one bind mount over a directory it
 > created itself. It does not touch anything else on your system. `sh ctf-setup.sh clean` reverses
@@ -266,7 +266,7 @@ One of those two is a decoy. Both are worth opening.
 <details>
 <summary>Hint 4.1 — `vault/flag.txt` has mode 0000. Am I meant to break it?</summary>
 
-No. You own it, so you can simply change the mode — which is itself the lesson. A mode protects a
+No. You own it, so you can change the mode — which is itself the lesson. A mode protects a
 file from *other* UIDs, not from its owner. Read it once you have; it will tell you what it is.
 </details>
 

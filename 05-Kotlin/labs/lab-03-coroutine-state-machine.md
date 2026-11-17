@@ -24,7 +24,7 @@ You must:
 **The flag has the form `FLAG{CH-<number>:<24 lowercase hex characters>}`.** You will never learn the
 correct input to `unlock`; you recover the flag by reading the coroutine's state, not by guessing.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > A thread's stack holds "where I am" and "what I was holding". A coroutine cannot use the thread stack,
 > because it gives the thread back every time it suspends. So the compiler builds a small object that
 > holds both: an integer saying where it is (`label`) and a set of fields holding what it was carrying
@@ -221,7 +221,7 @@ This code answers one question: **am I being called for the first time, or am I 
 - If it is my class but the sign bit is clear, the object belongs to a different invocation that happens
   to share the type, so allocate a fresh one.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > The sign bit is a one-bit flag smuggled into the same integer as the program counter, to avoid
 > allocating a second field. It is set by the continuation's own `invokeSuspend` immediately before it
 > re-enters the function, and cleared here. Because `label` values are small non-negative integers, the
@@ -276,7 +276,7 @@ This is the core exercise. Here is the `switch` body.
     }
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > JADX will not always render the fall-through between cases as cleanly as shown. Depending on the
 > version and on how R8 or `d8` laid out the blocks, you may see `goto` comments, a `while (true)` loop
 > wrapping the switch, or the cases merged into `if` chains on `label`. The *semantics* are always the
@@ -359,7 +359,7 @@ the developer named `challenge`. Note also `invokeSuspend` passes `null` as the 
 re-enters `unlock` — the real `userSupplied` is restored from `L$0` inside the switch, so the parameter
 slot is unused on the resume path.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `@DebugMetadata` is a runtime-visible annotation emitted by default. It is not stripped by standard R8
 > configurations because the coroutines debug agent reads it. In an otherwise fully obfuscated release
 > APK, it hands you original file names, function names, source line numbers, and local variable names
@@ -472,7 +472,7 @@ java -cp "classes:kotlinx-coroutines-core-jvm-1.8.1.jar:$KOTLIN_HOME/lib/kotlin-
 frida -n java -l recover.js
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > `resumeWith` fires for *every* coroutine in the process, including internals of `delay` and of the
 > dispatcher. On a real Android application this hook is extremely noisy and can slow the app enough to
 > cause ANRs. Filter by class name as early as possible, as the script above does for the flag path, and

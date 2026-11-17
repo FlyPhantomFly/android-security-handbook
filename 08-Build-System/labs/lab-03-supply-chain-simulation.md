@@ -21,7 +21,7 @@ Then close all three with the exact controls from §5.4 and prove they hold.
 
 ## Rules of engagement — read before starting
 
-> **⚠️ Everything in this lab runs against a LOCAL Maven repository you create, in a project you own.**
+> **Everything in this lab runs against a LOCAL Maven repository you create, in a project you own.**
 >
 > - Do **not** publish anything to Maven Central, the Gradle Plugin Portal, JitPack, or any other public
 >   or shared repository. Publishing to a namespace you do not own is at best a terms-of-service

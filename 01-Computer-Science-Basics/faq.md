@@ -26,7 +26,7 @@ inside `libfoo.so` after a 512-byte input overwrote the saved link register in t
 the crash address was attacker-controlled" is worth a bounty, because it demonstrates control. The
 difference between those two sentences is this chapter.
 
-> **🧠 Mental Model** — Tools are opinions about the machine. When two tools disagree, or when one
+> **Mental Model** — Tools are opinions about the machine. When two tools disagree, or when one
 > fails, only knowledge of the machine breaks the tie.
 
 There is also a career-shaped reason. Almost everyone who calls themselves a mobile pentester can run
@@ -79,7 +79,7 @@ instruction if the CPU fetches it as code, and a red channel value if a graphics
 display. Bytes have no intrinsic type. Confusion about which convention is in force at a given moment
 is the root of a large fraction of security bugs, including type confusion and format-string bugs.
 
-> **📖 Definition** — **Bit**: a single binary digit, the smallest unit of information.
+> **Definition** — **Bit**: a single binary digit, the smallest unit of information.
 > **Byte**: eight bits, the smallest individually addressable unit of memory.
 > **Nibble**: four bits, exactly one hexadecimal digit.
 
@@ -92,7 +92,7 @@ one byte is exactly two hex digits and a 64-bit address is exactly sixteen. If y
 are staring at a permission bitmask or a flags field, hex lets you read individual bits off the page.
 
 The second reason is that hardware boundaries are powers of two, and powers of two are round numbers
-in hex but ugly in decimal. A page is `0x1000` bytes, which is obviously "a 1 followed by twelve zero
+in hex but ugly in decimal. A page is `0x1000` bytes, which is "a 1 followed by twelve zero
 bits", so page-aligning an address means zeroing the last three hex digits. In decimal that same page
 is 4096 bytes, and page-aligning becomes a division. Compare these two views of the same facts:
 
@@ -133,7 +133,7 @@ xxd /tmp/le.bin            # shows: 7856 3412
 od -A d -t x4 /tmp/le.bin  # shows: 12345678  (interpreted as a 32-bit int)
 ```
 
-> **🔍 Pentester's Note** — When a value from a hex dump "looks reversed", it is not corrupt, it is
+> **Pentester's Note** — When a value from a hex dump "looks reversed", it is not corrupt, it is
 > little-endian. This is the single most common false alarm for people new to binary formats.
 
 ---
@@ -161,7 +161,7 @@ assigned per app, a new SELinux context, and then loads the app's DEX. The progr
 APK; the process is the forked, specialised Zygote child. This is covered properly in
 [09-Android-App-Internals](../09-Android-App-Internals/README.md).
 
-> **📖 Definition** — **Process**: an executing instance of a program, holding a private address
+> **Definition** — **Process**: an executing instance of a program, holding a private address
 > space and the kernel bookkeeping that goes with it. The unit of isolation in the Android sandbox is
 > the process's UID, not the program file.
 
@@ -227,7 +227,7 @@ why they get shipped: the developer's test passed. When you find one during an e
 with a loop that hammers the operation rather than a single manual attempt, and report the
 interleaving explicitly rather than saying "it sometimes fails".
 
-> **⚠️ Warning** — "It only happened once" is not evidence that a race is unexploitable. Attackers
+> **Warning** — "It only happened once" is not evidence that a race is unexploitable. Attackers
 > can widen the window deliberately, for example by forcing page faults, by pinning threads to
 > specific cores, or by inflating the file the victim reads.
 
@@ -315,7 +315,7 @@ faulting address is printed in the tombstone along with the full register set, s
 the address came from attacker-controlled data — for example, `0x4141414141` after sending a string of
 `A` characters.
 
-> **🔬 Under the Hood** — A `SIGSEGV` is not an error the kernel invented; it is the kernel's
+> **Under the Hood** — A `SIGSEGV` is not an error the kernel invented; it is the kernel's
 > translation of a hardware exception it decided not to resolve. The same mechanism, when the kernel
 > *does* resolve it, is ordinary demand paging that happens millions of times per second without
 > anyone noticing.
@@ -346,7 +346,7 @@ page zero; that is what `mmap_min_addr` exists to prevent.
 
 A use-after-free is what happens when a program keeps using a pointer to memory it has already
 returned to the allocator. The `free()` call does not erase anything and does not make your pointer
-null; it simply tells the allocator that the block is available again. Your pointer still holds the
+null; it tells the allocator that the block is available again. Your pointer still holds the
 same address and still points at bytes that look plausible. The program keeps working, right up until
 the allocator hands that same block to a different part of the program.
 
@@ -404,7 +404,7 @@ of a function within `libc.so` is constant, so leaking any single address inside
 every other address in it by subtraction. That is exactly how real exploits use an info leak, and it
 is why a seemingly harmless address disclosure is a genuine finding.
 
-> **🔍 Pentester's Note** — Practically, ASLR means you must never hardcode an address in a Frida
+> **Pentester's Note** — Practically, ASLR means you must never hardcode an address in a Frida
 > script. Resolve it at runtime with `Module.findBaseAddress("libfoo.so")` and add the offset you
 > found statically. See [53-Frida](../53-Frida/README.md).
 
@@ -427,7 +427,7 @@ offset and `addr & ~0xFFF` is the page base.
 It is not the only option, and this now matters on Android. Android 15 added support for devices with
 16 KiB pages, and native libraries that assumed 4 KiB — for example by hardcoding page arithmetic or
 by having `LOAD` segments aligned to only 4 KiB — fail to load on such devices. If you are testing an
-app with native code, checking segment alignment is a legitimate compatibility and robustness finding.
+app with native code, checking segment alignment is a legitimate compatibility finding.
 ARM also supports huge pages of 2 MiB and 1 GiB with the 4 KiB granule, used mostly by the kernel and
 by very large allocations.
 
@@ -514,7 +514,7 @@ privileged than the programs it arbitrates.
 
 The kernel is that arbitrator, and the hardware enforces its privilege. The CPU runs application code
 at EL0, where the instructions that configure the MMU, mask interrupts, or access other exception
-levels' system registers simply do not work. Only code at EL1 can change the page tables, so only the
+levels' system registers do not work. Only code at EL1 can change the page tables, so only the
 kernel can decide which physical memory a process is allowed to see. Because the kernel controls the
 page tables, process isolation is not a promise the apps make to each other — it is a property of the
 address translation hardware that apps cannot opt out of.
@@ -566,7 +566,7 @@ Reading means: given twenty lines of AArch64 disassembly from Ghidra or `objdump
 the function does at the level of "it compares the length in `W1` against 0x20, and if it is greater
 it branches to the error path, otherwise it calls `memcpy` with the destination in `X0`". To do that
 you need the register roles, maybe thirty instruction mnemonics, the branch and condition codes, and
-the prologue and epilogue patterns. That is a weekend of study and it is the single highest-leverage
+the prologue and epilogue patterns. That is a weekend of study and it is the single highest-value
 thing you can learn for native Android work, because decompilers fail exactly on the code that matters
 most — obfuscated routines, hand-written crypto, anti-tamper checks — and when the decompiler output
 is nonsense the disassembly is still true.
@@ -576,7 +576,7 @@ small shellcode payload, writing a hook trampoline by hand, or patching an instr
 branch. Even then you will normally write one or two instructions, assemble them with a tool, and
 patch the bytes, rather than authoring functions.
 
-> **🧠 Mental Model** — Assembly is a language you read like a foreign-language menu, not one you
+> **Mental Model** — Assembly is a language you read like a foreign-language menu, not one you
 > compose poetry in. Recognition, not fluency, is the goal.
 
 ### Compiled vs interpreted vs JIT vs AOT — where does Android sit?
@@ -703,7 +703,7 @@ interface that does not check the caller's permission will happily serve any cal
 runs its own attacker-controlled input through native code with a heap overflow is compromised inside
 its own sandbox, where the kernel has nothing to say.
 
-> **🧠 Mental Model** — The kernel guarantees that a process cannot reach *outside* itself without
+> **Mental Model** — The kernel guarantees that a process cannot reach *outside* itself without
 > permission. It guarantees nothing about what a process does to itself, or about what it voluntarily
 > hands out. Most of your findings will live in that second category.
 

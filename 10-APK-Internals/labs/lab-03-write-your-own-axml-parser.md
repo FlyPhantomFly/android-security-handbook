@@ -41,16 +41,16 @@ choosing between other people's opinions.
 | `apktool` (optional but wanted) | A second, independent comparison | `apktool --version` |
 | An APK to read | Any one; your own build is ideal | — |
 
-> **📖 Definition — binary XML (AXML).** The build tool `aapt2` compiles every XML file in an
+> **Definition — binary XML (AXML).** The build tool `aapt2` compiles every XML file in an
 > Android project into a compact binary form. Text XML is parsed by scanning for `<`, `>` and `"`;
 > AXML is parsed by arithmetic on length fields. The device does this on every app launch and every
 > `PackageManager` query, which is why it is worth the format's complexity.
 
-> **📖 Definition — chunk.** A length-prefixed block of bytes that knows its own type, the size of
+> **Definition — chunk.** A length-prefixed block of bytes that knows its own type, the size of
 > its own header, and its total size. Chunks nest. A parser walks the tree by adding sizes, never by
 > searching for a delimiter — there are no delimiters.
 
-> **📖 Definition — string pool.** A single table holding every distinct string in the document
+> **Definition — string pool.** A single table holding every distinct string in the document
 > exactly once. Element names, attribute names, namespace URIs and string values are all stored as
 > 32-bit *indices* into this table. Nothing in an AXML document is text where you would expect text.
 
@@ -71,7 +71,7 @@ framework calls is `frameworks/base/core/java/android/content/res/XmlBlock.java`
 Keep the header open in a second window for the whole lab. When your parser produces nonsense, the
 answer is in it.
 
-> **⚠️ Warning** Do not cite line numbers from that header, in your notes or in a report. The paths
+> **Warning** Do not cite line numbers from that header, in your notes or in a report. The paths
 > are stable across releases; the line numbers are not, and a stale line number in a report is worse
 > than no reference at all.
 
@@ -280,7 +280,7 @@ root: type=0x0003 headerSize=8 size=31732 file=31732
   0x00007bd4  RES_XML_END_NAMESPACE_TYPE       headerSize=16   size=24
 ```
 
-> **🧠 Mental Model** The chunk walk is a linked list where the link is arithmetic rather than a
+> **Mental Model** The chunk walk is a linked list where the link is arithmetic rather than a
 > pointer. Every `size` field is a jump instruction. Forge one and you decide where the reader lands
 > next — and if two readers compute the jump differently, they are reading different documents from
 > the same bytes.
@@ -319,7 +319,7 @@ struct ResStringPool_header {
 Immediately after the header come `stringCount` 32-bit offsets, then `styleCount` more, then the
 string data itself at `chunkStart + stringsStart`.
 
-> **⚠️ Warning** The offset array starts at `chunkStart + headerSize`. Almost every tutorial
+> **Warning** The offset array starts at `chunkStart + headerSize`. Almost every tutorial
 > hardcodes 28. Hardcode it and you have written a parser that reads the wrong bytes the moment
 > someone declares 32 — which is the first thing an author of a hostile manifest tries.
 
@@ -379,7 +379,7 @@ def read_utf8(data, pos):
     return text, char_len
 ```
 
-> **🔬 Under the Hood** Why two lengths? Because a reader that only wants to *skip* a string needs
+> **Under the Hood** Why two lengths? Because a reader that only wants to *skip* a string needs
 > the byte count, and a reader that wants to allocate a UTF-16 buffer needs the character count.
 > Storing both saves a decode pass. The consequence is that the two fields are independent, nothing
 > validates them against each other, and a parser that trusts one while another parser trusts the
@@ -459,9 +459,9 @@ need it to understand two things:
 - A resource ID in the map that does not match the framework's real ID for that name is a mismatch
   worth reporting.
 
-> **🔍 Pentester's Note** If your parser prints an attribute whose name is the empty string, do not
+> **Pentester's Note** If your parser prints an attribute whose name is the empty string, do not
 > shrug. Look up its resource ID against the framework's `public.xml` — `aapt2 dump resources` on
-> `android.jar`'s resources, or simply search for the constant. That construction exists precisely so
+> `android.jar`'s resources, or search for the constant. That construction exists precisely so
 > that name-matching tools see nothing.
 
 ---
@@ -516,7 +516,7 @@ string-pool index, and the parsed value as a `Res_value`. **The platform reads `
 `rawValue` exists so that tools can show a human the text the developer typed. Nothing forces them to
 agree.
 
-> **⚠️ Warning** Write `typedValue` into your output and `rawValue` into a side note, never the other
+> **Warning** Write `typedValue` into your output and `rawValue` into a side note, never the other
 > way around. If you render `rawValue` because it is prettier, you have written a tool that displays
 > a value the platform never consults — which is exactly the tool the next lab is designed to defeat.
 
@@ -589,7 +589,7 @@ def render(dtype, data, strings):
     return f"0x{data:08x}"
 ```
 
-> **🔬 Under the Hood** `TYPE_INT_BOOLEAN` treats *any* non-zero value as true, and `aapt2` writes
+> **Under the Hood** `TYPE_INT_BOOLEAN` treats *any* non-zero value as true, and `aapt2` writes
 > `0xffffffff` for true. Both `0x00000001` and `0xffffffff` are true to the platform. A parser that
 > compares against 1 reads `0xffffffff` as… something else, depending on how carelessly it was
 > written. Test yours: build a manifest with `debuggable` set to `0x00000002` and see what you print.
@@ -687,7 +687,7 @@ Add each of these. Every one corresponds to a real construction.
 | Chunks after the root chunk's end | Seen by a file-bounded parser, not by a size-bounded one |
 | An unknown chunk type | Skipped by size — so it can hold anything |
 
-> **🧠 Mental Model** A decoder answers "what does this say?". An analysis tool answers "is there any
+> **Mental Model** A decoder answers "what does this say?". An analysis tool answers "is there any
 > way to read this other than the way I just did?". The list above is that second question, written
 > out. Every entry is a place where two reasonable implementations part company.
 
@@ -721,7 +721,7 @@ defensible.** That is exactly the problem.
 Now build a manifest that is legal, that the platform accepts, and that breaks at least one
 mainstream decoder.
 
-> **⚠️ Warning** Build this yourself, in your own directory, and do not distribute it. The
+> **Warning** Build this yourself, in your own directory, and do not distribute it. The
 > construction below is the mechanism behind real store-review evasion. It is here so that you can
 > *detect* it. See the rules at the top of
 > [lab 04](lab-04-ctf-the-lying-manifest.md).
@@ -854,7 +854,7 @@ what you have produced before drawing conclusions:
 python3 ../examples/parse_apk_zip.py bent-attrsize.apk | grep -i duplicate
 ```
 
-> **⚠️ Warning** These APKs are now unsigned garbage as far as any device is concerned, because
+> **Warning** These APKs are now unsigned garbage as far as any device is concerned, because
 > replacing an entry invalidates every signature. That is fine — this part of the lab is about
 > *decoders*, not installation. Lab 04 does the whole pipeline properly.
 
@@ -878,7 +878,7 @@ jadx -d /tmp/bentjx --no-src bent-attrsize.apk && cat /tmp/bentjx/resources/Andr
 
 Record for each cell: **decoded correctly**, **decoded but wrong**, **refused**, or **crashed**.
 
-> **⚠️ Warning** Your results will not match anyone else's exactly, because they depend on the
+> **Warning** Your results will not match anyone else's exactly, because they depend on the
 > versions of `apktool`, `jadx` and `aapt2` you have installed. That is not a flaw in the lab — it is
 > the finding. **Write your versions down next to your table.** A statement like "apktool cannot read
 > this" is worthless without them; "apktool 2.9.3 renders `debuggable=false` where aapt2 2.19 renders

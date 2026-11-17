@@ -23,7 +23,7 @@ Three concrete reasons, and all three come up in real engagements.
    that reaches `ServiceManager` all go through reflection into `@hide` classes. When they misbehave on
    a particular device, hidden-API policy is one of the first things to check.
 2. **It changes app behaviour, silently.** A denial throws an ordinary `NoSuchMethodException`, so an
-   app that catches broadly simply behaves differently with no visible cause. "The app stopped working
+   app that catches broadly behaves differently with no visible cause. "The app stopped working
    after we bumped `targetSdk`" is very often this.
 3. **`@SystemApi` is the map of privileged capability.** When you decompile an OEM or carrier app and
    find calls you do not recognise, the system API surface tells you whether you have found something

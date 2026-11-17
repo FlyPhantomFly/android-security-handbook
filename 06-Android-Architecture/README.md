@@ -73,7 +73,7 @@ whenever it liked. So the privileged operation lives in a **separate, trusted pr
 the screen.** That is the **boot process**, and it is the single most instructive thing in this
 chapter, because the order in which things start *is* the order in which trust is established.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Android is not "Linux with a Java layer on top." It is a **trust pyramid built on a Linux base**.
 > Each layer is deliberately less trusted than the one below it and deliberately more convenient than
 > the one below it. Security work on Android is almost always the work of finding a place where a
@@ -126,7 +126,7 @@ useful. If it runs in the kernel, Frida cannot reach it at all without a kernel 
 crash the camera HAL" and "I can crash the app" are three wildly different severities. Impact is a
 function of *which layer* you reached and *what that layer is trusted with*.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > When you get a new device in front of you, run `adb shell ps -A` and read the whole list. Every line
 > is a process, every process belongs to exactly one layer of this chapter, and the ones you cannot
 > place are the ones worth researching. That exercise is Lab 02 of this chapter, and it is worth
@@ -134,28 +134,28 @@ function of *which layer* you reached and *what that layer is trusted with*.
 
 ### 1.5 Terms you need before we go further
 
-> **📖 Definition — Process**
+> **Definition — Process**
 > A **process** is one running program, with its own private view of memory, its own file
 > descriptors, and its own identity (a user ID). Two processes cannot see each other's memory unless
 > the kernel is explicitly asked to arrange it. On Android, every app normally runs in its own
 > process under its own UID, and that single fact is the foundation of the app sandbox.
 
-> **📖 Definition — Kernel space and user space**
+> **Definition — Kernel space and user space**
 > The CPU has (at least) two privilege levels. Code running in **kernel space** can touch any memory
 > and any device. Code running in **user space** cannot; it must ask the kernel, using a **system
 > call** (`syscall`), which is a controlled doorway into kernel space. Everything above the kernel in
 > this chapter is user space.
 
-> **📖 Definition — Daemon**
+> **Definition — Daemon**
 > A **daemon** is a long-lived background process with no user interface, started at boot, that
 > provides a service to other processes. `servicemanager`, `netd`, `vold` and `logd` are daemons.
 
-> **📖 Definition — IPC (Inter-Process Communication)**
+> **Definition — IPC (Inter-Process Communication)**
 > Any mechanism by which two processes exchange data despite having separate memory. On Linux the
 > classics are pipes, sockets, shared memory and signals. Android adds **Binder**, which is the one
 > that matters, and which gets its own chapter: [25-Binder](../25-Binder/README.md).
 
-> **📖 Definition — HAL (Hardware Abstraction Layer)**
+> **Definition — HAL (Hardware Abstraction Layer)**
 > The body of vendor-written code that sits between the generic Android framework and a specific
 > piece of hardware. When the framework says "vibrate for 200 milliseconds," the HAL is what knows
 > which GPIO pin or which chip register makes this particular device buzz.
@@ -417,7 +417,7 @@ Google requires. Most of those patches have, over fifteen years, been either ups
 Linux or replaced by an upstream equivalent. But several remain distinctly Android, and every one of
 them is security-relevant.
 
-> **📖 Definition — Mainline Linux**
+> **Definition — Mainline Linux**
 > The kernel released by kernel.org under Linus Torvalds. "Mainline" is the canonical tree. A
 > **downstream** kernel is a copy of mainline with additional patches — Android's kernel is
 > downstream of mainline, and a phone vendor's kernel is downstream of Android's.
@@ -434,10 +434,10 @@ them is security-relevant.
 | **Paranoid networking** | Restricts socket creation to processes in specific supplementary groups | Historically `CONFIG_ANDROID_PARANOID_NETWORK`; modern devices use per-UID rules in `netd`, iptables/xt_qtaguid and eBPF | Android needed `INTERNET` to be a *permission*, and Linux has no per-app network permission | The `INTERNET` permission is enforced by a **group membership check in the kernel**, not by the framework. This is why an app without `INTERNET` genuinely cannot open a socket even from native code. |
 | **SELinux in enforcing mode** | Mandatory access control on every process, file, socket and Binder call | `security/selinux/` plus the policy in `system/sepolicy/` | UID separation alone was not enough once root compromises appeared | The most important post-exploitation constraint on Android. Root without an SELinux bypass is dramatically less useful than root on a desktop. See [22-SELinux](../22-SELinux/README.md). |
 | **seccomp-bpf filters** | Per-process syscall allowlists applied to app and system processes | `kernel/seccomp.c`; Android's filters in `bionic/libc/seccomp/` | Shrink the kernel attack surface reachable from an app | An app process cannot call most exotic syscalls at all, which kills whole families of kernel exploits from app context. |
-| **dm-verity / dm-crypt / fs-verity** | Block-level and file-level integrity and encryption | `drivers/md/dm-verity*`, `fs/verity/` | Detect offline modification of the system partition and protect user data at rest | The reason you cannot simply mount `/system` and edit a framework JAR on a locked device. |
+| **dm-verity / dm-crypt / fs-verity** | Block-level and file-level integrity and encryption | `drivers/md/dm-verity*`, `fs/verity/` | Detect offline modification of the system partition and protect user data at rest | The reason you cannot mount `/system` and edit a framework JAR on a locked device. |
 | **eBPF** | Programmable kernel-side filters used for network accounting and tracing | `kernel/bpf/`, Android programs in `system/bpf/` | Replace out-of-tree `xt_qtaguid` accounting | Traffic accounting and per-UID firewalling now live in eBPF programs loaded at boot by `bpfloader`. |
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > The `INTERNET` permission is the cleanest example in Android of a framework-level concept enforced
 > in the kernel. When `PackageManagerService` grants `android.permission.INTERNET`, what actually
 > happens is that the app's UID is added to the supplementary group `AID_INET` (GID 3003). The
@@ -453,7 +453,7 @@ the SoC vendor's patches, plus the OEM's patches. Fixing a kernel vulnerability 
 those forks had to merge the fix independently. Most never did, which is the technical reason so many
 Android devices historically ran kernels with years-old public vulnerabilities.
 
-> **📖 Definition — GKI (Generic Kernel Image)**
+> **Definition — GKI (Generic Kernel Image)**
 > A single kernel binary, built by Google from the Android Common Kernel for a given kernel version,
 > that ships unchanged on every device using that version. All hardware-specific code is moved out of
 > the kernel image into **vendor modules** — separately compiled `.ko` files loaded at boot.
@@ -481,7 +481,7 @@ cat /proc/modules | head -40
 ls -la /vendor/lib/modules/ 2>/dev/null
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The `uname -r` string is one of the first things to record on any engagement. It tells you the
 > kernel version (which public exploits might apply), the Android release the kernel targets, and —
 > combined with `ro.build.version.security_patch` — whether the device is plausibly patched. A device
@@ -555,7 +555,7 @@ get upgrades.
 
 **Generation 2: HIDL (Android 8.0 – 13).**
 
-> **📖 Definition — HIDL (HAL Interface Definition Language)**
+> **Definition — HIDL (HAL Interface Definition Language)**
 > A language for describing HAL interfaces in a versioned, ABI-stable way, plus a code generator that
 > produces C++ (and Java) client and server code. HIDL interfaces communicate over a separate binder
 > domain called **hwbinder** (`/dev/hwbinder`), registered with a separate service manager,
@@ -582,7 +582,7 @@ seccomp filter. A memory-corruption bug in the vibrator HAL now gets you code ex
 
 **Generation 3: Stable AIDL for HALs (Android 11 onward).**
 
-> **📖 Definition — Stable AIDL**
+> **Definition — Stable AIDL**
 > AIDL (Android Interface Definition Language) is the language Android has always used to describe
 > Binder interfaces between Java components. "Stable AIDL" adds versioning and a frozen-ABI guarantee
 > so it can be used for the vendor interface, replacing HIDL. Interfaces are declared with
@@ -612,7 +612,7 @@ the great majority of core HALs are AIDL.
 
 #### 3.2.3 Project Treble and the system/vendor split
 
-> **📖 Definition — Project Treble**
+> **Definition — Project Treble**
 > The Android 8.0 re-architecture that separated the Android OS framework from the vendor
 > implementation with a formal, versioned interface (the **VINTF**, Vendor Interface), so that the
 > framework can be updated without rebuilding vendor code.
@@ -655,7 +655,7 @@ lshal --types=b 2>/dev/null | head -40
 lshal list 2>/dev/null | head -40
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `lshal` is one of the fastest reconnaissance commands on a device you have never seen. It lists
 > every HAL service, its interface version, the PID serving it, and the clients bound to it. OEM-added
 > HALs with non-`android.hardware.*` names (`vendor.acme.diagnostics@1.0::IDiag`, and similar) are
@@ -669,7 +669,7 @@ Vendor processes need to use some of the platform's C++ libraries (`libutils`, `
 `libbase`). But if a vendor process linked against the same copy the framework uses, the framework
 could not change those libraries without breaking vendor code — which would defeat Treble.
 
-> **📖 Definition — VNDK**
+> **Definition — VNDK**
 > A set of platform libraries with a stable ABI, shipped in a separate copy under `/system/lib[64]/vndk-<version>/`,
 > that vendor processes are permitted to link against. Vendor processes get their own linker
 > namespace that can see only VNDK libraries and `/vendor` libraries — never the framework's private
@@ -689,7 +689,7 @@ cat /linkerconfig/ld.config.txt | head -60
 ls -d /system/lib64/vndk* 2>/dev/null
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > Linker namespaces are a genuine security boundary, and they break naive instrumentation. If you
 > push a Frida gadget or an interposition library into `/data/local/tmp` and try to make a vendor HAL
 > process load it, the linker will usually refuse because the path is not in that namespace's search
@@ -709,7 +709,7 @@ historically have.
 
 #### 3.3.1 Bionic — Android's C library
 
-> **📖 Definition — Bionic**
+> **Definition — Bionic**
 > Android's implementation of the C standard library (`libc.so`), the math library (`libm.so`), the
 > dynamic linker (`linker` / `linker64`) and `libdl.so`. It is not glibc and not musl; it was written
 > for Android for licence reasons (BSD-licensed, so it can be statically linked into proprietary
@@ -744,7 +744,7 @@ system components. `readelf -n` on a system binary will show the BTI/PAC propert
 grep -E 'libc\.so|linker64' /proc/$(pidof -s com.android.systemui)/maps | head
 ```
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > Notice that `libc.so` is loaded from `/apex/com.android.runtime/`, not `/system/lib64/`. Since
 > Android 10, Bionic and ART ship inside an **APEX module** (§3.11) so that they can be updated
 > through Google Play without a full OS update. This is why `/system/lib64/libc.so` may be a symlink
@@ -767,7 +767,7 @@ grep -E 'libc\.so|linker64' /proc/$(pidof -s com.android.systemui)/maps | head
 | **OpenGL ES / Vulkan / ANGLE** | `frameworks/native/opengl/`, vendor drivers | GPU access | GPU drivers are vendor kernel code reachable from every app — historically one of the most productive kernel LPE surfaces on Android |
 | `libgui`, `libui` | `frameworks/native/libs/gui/` | Surface/BufferQueue plumbing between apps and `surfaceflinger` | Where screen-capture and overlay security decisions are implemented |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > When you are asked "where would a remote, zero-click bug on Android most plausibly be?", the honest
 > answer is: in the code that parses attacker-supplied bytes without user interaction. That means the
 > media extractors and codecs, the image decoders in Skia, the font parser, the Bluetooth stack
@@ -785,7 +785,7 @@ This chapter treats ART briefly and deliberately, because it is owned in full by
 
 What you need here is the architectural role.
 
-> **📖 Definition — ART (Android Runtime)**
+> **Definition — ART (Android Runtime)**
 > The managed-code execution engine. It loads DEX (Dalvik Executable) bytecode, executes it — by
 > interpreting it, by JIT-compiling hot methods to native code, or by running code that was
 > AOT-compiled ahead of time — and manages the garbage-collected heap that all Java/Kotlin objects
@@ -816,7 +816,7 @@ Three architectural facts matter for the rest of this chapter:
 Ask ten Android developers what "the framework" is and you will get ten vague answers. Here is the
 precise one.
 
-> **📖 Definition — The Android framework**
+> **Definition — The Android framework**
 > The set of Java/Kotlin classes in the `android.*` and `com.android.internal.*` packages, compiled
 > into `framework.jar` (plus `services.jar` and companions), that ships on the device in
 > `/system/framework/`. Part of it is loaded into **every** app process as part of the boot
@@ -858,7 +858,7 @@ left side is a security control. The security control is the single box labelled
 enforcement" on the right, inside `system_server`, and it works because the kernel — not the caller —
 supplies the calling UID.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Framework `Manager` classes are **customer-service desks**, not decision-makers. `ActivityManager`
 > in your process is a form you fill in. `ActivityManagerService` in `system_server` is the official
 > who reads the form, checks who you are (from a source you cannot forge), and decides. Hooking the
@@ -918,7 +918,7 @@ dumpsys activity services | head -50
 dumpsys package com.example.target | head -80
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `service list` on an OEM device almost always contains services that do not exist in AOSP. Those are
 > the OEM's own additions, usually written under schedule pressure, often without the review AOSP code
 > gets, and frequently missing permission checks on some methods. Diffing `service list` against a
@@ -954,7 +954,7 @@ distinctions matter for testing.
 | Platform-signed app | either | may share `android.uid.system` | the **platform key** | If it declares `android:sharedUserId="android.uid.system"` it runs as UID 1000 — the same UID as `system_server` |
 | GMS / Play Services | `/product/priv-app/` or `/system/priv-app/` | 10000+ | Google key | **Not part of AOSP**; see [07-AOSP](../07-AOSP/README.md) §1.4 |
 
-> **⚠️ Warning**
+> **Warning**
 > An app with `sharedUserId="android.uid.system"` runs with UID 1000. If you find a third-party or
 > OEM app in that state with an exported component or a reachable `WebView` with JavaScript bridges,
 > the impact is not "app compromise" — it is system compromise. Always check `dumpsys package <pkg>`
@@ -1056,7 +1056,7 @@ points into **mask ROM**: code physically burned into the silicon at manufacture
 modified, ever, by anyone, including the manufacturer. That immutability is exactly why it is the
 **root of trust**.
 
-> **📖 Definition — Root of trust**
+> **Definition — Root of trust**
 > The one component in a system whose integrity is assumed rather than verified, because nothing
 > exists that could verify it. Everything else in a secure boot chain is verified by something that
 > came before; the root of trust is where the chain has to stop.
@@ -1067,7 +1067,7 @@ the signature of the next bootloader stage against it, and jumps. If verificatio
 either refuses to boot or drops into a vendor-specific emergency download mode (Qualcomm's EDL,
 MediaTek's BROM mode, Samsung's Odin/download mode).
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > BootROM bugs are the most valuable class of vulnerability in the mobile world because they cannot be
 > patched in the field — the code is in silicon. Publicly documented SoC BootROM/EDL issues have
 > produced permanent, unfixable unlock and code-execution primitives for the affected chips. In an
@@ -1088,7 +1088,7 @@ previous Android session.
 
 **Android Verified Boot (AVB).**
 
-> **📖 Definition — AVB (Android Verified Boot), version 2**
+> **Definition — AVB (Android Verified Boot), version 2**
 > The mechanism by which the bootloader cryptographically verifies every partition that participates
 > in booting. Hashes and signatures live in the **`vbmeta`** partition, which is signed with a key the
 > bootloader trusts. `vbmeta` contains, for each partition, either a full hash (for small partitions
@@ -1121,7 +1121,7 @@ remote server can tell whether the device booted a verified image. This is the t
 Magisk's DenyList and "hide" behaviours cannot defeat hardware-backed attestation — the value is
 signed by the TEE, not read from a property.
 
-> **⚠️ Warning**
+> **Warning**
 > Unlocking the bootloader triggers a mandatory **data wipe** on any modern device. This is not an
 > inconvenience; it is a security requirement. Without it, an attacker with brief physical access
 > could unlock, flash a modified boot image, and read the previous user's data. If you are handed a
@@ -1163,7 +1163,7 @@ cat /proc/cmdline | tr ' ' '\n'
 #   androidboot.serialno=XXXXXXXX
 ```
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > Every `androidboot.X=Y` parameter on the kernel command line (or in the bootconfig, which newer
 > devices use instead) is turned by `init` into the read-only property `ro.boot.X=Y`. That is the
 > entire mechanism. It means the properties beginning `ro.boot.` are *bootloader assertions*, not
@@ -1192,7 +1192,7 @@ distinct phases, and you can see which phase a given `init` process is in from i
 enforcing mode, and then **re-executes itself** so that the new `init` process runs in the correct
 SELinux domain (`u:r:init:s0`) rather than the kernel's initial domain.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > The re-exec is not cosmetic. A process's SELinux domain is assigned at `execve()` time. Init cannot
 > transition itself into the `init` domain without executing something, so it executes itself. If you
 > ever wonder why `ps` sometimes shows `init` with different argv on different devices or at different
@@ -1203,7 +1203,7 @@ the `.rc` files and drives the rest of boot.
 
 #### 3.7.6 Stage 5 — the `.rc` language, triggers, actions and services
 
-> **📖 Definition — `init.rc`**
+> **Definition — `init.rc`**
 > The configuration language `init` reads to learn what to start, when to start it, and with what
 > privileges. The primary file is `/system/etc/init/hw/init.rc` (from `system/core/rootdir/init.rc`
 > in AOSP); it imports many more from `/system/etc/init/`, `/vendor/etc/init/`, `/odm/etc/init/` and
@@ -1292,7 +1292,7 @@ getprop | grep init.svc | sort
 # [init.svc.vendor.diag-service]: [stopped]     <-- interesting
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `getprop | grep init.svc` is a device-recon goldmine. Every service `init` knows about is listed
 > with its state. Services in the `stopped` state that have a suggestive name (`diag`, `factory`,
 > `test`, `dm-verity-disable`, `at-service`) are worth chasing: find their `.rc` file, see what
@@ -1309,7 +1309,7 @@ in §3.10, but its boot role is simple: it creates the shared-memory property ar
 
 #### 3.7.8 Stage 7 — `ueventd`
 
-> **📖 Definition — `ueventd`**
+> **Definition — `ueventd`**
 > A mode of `init` (the same binary, invoked as `ueventd`) that listens on a kernel netlink socket for
 > **uevents** — messages the kernel emits when a device appears or disappears — and creates the
 > corresponding device node in `/dev` with the ownership, mode and SELinux label specified in
@@ -1328,7 +1328,7 @@ cat /vendor/ueventd.rc 2>/dev/null | head -40
 
 #### 3.7.9 Stage 8 — `vold` and mounting `/data`
 
-> **📖 Definition — `vold` (Volume Daemon)**
+> **Definition — `vold` (Volume Daemon)**
 > The native daemon responsible for mounting and unmounting storage volumes, managing SD cards and
 > USB OTG storage, running `fsck`, and — most importantly — handling **file-based encryption (FBE)**
 > keys.
@@ -1345,7 +1345,7 @@ This produces the state Android calls **Direct Boot**: after a reboot but before
 device is running, apps marked `directBootAware` are usable, and CE storage is *cryptographically
 inaccessible* — not permission-denied, but undecryptable.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The forensic and physical-attack consequence is large. A device seized in the **AFU** state (After
 > First Unlock) has CE keys in memory; a device in the **BFU** state (Before First Unlock) does not.
 > This distinction determines what a forensic extraction can recover and is the reason the standard
@@ -1356,7 +1356,7 @@ inaccessible* — not permission-denied, but undecryptable.
 
 #### 3.7.10 Stage 9 — `servicemanager` and `hwservicemanager`
 
-> **📖 Definition — `servicemanager`**
+> **Definition — `servicemanager`**
 > The Binder **name registry**. Binder itself has no concept of names, only of object handles. A
 > process that wants to publish a service registers it with `servicemanager` under a string name; a
 > process that wants to use one asks `servicemanager` for that name and receives a handle. Handle 0 on
@@ -1515,7 +1515,7 @@ You cannot copy a live Java heap over a socket.
 Android's answer is elegant and slightly outrageous: **do the work once, in a process that then never
 does anything else, and make every app a copy of that process.**
 
-> **📖 Definition — Zygote**
+> **Definition — Zygote**
 > A process started at boot that initialises an ART runtime, loads and initialises the framework
 > classes and resources every app will need, and then waits. When a new app must start, Zygote
 > `fork()`s itself. The child inherits the entire initialised heap, the loaded classes, the mapped
@@ -1567,7 +1567,7 @@ in `Zygote.forkAndSpecialize` and the native `com_android_internal_os_Zygote.cpp
 enormously and is a classic source of bugs in other systems: capabilities must be dropped after they
 are used and before the UID is finally set, and the seccomp filter must be installed last.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > Zygote runs as **root** (UID 0) with `CAP_SETUID` and `CAP_SETGID`. It must, because dropping to an
 > arbitrary app UID requires privilege. This means that for the fraction of a millisecond between
 > `fork()` and the `setresuid()` call, there is a root process whose memory contains the framework
@@ -1619,7 +1619,7 @@ asks about to see whether you understand *systems*, not just tools.
 
 #### 3.9.1 What ASLR is and why it works
 
-> **📖 Definition — ASLR (Address Space Layout Randomisation)**
+> **Definition — ASLR (Address Space Layout Randomisation)**
 > A mitigation in which the operating system loads a program's stack, heap, shared libraries and
 > (with PIE) the executable itself at addresses chosen randomly at process start. The purpose is to
 > deny an attacker knowledge of *where* useful code and data are, so that a memory-corruption bug
@@ -1657,12 +1657,12 @@ flowchart TD
 ```
 
 Look at what that diagram means in practice. An attacker who controls **any** app on the device —
-their own, freely installed, no permissions needed — can simply read `/proc/self/maps` in their own
+their own, freely installed, no permissions needed — can read `/proc/self/maps` in their own
 process and learn the load address of `libc.so` in **every other app process on the device, including
 `system_server`**. No information leak is required. The attacker's own process is the information
 leak.
 
-> **⚠️ Warning**
+> **Warning**
 > This is not a hypothetical. It is the documented, intentional consequence of the Zygote design, and
 > it is the basis of the academic work "From Zygote to Morula: Fortifying Weakened ASLR on Android"
 > (Lee, Wang, Kim and Lee, IEEE Symposium on Security and Privacy, 2014), which proposed forking
@@ -1700,7 +1700,7 @@ Android did not fix the root cause, but it added defence in depth around it:
 - **seccomp filters** limit what the attacker can do after achieving execution.
 - **SELinux** limits what the compromised process can reach.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The way to demonstrate this in a report, cleanly and without any exploit, is a two-line experiment:
 > print the load address of `libc.so` from two different apps, and from `system_server`, and show that
 > they match. Then reboot and show that all three changed together. That is a complete, reproducible
@@ -1726,7 +1726,7 @@ can write, that survives across the whole system, and that is fast enough to be 
 Files are too slow and racy; a daemon queried over IPC would add a round trip to `getprop`. So Android
 built something specific.
 
-> **📖 Definition — The property system**
+> **Definition — The property system**
 > A shared-memory key-value store of null-terminated strings. The data lives in files under
 > `/dev/__properties__`, which every process maps **read-only**. Reads are therefore direct memory
 > accesses with no syscall and no IPC. Writes go through the property service (a thread in `init`)
@@ -1774,10 +1774,10 @@ detection bypasses do.
 | `debug.*` | Writable | Until reboot | Debug toggles read by framework and native code |
 | `init.svc.*` | Set by `init` only | Until reboot | The state of each init service (`running`, `stopped`, `restarting`) |
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > "Read-only" for `ro.*` is enforced by the property service, not by the kernel. The check is a string
 > comparison on the prefix, and the property service refuses to overwrite an existing `ro.` property.
-> Because the shared memory region is mapped read-only into readers, a process cannot simply write to
+> Because the shared memory region is mapped read-only into readers, a process cannot write to
 > it — but a process that can get code into `init`, or that can map the underlying files writable as
 > root with the right SELinux permissions, can. On a rooted device with a permissive setup you can
 > also use `resetprop` (a Magisk tool) which manipulates the property area directly rather than going
@@ -1847,7 +1847,7 @@ done
 getenforce
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `ro.build.tags=test-keys` deserves its own paragraph in any report where you find it. The AOSP test
 > keys are published in `build/make/target/product/security/` in the public source tree. If a shipped
 > device was signed with them, **anyone can build an APK signed with the platform key**, install it,
@@ -1892,7 +1892,7 @@ char value[PROP_VALUE_MAX];
 __system_property_get("ro.debuggable", value);
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Root-detection and emulator-detection code reads properties, and it reads them by one of exactly
 > three routes: `SystemProperties.get()` in Java, `__system_property_get()` in libc, or by shelling
 > out to `/system/bin/getprop`. A complete bypass must cover all three. Hooking only the Java route is
@@ -1930,7 +1930,7 @@ different owner, a different update cadence and a different trust level.
 | `cache` (legacy) | `/cache` | OTA staging on old devices | — | — |
 | `persist` | `/persist` | Calibration data, sensor data, sometimes DRM keys | vendor code | usually none |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Two rows in that table deserve attention. `userdata` is **not** integrity-protected — it is
 > encrypted, but a party who can write it (which includes any root process, and includes an attacker
 > with an offline write primitive on an unlocked device) can modify app data without any verity
@@ -1948,7 +1948,7 @@ df -h
 
 #### 3.11.2 A/B (seamless) updates
 
-> **📖 Definition — A/B partitions**
+> **Definition — A/B partitions**
 > A scheme in which the device has two complete copies of every updatable partition, labelled with the
 > suffixes `_a` and `_b`. The system runs from one **slot** while an update is written to the other.
 > On the next boot, the bootloader switches slots. If the new slot fails to boot a set number of
@@ -1973,7 +1973,7 @@ getprop ro.build.ab_update         # true on an A/B device
 ls /dev/block/by-name/ | grep -E '_a$|_b$' | head
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > On an A/B device there is **no separate recovery partition**. Recovery is a mode of the `boot`
 > image. Flashing a "recovery.img" from an A-only device onto an A/B device does not do what you
 > expect and can leave the device unbootable. Also note the **anti-rollback index**: once a device has
@@ -1986,7 +1986,7 @@ ls /dev/block/by-name/ | grep -E '_a$|_b$' | head
 Fixed partition sizes are a problem when `system` grows and `vendor` shrinks between releases, and A/B
 doubles the waste.
 
-> **📖 Definition — Dynamic partitions**
+> **Definition — Dynamic partitions**
 > Instead of separate physical partitions for `system`, `vendor`, `product` and friends, the device
 > has one large physical partition called **`super`**, containing a metadata header and a set of
 > **logical partitions** carved out of it. At boot, first-stage `init` reads the metadata (using
@@ -2007,7 +2007,7 @@ implementation cannot resize logical partitions.
 
 #### 3.11.4 dm-verity
 
-> **📖 Definition — dm-verity**
+> **Definition — dm-verity**
 > A Linux device-mapper target that provides transparent, block-level integrity checking for a
 > read-only filesystem. The image is hashed in 4 KiB blocks; those hashes are hashed, and so on, into
 > a **Merkle tree** whose single root hash is signed. Every read of a block verifies that block's hash
@@ -2037,12 +2037,12 @@ adb root && adb remount # now /system is writable
 
 #### 3.11.5 APEX modules and Project Mainline
 
-> **📖 Definition — APEX (Android Pony EXpress)**
+> **Definition — APEX (Android Pony EXpress)**
 > A container format for delivering low-level system components — native libraries, daemons, and even
 > the ART runtime — as independently updatable modules. An `.apex` file is a signed package containing
 > a filesystem image, which `apexd` verifies and loop-mounts under `/apex/<name>/` early in boot.
 
-> **📖 Definition — Project Mainline**
+> **Definition — Project Mainline**
 > Google's programme, introduced in Android 10, of shipping a defined set of OS components as APEX
 > modules or APKs that update **through Google Play**, independently of the device manufacturer's OTA
 > schedule.
@@ -2127,7 +2127,7 @@ fastboot flashing get_unlock_ability
 fastboot boot patched_boot.img   # run this image ONCE without flashing it — the safe way to test
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > `fastboot boot` is dramatically safer than `fastboot flash` and should be your default when testing
 > a modified boot image. It loads the image into RAM and boots it once; a reboot returns the device to
 > its previous state. `fastboot flash boot` persists it, and a bad image means a device that will not
@@ -2250,7 +2250,7 @@ namespace view of external storage.
 `attach()` — which Binders back to `ActivityManagerService` to say "I am up", receives
 `bindApplication`, creates the `Application` object and calls `onCreate()`.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > Note the direction of Step 6. The new process calls **into** `system_server` to announce itself; the
 > server does not push work into a process it has not heard from. This handshake is why an app that
 > hangs in a static initialiser produces "process started but never attached" behaviour, and why
@@ -2310,7 +2310,7 @@ Read it as a chain of assertions, each depending on the one above:
 | Zygote → app | The child drops to an app UID, gains seccomp and an SELinux domain, and can never regain them | A Zygote or kernel vulnerability |
 | App → system_server | The caller's UID is authoritative and cannot be spoofed over Binder | A confused-deputy bug **in system_server**, not in Binder |
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Every arrow **downward** in that diagram is a privilege *reduction* that is irreversible without a
 > vulnerability. Every arrow **upward** (the dotted Binder line) is a request that must be
 > authorised. Almost every platform-level Android vulnerability is either "a downward arrow did not
@@ -2331,7 +2331,7 @@ Read it as a chain of assertions, each depending on the one above:
 | Framework | Permission-check omissions, `PendingIntent` mishandling, parcel mismatch | Yes |
 | System apps | Exported components with excessive privilege | Yes |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > On an *application* assessment, only the last three rows are usually in scope, and by far the most
 > productive is "a privileged app or service exposes something that does not check the caller". You
 > will rarely be writing kernel exploits. You will regularly be finding a system or OEM app with an
@@ -2354,7 +2354,7 @@ This is the part of the chapter that turns directly into report content.
 | Play system update level stale | see §3.11.5 | Medium — Mainline components unpatched |
 | `persist.sys.usb.config` includes `adb` on a kiosk | `getprop persist.sys.usb.config` | High for embedded/kiosk deployments |
 
-> **⚠️ Warning**
+> **Warning**
 > Be scrupulous about context. On a **test device you rooted yourself**, "bootloader unlocked" and
 > "SELinux permissive" are your own doing and are not findings — they are methodology, and belong in
 > the Test Environment section. They become findings only when you observe them on a device as
@@ -2366,7 +2366,7 @@ This is the part of the chapter that turns directly into report content.
 Zygote's fork-without-exec model is the reason app startup is fast and the reason thousands of
 framework classes cost almost nothing per app. It also has a consequence worth stating plainly.
 
-> **📖 Definition — the Zygote ASLR weakness**
+> **Definition — the Zygote ASLR weakness**
 > Because app processes are `fork`ed from Zygote rather than `exec`ed fresh, they **inherit Zygote's
 > address-space layout**. Every app on the device therefore has the framework and its shared libraries
 > mapped at the same addresses, until the next reboot. An address leaked from one process is
@@ -2398,7 +2398,7 @@ grep Seccomp /proc/$(pidof -s com.example.target)/status
 # Seccomp: 2   → filter mode (0 = disabled, 1 = strict, 2 = filter)
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `Seccomp: 0` on an app process is anomalous and worth investigating. It normally means the process
 > was not created by Zygote in the usual way — a `zygisk`-injected process, an app spawned by
 > unusual means, or a device with the filter disabled. It is also a useful signal when assessing
@@ -2474,7 +2474,7 @@ getprop ro.boot.slot_suffix
 mount | grep -E ' /(system|vendor|product|odm) '
 ```
 
-> **🧠 Mental Model**
+> **Mental Model**
 > You are trying to answer four questions: *which build is this*, *is the boot chain intact*, *what is
 > modularised*, and *what did the OEM add*. The fourth is where findings live on OEM devices — vendor
 > partitions and pre-installed apps are far less scrutinised than AOSP.
@@ -2584,7 +2584,7 @@ cat /proc/$PID/status | grep -E "Uid|Gid|Groups|CapEff|Seccomp|NoNewPrivs"
 cat /proc/$PID/attr/current      # SELinux context
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > That single `/proc/<pid>/status` block is a complete picture of an app's privilege: its UID, its
 > supplementary groups (which encode some permissions, notably `AID_INET` for `INTERNET`), its
 > effective capabilities (should be empty), and whether seccomp is active. Capture it for any process
@@ -2915,7 +2915,7 @@ caveats worth naming: it fragments the notion of "patch level" into two numbers 
 it means two devices reporting the same Android release can differ in runtime internals, which
 complicates both exploitation and tooling; it concentrates trust in Google's update channel; and it
 does nothing for vendor-supplied components, which is where a large share of real-world device
-vulnerabilities live. Net: clearly correct, but it moved the problem rather than eliminating it.
+vulnerabilities live. Net: correct, but it moved the problem rather than eliminating it.
 
 ### Principal Engineer
 

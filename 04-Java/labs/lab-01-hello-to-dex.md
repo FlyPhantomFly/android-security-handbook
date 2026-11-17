@@ -29,7 +29,7 @@ X in JADX" or "X is not recoverable" is a consequence of what you measure here.
   [`../references/README.md`](../references/README.md).
 - Comfort with a terminal, at the level of [02 — Linux Basics](../../02-Linux-Basics/README.md).
 
-> **📖 Definition**
+> **Definition**
 > **Toolchain** — the ordered set of programs that transform your source into the artefact that
 > actually runs. Here the chain is `javac` (source to JVM bytecode), then `d8` (JVM bytecode to DEX),
 > then packaging. Each program is a lossy transformation, and the losses are what this lab measures.
@@ -194,7 +194,7 @@ initialised to zero, a comparison, a conditional forward jump, and an unconditio
 Every loop form in Java — `for`, `while`, `do-while`, enhanced `for` over an array — compiles to some
 arrangement of exactly those pieces. This is why a decompiler must *guess* which loop you wrote.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > The JVM is a stack machine. `aload_0` pushes local variable 0 (which is `this` in an instance
 > method) onto an operand stack; `getfield` pops an object reference and pushes a field value;
 > `invokevirtual` pops the receiver and arguments and pushes the return value. DEX, which you will
@@ -247,13 +247,13 @@ once — with a trailing space, because the compiler merged the `+ " "` into it 
 argument inside `greet()`. The `greet()` method never reads the `GREETING` field at all. There is no
 `getstatic` for it anywhere in the bytecode.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > A `static final` field of primitive or `String` type initialised with a compile-time constant
 > expression is a **compile-time constant**. The JLS requires the compiler to inline its value at
 > every use site. The field is still emitted, so reflection and other classes compiled separately can
 > find it, but no code reads it.
 
-> **⚠️ Warning**
+> **Warning**
 > This is why "I changed the constant and rebuilt only that one file, but the old value is still
 > being used" happens, and it is why storing a secret in a `private static final String` is worse
 > than storing it in a plain field: the value is not in one place you can find and audit, it is
@@ -336,7 +336,7 @@ string concatenation back into explicit `StringBuilder` calls:
 .end method
 ```
 
-> **📖 Definition**
+> **Definition**
 > **Desugaring** — rewriting a language or bytecode feature into an equivalent built from older,
 > more widely supported constructs. `d8` desugars `invokedynamic` string concatenation, lambdas,
 > default interface methods, and parts of the modern `java.time` and stream APIs, so that code
@@ -354,7 +354,7 @@ Now grep the whole disassembly for our two literals.
 grep -rn "Hello, DEX" smali_out/
 ```
 
-You will find the concatenation literal. Note that `GREETING`'s field value does not appear as a
+You will find the concatenation literal.`GREETING`'s field value does not appear as a
 `sget-object` read anywhere, for exactly the compile-time constant reason from step 3.
 
 ### Step 6 — Decompile with JADX and diff against your source
@@ -468,7 +468,7 @@ For a class that only touches `java.lang`, this is usually unnecessary, but some
 <summary>Hint 3 — `xxd` does not exist on my system</summary>
 
 Use `od -A x -t x1z -N 16 classes.dex` on any Unix, or on Windows use PowerShell:
-`Format-Hex -Path classes.dex -Count 16`. On Windows, note that `strings` is the Sysinternals tool and
+`Format-Hex -Path classes.dex -Count 16`. On Windows,`strings` is the Sysinternals tool and
 behaves differently from the Unix one; prefer
 [`../scripts/dump-strings.py`](../scripts/dump-strings.py), which is cross-platform and parses the
 string table properly instead of scanning for printable runs.
@@ -563,7 +563,7 @@ that survives only if `-g` was used.
 .end method
 ```
 
-Note that `.registers 2` counts parameter registers too. Registers are allocated at the *end* of the
+`.registers 2` counts parameter registers too. Registers are allocated at the *end* of the
 frame for parameters, which is why baksmali can name them `p0` and `p1` instead of `v0` and `v1`.
 
 ### Why `greet()` shows a literal

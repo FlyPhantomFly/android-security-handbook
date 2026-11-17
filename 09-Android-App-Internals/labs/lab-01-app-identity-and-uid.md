@@ -22,7 +22,7 @@ guessing, state:
 That last point is the real objective. Anyone can run `pm list packages -U`. A researcher can
 corroborate it against `/proc`, against `packages.list`, and against the kernel's own view.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > You are performing an identity investigation on a suspect. The package name is the name on the
 > door. The UID is the fingerprint. The SELinux label is the security clearance badge. The data
 > directory is the office. You will visit all four and check that they agree.
@@ -116,7 +116,7 @@ package:com.example.probe uid:10234
 
 Write that number down. Everything else in this lab either confirms it or explains it.
 
-> **📖 Definition — appId**
+> **Definition — appId**
 > The number after `uid:` here is technically the **appId**: the per-package identifier
 > `PackageManagerService` allocated from the range 10000–19999. For the owner user (userId 0) the
 > appId and the UID happen to be the same number, which is why the two words get used
@@ -209,7 +209,7 @@ Threads:	17
 | `Groups:` | supplementary GIDs. **3003** is `INTERNET`. 9997 is `AID_EVERYBODY`. 20234 and 50234 are the per-app cache GID and shared GID derived from the appId. |
 | `TracerPid:` | 0 means nothing is debugging it. If Frida is attached, this becomes non-zero. |
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > The `Uid:` line has four numbers because Linux tracks four UIDs per process. Zygote sets all four
 > with `setresuid()` immediately after forking, *and drops all capabilities*, so there is no saved-set
 > UID for the app to restore. This is why an app cannot "become root again" — the privilege was not
@@ -362,7 +362,7 @@ The four categories are a lossless encoding of `(appId, userId)`:
 | third | `512 + (userId & 0xff)` | `c512` |
 | fourth | `768 + (userId >> 8)` | `c768` |
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > This encoding is produced by libselinux's Android backend under
 > `external/selinux/libselinux/src/android/` when `system/sepolicy/private/seapp_contexts` marks the
 > entry `levelFrom=all`. Because SELinux MLS requires the category sets to match **exactly** for

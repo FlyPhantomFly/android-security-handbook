@@ -104,7 +104,7 @@ Signing is what turns a package name from a *label* into an *identity*. That is 
 of signing scheme exist, why each closed a specific coverage gap in its predecessor, and why the exact
 byte ranges each scheme covers is the single most important table in this chapter.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > An APK is a ZIP file wearing a uniform. The ZIP part is generic and forty years old, with all the
 > ambiguity that implies. The uniform — the manifest, the resource table, the signing block — is what
 > makes Android trust it. **Nearly every APK-level attack works by creating a gap between what the ZIP
@@ -157,7 +157,7 @@ You will see a listing something like this:
      1181  1981-01-01 01:01   META-INF/CERT.RSA
 ```
 
-> **📖 Definition**
+> **Definition**
 > A **ZIP archive** is a container format that holds many files, each optionally compressed, plus an
 > index (the *central directory*) listing what is inside and where each item starts. It was designed
 > in 1989 for floppy disks, which explains several of its odder properties.
@@ -187,7 +187,7 @@ invalidates it, and the installer rejects the package. That is the entire securi
 sentence: **anyone can read an APK, but only the holder of the original private key can produce one
 Android will accept as an update to an existing app.**
 
-> **⚠️ Warning**
+> **Warning**
 > "Anyone can read an APK" is not a flaw the developer can fix. If your app contains a secret, that
 > secret is public. Obfuscation and native code raise the cost of finding it; they do not make it
 > private. See [40-Obfuscation](../40-Obfuscation/README.md).
@@ -286,7 +286,7 @@ Those four sections are numbered deliberately. The v2 signing scheme's digest is
 section 2, the signing block itself. It has to exclude it, because the signature lives there and
 cannot cover itself.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > There is a subtlety in that scheme. The EOCD contains the offset of the central directory. Inserting
 > the signing block shifts the central directory later in the file, changing that offset. So when
 > computing or verifying a v2 digest, the verifier takes the EOCD and **substitutes the central
@@ -415,7 +415,7 @@ the bytes `50 4B`.
 | 30 | n | file name | |
 | 30+n | m | extra field | |
 
-> **⚠️ Warning**
+> **Warning**
 > **The local file header is not authoritative.** Its size, CRC and compression fields duplicate the
 > central directory's and can be made to disagree. Any tool you write must read the central directory.
 > Any tool you *use* should be checked for whether it does.
@@ -466,7 +466,7 @@ handle them and some do not.
 | 8 | DEFLATE | The normal case |
 | others | various | Rejected by the platform installer |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Some entries in a modern APK **must** be STORED and aligned, because Android memory-maps them
 > directly from the APK rather than copying them out. This is why `zipalign` exists and why alignment
 > must happen before signing. An entry that ought to be stored-and-aligned but is deflated is a build
@@ -494,7 +494,7 @@ handle them and some do not.
 | `stamp-cert-sha256` | Play source stamp | — |
 | `<name>.apk.idsig` (sibling file) | v4 signature, stored *outside* the APK | §3.5 |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The presence of `kotlin/` tells you to expect `Intrinsics.checkNotNullParameter` calls and
 > coroutine state machines in the decompiled output. The presence of `DebugProbesKt.bin` is worth
 > checking against the build type — it is not itself a vulnerability, but it is an indicator that the
@@ -505,7 +505,7 @@ handle them and some do not.
 Android does not ship XML as text. AAPT2 compiles it into a chunked binary format that is faster to
 parse and smaller. Both `AndroidManifest.xml` and every XML file under `res/` are in this format.
 
-> **📖 Definition**
+> **Definition**
 > **AXML** is a sequence of *chunks*. Every chunk begins with a `ResChunk_header` giving its type, the
 > size of its own header, and the size of the whole chunk. Chunks nest: a parser walks the tree by
 > arithmetic on these sizes rather than by scanning for delimiters.
@@ -554,7 +554,7 @@ The encoding differs based on `UTF8_FLAG`:
   byte count — each of which is one byte, or two bytes when the high bit of the first is set. Then the
   UTF-8 bytes and a `0x00` terminator.
 
-> **⚠️ Warning**
+> **Warning**
 > The UTF-8 double-length encoding is genuinely confusing and is implemented subtly differently across
 > tools. A string whose declared character count and byte count are mutually inconsistent will be read
 > differently by `aapt2`, `apktool` and the platform. This is one of the most reliable ways to build an
@@ -605,7 +605,7 @@ And `Res_value` is:
 | `0x12` | `TYPE_INT_BOOLEAN` — `data` 0 = false, non-zero = true |
 | `0x1c`–`0x1f` | Colour types |
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > An attribute has **two** representations: `rawValue` (the original text) and `typedValue` (the parsed
 > value). The platform reads `typedValue` for typed attributes. Some analysis tools display
 > `rawValue` because it is human-readable. Craft an APK where `rawValue` says `"false"` and
@@ -668,7 +668,7 @@ for that type, the one whose `ResTable_config` best matches the device's current
 (language, density, orientation, API level, and a dozen more axes) wins, and its entry supplies the
 value.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Because resolution is configuration-dependent, **reading `res/values/strings.xml` from an apktool
 > decode does not tell you what the app will actually display or use**. A backend URL may be
 > overridden in `values-v31/` or a locale-specific directory. Always dump the full table with
@@ -683,24 +683,24 @@ most valuable thing in this chapter.
 flowchart LR
     subgraph V1["v1 — JAR signing (all versions)"]
         A1["Digests the CONTENT of listed entries"]
-        A2["❌ Does not cover ZIP metadata"]
-        A3["❌ Does not cover unlisted entries"]
-        A4["❌ Does not cover the central directory"]
+        A2["Does not cover ZIP metadata"]
+        A3["Does not cover unlisted entries"]
+        A4["Does not cover the central directory"]
     end
     subgraph V2["v2 — APK Signature Scheme v2 (API 24+)"]
         B1["Digests sections 1, 3, 4 as raw bytes"]
-        B2["✅ Covers entry data + CD + EOCD"]
-        B3["✅ Any byte change breaks it"]
+        B2["Covers entry data + CD + EOCD"]
+        B3["Any byte change breaks it"]
     end
     subgraph V3["v3 — key rotation (API 28+)"]
         C1["Everything v2 covers"]
-        C2["✅ + minSdk/maxSdk in signed data"]
-        C3["✅ + proof-of-rotation lineage"]
+        C2["+ minSdk/maxSdk in signed data"]
+        C3["+ proof-of-rotation lineage"]
     end
     subgraph V4["v4 — incremental (API 30+)"]
         D1["Merkle tree in a side file .idsig"]
-        D2["✅ Enables streaming install"]
-        D3["⚠️ Requires v2 or v3 as well"]
+        D2["Enables streaming install"]
+        D3["Requires v2 or v3 as well"]
     end
     V1 --> V2 --> V3 --> V4
     style A2 fill:#f9d0d0
@@ -744,10 +744,10 @@ The three critical gaps, which together are the entire reason v2 exists:
 1. Only the **content** of each entry is digested — not its name's position, not the compression
    method, not the ZIP structure around it.
 2. Entries **not listed** in `MANIFEST.MF` are not covered at all. Historically an unlisted entry could
-   simply be ignored by the verifier.
+   be ignored by the verifier.
 3. The **central directory and EOCD are not covered**, so ZIP metadata can be altered freely.
 
-> **📖 Definition**
+> **Definition**
 > `X-Android-APK-Signed: 2, 3` is **downgrade protection**. It tells a v1-capable verifier "this APK
 > also carries v2 and v3 signatures; if you are capable of checking them, you must". Without it, an
 > attacker could strip the stronger signatures and present a v1-only APK to a modern device.
@@ -778,7 +778,7 @@ Everything from v2 onward lives in a block inserted between the entry data and t
 | `0x42726577` | Verity padding block (aligns the block to 4096) |
 | vendor-specific | Play Store metadata, dependency info, source stamps |
 
-> **⚠️ Warning**
+> **Warning**
 > **The ID-value pairs are not individually digested.** The v2 digest covers the file *outside* the
 > signing block. An attacker who can already produce a validly-signed APK can therefore add arbitrary
 > data under an unknown ID without breaking verification. Unknown IDs are ignored by design, for
@@ -848,7 +848,7 @@ v4 does not stand alone — it requires a v2 or v3 signature in the APK itself.
 | 16 KB alignment | Required for Android 15+ device compatibility |
 | `useLegacyPackaging` | Gradle flag restoring the old extract-based behaviour |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `extractNativeLibs="false"` means the `.so` you want to analyse exists *only* inside the APK, not as
 > a separate file in the app's data directory. Pull it from the APK, not from `/data/app/.../lib/`.
 > It also means patching the library requires repackaging the whole APK, which changes the signature.
@@ -867,10 +867,10 @@ v4 does not stand alone — it requires a v2 or v3 signature in the APK itself.
 All splits of an installed app must share the same signer. Installation uses
 `adb install-multiple` or a session-based install.
 
-> **⚠️ Warning**
+> **Warning**
 > When you pull an app with `adb shell pm path <pkg>` and get several paths, you must pull **all** of
 > them. Analysing only `base.apk` will miss native libraries, resources, and sometimes whole features.
-> A surprising number of reports contain findings like "the app has no native code" that are simply
+> A surprising number of reports contain findings like "the app has no native code" that are
 > wrong because only the base split was examined.
 
 ---
@@ -902,7 +902,7 @@ technique.
 | AAPT2 | `frameworks/base/tools/aapt2/` |
 | `zipalign` | `build/tools/zipalign/` |
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > `frameworks/base/libs/androidfw/include/androidfw/ResourceTypes.h` is the definitive reference for
 > every AXML and `resources.arsc` structure in this chapter. Every constant in section 3.3 and 3.4 is
 > declared there as a C++ struct or enum. If you ever need to write your own parser — and doing so is
@@ -1018,7 +1018,7 @@ Applying the rubric from [80-Appendix](../80-Appendix/README.md):
 | `allowBackup="true"` with a session token stored locally | Medium | Extraction without root, given device access |
 | No runtime integrity check | Informational–Low | Only meaningful when the device owner is in the threat model |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Resist rating "no tamper detection" as anything but Informational unless the threat model genuinely
 > includes a hostile device owner — banking, DRM, payments, gaming. For an internal enterprise app on
 > managed devices, recommending it costs the client engineering effort and buys nothing. See
@@ -1142,7 +1142,7 @@ sequenceDiagram
     Note over F: File is simultaneously<br/>a valid DEX and a valid ZIP
     V->>F: parse as ZIP from the END
     V->>V: digest each listed entry's content
-    V-->>V: ✅ all digests match — signature valid
+    V-->>V: all digests match — signature valid
     R->>F: read from OFFSET 0
     R-->>R: sees the ATTACKER'S DEX
     Note over R: Malicious code runs with<br/>the victim app's identity
@@ -1296,7 +1296,7 @@ unzip -l target.apk | grep -iE "mapping|seeds|usage|\.pro$"
 **Impact.** Removes the entire benefit of obfuscation. Low to Medium — it is not directly exploitable,
 but it materially reduces attacker cost for every other finding.
 
-**Fix.** Ensure the mapping file is uploaded to Play for crash deobfuscation and excluded from
+**Fix.** Upload the mapping file to Play for crash deobfuscation and exclude it from
 packaging.
 
 ### 5.5 Attack scenarios
@@ -1380,7 +1380,7 @@ flowchart TD
     style X fill:#f9d0d0
 ```
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Every client-side integrity control answers the question "has this app been modified?" *using code
 > that the modifier controls*. That is a fundamentally losing position. The only control that escapes
 > it is one where the verdict is produced by hardware the attacker does not control and checked by a
@@ -1404,7 +1404,7 @@ When a check does fail, how the app responds matters as much as the check.
 | Silently degrade functionality | Harder to attribute; the attacker may not notice for a long time |
 | Report to the server and let the server decide | **Best** — the decision moves outside the attacker's control |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The silent-degradation response is why you must be alert during dynamic analysis. An app that seems
 > to work but "just doesn't load transactions" may have detected you twenty minutes ago. See
 > [67-BypassingProtections](../67-BypassingProtections/README.md) on the silent-failure problem.
@@ -1472,7 +1472,7 @@ grep -iE 'debuggable|allowBackup|usesCleartext|exported'        /tmp/manifest-aa
 grep -iE 'DEBUGGABLE|ALLOW_BACKUP|exported'                     /tmp/manifest-platform.txt
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > If the three disagree, **the platform is right and your tools are wrong** — and the disagreement
 > itself is a high-value finding, because it means the APK was crafted to evade analysis. Report both
 > the divergence and the real value.
@@ -1586,7 +1586,7 @@ Java_com_example_Integrity_hasSigningBlock(JNIEnv* env, jclass, jstring apkPath)
 }
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > When you meet an app whose tamper detection survives your Java hooks, this is what it is doing. Your
 > route is `strings` on the `.so` looking for `APK Sig Block 42` or `META-INF`, then Ghidra to locate
 > the function, then a Frida `Interceptor.attach` on it — or an inline patch to force the return value.
@@ -1659,7 +1659,7 @@ Java.perform(function () {
 });
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > This defeats *Java-side* checks only. An app performing the check in native code
 > ([section 6.5](#65-native--jni-perspective)) is unaffected, and you will need to hook or patch the
 > native function instead. If your bypass "works" but the app still behaves oddly, assume a second
@@ -1773,7 +1773,7 @@ public static String getOwnSignatureSha256(Context context) throws Exception {
 }
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > `GET_SIGNATURES` (the pre-API-28 constant) returns only the *original* signer and is not
 > rotation-aware. Code still using it will break when a developer rotates keys. Use
 > `GET_SIGNING_CERTIFICATES` on API 28+.
@@ -1914,7 +1914,7 @@ public static boolean isPeerTrusted(Context ctx, String peerPackage, byte[] expe
 }
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > When you review an app that binds to another app's service, check whether it verifies the peer's
 > signature. Very often it checks only the package name — and any app can *claim* a package name on a
 > device where the legitimate one is not installed. That is a real finding, and its severity depends on
@@ -1993,7 +1993,7 @@ public static void safeExtract(File zipFile, File destDir) throws IOException {
 }
 ```
 
-> **📖 Definition**
+> **Definition**
 > Since `targetSdkVersion` 34, Android installs a default `ZipPathValidator` that causes
 > `ZipEntry` construction to throw on entry names containing `..` or starting with `/`. That is a
 > useful backstop, **not** a substitute for the canonical-path check above — it does not cover
@@ -2073,7 +2073,7 @@ A ZIP archive containing an Android application's compiled code (`classes.dex`),
 (`resources.arsc` and `res/`), a binary manifest, native libraries, and a cryptographic signature in
 `META-INF/`.
 
-**Q: Why can you not simply edit a file inside an APK and install it?**
+**Q: Why can you not edit a file inside an APK and install it?**
 The APK is signed. Modifying covered bytes invalidates the signature, and the installer rejects it. You
 must re-sign, which changes the signing certificate unless you hold the original private key.
 
@@ -2158,7 +2158,7 @@ backwards-scanned EOCD with a variable-length comment, and permitted duplicate n
 container with a single authoritative index, content-addressed entries, and a length-prefixed header at
 offset 0. It then honestly accounts for the cost: every build tool, every analysis tool, every app
 store pipeline, and a decade of devices would need to change, for a class of bug that v2 signing
-already largely closed. The correct conclusion is usually that the format is not the leverage point —
+already largely closed. The correct conclusion is usually that the format is not the point of attack —
 the signing scheme was, and it worked.
 
 **Q: Argue for and against making runtime integrity checks a platform-provided API rather than

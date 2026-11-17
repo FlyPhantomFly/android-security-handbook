@@ -46,7 +46,7 @@ git clone --depth 50 <repository-url> target-app
 cd target-app
 ```
 
-> **⚠️ Do not run `./gradlew` and do not open the project in an IDE for steps 1–8.**
+> **Do not run `./gradlew` and do not open the project in an IDE for steps 1–8.**
 > The configuration phase executes arbitrary code from the project and from every plugin it applies.
 > That is the subject of §5.4, and this lab is partly about internalising that constraint. Steps 9–10
 > run the build deliberately, in a container.

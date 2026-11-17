@@ -37,7 +37,7 @@ granting that dependency arbitrary code execution at process start, inside your 
 permissions, before your code can defend itself. The provider is merged into your manifest by the
 Gradle manifest merger. You never wrote it and you will not find it in your source tree.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > `Application.onCreate()` feels like the front door of the house. It is actually the moment you walk
 > into the living room. The manifest merger let the contractors in through the back door an hour ago,
 > and they have been working the whole time.

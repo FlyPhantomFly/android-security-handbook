@@ -21,7 +21,7 @@ Concretely you will:
 5. Observe where the program crashes instead, and explain why that location is worse for a defender and
    better for an attacker.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Kotlin's type system is a *contract*. `Intrinsics.checkNotNullParameter` is the *bouncer at the door*
 > who enforces the contract for anyone who did not sign it — Java callers, reflection, deserialisers,
 > JNI. Removing the bouncer does not make the building safe; it just means violations are discovered
@@ -285,7 +285,7 @@ Fill in this table from what you see. Do not copy it from below — derive it.
 | `Session.setUserId` | `lateinit` write | `checkNotNullParameter(v, "<set-?>")` | `NullPointerException` |
 | `readApiKeySafely` | Elvis with `error()` | none | `IllegalStateException` with your message |
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > Notice `checkNotNullParameter(str, "<set-?>")` on the setter. `<set-?>` is the compiler's internal
 > name for a property setter's implicit value parameter, because the developer never named it. Seeing
 > that exact string in decompiled output tells you the enclosing method is a generated property setter,
@@ -294,7 +294,7 @@ Fill in this table from what you see. Do not copy it from below — derive it.
 
 ### Step 2 — Confirm the difference between the platform-type hole and `!!`
 
-Run these two commands and note that the first shows *nothing*.
+Run these two commands and confirm that the first shows *nothing*.
 
 ```bash
 # host
@@ -308,7 +308,7 @@ Kotlin type checker agrees with them for the rest of the function. But nothing c
 version is, counter-intuitively, the *safer* of the two, because at least the failure is attributed to
 the assertion.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > When reviewing a Kotlin Android app, the highest-yield search is not for `!!`. It is for non-null
 > Kotlin locals assigned from framework getters: `intent.getStringExtra`, `bundle.getString`,
 > `cursor.getString`, `jsonObject.getString`, `sharedPrefs.getString`, and every JNI method. Those

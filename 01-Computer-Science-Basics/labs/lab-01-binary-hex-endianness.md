@@ -30,7 +30,7 @@ By the end you will have converted numbers by hand, verified your answers agains
 wrote, determined the endianness of your own machine experimentally, and annotated the header bytes
 of a real DEX file and a real ELF file.
 
-> **📖 Definition**
+> **Definition**
 > A **byte** is eight binary digits (bits), so it can hold 256 distinct values: 0 to 255 if you
 > interpret it as unsigned, or −128 to 127 if you interpret it as signed. The bits themselves carry
 > no interpretation; *interpretation is something the reader applies*, and choosing the wrong
@@ -107,7 +107,7 @@ ls -l extracted/lib/arm64-v8a/ | head
 If the APK you chose has no native libraries, use any Linux binary instead — `/bin/ls` is an ELF and
 serves the same purpose for the ELF portion of this lab.
 
-> **⚠️ Warning**
+> **Warning**
 > Only unpack APKs you are permitted to analyse. Pulling an APK off your own device for study is
 > normal practice; redistributing a proprietary APK is not. Nothing in this lab modifies the APK.
 
@@ -171,9 +171,9 @@ numbers in *two's complement*, which is defined as: invert every bit of the posi
 one. The reason is not aesthetic. It is that with two's complement, the same addition circuit works
 for signed and unsigned operands, and `x + (−x)` naturally overflows to zero.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Think of an 8-bit value as a car odometer with 256 positions arranged in a circle. Counting up
-> from 255 wraps to 0. Counting *down* from 0 wraps to 255. Two's complement simply declares that
+> from 255 wraps to 0. Counting *down* from 0 wraps to 255. Two's complement declares that
 > the top half of the circle (128–255) is read as the negatives (−128 to −1). The bits did not
 > change; only the label on the dial did.
 
@@ -204,7 +204,7 @@ Then answer, in one sentence each:
 | Word / dword | 32 | 4 | 0–4294967295 | `unsigned int`, `uint32_t` |
 | Double word / qword | 64 | 8 | 0–18446744073709551615 | `unsigned long`, `uint64_t` |
 
-> **⚠️ Warning**
+> **Warning**
 > The word "word" is ambiguous and you must always ask whose definition is in use. In Intel
 > documentation a *word* is 16 bits. In ARM documentation a *word* is 32 bits and a *doubleword* is
 > 64 bits. In DEX documentation values are described by explicit width (`uint`, `ushort`). When you
@@ -290,7 +290,7 @@ by default. The right column, between pipes, is the ASCII rendering, with a dot 
 byte outside the printable range 0x20–0x7E.
 
 **C2. Prove to yourself that ASCII is just numbers.** Look up the byte values for `H`, `e`, `A` and
-the newline in your dump. Note that `0x41` is `A`, `0x61` is `a`, and the difference between an
+the newline in your dump.`0x41` is `A`, `0x61` is `a`, and the difference between an
 uppercase and lowercase ASCII letter is exactly bit 5 (`0x20`).
 
 **C3. Practise offsets.** Answer from the dump alone: what is the byte at offset `0x07`? At what
@@ -343,7 +343,7 @@ format documentation. Its first fields are:
 
 Write down the eight bytes your file actually has and translate each to its ASCII character. Modern
 tooling emits `035`, `037`, `038` or `039` depending on the language features used; record which
-version yours is. Note that the version digits are ASCII characters, not a binary number — `035` is
+version yours is.the version digits are ASCII characters, not a binary number — `035` is
 the three bytes `0x30 0x33 0x35`, not the value 35.
 
 **D4. Decode `header_size` and `endian_tag` as an endianness exercise.** Read the four bytes at
@@ -365,7 +365,7 @@ stat -c %s extracted/classes.dex
 If they match, you have just validated a DEX header by hand, which is exactly what ART's verifier
 does before it will load the file.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Apps that want to frustrate static analysis frequently ship a `classes.dex` whose `checksum`,
 > `signature` or `file_size` fields are deliberately wrong, or whose `header_size` points past the
 > real header. Many desktop parsers refuse the file; the Android runtime, historically more
@@ -449,7 +449,7 @@ python3 "$DUMP" base.apk
 python3 "$DUMP" --length 128 /bin/ls
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > `python3: can't open file '.../hexdump-header.py'` means `$REPO` is unset or wrong — the working
 > directory `~/android-lab/lab01` is outside the repository, so `../scripts/` does **not** resolve to
 > the chapter's `scripts/` directory. Re-run the `export REPO=...` and the `ls` check from Setup
@@ -520,7 +520,7 @@ example, pull one off a device: `adb pull /system/lib64/libc.so`.
 | 65535 | `1111 1111 1111 1111` | `0xFFFF` | Largest 16-bit unsigned value |
 | 112 | `0111 0000` | `0x70` | The DEX `header_size` |
 | 127 | `0111 1111` | `0x7F` | Largest 8-bit signed value; also ELF's first magic byte |
-| 3735928559 | `1101 1110 1010 1101 1011 1110 1110 1111` | `0xDEADBEEF` | The classic "obviously fake pointer" sentinel |
+| 3735928559 | `1101 1110 1010 1101 1011 1110 1110 1111` | `0xDEADBEEF` | The classic joke pointer sentinel |
 
 ### A5 — Two's complement, worked
 
@@ -605,7 +605,7 @@ demand to be loaded at one fixed address, which would defeat ASLR entirely. That
 file-format expression of a security decision, and it is why the addresses you read in a `.so`
 disassembly are offsets from an unknown base rather than the addresses you will see at runtime.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > `e_entry` in an `ET_DYN` file is a *relative* virtual address. At load time the kernel or the
 > dynamic linker picks a base address — call it `L` — maps the segments described in the program
 > headers there, and the real entry point becomes `L + e_entry`. This is exactly why an address you
@@ -653,7 +653,7 @@ You have completed this lab when all of the following are true.
    DEX.
 
 3. **Read a multi-DEX APK.** Large apps ship `classes.dex`, `classes2.dex`, `classes3.dex` and so on.
-   Dump the header of each and note that `header_size` and `endian_tag` are identical while
+   Dump the header of each and confirm that `header_size` and `endian_tag` are identical while
    `string_ids_size` differs wildly. Explain why.
 
 4. **Look at a 32-bit ELF.** Extract `lib/armeabi-v7a/*.so` from an APK that ships both ABIs and dump

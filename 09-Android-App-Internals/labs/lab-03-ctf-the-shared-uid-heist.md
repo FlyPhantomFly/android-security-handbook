@@ -26,7 +26,7 @@ neat way to share a login session — both declare the same `android:sharedUserI
 root. You may not use `run-as` on the Vault (it is not debuggable). Everything you need is a
 consequence of a single line in two manifests.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Every lab so far has treated the UID as a wall between apps. This lab is about what happens when
 > two apps agree, at build time, to stand on the same side of the wall — and what that does to the
 > blast radius of a bug in the app nobody cared about.
@@ -780,7 +780,7 @@ describing the data-migration plan.
 ---
 ---
 
-# ⚠️ SPOILERS BELOW — FULL SOLUTION ⚠️
+# SPOILERS BELOW — FULL SOLUTION 
 
 **Everything past this line gives the answer away. Do not read it until you have the flag or have
 genuinely exhausted the three hints.**

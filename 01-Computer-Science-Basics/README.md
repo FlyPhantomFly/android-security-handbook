@@ -91,7 +91,7 @@ they mean something, you know exactly which of five things to check next. That d
 having a next step and not having one — is what this chapter buys you, and it is why it comes before
 Linux, before Java, and long before any tool.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Every tool you will use is an *opinion* about the machine, encoded by somebody who understood the
 > machine. When two tools disagree, or when one fails, only knowledge of the machine breaks the tie.
 > Tools are borrowed understanding; this chapter is your own.
@@ -178,7 +178,7 @@ Do not try to memorise the tables on the first pass. Read for the shape of the t
 then come back. The [cheatsheet](cheatsheet.md) exists so that you never have to memorise a constant,
 and the [FAQ](faq.md) answers the questions people are embarrassed to ask out loud.
 
-> **⚠️ Warning**
+> **Warning**
 > This chapter contains a lab that deliberately corrupts a return address ([Lab 03](labs/lab-03-stack-frames-and-overflow.md)).
 > It stops at *demonstrating control* and contains no shellcode and no working exploit. Run it on a
 > machine you own, against a program you compiled yourself. Everything in this repository assumes you
@@ -258,7 +258,7 @@ machine code running at exception level EL0.
 Three of those words have not been defined yet, and this chapter promised not to do that. Here they
 are; each gets a full treatment later, and none of them is needed to follow the paragraph above.
 
-> **📖 Definition — Bytecode**
+> **Definition — Bytecode**
 > Instructions for a machine that does not physically exist. A real CPU has an instruction set burned
 > into silicon; a *virtual* machine has one defined in software, and a program on the real CPU reads
 > those instructions and carries them out. Bytecode is the compact binary encoding of that imaginary
@@ -266,7 +266,7 @@ are; each gets a full treatment later, and none of them is needed to follow the 
 > anything else that has a runtime, because the runtime, not the chip, does the interpreting.
 > Chapter [12 — DEX Internals](../12-DEX-Internals/README.md) reads a DEX file byte by byte.
 
-> **📖 Definition — `dex2oat`, and JIT versus AOT**
+> **Definition — `dex2oat`, and JIT versus AOT**
 > `dex2oat` is a program on the device. It reads DEX bytecode and writes out real AArch64 machine
 > code, so the CPU can execute it directly instead of ART interpreting it instruction by instruction.
 > Doing that in advance — at install time, or overnight while the phone charges — is **AOT**
@@ -277,18 +277,18 @@ are; each gets a full treatment later, and none of them is needed to follow the 
 > [§3.26](#326-interpreters-compilers-jit-and-aot) of this chapter builds the idea up from nothing;
 > chapter [13 — ART](../13-ART/README.md) owns the Android specifics.
 
-> **📖 Definition — Exception level (EL0, EL1)**
+> **Definition — Exception level (EL0, EL1)**
 > AArch64 CPUs run code at one of four privilege levels, numbered EL0 (least privileged) to EL3
 > (most). **EL0** is where all ordinary application code runs — your app, and every library it loads.
 > **EL1** is where the kernel runs. The level is a hardware state, not a software convention: at EL0
-> certain instructions simply will not execute and certain memory is unreachable, enforced by the
+> certain instructions will not execute and certain memory is unreachable, enforced by the
 > silicon, and no amount of clever code at EL0 changes that. This is the physical basis of the entire
 > Android security model, and
 > [§3.11](#311-kernel-space-user-space-privilege-rings-and-exception-levels) of this chapter builds it
 > up properly.
 
 When that code needs anything from outside its own address space — a file, a socket, more memory, the
-current time, a Binder transaction — it cannot simply do it. It executes the `SVC #0` instruction,
+current time, a Binder transaction — it cannot do it. It executes the `SVC #0` instruction,
 which is a deliberate hardware exception that switches the CPU to EL1 and enters the kernel at a
 fixed address. The kernel checks whether the caller is permitted to do what it asked, does it, and
 returns. Everything Android's security model claims rests on the fact that user-space code physically
@@ -370,7 +370,7 @@ device.
 
 Above that sit the segments of the main executable, mapped directly from the ELF file: executable
 code that is readable and executable but not writable, read-only constants, and writable globals.
-Note that no normal region is simultaneously writable and executable. When you find one, something
+no normal region is simultaneously writable and executable. When you find one, something
 is generating code at runtime — the ART JIT, a packer unpacking itself, or an injected agent.
 
 Then the heap, which historically grew upward from the end of the data segment by moving the "program
@@ -510,7 +510,7 @@ data live in the *same* memory and are made of the *same* bits. Earlier machines
 change what they computed. Storing the program as data means a machine can load a new program, and
 means one machine can run any program.
 
-> **📖 Definition — Stored-program computer**
+> **Definition — Stored-program computer**
 > A machine in which the program is held in the same read/write memory as the data it operates on,
 > so that instructions can be loaded, generated, and modified at runtime by other instructions.
 
@@ -539,7 +539,7 @@ the number of address lines determines how much memory can be addressed. Thirty-
 address 4 GiB, which is why 32-bit systems hit a 4 GiB wall, and why every current Android device is
 64-bit.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > Peripherals are not reached with special instructions on ARM. They are *memory-mapped*: the
 > hardware designer assigns a range of physical addresses to a device's registers, and writing to
 > those addresses configures the device. This is why a kernel driver bug that lets user space control
@@ -582,7 +582,7 @@ Eight bits grouped together form a **byte**, giving 2⁸ = 256 distinct patterns
 smallest unit that memory hardware lets you address individually. When you read that a variable is
 "at address `0x7f8a1c0000`", that address identifies one byte. There is no pointer to a bit in C.
 
-> **📖 Definition**
+> **Definition**
 > **Bit** — a single binary digit, the smallest unit of information.
 > **Nibble** — four bits, exactly one hexadecimal digit.
 > **Byte** — eight bits, the smallest individually addressable unit of memory.
@@ -653,7 +653,7 @@ Work through the full table once by hand; every value in it is one you will actu
 | 256 | `1 0000 0000` | `0x100` | Needs a ninth bit — the byte overflow boundary |
 | 4096 | — | `0x1000` | The default page size |
 | 65535 | — | `0xFFFF` | Largest unsigned 16-bit; largest TCP port |
-| 3735928559 | — | `0xDEADBEEF` | The classic "obviously fake pointer" filler |
+| 3735928559 | — | `0xDEADBEEF` | The classic joke filler value |
 
 #### 3.2.5 Why hexadecimal wins
 
@@ -679,7 +679,7 @@ mask you can read off the page.
 The third reason is social: `xxd`, `readelf`, `objdump`, `gdb`, `lldb`, Ghidra, IDA, Frida and every
 Android tombstone print in hex. Fighting the convention costs you time on every command.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Learn to recognise values on sight. `0x7F454C46` is ELF. `0x504B0304` is a ZIP or APK.
 > `0x64657801`-ish starting `64 65 78 0a` is DEX. `0xCAFEBABE` is a Java `.class` file — and also the
 > Mach-O fat binary magic, which is a nice reminder that magic numbers are conventions, not
@@ -698,7 +698,7 @@ hardware needs one adder or two.
 The most significant bit ends up acting as a sign bit, but it is a *consequence* of the scheme, not a
 separate field.
 
-> **📖 Definition — Two's complement**
+> **Definition — Two's complement**
 > A representation of signed integers in which the value of an *n*-bit pattern *b* is
 > `b` if the top bit is 0, and `b − 2ⁿ` if the top bit is 1. Negation is bitwise NOT followed by
 > adding one.
@@ -788,7 +788,7 @@ void *p = malloc(count * sizeof(struct item));   // count = 0x20000000, sizeof =
 The disciplined fix is to check for overflow before multiplying, or to use a checked helper such as
 `__builtin_mul_overflow`, or to use `calloc`, which is required to detect the overflow itself.
 
-> **⚠️ Warning**
+> **Warning**
 > When you review decompiled code, the decompiler's type inference is a *guess*. Ghidra frequently
 > shows `int` where the source had `size_t`, or `undefined4` where the width matters. Confirm
 > signedness by looking at the actual comparison instruction: on AArch64, `B.GT`/`B.LT` are the
@@ -862,7 +862,7 @@ struct.pack(">I", 0x12345678)   # b'\x12\x34\x56\x78'  big-endian, 32-bit
 struct.pack("<Q", 0x7f8a1c0000) # little-endian, 64-bit — the form addresses take
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > When a value from a hex dump "looks reversed", it is not corrupt — it is little-endian. This is the
 > single most common false alarm for people new to binary formats. The rule for deciding whether to
 > reverse: if the bytes are a multi-byte **number** (a size, an offset, a checksum, an address),
@@ -904,7 +904,7 @@ UTF-8's four.
 | UTF-16 | 2 or 4 bytes | Java/Kotlin `String` in memory | `length()` counts code units, not characters |
 | MUTF-8 | 1–6 bytes | DEX string data, `NewStringUTF` | Not valid UTF-8 for supplementary characters |
 
-> **⚠️ Warning**
+> **Warning**
 > The MUTF-8 distinction is a real source of bugs and a real source of findings. Passing a genuine
 > UTF-8 buffer containing an emoji to `NewStringUTF` produces undefined behaviour, and passing a
 > string containing an embedded NUL through the JNI boundary can truncate on one side and not the
@@ -992,12 +992,12 @@ to another core is not necessarily the order they appear in the source.
 | Caches | Latency | Cache timing side channels; Flush+Reload |
 | SIMD (NEON/SVE) | Data parallelism | Constant-time crypto implementations rely on it |
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > AArch64 has a *fixed 4-byte instruction encoding* and requires 4-byte alignment for instruction
 > fetch. Two consequences follow that you will use. First, you cannot jump into the middle of an
 > instruction to reinterpret its bytes as a different instruction — the "unaligned gadget" trick that
-> makes x86 ROP so productive simply does not exist on ARM, so ARM gadget sets are smaller and more
-> obviously intentional. Second, any address that is not a multiple of four cannot be a valid ARM
+> makes x86 ROP so productive does not exist on ARM, so ARM gadget sets are smaller and more
+> deliberate. Second, any address that is not a multiple of four cannot be a valid ARM
 > code address, which is a fast sanity check when you are staring at a corrupted pointer.
 
 ---
@@ -1039,7 +1039,7 @@ roles are how you read disassembly. The procedure call standard for AArch64 is A
 | `V8`–`V15` | — | SIMD/FP; **low 64 bits are callee-saved** | Partly callee |
 | `V16`–`V31` | — | SIMD/FP temporaries | Caller |
 
-> **📖 Definition — Caller-saved and callee-saved**
+> **Definition — Caller-saved and callee-saved**
 > A **caller-saved** (volatile) register may be freely overwritten by any function you call, so if
 > you need its value afterwards you must save it yourself before the call. A **callee-saved**
 > (non-volatile) register must be preserved: a function that uses one must save it on entry and
@@ -1104,7 +1104,7 @@ would spend almost all its time waiting.
 **The solution.** A hierarchy of progressively larger and slower stores, in which each level caches
 the level below it. This works only because of two empirical properties of real programs:
 
-> **📖 Definition — Locality of reference**
+> **Definition — Locality of reference**
 > **Temporal locality**: a memory location accessed once is likely to be accessed again soon (loop
 > counters, the top of the stack).
 > **Spatial locality**: locations near a recently accessed one are likely to be accessed soon
@@ -1138,7 +1138,7 @@ __builtin___clear_cache((char *)buf, (char *)buf + len);
 // This expands to the DC CVAU / DSB ISH / IC IVAU / DSB ISH / ISB sequence.
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > This is a genuinely useful fingerprint. Native code that calls `__builtin___clear_cache`,
 > `cacheflush`, or emits `IC IVAU` / `ISB` instructions is generating or patching code at runtime.
 > In an app's own `.so` that is a strong indicator of a packer, an obfuscation runtime, or an inline
@@ -1183,7 +1183,7 @@ of it.
 | Disassembly | Disassembler | Exact | `objdump`, `llvm-objdump`, `r2` |
 | Decompilation (pseudo-C) | Decompiler | **A guess** | Ghidra, IDA Hex-Rays |
 
-> **⚠️ Warning**
+> **Warning**
 > Decompiler output is an inference, not a translation. It invents variable names, guesses types and
 > signedness, sometimes drops a check it could not model, and occasionally produces code whose
 > behaviour differs from the binary. When the decompiled function is the one your finding depends on,
@@ -1201,11 +1201,11 @@ the middle of a function, you are usually looking at data.
 to write it. Reading means that given twenty lines of AArch64 you can say "it compares the length in
 `W1` against `0x20`, branches to the error path if greater, and otherwise calls `memcpy` with the
 destination in `X0`". That needs the register roles, about thirty mnemonics, the condition codes, and
-the prologue/epilogue patterns — a weekend of study, and the highest-leverage weekend available to
+the prologue/epilogue patterns — a weekend of study, and the highest-value weekend available to
 you, because decompilers fail precisely on the code that matters most: obfuscated routines,
 hand-written crypto, and anti-tamper checks.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Assembly is a language you read like a menu in a foreign country, not one you compose poetry in.
 > Recognition, not fluency, is the goal.
 
@@ -1219,12 +1219,12 @@ all of them must share one screen, one radio and one flash chip without corrupti
 Every one of those requirements says that *somebody must arbitrate*, and that the arbitrator must be
 more privileged than the programs it arbitrates.
 
-> **📖 Definition — Operating system**
+> **Definition — Operating system**
 > A body of software that (a) abstracts hardware into portable interfaces, (b) multiplexes limited
 > hardware resources between competing programs, and (c) enforces isolation between those programs.
 > On Android the operating system is the Linux kernel plus the Android user space around it.
 
-> **📖 Definition — Kernel**
+> **Definition — Kernel**
 > The single privileged program that is always resident and is the only software permitted to execute
 > privileged instructions and touch hardware directly. Everything else runs in *user space* and must
 > ask the kernel for anything it wants, through a *system call*.
@@ -1344,7 +1344,7 @@ turns any user-space process into a kernel-memory reader.
 | **MTE** (Memory Tagging Extension) | Allocation and pointer tags must match on access | ARMv8.5+; used for heap safety on supporting devices |
 | **Shadow Call Stack** | Return addresses kept in a separate `X18`-based region | Used in AOSP; the reason `X18` is reserved on Android |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > When you assess the severity of a native memory-corruption finding, the mitigations active on the
 > target device change the honest conclusion. A stack overflow on a binary built with
 > `-fstack-protector-strong` and running with PAC and shadow call stack enabled is realistically a
@@ -1361,7 +1361,7 @@ turns any user-space process into a kernel-memory reader.
 registers, no identity. A **process** is a program that has been loaded and given the resources it
 needs to execute.
 
-> **📖 Definition — Process**
+> **Definition — Process**
 > An executing instance of a program, consisting of a private virtual address space, one or more
 > threads of execution, and a set of kernel-held resources: an open file table, signal dispositions,
 > credentials, a working directory, and an entry in the kernel's task list.
@@ -1462,7 +1462,7 @@ column of `ps`.
 | `+` | Foreground process group | |
 | `l` | Multi-threaded | Almost every Android process |
 
-> **📖 Definition — Zombie process**
+> **Definition — Zombie process**
 > A process that has exited but whose exit status has not yet been collected by its parent with
 > `wait4()`. It holds no memory and runs no code; only its task structure survives so that the exit
 > status can be reported. You cannot kill a zombie — it is already dead. Either the parent reaps it,
@@ -1631,7 +1631,7 @@ window before the drop, you have found a very serious bug — which is why that 
 `frameworks/base/core/jni/com_android_internal_os_Zygote.cpp` is among the most heavily reviewed in
 AOSP.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > Both `fork()` and `pthread_create()` are implemented by the *same* syscall, `clone`, differing only
 > in flags. `fork` shares almost nothing; `pthread_create` passes `CLONE_VM | CLONE_FS | CLONE_FILES |
 > CLONE_SIGHAND | CLONE_THREAD` and friends so the new task shares the address space. The Linux kernel
@@ -1673,7 +1673,7 @@ apps with processes and UIDs, and why "I ran my code in a thread" provides no is
 
 **Scheduling.** The kernel decides which runnable thread executes on which core, and for how long.
 
-> **📖 Definition — Preemptive multitasking**
+> **Definition — Preemptive multitasking**
 > A scheduling model in which the kernel can suspend a running thread at any point — driven by a
 > timer interrupt — and resume a different one, without the thread's cooperation. The alternative,
 > cooperative multitasking, requires threads to yield voluntarily, and a single misbehaving thread
@@ -1701,11 +1701,11 @@ apps with processes and UIDs, and why "I ran my code in a thread" provides no is
 Step 3 is the expensive one. Changing the translation tables would ordinarily require invalidating
 the TLB, throwing away every cached translation. ARM avoids most of that cost with **ASIDs** (Address
 Space Identifiers): each process gets a tag, TLB entries are tagged with it, and entries for other
-processes simply do not match rather than needing to be flushed. Even so, a switch between processes
+processes do not match rather than needing to be flushed. Even so, a switch between processes
 costs meaningfully more than a switch between threads of the same process, because the caches are now
 full of the wrong process's data.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Thread inventory is cheap reconnaissance. `ls /proc/<pid>/task/` lists every thread and
 > `cat /proc/<pid>/task/*/comm` names them. An app that normally has 42 threads and now has 45, three
 > of them named `gmain`, `gdbus` and `gum-js-loop`, is running a Frida agent — those names come from
@@ -1789,7 +1789,7 @@ practicality: forcing page faults on the data being validated, inflating the fil
 longer, pinning threads to different cores, or introducing memory pressure all make a "one in ten
 thousand" race into a reliable one.
 
-> **⚠️ Warning**
+> **Warning**
 > "It only happened once" is not evidence that a race is unexploitable, and neither is "we could not
 > reproduce it". Races are probabilistic, and an attacker gets unlimited attempts. Report the
 > mechanism, not the observed frequency.
@@ -1808,7 +1808,7 @@ memory for the value it should return to. The requirement is exactly last-in-fir
 recently entered function is always the first to leave. A stack is the data structure for that
 requirement, and hardware supports it with a dedicated stack pointer register.
 
-> **📖 Definition — Stack frame (activation record)**
+> **Definition — Stack frame (activation record)**
 > The block of stack memory belonging to one active function call. It typically contains the
 > function's local variables, saved copies of callee-saved registers, the saved frame pointer of the
 > caller, and — on architectures that spill it — the return address.
@@ -1888,7 +1888,7 @@ corrupt a return address by that route. When you audit ARM code, the first quest
 candidate function is "does it call anything?" — and the answer is visible in one instruction, the
 presence or absence of `stp x29, x30`.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > On x86-64 the return address is *data on the stack* from the moment of the call. On AArch64 it
 > starts as a *value in a register* and only becomes data when the function is a non-leaf. That
 > single design choice is why a great many trivially exploitable x86 stack overflows have no
@@ -1944,7 +1944,7 @@ mapping region. This is the "stack clash" class of bug, and it is why compilers 
 | **FORTIFY_SOURCE** | Compiler substitutes checked variants when the destination size is known | `strcpy`/`sprintf` into a statically sized buffer | Copies whose destination size is not statically known |
 | **CFI** | Indirect calls checked against the target's type signature | Calling a function of the wrong type through a corrupted pointer | Direct return-address corruption |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Recognising `paciasp` at the top of a function and `autiasp`/`retaa` at the bottom tells you PAC is
 > active on that binary, which changes your impact statement from "control-flow hijack" to
 > "data-only corruption or denial of service". Writing that distinction into a report is the
@@ -1968,7 +1968,7 @@ size the compiler knows. Everything else — an object that outlives the functio
 buffer whose size depends on input, a linked structure that grows — needs memory with an arbitrary
 lifetime, requested and released explicitly. That memory is the heap.
 
-> **📖 Definition — Heap**
+> **Definition — Heap**
 > A region of a process's memory from which blocks of arbitrary size are allocated on request and
 > released in arbitrary order, managed by an *allocator* library rather than by the compiler.
 
@@ -2034,7 +2034,7 @@ do not transfer.
 
 **Fragmentation.**
 
-> **📖 Definition**
+> **Definition**
 > **External fragmentation**: enough total free memory exists, but it is split into pieces none of
 > which is large enough for the request.
 > **Internal fragmentation**: the allocator rounds a request up to a size class, so bytes inside the
@@ -2109,7 +2109,7 @@ Android it becomes an out-of-memory kill.
 | **GWP-ASan** | Sampling allocator that guards a small random subset of allocations | Enabled in production Android for some apps — catches rare bugs in the field |
 | **Valgrind** | Dynamic binary instrumentation, no recompilation | Host only; conceptually the ancestor of ASan |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > When you find a native crash, the *region* the fault address falls in tells you which bug class you
 > are looking at. Check it against `/proc/<pid>/maps`. If it is inside `[stack]` or a thread stack,
 > you have a stack problem and the corrupted thing is probably a saved register. If it is inside
@@ -2142,7 +2142,7 @@ and together they may want more memory than physically exists.
 **The solution.** Give every process its own private map from the addresses it uses to the physical
 memory that actually holds the data, and let the kernel own those maps.
 
-> **📖 Definition**
+> **Definition**
 > A **virtual address** is the address a program uses. A **physical address** is the address of an
 > actual location in DRAM. The **memory management unit (MMU)** is hardware inside the CPU that
 > translates the first into the second on *every single access*, using per-process tables the kernel
@@ -2214,7 +2214,7 @@ that a context switch does not require flushing them all.
 The split between `TTBR0` and `TTBR1` is elegant and important: user addresses are in the low half of
 the 64-bit space and kernel addresses in the high half, each with its own table base. Switching
 processes changes only `TTBR0_EL1`; the kernel's mapping never changes. And because `TTBR0` is
-swapped, an app simply has no translation for another app's memory.
+swapped, an app has no translation for another app's memory.
 
 #### 3.18.2 Page faults
 
@@ -2228,7 +2228,7 @@ exception and the kernel decides what to do.
 | **Copy-on-write fault** | Allocate a new frame, copy 4 KiB, remap writable | Microseconds |
 | **Invalid** | No valid mapping and no way to create one → deliver `SIGSEGV` | Process usually dies |
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > A `SIGSEGV` is not an error the kernel invented. It is the kernel's translation of a hardware
 > exception it decided not to resolve. The *same* mechanism, when the kernel does resolve it, is
 > ordinary demand paging happening millions of times a second without anyone noticing. That is why
@@ -2269,7 +2269,7 @@ the same object. The APK itself is mapped so ART can read DEX without copying it
 `mprotect` changes the permissions of an existing range of pages. It is the other half of the pair,
 and it is the single most security-relevant memory syscall on Android.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Runtime code generation always shows the same footprint: write instructions into a region while it
 > is `PROT_READ|PROT_WRITE`, then call `mprotect(addr, len, PROT_READ|PROT_EXEC)` and flush the
 > instruction cache. The ART JIT does it. Packers do it. Frida's Gum engine does it. So the two
@@ -2309,7 +2309,7 @@ even that is insufficient, the **low-memory killer daemon** (`lmkd`) terminates 
 
 #### 3.18.6 ASLR
 
-> **📖 Definition — Address Space Layout Randomisation**
+> **Definition — Address Space Layout Randomisation**
 > Randomisation of the base addresses of a process's memory regions at creation time, so that an
 > attacker who finds a memory-corruption bug cannot know in advance what address to target.
 
@@ -2344,7 +2344,7 @@ with `Module.findBaseAddress("libfoo.so")` and add the offset you found statical
 |---|---|---|
 | ≤ Android 14 | 4 KiB assumed universally | Native libraries aligned to 4 KiB load fine |
 | Android 15 (API 35) | 16 KiB page size support introduced for supporting devices | Native libraries whose `PT_LOAD` segments are only 4 KiB-aligned may fail to load |
-| Android 16 (API 36) | 16 KiB alignment expectations tighten for new uploads | Check `.so` alignment as a routine compatibility and robustness finding |
+| Android 16 (API 36) | 16 KiB alignment expectations tighten for new uploads | Check `.so` alignment as a routine compatibility finding |
 
 ```bash
 # adb shell — confirm the page size on the device under test
@@ -2498,7 +2498,7 @@ Android installs a filter on every app process from Zygote, denying syscalls app
 reason to make. Violations that are configured to trap raise `SIGSYS`. The current filter mode is
 visible on the `Seccomp:` line of `/proc/<pid>/status`.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The syscall boundary is the one place an app cannot lie to you. It can implement its own file
 > access wrapper, its own string comparison, its own crypto, and its own control-flow obfuscation —
 > but to open a file it must execute `openat`, and to reach a server it must execute `connect`.
@@ -2598,8 +2598,8 @@ adb logcat -d | sed -n '/----- pid/,/----- end/p'
 ls -t /data/tombstones/ | head -1
 ```
 
-> **⚠️ Warning**
-> An app that installs its own handler for `SIGSEGV` and simply continues is not "robust", it is
+> **Warning**
+> An app that installs its own handler for `SIGSEGV` and continues is not "robust", it is
 > *hiding memory corruption*. When you see a native crash handler that swallows faults, treat every
 > subsequent "it works fine" as unproven: the app may be running on a corrupted heap. Report the
 > handler itself, and test with the handler removed (patch the `sigaction` call, or set
@@ -2613,7 +2613,7 @@ ls -t /data/tombstones/ | head -1
 the kernel opened on its behalf. It is an index into a per-process table, and each entry points at a
 kernel object with its own offset and access mode.
 
-> **📖 Definition — File descriptor**
+> **Definition — File descriptor**
 > A per-process integer handle to an open kernel object. Descriptors 0, 1 and 2 are conventionally
 > standard input, standard output and standard error. The abstraction is deliberately broad.
 
@@ -2712,7 +2712,7 @@ lock-free code is built from and what makes it so easy to get wrong.
 
 **Futex — the mechanism underneath.**
 
-> **📖 Definition — Futex (fast userspace mutex)**
+> **Definition — Futex (fast userspace mutex)**
 > A kernel primitive that lets a userspace lock avoid entering the kernel in the uncontended case.
 > The lock state is an integer in shared user memory manipulated with atomic instructions. Only when
 > a thread must *wait* or *wake* does it call into the kernel with `FUTEX_WAIT` or `FUTEX_WAKE`.
@@ -2760,7 +2760,7 @@ The discipline that prevents deadlock is a **global lock ordering**: define an o
 and always acquire them in that order. When you read a `kill -3` thread dump and see two threads each
 `BLOCKED` on a monitor the other holds, you are looking at an ordering violation.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Locking is a denial-of-service surface. If an exported component takes a lock and then performs an
 > operation an attacker can make arbitrarily slow — a huge parse, a network fetch, a giant regular
 > expression — any other caller that needs the same lock is stuck. On Android, if that lock is held
@@ -2829,7 +2829,7 @@ position-independent executable is an `ET_DYN` file with an entry point, loaded 
 chosen by ASLR. If `e_type` were `2` the file would demand one fixed address, defeating ASLR
 entirely. That single byte is a security decision expressed in the file format.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > `e_entry` and every address inside an `ET_DYN` file is a *relative* virtual address. At load time
 > the linker picks a base `L`, maps the segments there, and the real entry point becomes `L + e_entry`.
 > This is exactly why an address you noted in Ghidra (say `0x1a2b4`) never matches what Frida reports
@@ -2867,7 +2867,7 @@ entirely. That single byte is a security decision expressed in the file format.
 | `.init_array` / `.fini_array` | Constructor / destructor pointers | `rw-` then RELRO | **Run before `JNI_OnLoad`** |
 | `.note.gnu.build-id` | Unique build hash | `r--` | Matching a stripped `.so` to symbols |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `.init_array` is the most under-examined part of an Android native library. Every function pointer
 > in it runs when the library is loaded — before `JNI_OnLoad`, before any Java code calls into it,
 > and before most instrumentation is in place. Packers, anti-debug checks and licence validators live
@@ -3029,7 +3029,7 @@ that is **RELRO** (RELocation Read-Only), and full RELRO is immediate binding pl
 | Partial RELRO | `.got` read-only, `.got.plt` writable | Lazy binding still needs a writable slot |
 | **Full RELRO** (`-z relro -z now`) | Read-only | GOT overwrite is no longer a viable primitive |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > GOT and PLT are the standard hooking points, in both directions. Frida's `Interceptor.attach` on an
 > imported function, `LD_PRELOAD` on a non-Zygote process, and every classic library-interposition
 > technique all work by making a call go somewhere else. Conversely, an app checking that
@@ -3045,7 +3045,7 @@ that is **RELRO** (RELocation Read-Only), and full RELRO is immediate binding pl
 **Library search order.** The dynamic linker resolves `DT_NEEDED` names in a defined order, and
 Android restricts it far more than desktop Linux does. Bionic implements **linker namespaces**, so an
 app can only load libraries from its own APK, from the public NDK library list, and from a small
-number of permitted paths. This is why you cannot simply `dlopen("/system/lib64/libbinder.so")` from
+number of permitted paths. This is why you cannot `dlopen("/system/lib64/libbinder.so")` from
 an app: the namespace forbids it. It is also why bundled native dependencies must live inside the
 APK's `lib/<abi>/` directory.
 
@@ -3094,7 +3094,7 @@ analysis must name which one it is talking about:
 | JIT native code | An anonymous RWX-then-RX region in the process | Dump at runtime |
 | NDK native code | `lib/<abi>/*.so` in the APK | Ghidra, IDA, `objdump` |
 
-> **⚠️ Warning**
+> **Warning**
 > Patching `classes.dex` in an APK does not necessarily change what runs, if an AOT artefact exists
 > and is considered valid. And dumping DEX from memory can yield a *different* DEX from the one on
 > disk, which is exactly what a packer intends. When a static analysis result and a dynamic
@@ -3108,7 +3108,7 @@ Everything in section 3 is implemented by code you can read. This section names 
 two complete paths from a public API down to the kernel. Browse AOSP at
 <https://cs.android.com/> (Android Code Search) or <https://android.googlesource.com/>.
 
-> **⚠️ Warning**
+> **Warning**
 > File *paths* in AOSP are stable across releases; line numbers are not. Nothing below cites a line
 > number, and neither should your notes. When a path has moved between releases, search for the
 > filename rather than assuming.
@@ -3329,7 +3329,7 @@ void handle(JNIEnv *env, jstring jname) {
 }
 ```
 
-Note that `strncpy` is *not* the fix: it does not NUL-terminate when the source fills the buffer, so
+`strncpy` is *not* the fix: it does not NUL-terminate when the source fills the buffer, so
 it converts an overflow into an unterminated string, which the next `strlen` turns back into an
 overflow. `strlcpy` (available in Bionic) or an explicit length check is the correct tool.
 
@@ -3427,7 +3427,7 @@ actually encounter on engagements:
 | An unzip routine without path canonicalisation | Update and DLC downloaders | Arbitrary write inside the sandbox, then code execution |
 | `ptrace`-able release build | `android:debuggable`, or `ro.debuggable` | Full memory access to the app from `shell` |
 
-> **⚠️ Warning**
+> **Warning**
 > A crash on its own is not a vulnerability report. The report needs: the input that triggers it, the
 > fault address and whether it is attacker-controlled, the `si_code`, the register state showing your
 > data in a register, the mitigations active on the target, and an honest impact statement. A
@@ -3517,7 +3517,7 @@ sees through obfuscation.
 | Auxiliary vector | `/proc/<pid>/auxv` | `AT_ENTRY`, `AT_PHDR`, `AT_RANDOM` — useful for reconstructing the layout |
 | SELinux context | `/proc/<pid>/attr/current` | Which domain the process actually runs in |
 
-> **⚠️ Warning**
+> **Warning**
 > Volatile evidence must be collected first. `/proc` content, open descriptors, network state and
 > process memory disappear the instant the device reboots or the process dies. Files can be pulled
 > later; a live process's `maps` and `mem` cannot be recovered afterwards.
@@ -3675,7 +3675,7 @@ by hooking `RegisterNatives` at runtime.
 | Packing | The real code is not in the file | Dump from memory after the `mprotect` to RX |
 | Anti-disassembly data in `.text` | Linear sweep produces nonsense | Use recursive-descent disassembly; on AArch64 the fixed width limits the damage |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > No obfuscator can remove the function prologue, the calling convention, the syscall interface, or
 > the ELF program headers, because the hardware and the loader require them. That is the reason this
 > chapter is the durable foundation: everything above it can be obfuscated, and everything in it
@@ -4103,7 +4103,7 @@ readelf -l lib/arm64-v8a/libnative.so         # segments and their permissions
 | `1F 8B` | gzip | `gunzip` |
 | High entropy, no magic | Encrypted or compressed blob | Find the decryptor |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > An `assets/` file called `config.dat` that starts `50 4B 03 04` is a hidden ZIP — a very common way
 > to ship a second DEX for dynamic loading. One that starts `64 65 78 0A` is a DEX pretending not to
 > be one. `file` will not tell you either if the extension is misleading; your eyes will. Run
@@ -4215,7 +4215,7 @@ done
 
 ## 9. Examples
 
-> **✅ Verified against a compiler and a device.** Both C files in `examples/` compile **clean** with
+> **Verified against a compiler and a device.** Both C files in `examples/` compile **clean** with
 > `-Wall -Wextra` using `aarch64-linux-android21-clang` from **NDK 25.2.9519653**, and
 > `stack_frames.c` was additionally built with `-O0 -g -fno-omit-frame-pointer` and **run on a
 > physical arm64 device** (Redmi `M2101K6P`, Android 11 / API 30) to confirm every claim its output
@@ -4589,7 +4589,7 @@ checks is code running inside the process the attacker controls, so each can be 
 and the check that reads `/proc/self/maps` can be given a doctored file through a mount namespace.
 The correct architecture treats these as *telemetry* and moves the enforcement decision to a server,
 using hardware-backed key attestation and Play Integrity, binding the verdict to the specific
-transaction so that a compromised client cannot simply skip the step.
+transaction so that a compromised client cannot skip the step.
 
 **Q: An app's native library must parse an untrusted binary format. Specify the engineering controls
 you would require.**

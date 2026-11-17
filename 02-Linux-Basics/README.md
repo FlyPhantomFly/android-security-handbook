@@ -65,18 +65,18 @@ That second person is the reader this chapter is written for.
 
 ### 1.2 What an operating system is, in plain words
 
-> **🧠 Mental Model**
+> **Mental Model**
 > A computer without an operating system is a very fast machine that can do exactly one thing at a time and has no idea what a "file" is. The operating system is the office manager: it hands out desk space (memory), decides whose turn it is to use the single photocopier (the CPU), keeps the filing cabinets organised (the filesystem), and — crucially — makes sure that the intern cannot open the CEO's drawer (permissions).
 
 More precisely:
 
-> **📖 Definition — Operating system**
+> **Definition — Operating system**
 > A body of software that (a) abstracts hardware into portable interfaces, (b) multiplexes limited hardware resources between competing programs, and (c) enforces isolation between those programs. On Android, the operating system is the Linux kernel plus the Android userspace that surrounds it.
 
-> **📖 Definition — Kernel**
+> **Definition — Kernel**
 > The single privileged program that is always resident in memory and is the only software allowed to execute privileged CPU instructions and touch hardware directly. Everything else runs in *user space* and must ask the kernel for anything it wants, using a mechanism called a **system call**.
 
-> **📖 Definition — System call (syscall)**
+> **Definition — System call (syscall)**
 > The controlled doorway from user space into the kernel. A program loads a syscall number and arguments into CPU registers and executes a special instruction (`svc #0` on AArch64, `syscall` on x86-64). The CPU switches to privileged mode and jumps to a fixed kernel entry point. The kernel validates the arguments, does the work, and returns. `open`, `read`, `write`, `mmap`, `fork`, `execve`, `ioctl` are all syscalls. There are roughly 300–400 of them depending on architecture and kernel version.
 
 Every single thing in this chapter — reading a file, listing a directory, sending a signal, creating a socket — is a syscall wearing a friendly name.
@@ -87,12 +87,12 @@ Imagine you are standing outside a locked warehouse. Inside, thousands of worker
 
 That translator is a **shell**.
 
-> **📖 Definition — Shell**
+> **Definition — Shell**
 > A program whose job is to read lines of text from you, interpret them as commands, ask the kernel to run those commands as new processes, connect their inputs and outputs together, and print the results back to you. It is called a "shell" because it is the outermost layer wrapped around the kernel.
 
 The shell is *not* the kernel, *not* the terminal, and *not* Linux. It is an ordinary user-space program with no special privileges — you can replace it, write your own, or run three at once. This matters for security: on Android, `/system/bin/sh` is Mksh, and its behaviour (word splitting, globbing, environment inheritance) is part of the attack surface whenever an app calls `Runtime.exec("sh -c ...")` with attacker-influenced text.
 
-> **📖 Definition — Terminal / terminal emulator**
+> **Definition — Terminal / terminal emulator**
 > The window that shows text and accepts keystrokes. Historically it was a physical device (a "teletype", hence `tty`). Today it is a program (Windows Terminal, GNOME Terminal, `adb shell`'s pseudo-terminal) that draws characters and feeds keystrokes to whichever program is attached to it. The terminal draws; the shell thinks.
 
 The chain is: **you → terminal emulator → shell → kernel (syscalls) → hardware.**
@@ -334,7 +334,7 @@ For every line you type, the shell performs a fixed pipeline of transformations.
 | 11. Redirection setup | Open files, `dup2()` onto 0/1/2 | `> out.txt` |
 | 12. Execution | `fork()` + `execve()`, or run a builtin | |
 
-> **⚠️ Warning**
+> **Warning**
 > Stages 8 and 9 are why unquoted variables are dangerous. If `$USERINPUT` contains `; rm -rf /`, stage 1 already happened — so a plain `sh -c "echo $USERINPUT"` in a Java `Runtime.exec()` string re-runs tokenisation on attacker data. This is command injection, and it is a real, frequently-found finding in Android apps that shell out to `ping`, `logcat`, or a bundled native binary.
 
 #### Builtins versus external commands
@@ -351,7 +351,7 @@ type ls        # ls is /system/bin/ls
 command -v id  # /system/bin/id
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `$PATH` order is a vulnerability class. If a privileged process runs `system("ping ...")` and `$PATH` starts with a directory you can write to, your `ping` runs with that process's privileges. On Android this is rarer than on servers because most privileged code uses absolute paths, but it still appears in vendor daemons and in apps that bundle native helpers into their own writable directories.
 
 #### The shells you will meet on Android
@@ -384,10 +384,10 @@ Exit status is the backbone of shell logic (`&&`, `||`, `if`) and it is how your
 
 Windows has drive letters: `C:\`, `D:\`. UNIX has exactly one tree, rooted at `/`. Additional storage is not given a letter; it is **mounted** onto a directory inside the existing tree.
 
-> **📖 Definition — Mount**
+> **Definition — Mount**
 > Attaching a filesystem (a formatted region of storage, or a virtual filesystem generated by the kernel) to a directory in the existing tree, called the *mount point*. After `mount /dev/block/sda3 /data`, opening `/data/system/packages.xml` reaches the filesystem on that block device. The directory's previous contents are hidden, not deleted, for as long as the mount is active.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > The filesystem tree is a company org chart, and mounting is hiring a whole subcontractor team and hanging them under one manager. Everyone still appears on the one chart; you cannot tell from the chart alone that the subcontractors are a different company. This "you cannot tell" property is exactly what Magisk exploits.
 
 #### The Filesystem Hierarchy Standard (FHS) on desktop Linux
@@ -419,7 +419,7 @@ Android keeps `/proc`, `/sys`, `/dev`, `/etc` (as a symlink to `/system/etc`), `
 
 Every process has its own current working directory, stored in the kernel and visible at `/proc/<pid>/cwd`. This is a per-process property, which is why `cd` must be a builtin.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > Path resolution is done by the kernel's `path_lookup` machinery, one component at a time, and **execute permission on a directory means "may traverse"**. To open `/a/b/c` you need `x` on `/`, `x` on `a`, `x` on `b`, and the appropriate permission on `c`. You do **not** need `r` on the directories unless you want to *list* them. This distinction produces a classic Android trick: a directory can be mode `0711` (traverse but not list), so an attacker who knows an exact filename can open it but cannot enumerate. Several Android caches rely on this.
 
 ---
@@ -478,10 +478,10 @@ This is the section to bookmark. Every path here is one you will type during rea
 └── vendor/                               # vendor-private data
 ```
 
-> **📖 Definition — CE and DE storage**
+> **Definition — CE and DE storage**
 > Android's File-Based Encryption splits app data in two. **Credential Encrypted (CE)** storage (`/data/user/<id>/`) is only decryptable after the user first unlocks the device with their PIN, pattern, or password after boot. **Device Encrypted (DE)** storage (`/data/user_de/<id>/`) is decryptable as soon as the device boots, before any unlock. Apps that must work in Direct Boot mode (alarm clock, accessibility services, phone dialler) put their minimum state in DE. Anything sensitive belongs in CE.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > When you triage an app's storage, always check `user_de` as well as `user`. Developers who mark a component `directBootAware` sometimes move data to DE storage without realising they just removed the "encrypted until unlocked" property. Session tokens sitting in `/data/user_de/0/<pkg>/shared_prefs/` are extractable from a device seized in a powered-on-but-locked state by anyone with a working forensic exploit — a materially weaker position than CE.
 
 #### The `/sdcard` illusion
@@ -508,7 +508,7 @@ where AID_USER_OFFSET = 100000
 
 So package `com.example.app` with appId 10231 is UID 10231 for user 0, UID 110231 for user 1, and UID 1010231 for a work profile with user ID 10. Their data directories are `/data/user/0/com.example.app` and `/data/user/10/com.example.app` respectively — different directories, different UIDs, no sharing.
 
-> **⚠️ Warning**
+> **Warning**
 > When you dump a device and see UID 1010231 in `packages.list`, do not conclude the app is privileged because the number is large. Divide by 100000 to get the user ID and take the remainder to get the app ID.
 
 ---
@@ -519,10 +519,10 @@ So package `com.example.app` with appId 10231 is UID 10231 for user 0, UID 11023
 
 A filename is a convenience for humans. The kernel needs somewhere to store the file's real metadata: size, ownership, permissions, timestamps, and the list of disk blocks holding the data. Storing that in the directory entry would make renaming and linking expensive and would make it impossible for two names to refer to the same data. So UNIX separates them.
 
-> **📖 Definition — Inode**
+> **Definition — Inode**
 > An on-disk structure holding all metadata about a file *except its name*: type, permission bits, UID, GID, size, link count, timestamps (`atime` last access, `mtime` last content modification, `ctime` last inode change), and pointers to data blocks. Each inode has a number unique within its filesystem.
 
-> **📖 Definition — Directory**
+> **Definition — Directory**
 > A file whose contents are a list of `(name, inode number)` pairs. "Putting a file in a directory" means adding such a pair. Nothing about the file itself moves.
 
 ```mermaid
@@ -569,7 +569,7 @@ Concrete recurring shapes:
 - **Backup/restore symlink attacks.** `adb backup` archives and their restore path have historically been fertile ground.
 - **TOCTOU on `/data/local/tmp`.** Anything world-writable plus a privileged writer plus a symlink equals privilege escalation.
 
-> **⚠️ Warning**
+> **Warning**
 > `File.getAbsolutePath()` does **not** resolve `..` or symlinks. Only `getCanonicalPath()` (or `java.nio.file.Path.toRealPath()`) does. An app that validates with `getAbsolutePath().startsWith(baseDir)` is not validating anything useful. This exact mistake is one of the most common real findings in Android file-handling code.
 
 #### File types
@@ -586,7 +586,7 @@ Concrete recurring shapes:
 | `s` | UNIX domain socket | IPC endpoint: `/dev/socket/installd`. |
 | `p` | Named pipe (FIFO) | IPC byte stream with a filesystem name. |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `ls -l /dev/socket/` on a rooted device is a map of Android's native IPC. Each socket there is a daemon you may be able to talk to: `installd`, `netd`, `vold`, `zygote`, `zygote_secondary`, `logd`, `property_service`. Which sockets your UID can connect to is decided by the socket file's mode bits *and* SELinux. Historically, reachable-from-app daemon sockets have produced serious escalations.
 
 ---
@@ -597,10 +597,10 @@ Concrete recurring shapes:
 
 UNIX was built for shared machines. Alice and Bob each got a number — a **user ID** — and the kernel tagged every process and every file with one. The rule was simple and has never changed: *a process's identity is a number, and access decisions compare that number against the number on the object.*
 
-> **📖 Definition — UID (User ID)**
+> **Definition — UID (User ID)**
 > A 32-bit integer identifying a security principal. UID 0 is `root` and historically bypasses almost all permission checks. Names like `alice` exist only in `/etc/passwd` for human convenience; the kernel only ever sees the number.
 
-> **📖 Definition — GID (Group ID)**
+> **Definition — GID (Group ID)**
 > A 32-bit integer identifying a group. A process has one *primary* GID plus a list of *supplementary* GIDs. A file has exactly one owning GID.
 
 #### The four UIDs every process has
@@ -665,7 +665,7 @@ Android: **one UID per application.**
 
 That single substitution is the foundation of the Android sandbox. Because each app is a different Linux user, ordinary file permissions — invented in 1971 to stop students reading each other's homework — stop your banking app's database from being read by a torch app.
 
-> **📖 Definition — AID (Android ID)**
+> **Definition — AID (Android ID)**
 > A named, reserved UID/GID constant defined by the Android platform. Static AIDs are compile-time constants in `system/core/libcutils/include/private/android_filesystem_config.h`; dynamic AIDs are allocated at runtime for applications.
 
 #### The UID map
@@ -702,7 +702,7 @@ That single substitution is the foundation of the Android sandbox. Because each 
 | `99000–99999` | `AID_ISOLATED_START` – `_END` | Isolated processes (e.g. WebView renderer, `isolatedProcess="true"` services). |
 | `+100000 per user` | `AID_USER_OFFSET` | Multi-user offset applied to all of the above. |
 
-> **⚠️ Warning**
+> **Warning**
 > Treat this table as a reliable map, not as gospel for a specific build. The authoritative source on any given device is `system/core/libcutils/include/private/android_filesystem_config.h` in that AOSP branch, plus any `oem_` AIDs the vendor added. When a number surprises you, look it up rather than guessing.
 
 #### The networking GIDs — the ones you will actually use
@@ -719,10 +719,10 @@ Android does not give apps raw network capability. Instead, the `INTERNET` permi
 | 3006 | `AID_NET_BW_STATS` | Read network usage statistics |
 | 3007 | `AID_NET_BW_ACCT` | Bypass bandwidth accounting |
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > The kernel enforcement is a small Android-specific patch (historically called `ANDROID_PARANOID_NETWORK`) in the socket creation path: creating an internet socket requires membership of GID `AID_INET`. On newer kernels the mechanism is implemented with eBPF and cgroup socket hooks instead, but the observable behaviour is the same. This is why an app without `INTERNET` gets `EACCES` from `socket()` itself rather than a connection failure — and why you cannot "just use a native library" to bypass the permission.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Read an app's groups directly: `adb shell cat /proc/<pid>/status | grep Groups`. If 3003 is absent, the app genuinely cannot make network connections in-process. That single check refutes a lot of speculative "this SDK exfiltrates data" claims — and confirms them when 3003 *is* present in a component you did not expect.
 
 #### How an app gets its UID: the install flow
@@ -771,7 +771,7 @@ pm list packages -U | grep -i bank
 ps -A -o USER,PID,NAME | grep com.bank.app
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `pm list packages -U` is your friend on a non-rooted device. Combine it with `dumpsys package <pkg>` to get the UID, the granted permissions, the signing certificate digest, and the declared components — everything you need for an initial attack-surface map, without root and without pulling the APK.
 
 ---
@@ -837,7 +837,7 @@ Each group of three bits is one octal digit.
 | `4755` | setuid root, world-executable | A classic `su` binary |
 | `2755` | setgid | Group-inheriting tool directories |
 
-> **⚠️ Warning — `MODE_WORLD_READABLE`**
+> **Warning — `MODE_WORLD_READABLE`**
 > `Context.MODE_WORLD_READABLE` and `MODE_WORLD_WRITEABLE` set mode `0644`/`0622` on files inside an app's private directory. They were deprecated in API 17 and **throw `SecurityException` when targeting API 24 or higher**. You will still find them in old code and in apps that lower `targetSdkVersion`. When present, they defeat the sandbox for that file completely: any other app can read (or overwrite) it. Grep for them in every assessment.
 
 #### setuid in depth — and why it is a root-detection artefact
@@ -876,7 +876,7 @@ static boolean hasSuBinary() {
 
 At the Linux level, `File.exists()` is `stat()`/`access()`, and `canExecute()` is `access(path, X_OK)`. Both are syscalls, both are hookable, and both fail in interesting ways — for example, `stat()` on a path inside a directory you cannot traverse returns `EACCES`, not `ENOENT`, and some detection code treats "permission denied" as "the file exists", which is often the correct inference.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Because these checks are *file existence* checks, the systemless approach wins: Magisk does not place `su` at `/system/xbin/su`. It mounts its own filesystem view in a private mount namespace and, with DenyList/Zygisk, unmounts that view entirely for targeted processes so the app's own `stat()` genuinely returns `ENOENT`. Understanding *why* that works requires Section 3.22. See also [37 — Root Detection](../37-RootDetection/README.md).
 
 #### Linux capabilities — the modern replacement for setuid
@@ -911,7 +911,7 @@ grep Cap /proc/1/status
 capsh --decode=0000003fffffffff
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > A process with `CapEff: 0000000000000000` and a non-zero UID is genuinely unprivileged. A process running as a non-root UID but with `CAP_DAC_OVERRIDE` in `CapEff` is root in every way that matters for files. Always read the capability lines before concluding a daemon is "low privilege".
 
 ---
@@ -922,7 +922,7 @@ capsh --decode=0000003fffffffff
 
 Every process has a **umask**: a mask of permission bits to *remove* from newly created files.
 
-> **📖 Definition — umask**
+> **Definition — umask**
 > A per-process 12-bit mask. When a process creates a file with requested mode `M`, the kernel actually applies `M & ~umask`. It can only take permissions away, never add them.
 
 | umask | Files get (from 0666) | Directories get (from 0777) |
@@ -934,7 +934,7 @@ Every process has a **umask**: a mask of permission bits to *remove* from newly 
 
 Android's Zygote sets a umask for app processes so that files an app creates default to being private. This is why `openFileOutput(name, MODE_PRIVATE)` produces `0600` and not `0666`.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > Zygote establishes the process's file-creation defaults during specialisation, alongside `setuid`/`setgid`, capability dropping, seccomp filter installation, and SELinux context transition. Because the umask is inherited across `fork()` and `execve()`, a native binary an app spawns inherits the same protective default. An app that explicitly calls `chmod(0777)` afterwards has actively thrown that protection away — which is a common finding in apps that shell out to a bundled binary and "fix" a permission problem with the biggest hammer.
 
 #### `chmod`
@@ -960,7 +960,7 @@ chown -R system:system /data/misc/mydir
 chgrp inet /data/local/tmp/thing
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > Non-root users cannot `chown` files to another user, even files they own. If they could, they could plant a setuid binary and hand it to root. This restriction is load-bearing, and its absence in a vendor daemon that exposes a "change owner" operation over IPC is an immediate escalation.
 
 #### POSIX ACLs
@@ -1008,10 +1008,10 @@ The diagram is the single most useful thing to internalise about Android file ac
 
 #### What a process is
 
-> **📖 Definition — Process**
+> **Definition — Process**
 > An instance of a running program, consisting of: a private virtual address space, one or more threads of execution, a table of open file descriptors, a security identity (UIDs, GIDs, capabilities, SELinux context), a set of signal dispositions, a current working directory, and a namespace membership. The kernel tracks all of this in a `task_struct`.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > A program is a recipe printed in a book. A process is one cook actually making the dish, with their own counter space (memory), their own pans in use (file descriptors), and their own progress through the steps (the program counter). Two cooks can follow the same recipe simultaneously and never interfere — that is two processes running one program.
 
 #### Process attributes you will look up constantly
@@ -1043,7 +1043,7 @@ The diagram is the single most useful thing to internalise about Android file ac
 | `Z` | Zombie | Exited, but the parent has not called `wait()` to collect the status |
 | `X` | Dead | Being torn down |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > State `t` is what you see when Frida or GDB has a process stopped. A hardened app can read its own `/proc/self/stat` and notice. So can it notice `Z` children it did not create, or a `D` state that never clears (a hint that someone is single-stepping it).
 
 #### `fork()`, `execve()`, `wait()`, `exit()` — the process lifecycle
@@ -1096,7 +1096,7 @@ sequenceDiagram
 
 Three security consequences fall out of this design:
 
-- **Every app process shares Zygote's memory layout at fork time.** Historically that meant identical ASLR offsets across apps, which weakened exploitation defences; Android mitigates this in several ways, and it is one reason Zygote does not simply pre-fork.
+- **Every app process shares Zygote's memory layout at fork time.** Historically that meant identical ASLR offsets across apps, which weakened exploitation defences; Android mitigates this in several ways, and it is one reason Zygote does not pre-fork.
 - **The specialisation step is where privilege is dropped.** A bug in `setuid()` error handling in that path is catastrophic; a real historical Android/Linux bug class is exactly "`setuid()` failed and the return value was not checked", leaving the process as root.
 - **Apps do not `execve()`.** The app's process image is `app_process64` — which is why `/proc/<pid>/exe` for every app points at the same binary, and why the *command line* (`/proc/<pid>/cmdline`) is what identifies the app. Attackers and defenders both rely on that.
 
@@ -1130,7 +1130,7 @@ pstree -p              # same idea, compact
 | `PSS` | Proportional set size (Android-specific, in `dumpsys meminfo`): shared pages divided by sharers |
 | `%CPU` | Share of one core, or of all cores depending on the tool's mode |
 
-> **⚠️ Warning**
+> **Warning**
 > `VSZ` on Android is nearly meaningless — the runtime maps huge regions lazily. Judge memory by `PSS` from `dumpsys meminfo <pkg>`, not by `VSZ`.
 
 ---
@@ -1139,7 +1139,7 @@ pstree -p              # same idea, compact
 
 This is the single most valuable directory on the system for a reverse engineer, so it gets its own section.
 
-> **📖 Definition — procfs**
+> **Definition — procfs**
 > A virtual filesystem, mounted at `/proc`, that presents kernel data structures as readable text files. Nothing in it exists on disk; reading a file causes the kernel to generate its contents on the spot. There is one numbered directory per process, plus system-wide entries.
 
 #### System-wide entries worth knowing
@@ -1185,29 +1185,29 @@ State:  S (sleeping)
 Tgid:   9142                 ← thread group id == the "process" pid
 Pid:    9142
 PPid:   1002                 ← the zygote's pid for an app
-TracerPid:      0            ← ★ non-zero means a debugger is attached
+TracerPid:      0            ← non-zero means a debugger is attached
 Uid:    10231   10231   10231   10231     ← real, effective, saved, fs
 Gid:    10231   10231   10231   10231
 FDSize: 256
-Groups: 3003 9997 20231 50231           ← ★ 3003 = INTERNET permission
+Groups: 3003 9997 20231 50231           ← 3003 = INTERNET permission
 Threads:        28
 SigQ:   0/12800
 SigPnd: 0000000000000000
 ShdPnd: 0000000000000000
 SigBlk: 0000000000001204
 SigIgn: 0000000000000001
-SigCgt: 0000000e400084f8    ← ★ bitmask of signals with handlers installed
+SigCgt: 0000000e400084f8    ← bitmask of signals with handlers installed
 CapInh: 0000000000000000
 CapPrm: 0000000000000000
-CapEff: 0000000000000000    ← ★ all zero: genuinely unprivileged
+CapEff: 0000000000000000    ← all zero: genuinely unprivileged
 CapBnd: 0000000000000000
-Seccomp:        2           ← ★ 2 = filter mode, a BPF filter is installed
+Seccomp:        2           ← 2 = filter mode, a BPF filter is installed
 NoNewPrivs:     1
 Speculation_Store_Bypass:       thread vulnerable
 ```
 
-> **🔍 Pentester's Note — `TracerPid`**
-> This is the most-used anti-debugging check in existence. An app reads `/proc/self/status`, parses `TracerPid`, and if it is non-zero, exits or corrupts its own state. Frida in "attach" mode uses `ptrace` and therefore sets `TracerPid`. Countermeasures, in increasing order of robustness: spawn the app with Frida instead of attaching (`frida -U -f pkg`) so ptrace is released early; hook the `open`/`openat`/`read` path in `libc` to rewrite the value; or use a Zygisk-based injector that never ptraces. Understanding *why* each of these works requires knowing that `status` is generated on demand — the value cannot be pre-patched on disk because there is no disk.
+> **Pentester's Note — `TracerPid`**
+> This is the most-used anti-debugging check in existence. An app reads `/proc/self/status`, parses `TracerPid`, and if it is non-zero, exits or corrupts its own state. Frida in "attach" mode uses `ptrace` and therefore sets `TracerPid`. Countermeasures, weakest to strongest: spawn the app with Frida instead of attaching (`frida -U -f pkg`) so ptrace is released early; hook the `open`/`openat`/`read` path in `libc` to rewrite the value; or use a Zygisk-based injector that never ptraces. Understanding *why* each of these works requires knowing that `status` is generated on demand — the value cannot be pre-patched on disk because there is no disk.
 
 **`/proc/<pid>/maps`** — the process's virtual address space, one line per mapping.
 
@@ -1233,7 +1233,7 @@ Each line is `start-end perms offset dev inode pathname`. The permission field i
 | `.so` under `/data/app/.../lib/` | The app's own native libraries |
 | `deleted` suffix | A mapped file that has been unlinked — packers and droppers do this |
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > The single most productive first move when you meet an obfuscated or packed app is `cat /proc/<pid>/maps` and look for an anonymous `r-xp` region that is roughly DEX-sized, then dump it. Packers decrypt the real DEX into memory and hand it to ART; the map tells you exactly where. Frida's `Process.enumerateRanges('r-x')` is the same information from inside the process.
 
 **`/proc/<pid>/smaps`** — the same regions but with per-mapping detail: `Rss`, `Pss`, `Shared_Clean`, `Private_Dirty`, `Swap`, `AnonHugePages`, and a `VmFlags` line. Use it when you need to know whether a region is really resident, or to find the biggest contributors to an app's memory footprint. `smaps_rollup` gives the totals in one read, which is much cheaper.
@@ -1296,7 +1296,7 @@ Modern Android restricts `/proc` visibility. Since Android 9 (with kernel `hidep
 | 10+ (API 29) | Additionally, package visibility rules limit even *knowing* other packages exist |
 | 11+ (API 30) | `<queries>` in the manifest required to resolve most other packages |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > This changes malware behaviour and your own detection logic. An app that *can* see all of `/proc` on a modern device is either privileged, in a special group, or you are testing on an emulator with weakened settings. Conversely, when you write a root-detection *bypass*, remember the app is looking at `/proc/self/*` — its own view — and that view is what you must control. That is exactly what per-process mount namespaces let Magisk do.
 
 ---
@@ -1307,10 +1307,10 @@ Modern Android restricts `/proc` visibility. Since Android 9 (with kernel `hidep
 
 A process is busy doing its own thing. Something happens elsewhere — the user pressed Ctrl-C, a child exited, the memory the process touched does not exist, a timer fired. The kernel needs a way to interrupt the process asynchronously and say "deal with this". That mechanism is a **signal**.
 
-> **📖 Definition — Signal**
+> **Definition — Signal**
 > A small integer notification delivered asynchronously to a process. Each signal has a default action (terminate, terminate and dump core, ignore, stop, continue), and most can be caught by a handler function the process registers, or blocked temporarily.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Signals are the software equivalent of tapping someone on the shoulder while they work. Most taps can be answered ("hold on, I'll handle it") or ignored. Two of them — `SIGKILL` and `SIGSTOP` — are the manager physically removing the person from the room, and there is no negotiating.
 
 #### The signal table
@@ -1358,7 +1358,7 @@ pkill -f frida              # by command-line pattern
 
 You may signal a process only if your real or effective UID matches its real or saved UID, or if you have `CAP_KILL`. This is why an app cannot kill another app, and why `adb shell kill` on an app process may fail without root.
 
-> **🔍 Pentester's Note — `kill -3` is a free win**
+> **Pentester's Note — `kill -3` is a free win**
 > Sending `SIGQUIT` to an Android app makes ART write every Java thread's stack trace, plus held locks and the state of the runtime, into logcat (and historically to `/data/anr/traces.txt`). No root, no Frida. If you want to know which thread is doing the certificate check, or where an app hangs during a login, this is thirty seconds of work:
 > ```bash
 > # adb shell
@@ -1413,7 +1413,7 @@ Common anti-debugging techniques and their Linux basis:
 | Scan `/proc/self/maps` for `frida-agent` | procfs | Hide/rename the agent; hook the read |
 | Connect to TCP 27042 and speak the Frida protocol | Sockets | Run Frida on a non-default port; use `frida-gadget` |
 
-> **🔬 Under the Hood — how `SIGSEGV` becomes a useful artefact**
+> **Under the Hood — how `SIGSEGV` becomes a useful artefact**
 > When a process touches an invalid address, the CPU raises a page fault, the kernel decides there is no valid mapping, and it delivers `SIGSEGV` with a `siginfo_t` that contains the faulting address (`si_addr`) and a code (`SEGV_MAPERR` — nothing mapped; `SEGV_ACCERR` — mapped but wrong permissions). Android's `debuggerd` catches this via a special handler installed by Bionic in every process, and writes a **tombstone** to `/data/tombstones/`. That tombstone contains registers, the backtrace, the memory around each register, and the mapping list. It is the single richest artefact you get from a native crash, and it is how native vulnerability research on Android starts.
 > ```bash
 > # adb shell (root)
@@ -1439,10 +1439,10 @@ Job control lets one terminal manage several programs. It exists because termina
 | `nohup cmd &` | Ignore `SIGHUP`, so it survives terminal loss |
 | `wait` | Block until background jobs finish |
 
-> **📖 Definition — Process group and session**
+> **Definition — Process group and session**
 > Processes are organised into **process groups** (all the processes in one pipeline) and groups into **sessions** (everything started from one login/terminal). The terminal has one *foreground* process group; keyboard signals like Ctrl-C go to every process in it. A process that calls `setsid()` leaves the session entirely and becomes a daemon with no controlling terminal.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > This is exactly how you keep `frida-server` alive after `adb shell` exits:
 > ```bash
 > # adb shell (root)
@@ -1481,10 +1481,10 @@ The separation of 1 and 2 is deliberate: you can capture a program's results whi
 | `cmd 2>/dev/null` | Discard errors |
 | `cmd >/dev/null 2>&1` | Discard everything |
 
-> **⚠️ Warning — order matters**
+> **Warning — order matters**
 > `cmd > file 2>&1` sends both streams to `file`. `cmd 2>&1 > file` sends stderr to the *terminal* (where stdout pointed at that moment) and only stdout to the file. The redirections are applied left to right, and `2>&1` means "make fd 2 a duplicate of whatever fd 1 is **right now**".
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > Redirection is implemented with `open()` and `dup2()` between `fork()` and `execve()`. The shell opens `file`, gets (say) fd 5, calls `dup2(5, 1)` which closes fd 1 and makes it a copy of fd 5, closes 5, then execs. The new program writes to fd 1 exactly as always and has no idea it is a file. That indifference — a program cannot tell a file from a pipe from a terminal without asking `isatty()` — is the whole reason UNIX composition works.
 
 #### Pipes
@@ -1494,7 +1494,7 @@ The separation of 1 and 2 is deliberate: you can capture a program's results whi
 ps -A | grep com.example | awk '{print $2}' | xargs -r -n1 echo pid:
 ```
 
-> **📖 Definition — Pipe**
+> **Definition — Pipe**
 > An in-kernel FIFO buffer (64 KiB by default on Linux) with a read end and a write end, created by the `pipe()` syscall which returns two file descriptors. The writer blocks when the buffer is full; the reader blocks when it is empty. When the last writer closes, the reader sees end-of-file. When the last reader closes, the writer gets `SIGPIPE`.
 
 ```mermaid
@@ -1577,7 +1577,7 @@ ls -l /dev/socket/
 
 Note the modes. `installd` is `srw-rw----  root:system` — only root and members of the `system` group may connect. That single mode string is the entire authorisation policy for a daemon that can create and delete any app's data directory, and it is backed up by SELinux rules on the socket's label.
 
-> **📖 Definition — Abstract socket namespace**
+> **Definition — Abstract socket namespace**
 > A Linux extension where a UNIX socket's name begins with a NUL byte and lives in a namespace with **no filesystem presence and therefore no permission bits**. Anything in the same network namespace can connect. Android uses abstract sockets in several places, and they show up in `/proc/net/unix` with a leading `@`.
 > ```bash
 > # adb shell
@@ -1596,7 +1596,7 @@ Copying data between processes costs CPU and memory. Shared memory maps the same
 | **memfd** (`memfd_create()`) | Android 11+ / kernel 3.17+ | Upstream Linux replacement. Anonymous memory with an fd, plus **seals** (`F_SEAL_WRITE`, `F_SEAL_SHRINK`, `F_SEAL_GROW`) that make the region immutable. Android migrated to it because it is upstream and sealable. |
 | `mmap(MAP_SHARED)` on a file | Always | The generic mechanism. |
 
-> **🔬 Under the Hood — why seals matter for security**
+> **Under the Hood — why seals matter for security**
 > The classic shared-memory attack is a TOCTOU: process A validates the contents of a shared buffer, then uses them; process B mutates the buffer in between. `memfd` seals let the *producer* declare "this region can never be written again", so the consumer can validate once and trust the result. Any Android IPC design that shares a buffer without sealing it and then validates its contents is suspect, and this is a productive place to look when auditing vendor HALs and media parsers.
 
 #### How Android replaces most of this with Binder
@@ -1641,7 +1641,7 @@ The security-critical property is in the middle box: **the kernel binder driver 
 | Size limit | Stream-based, unbounded | ~1 MiB shared transaction buffer per process (`TransactionTooLargeException`) |
 | Attack surface | Whatever you wrote | AIDL interfaces, parcel deserialisation, permission checks |
 
-> **⚠️ Warning**
+> **Warning**
 > `Binder.getCallingUid()` returns *your own* UID when you are being called re-entrantly on the same thread, or after `clearCallingIdentity()`. The classic system-service bug is calling `clearCallingIdentity()` to do privileged work and then performing the permission check afterwards, against the now-cleared identity. Keep this in mind for [25 — Binder](../25-Binder/README.md).
 
 ---
@@ -1650,7 +1650,7 @@ The security-critical property is in the middle box: **the kernel binder driver 
 
 #### The layers
 
-> **📖 Definition — Socket**
+> **Definition — Socket**
 > A kernel object representing one endpoint of a communication channel, exposed to user space as a file descriptor. `socket(domain, type, protocol)` creates one: `AF_INET`/`AF_INET6` for network, `AF_UNIX` for local, `AF_NETLINK` for talking to the kernel, `AF_PACKET` for raw frames.
 
 | Model layer | What lives there | Android relevance |
@@ -1670,7 +1670,7 @@ The security-critical property is in the middle box: **the kernel binder driver 
 | Overhead | 20-byte header minimum | 8-byte header |
 | Used by | HTTP/1.1, HTTP/2, TLS, most app traffic | DNS, QUIC/HTTP-3, RTP, discovery protocols |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Modern Android apps increasingly use **HTTP/3 over QUIC**, which is UDP. Your interception proxy may only handle TCP, so the app "mysteriously" works while Burp shows nothing. The standard mitigation during testing is to block UDP 443 with an `iptables` rule so the app falls back to TCP:
 > ```bash
 > # adb shell (root)
@@ -1718,7 +1718,7 @@ sl  local_address rem_address   st tx_queue rx_queue ... uid  timeout inode
 
 `0100007F` is `7F 00 00 01` reversed, i.e. `127.0.0.1`. `69A2` hex is 27042 decimal — that is `frida-server` listening on localhost, owned by UID 2000 (`shell`). State `0A` is `TCP_LISTEN`. The `inode` column matches the `socket:[184213]` you saw in `/proc/<pid>/fd/`, which is how you map a socket back to a process.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > A hardened app can perform this same read from inside its own process — no root needed, because `/proc/net/tcp` is readable — and refuse to run when it finds a listener on 27042. Running `frida-server -l 127.0.0.1:1337` changes the port; a determined check enumerates all listeners and probes each one with the Frida handshake. This escalating game is covered properly in [67 — Bypassing Protections](../67-BypassingProtections/README.md).
 
 #### `iptables` in one page
@@ -1745,10 +1745,10 @@ iptables -t nat -A OUTPUT -p tcp --dport 443 -j DNAT --to-destination 192.168.1.
 iptables -t nat -F OUTPUT
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > Android's `netd` owns the firewall rules and rewrites them when connectivity changes, data saver toggles, or a VPN starts. Rules you add by hand can be silently flushed. If your interception stops working after the screen turns off, check whether your chains still exist before blaming the app.
 
-> **🔬 Under the Hood — per-UID network policy**
+> **Under the Hood — per-UID network policy**
 > Android implements Data Saver, VPN routing, and per-app network restrictions with per-UID rules (historically `iptables -m owner --uid-owner`, now largely eBPF programs attached to cgroup socket hooks). This is why "which app made this connection" is answerable on Android at all: the kernel tags sockets with the creating UID, and `/proc/net/tcp`'s `uid` column exposes it.
 
 ---
@@ -1803,10 +1803,10 @@ pm disable-user com.example.app
 cmd package resolve-activity --brief -a android.intent.action.VIEW -d "myapp://x"
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `pm clear` is the fastest way to return an app to a pristine, first-run state between test iterations — far faster than uninstall/reinstall, and it preserves the granted UID and installed splits. `pm grant`/`pm revoke` let you test permission-denied paths without touching the UI, which is where a surprising number of crashes and logic bugs live.
 
-> **⚠️ Warning — the absence of post-install scripts is load-bearing**
+> **Warning — the absence of post-install scripts is load-bearing**
 > Debian packages run arbitrary root shell scripts at install time. Android APKs cannot. There is no install hook, no `postinst`, no service registration outside the manifest. This eliminates an entire class of supply-chain attack and is a design decision worth being able to articulate in an interview.
 
 ---
@@ -1901,7 +1901,7 @@ cat pids.txt | xargs -I{} adb shell kill -9 {}
 seq 1 100 | xargs -P8 -I{} ./probe.sh {}    # 8-way parallelism
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > Filenames containing spaces or newlines break naive `find | xargs`. Always pair `find -print0` with `xargs -0`. On Android, toybox's `xargs` may lack `-0`; prefer a `while read` loop there.
 
 #### The rest, briefly
@@ -1942,7 +1942,7 @@ The `dex\n0NN\0` magic is your first checkpoint in [12 — DEX Internals](../12-
 
 ### 3.18 SSH
 
-> **📖 Definition — SSH (Secure Shell)**
+> **Definition — SSH (Secure Shell)**
 > A protocol (RFC 4251–4254) for running an authenticated, encrypted session on a remote machine. It provides a remote shell, file transfer (`scp`, `sftp`), and arbitrary TCP port forwarding.
 
 ```bash
@@ -1971,7 +1971,7 @@ adb forward tcp:27042 tcp:27042
 adb reverse tcp:8080 tcp:8080
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `adb reverse` is the cleanest way to proxy an app when you cannot change the device's Wi-Fi settings, and it survives the device changing networks. Set the app's proxy (or the global one) to `127.0.0.1:8080` and let `adb reverse` carry it to Burp on your host.
 
 ---
@@ -1980,7 +1980,7 @@ adb reverse tcp:8080 tcp:8080
 
 #### What environment variables are
 
-> **📖 Definition — Environment**
+> **Definition — Environment**
 > An array of `NAME=value` strings passed to a process at `execve()` time and inherited by its children. It lives in the process's own memory (near the stack) and can be read at `/proc/<pid>/environ`. It is *configuration by inheritance*.
 
 ```bash
@@ -2055,12 +2055,12 @@ int open(const char *path, int flags, ...) {
 
 `RTLD_NEXT` is the crucial detail: it asks the linker for the *next* definition after this library, which is the real libc one. Without it you get infinite recursion.
 
-> **⚠️ Warning — why `LD_PRELOAD` does not simply work on Android apps**
+> **Warning — why `LD_PRELOAD` does not work on Android apps**
 > Android apps are not `execve()`d; they are **forked from Zygote**, which was started by `init` long before you existed. There is no `execve()` for your environment variable to influence. `LD_PRELOAD` therefore works fine for native binaries you launch yourself from `adb shell`, and not at all for ordinary app processes. Two real ways around it:
 > - `setprop wrap.<package_name> "LD_PRELOAD=/data/local/tmp/libhook.so"` — Android's *wrap property* mechanism, intended for debugging, causes Zygote to exec a wrapper for that package. It requires a debuggable app or a userdebug/eng build.
 > - Inject the library into the running process instead (`ptrace` + `dlopen`, or Zygisk), which is what Frida and LSPosed do. This is the modern approach and is covered in [65 — Hooking](../65-Hooking/README.md).
 
-> **🔬 Under the Hood — the linker ignores you when it matters**
+> **Under the Hood — the linker ignores you when it matters**
 > The dynamic linker deliberately ignores `LD_PRELOAD` and `LD_LIBRARY_PATH` for **setuid/setgid binaries and processes with elevated capabilities** (the `AT_SECURE` flag in the ELF auxiliary vector). If it did not, `LD_PRELOAD=evil.so su` would be an instant root exploit on every UNIX system ever built. When you find a privileged binary that *does* honour these variables — for instance a vendor daemon started from a shell script that re-exports the environment — you have found a real privilege escalation.
 
 Android also adds **namespace isolation in the linker**: apps cannot `dlopen()` arbitrary platform libraries any more, because the linker enforces per-namespace visibility rules described in `/system/etc/public.libraries.txt` and `ld.config.*.txt`. This is why `System.loadLibrary("android_runtime")` from an app fails on modern Android with a linker namespace error, and it is a defence against a whole class of "load an internal library and call its private functions" attacks.
@@ -2078,7 +2078,7 @@ A script is a text file whose first line names the interpreter.
 set -eu
 ```
 
-> **📖 Definition — Shebang**
+> **Definition — Shebang**
 > The two bytes `#!` at the very start of a file, followed by an interpreter path. When the kernel's `execve()` sees them, it runs that interpreter with the script as an argument instead of trying to execute the file as machine code.
 
 #### The constructs you need
@@ -2146,7 +2146,7 @@ command -v frida-server >/dev/null 2>&1 || log "frida-server not on PATH"
 | Never build a command string from untrusted input | Command injection |
 | Use `mktemp` for temp files | Avoids predictable-name races in world-writable directories |
 
-> **⚠️ Warning**
+> **Warning**
 > `set -e` has a long list of exceptions (commands in `if` conditions, anything before `&&`/`||`, the non-final stages of a pipeline). Do not treat it as a substitute for checking exit status where it matters.
 
 ---
@@ -2155,7 +2155,7 @@ command -v frida-server >/dev/null 2>&1 || log "frida-server not on PATH"
 
 Desktop Linux ships GNU coreutils: hundreds of separate binaries, each large, each GPL-licensed. Android needed something small and permissively licensed, and it needed it to fit on a boot ramdisk.
 
-> **📖 Definition — Multi-call binary**
+> **Definition — Multi-call binary**
 > A single executable that behaves as many different commands, choosing its behaviour from `argv[0]` — the name it was invoked under. The filesystem contains one real binary and many symlinks to it.
 
 ```bash
@@ -2188,7 +2188,7 @@ Practical consequences you will hit in week one:
 | `readlink -f` | Works | Usually works |
 | `awk` | Full GNU awk | Reduced |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Push a static BusyBox to `/data/local/tmp/` at the start of an engagement and call it explicitly. It costs ninety seconds and eliminates a whole category of confusing failures:
 > ```bash
 > # host
@@ -2207,7 +2207,7 @@ This is the theoretical foundation for modern Android root, and the concept that
 
 #### Namespaces in general
 
-> **📖 Definition — Namespace**
+> **Definition — Namespace**
 > A kernel mechanism that gives a set of processes their own private instance of a global resource. Two processes in different namespaces see different values for the same "global" thing, and neither can tell it is not the only one.
 
 | Namespace | What it virtualises | Android use |
@@ -2223,8 +2223,8 @@ This is the theoretical foundation for modern Android root, and the concept that
 
 #### Bind mounts
 
-> **📖 Definition — Bind mount**
-> A mount that makes an existing directory or file appear at a second path. Both paths refer to the same underlying inode; changes through one are visible through the other. It is not a copy and not a symlink — the kernel's path resolution simply redirects.
+> **Definition — Bind mount**
+> A mount that makes an existing directory or file appear at a second path. Both paths refer to the same underlying inode; changes through one are visible through the other. It is not a copy and not a symlink — the kernel's path resolution redirects.
 
 ```bash
 # desktop Linux (root)
@@ -2290,7 +2290,7 @@ flowchart TD
 
 Reading the diagram: Magisk never writes to `/system`. It builds an alternative view using bind mounts, so `dm-verity` and Verified Boot both remain satisfied — this is what "systemless" means. Then, for each app in the DenyList, it creates a fresh mount namespace with `unshare(CLONE_NEWNS)` and *unmounts its own modifications inside that namespace*. The app's `/proc/self/mounts` genuinely does not list them, because `/proc/<pid>/mounts` is rendered per-namespace. The app is not being lied to by a hook; it is being shown a real, clean namespace.
 
-> **🔬 Under the Hood — why `/proc/self/mounts` is namespace-aware**
+> **Under the Hood — why `/proc/self/mounts` is namespace-aware**
 > Reading `/proc/<pid>/mounts`, `/proc/<pid>/mountinfo` or `/proc/<pid>/mountstats` causes the kernel to walk the **mount namespace of that specific task**, not a global list. This is not a special case for Magisk; it is how mount namespaces are specified to behave. Any detection technique that reads its own mount table is therefore defeated by namespace separation, and the only remaining detections must look elsewhere — at process-level artefacts, at timing, or at attestation from outside the device entirely (Play Integrity, hardware key attestation). That escalation is exactly why [50 — Hardware-Backed Security](../50-HardwareBackedSecurity/README.md) matters.
 
 Useful commands:
@@ -2309,7 +2309,7 @@ diff /data/local/tmp/init_mounts.txt /data/local/tmp/app_mounts.txt
 nsenter --target 1 --mount --pid -- sh
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The `diff` above is itself a detection: an app cannot easily compare its own namespace with `init`'s, because it cannot read `/proc/1/mounts` — but a *researcher* can, which makes it an excellent way to verify that your hiding setup actually works before you blame the app.
 
 ---
@@ -2491,7 +2491,7 @@ Other `init.rc` directives worth recognising:
 | `writepid /dev/cpuset/...` | Place the process in a cgroup |
 | `disabled` / `oneshot` | Start only on demand; do not restart |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > A vendor service declared without `user`/`group` runs as root. A vendor service with `seclabel u:r:vendor_foo:s0` has whatever the vendor's policy grants, which is often far too much. On an engagement that includes device firmware, extracting `/vendor/etc/init/*.rc` and reading every service block is one of the highest-value static analyses you can do.
 
 ---
@@ -2676,7 +2676,7 @@ adb shell kill -3 $PID && adb logcat -d | sed -n '/----- pid/,/----- end/p'
 | Mount state | `/proc/mounts` | Evidence of root, overlays, or external tooling |
 | ADB authorisation | `/data/misc/adb/adb_keys` | Which hosts were trusted for debugging |
 
-> **⚠️ Warning**
+> **Warning**
 > Forensic work has an ordering rule: collect volatile evidence first. `/proc`, open file descriptors, network state and memory disappear the instant the device reboots or the process dies. Pulling files is easy and can be done later; capturing a live process's `maps`, `fd` and memory cannot.
 
 ---
@@ -2846,7 +2846,7 @@ objdump -d libnative.so | grep -E 'bl.*<(access|open|ptrace)@plt>'
 | `mmap` with `PROT_EXEC` | Runtime code generation or unpacking |
 | `inotify_init`, `inotify_add_watch` | Watching for tampering with its own files |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The presence of `syscall()` alongside string constants like `/proc/self/status` is a strong indicator of anti-hooking-aware code: the author is deliberately bypassing `libc`'s exported functions so that a Frida `Interceptor.attach(Module.getExportByName("libc.so", "openat"))` will not see the call. The counter-move is to hook at the syscall boundary itself (Frida's `Stalker`, or a seccomp-based tracer), or to patch the calling code rather than the callee.
 
 ### 6.4 What obfuscation does to these patterns
@@ -2899,7 +2899,7 @@ cat shared_prefs/auth.xml
 exit
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `run-as` is a small setgid/capability-bearing helper in `/system/bin` that consults `packages.list` and refuses unless the target package is debuggable and the caller is `shell`. It is the intended, supported way to inspect a debuggable app's private data. If a *release* build responds to `run-as`, the app shipped `debuggable="true"` — an immediate, easily-demonstrated finding.
 
 ### 7.2 `strace` — watching every syscall
@@ -2928,7 +2928,7 @@ read(42, "Name:\tm.example.app\n...TracerPid:\t0\n", 4096) = 1187
 
 That is a root check and an anti-debug check, caught with no reverse engineering at all. `strace` is the single fastest way to answer "what is this app actually looking for?"
 
-> **⚠️ Warning**
+> **Warning**
 > `strace` is not on stock Android. Push a static build to `/data/local/tmp/`. It also needs `ptrace` permission, so it needs root for another app's process, and it will set `TracerPid` — which the app can see. If the app dies the moment you attach, that is your answer about whether it has anti-debugging.
 
 ### 7.3 Frida — hooking the Linux layer
@@ -3336,7 +3336,7 @@ Execute permission is required on every directory in the path for traversal; cla
 ### Staff Engineer
 
 **Q: Design a detection strategy for an app that must know whether it is running in a modified environment, given that all filesystem-level checks can be defeated by namespace manipulation.**
-Layer the checks and accept that on-device detection is only a delay. Locally: check for artefacts that namespace tricks do not remove, such as `/proc/self/maps` entries for injected libraries, unexpected threads, symbol-table inconsistencies in loaded libraries, and timing anomalies. Verify the app's own code integrity from native code with the checks anchored in the most obfuscated component. Then move the real decision off the device: use hardware-backed key attestation to prove the key was generated in a TEE on a device with a verified boot state, and use Play Integrity or an equivalent to obtain a server-verified verdict. The server, not the client, decides whether to allow the sensitive operation. Design the protocol so that a bypassed client cannot simply skip the attestation step — bind the attestation to the session and to the specific transaction.
+Layer the checks and accept that on-device detection is only a delay. Locally: check for artefacts that namespace tricks do not remove, such as `/proc/self/maps` entries for injected libraries, unexpected threads, symbol-table inconsistencies in loaded libraries, and timing anomalies. Verify the app's own code integrity from native code with the checks anchored in the most obfuscated component. Then move the real decision off the device: use hardware-backed key attestation to prove the key was generated in a TEE on a device with a verified boot state, and use Play Integrity or an equivalent to obtain a server-verified verdict. The server, not the client, decides whether to allow the sensitive operation. Design the protocol so that a bypassed client cannot skip the attestation step — bind the attestation to the session and to the specific transaction.
 
 **Q: A vendor daemon exposes a UNIX socket in `/dev/socket` with mode 0666. Walk through the impact assessment.**
 First establish reachability: what SELinux policy applies to that socket's label, and can `untrusted_app` connect? A permissive mode with a restrictive SELinux rule may be unreachable in practice, and vice versa. Then establish what the daemon does with input: does it check `SO_PEERCRED`, does it parse a binary protocol, does it accept file descriptors, does it run as root? Then map the reachable operations to impact — arbitrary file write as root is critical, whereas a read-only status query is informational. Finally, consider whether the socket is reachable from a *remote* attacker through any app that forwards data to it. Report with a concrete proof of concept and the exact `.rc` line that declares the socket.
@@ -3567,7 +3567,7 @@ Answer each in one sentence, out loud, without looking:
 6. Which `/proc/<pid>/` file reveals an attached debugger, and on which line?
 7. Why does `LD_PRELOAD` not affect a normal Android app?
 8. What is the difference between a hard link and a symbolic link?
-9. Why does Magisk not simply copy `su` into `/system/xbin`?
+9. Why does Magisk not copy `su` into `/system/xbin`?
 10. What does `1777` mean and where do you see it on Android?
 11. Name the five checks that must all pass for an app to open a file.
 12. What does `kill -3` do to an Android app?

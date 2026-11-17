@@ -18,7 +18,7 @@ This is the shape of a real malware triage. The specific tricks used here — a 
 name, a method name built by character arithmetic, and a payload assembled at runtime — are the three
 most common cheap obfuscations you will meet, and all three fail against the same fixed workflow.
 
-> **📖 Definition**
+> **Definition**
 > **Reflection** — the ability of a running program to inspect and manipulate its own structure:
 > to look up a class by its name as a string, to find a method by its name as a string, and to call
 > that method without the call ever appearing as a normal method invocation in the bytecode. Because
@@ -119,7 +119,7 @@ ls
 You should now have `VaultChallenge.class`, `SecretVault.class`, and `classes.dex`. From here on,
 pretend `keep/` does not exist until you have the flag.
 
-> **⚠️ Warning**
+> **Warning**
 > Do not run the program yet. The first half of this lab is deliberately static-only. Getting the
 > answer by running the binary is the easy path, and it is the path that is unavailable to you when
 > the target only executes its payload on a specific device, after a specific date, or when it
@@ -155,9 +155,9 @@ heuristic mode:
 python3 ../04-Java/scripts/dump-strings.py classes.dex --min-len 4 --heuristic
 ```
 
-> **🧠 Mental Model**
-> A class name that does not appear in the type table but is clearly being loaded means the name is
-> computed. A method name that does not appear as a literal but is clearly being looked up means the
+> **Mental Model**
+> A class name that does not appear in the type table but is nonetheless being loaded means the name is
+> computed. A method name that does not appear as a literal but is nonetheless being looked up means the
 > name is computed. In both cases your job changes from *searching* to *evaluating*: you now have to
 > execute, by hand or by machine, the small piece of code that produces the name.
 
@@ -281,7 +281,7 @@ constructor. That is a decode-then-use pipeline, and you can evaluate it by hand
 echo -n 'U2VjcmV0VmF1bHQ=' | base64 -d ; echo
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > On Android the call will be `Landroid/util/Base64;->decode(Ljava/lang/String;I)[B` instead of the
 > JDK's `java.util.Base64`, and the second `int` argument is the flags word. `0` means `DEFAULT`, `8`
 > means `NO_WRAP`, `11` is the common `URL_SAFE | NO_PADDING | NO_WRAP` combination. Note the flag
@@ -309,7 +309,7 @@ characters. Do it by hand on paper first, then check with a one-liner:
 python3 -c "print(''.join(chr(c + 1) for c in [116, 109, 107, 110, 98, 106]))"
 ```
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > `javac` compiles a small `char[]` initialiser into individual `bipush`/`castore` pairs, which `d8`
 > turns into `const/16` and `aput-char`. A larger array would instead be emitted as a
 > `fill-array-data` instruction pointing at a `.array-data` payload block at the end of the method.
@@ -368,7 +368,7 @@ java -Xlog:class+load=info VaultChallenge 2>&1 | grep -i vault
 ```
 
 You will see `SecretVault` being loaded from the classpath, which is the proof that `forName` resolved
-to the name you decoded. Then simply run it:
+to the name you decoded. Then run it:
 
 ```bash
 # host

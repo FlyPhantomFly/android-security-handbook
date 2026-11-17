@@ -24,7 +24,7 @@ Specifically you will:
    so you can point at the exact moment each artefact came into existence.
 6. Abandon a session and prove that nothing was created.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > An install is not a copy. It is a **transaction**: the system opens a staging area, accepts bytes,
 > verifies them cryptographically, allocates an identity, creates labelled storage, compiles code,
 > writes durable records, and only then tells the world. Any step can fail and roll the whole thing
@@ -105,7 +105,7 @@ adb logcat -v threadtime \
 
 The trailing `'*:S'` silences every tag you did not list. Without it you will drown.
 
-> **⚠️ Warning**
+> **Warning**
 > Tag names differ slightly between releases and vendors. If a tag produces nothing, drop the filter
 > entirely (`adb logcat -v threadtime | tee install-trace.txt`) and grep afterwards. Absence of a tag
 > is not absence of the subsystem.
@@ -222,7 +222,7 @@ Two details worth noticing immediately:
 - **`files/`, `databases/` and `shared_prefs/` do not exist yet.** `installd` creates only `cache` and
   `code_cache`. The rest are created lazily by the framework the first time the app calls
   `getFilesDir()`, `openOrCreateDatabase()` or `getSharedPreferences()`. If you are triaging an app
-  and `shared_prefs/` is missing, the app has simply never written a preference.
+  and `shared_prefs/` is missing, the app has never written a preference.
 - **`cache` is group-owned by a *different* GID** (`u0_a234_cache`, numerically 20000 + appId) with
   the setgid bit. That is how the platform accounts and enforces per-app cache quotas separately from
   the rest of the data directory.
@@ -291,7 +291,7 @@ size=4823119
 Success: created install session [98123457]
 ```
 
-> **📖 Definition — install session**
+> **Definition — install session**
 > A session is a server-side staging area owned by `PackageInstallerService`, identified by an integer.
 > It holds the APK bytes and the `SessionParams` (install reason, target user, installer attribution,
 > whether it is staged, whether it is multi-package) until you either commit it or abandon it. Nothing
@@ -403,7 +403,7 @@ Success
     installerPackageName=com.android.vending
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `-i com.android.vending` set the attributed installer to the Play Store even though the APK
 > arrived over USB. Any app that decides "am I a legitimate install?" by calling
 > `getInstallerPackageName()` has just been defeated by one command-line flag. Since API 30, the
@@ -507,7 +507,7 @@ package:/data/app/~~kQ3n8LmA==~~/com.example.probe-9dK2vP1w==/split_config.xxhdp
 One `codePath`, one `userId`, several APKs. Splits are **not** a privilege boundary. They share a
 signature, a UID, a data directory and a process.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Any analysis pipeline that pulls only `base.apk` is blind to every native library and every dynamic
 > feature module. When you receive an APK from a client, ask whether it is the base of a bundle. When
 > you pull from a device, always iterate `pm path` output.
@@ -612,7 +612,7 @@ I/PackageWatcher: action=android.intent.action.PACKAGE_ADDED pkg=com.other.app u
 The `<data android:scheme="package" />` element is mandatory. Without it your filter never matches and
 you will spend an hour wondering why.
 
-> **⚠️ Warning**
+> **Warning**
 > A receiver cannot **prevent** or **modify** an install. `PACKAGE_ADDED` is a notification after the
 > fact. Any product that claims to "block malicious installs" from an ordinary app is either a device
 > owner using `DevicePolicyManager`, a privileged verifier holding

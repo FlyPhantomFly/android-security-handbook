@@ -423,7 +423,7 @@ directory, and the EOCD **with its `cdOffset` field replaced by `signingBlockSta
 | `0x2146444e` | Google Play "frosting" metadata, added at Play-serving time | Observed, undocumented |
 | anything else | **Unknown — dump it and look** | — |
 
-> **⚠️** Unknown ID-value pairs are *not* covered by any signature digest. They are a legitimate
+> **** Unknown ID-value pairs are *not* covered by any signature digest. They are a legitimate
 > extension point and an equally legitimate place to smuggle a payload past a signature check.
 
 ### v2/v3 signer structure (all lengths are `u32` LE prefixes)

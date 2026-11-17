@@ -17,7 +17,7 @@ code are the same program in different clothes. That single realisation is what 
 repository is built on. Everything about DEX files, ART, Smali and hooking becomes ordinary once you
 have actually watched it happen once.
 
-> **🧠 Mental Model.** You are not learning four languages. You are learning that there is one
+> **Mental Model.** You are not learning four languages. You are learning that there is one
 > program, and four ways of writing it down — the way that suits a human, the way that suits a
 > compiler, the way that suits a virtual machine, and the way that suits silicon.
 

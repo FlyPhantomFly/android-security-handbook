@@ -52,7 +52,7 @@ read how `X509TrustManager` is dispatched. Binder fuzzing works because the tran
 method you can name. If you take one skill from this chapter, take this: **stop guessing what Android
 does and go read it.**
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Think of AOSP as the *published blueprints of the building you are testing*. A tester who has not
 > learned to read them is walking the corridors with a torch, inferring the structure from what they
 > bump into. A tester who has learned to read them walks in already knowing where the load-bearing
@@ -62,7 +62,7 @@ does and go read it.**
 
 ### 1.2 What AOSP is, precisely
 
-> **📖 Definition**
+> **Definition**
 > The **Android Open Source Project (AOSP)** is the complete, publicly published source code of the
 > Android operating system: the Linux kernel configuration and patches, the C library, the runtime, the
 > native system services, the Java framework, the system applications, the build system, the SELinux
@@ -123,7 +123,7 @@ vulnerability research.
 | Google Mobile Services | **Proprietary** | Not in AOSP at all. See 1.5. |
 | Vendor HAL implementations, firmware blobs | **Proprietary** | Not in AOSP. Where most device-specific vulnerabilities live. |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The Apache-2.0-versus-GPL split has a direct operational consequence. When you are testing a
 > manufacturer's device and you want the source:
 > - **Kernel source you can demand.** GPL v2 obliges the distributor to provide it. Most OEMs publish it
@@ -192,7 +192,7 @@ in AOSP.
 | **Bootloader** | Verified boot chain root | Unlocking behaviour, rollback protection |
 | **GTS (Google Test Suite)** | Tests GMS behaviour for licensing | Not published; CTS is |
 
-> **⚠️ Warning**
+> **Warning**
 > A self-built AOSP image or the AOSP emulator has **no Google Play services**. Consequences you will hit
 > within the first hour:
 > - Many applications crash on launch or show "Google Play services is required".
@@ -408,7 +408,7 @@ with the sender's UID and PID. `system_server` reads that stamped identity throu
 permission check always happens in `system_server` and never in the app process, and why "I hooked
 `checkSelfPermission` and it returned GRANTED" does not grant you anything.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Every framework API is a *receptionist*, and `system_server` is the *vault*. Hooking the receptionist
 > changes what you are told. It does not change what is in the vault, because the vault does not ask the
 > receptionist who you are — it asks the building's access-control system, which the kernel operates.
@@ -472,7 +472,7 @@ bulletin lists the specific commits that fix each issue, which is how you verify
 
 ### 3.2 The `repo` tool and manifests
 
-> **📖 Definition**
+> **Definition**
 > **`repo`** is a Python script that manages many git repositories as one logical tree. It does not
 > replace git; it drives it. A **manifest** is an XML file that tells `repo` which projects exist, where
 > to fetch each from, where to place it, and which revision to check out.
@@ -546,7 +546,7 @@ rg --no-heading -n "checkCallingPermission" frameworks/base/services/ | head -20
 repo start my-instrumentation frameworks/native
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > When a client hands you a device *and* a source tree, the first three files to read are
 > `.repo/manifests/default.xml`, everything in `.repo/local_manifests/`, and the output of
 > `repo manifest -r`. Together they answer: which AOSP release is this based on, which projects were
@@ -611,7 +611,7 @@ Inside `frameworks/base/`, which you will use more than everything else combined
 | `frameworks/base/core/api/current.txt` | The machine-readable public API surface (see 3.10) |
 | `frameworks/base/boot/hiddenapi/` | Hidden-API list inputs (path varies by release) |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `frameworks/base/core/res/AndroidManifest.xml` deserves to be bookmarked. It contains every
 > platform-defined permission with its exact `protectionLevel` — `normal`, `dangerous`, `signature`,
 > `signature|privileged`, `signature|appop`, and the modifier flags. When you need to know whether a
@@ -699,7 +699,7 @@ Three features of the UI that are worth knowing:
   exists — and reading the one that changed it tells you what the previous behaviour was, which is
   frequently the vulnerability.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > Code Search indexes far more than `platform/`. Chromium, the kernel, and several other Google-published
 > trees are searchable from the same UI via the project selector. For Android work the two you will use
 > are the platform superproject and the kernel, and being able to jump from `IPCThreadState.cpp` to
@@ -714,7 +714,7 @@ Three features of the UI that are worth knowing:
 | Cross-file structural search with `rg` and context | Complex multi-pattern searches |
 | Diffing two releases | `git diff android-14.0.0_r1..android-15.0.0_r1 -- <path>` |
 | Anything in a vendor tree | Not indexed anywhere |
-| Building | Obviously |
+| Building | Yes |
 
 ```bash
 # host — the searches that pay for a local checkout
@@ -743,7 +743,7 @@ git -C frameworks/base diff android-14.0.0_r1..android-15.0.0_r1 -- \
 | `SystemProperties.get("ro.…")` | A read-only system property, set at build time |
 | `Slog` vs `Log` | `Slog` is the system-server logging class |
 
-> **⚠️ Warning**
+> **Warning**
 > `checkCallingPermission` returns an `int`; `enforceCallingPermission` throws. A service that calls
 > `check*` and then ignores or mishandles the result has a permission bypass. When you audit an OEM's
 > added system service, grep for `checkCallingPermission` and read what happens to every return value.
@@ -753,7 +753,7 @@ git -C frameworks/base diff android-14.0.0_r1..android-15.0.0_r1 -- \
 
 Most traces end here, so it is worth having the map in advance.
 
-> **📖 Definition**
+> **Definition**
 > **`system_server`** is a single process, forked from Zygote at boot, running as UID 1000 (`system`),
 > that hosts almost every framework service: ActivityManager, PackageManager, WindowManager,
 > PowerManager, NotificationManager, and dozens more. It is the most privileged Java process on the
@@ -785,7 +785,7 @@ in a defined order, in three phases (`startBootstrapServices`, `startCoreService
 | Clipboard | `ClipboardService` | `services/core/java/com/android/server/` |
 | Media projection | `MediaProjectionManagerService` | `services/core/java/com/android/server/media/projection/` |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `dumpsys` on a device and `SystemServer.java` in the source are two views of the same list. When you
 > find a service on a client's device that is **not** in `SystemServer.java` for the corresponding AOSP
 > release, you have found an OEM addition — code written by the manufacturer, running as UID 1000,
@@ -799,7 +799,7 @@ in a defined order, in three phases (`startBootstrapServices`, `startCoreService
 
 ### 3.6 AIDL, and why every trace goes through it
 
-> **📖 Definition**
+> **Definition**
 > **AIDL** (Android Interface Definition Language) is a small language for declaring an interface that
 > can be called across process boundaries. The build system generates, from one `.aidl` file, both the
 > client-side proxy that marshals arguments into a `Parcel` and sends a Binder transaction, and the
@@ -859,7 +859,7 @@ See [25-Binder](../25-Binder/README.md) for the transaction format in full and
 New readers are constantly confused by finding a method in AOSP that does not exist in Android Studio.
 This section resolves that completely.
 
-> **📖 Definition**
+> **Definition**
 > The **SDK stubs** are the `android.jar` you compile against. It is **not** the framework. It is a
 > generated jar containing every public class and method signature, with bodies that throw
 > `RuntimeException("Stub!")`. At runtime, the real implementation is loaded from the device's boot
@@ -902,7 +902,7 @@ Any change to a public API must update these files, which is enforced by the bui
 excellent research artefact: `git log -p frameworks/base/core/api/system-current.txt` is a complete
 history of every system API Google has ever added or removed.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `@SystemApi` is the surface to study when you are testing a **preinstalled or platform-signed
 > application** — an OEM app, a carrier app, an MDM agent, a device-owner app. Those apps compile against
 > the system SDK and can call things a normal app cannot. When you decompile such an app and find calls
@@ -991,7 +991,7 @@ logcat | grep -i "Accessing hidden"
 adb shell am instrument --no-hidden-api-checks -w com.example.test/androidx.test.runner.AndroidJUnitRunner
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Three things to hold onto:
 > 1. **The `adb shell` user holds `WRITE_SECURE_SETTINGS`**, so `settings put global hidden_api_policy`
 >    works on ordinary retail devices over USB — you do not need root, and you do not need a userdebug
@@ -1043,7 +1043,7 @@ launch_cvd --daemon        # Cuttlefish: a virtual reference device that boots o
 | `userdebug` | 1 | 1 | Allowed | Enforcing | **What you want** |
 | `eng` | 1 | 0 | Allowed, `adbd` may run as root | Often permissive | Development only |
 
-> **🔬 Under the Hood — why a self-built `userdebug` image is the best Android lab you can have**
+> **Under the Hood — why a self-built `userdebug` image is the best Android lab you can have**
 >
 > Every other lab setup involves a compromise. A rooted retail phone gives you privilege but not source,
 > and Magisk changes the system in ways that interact with what you are testing. A stock emulator gives
@@ -1079,7 +1079,7 @@ launch_cvd --daemon        # Cuttlefish: a virtual reference device that boots o
 | `out/target/product/<device>/module-info.json` | Module name → installed path, source directory, class |
 | `out/target/product/<device>/obj/` | Intermediates, including unstripped objects |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `symbols/` and `module-info.json` are the two artefacts to ask for whenever a client gives you a
 > device *and* has a build tree. `symbols/` lets you apply full symbol tables to the stripped binaries
 > on the device, which turns weeks of native reversing into an afternoon.
@@ -1161,7 +1161,7 @@ m snod                  # repack system.img in under a minute
 stop_cvd && launch_cvd --daemon
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > A patched platform is a **research instrument**, not evidence. Any finding you demonstrate on a
 > modified image must be reproduced on an unmodified one before it goes in a report, and your report
 > must say which image each piece of evidence came from. The failure mode is embarrassing and common:
@@ -1180,7 +1180,7 @@ Other useful patches, each a one-liner once you know where to look:
 
 ### 3.11 CTS, VTS, GTS and STS
 
-> **📖 Definition**
+> **Definition**
 > The **Compatibility Test Suite (CTS)** is an automated test suite, published in AOSP under `cts/`, that
 > a device must pass to be considered Android-compatible. Passing it is a precondition for using the
 > Android trademark and for licensing Google Mobile Services.
@@ -1218,7 +1218,7 @@ cts-tradefed run commandAndExit cts --module CtsPermissionTestCases
 cts-tradefed run commandAndExit cts --module CtsSecurityTestCases
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `ro.build.version.security_patch` and `ro.vendor.build.security_patch` differing by many months is
 > extremely common and is a legitimate, reportable finding on its own. The system partition gets a
 > Mainline-assisted update; the vendor partition — which contains the HALs and the drivers where the
@@ -1258,7 +1258,7 @@ does the work — in `system_server`, in native code, or in the kernel. Follow a
 [cs.android.com](https://cs.android.com/); every path below is real and every step is one you can
 reproduce.
 
-> **⚠️ A note on paths and line numbers**
+> **A note on paths and line numbers**
 > Directory and file paths in AOSP are stable over years, and every path below is one you can search for
 > today. **Line numbers are not stable and are not given here.** Method names occasionally move between
 > classes across releases — where that has happened, the trace says so and gives you the Code Search
@@ -1370,7 +1370,7 @@ public ActivityResult execStartActivity(Context who, IBinder contextThread, IBin
 }
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `checkStartActivityResult` is worth reading in full. It is the single function that decides which
 > exception your app sees, and its mapping tells you exactly what the system distinguishes:
 > `START_INTENT_NOT_RESOLVED` and `START_CLASS_NOT_FOUND` become `ActivityNotFoundException`;
@@ -1437,7 +1437,7 @@ body is mechanical:
 }
 ```
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > `writeInterfaceToken(DESCRIPTOR)` writes the interface's name string into the transaction, and the
 > server's `onTransact` calls `enforceInterface(DESCRIPTOR)` to check it. This is a *type-confusion*
 > defence, not an authentication one: it stops a caller sending a transaction intended for one interface
@@ -1497,7 +1497,7 @@ t->from = thread;                         /* used for reply routing */
 security_binder_transaction(proc->cred, target_proc->cred);  /* SELinux LSM hook */
 ```
 
-> **🧠 Mental Model**
+> **Mental Model**
 > This is the *only* place in the whole trace where identity is established, and it is established by
 > the kernel from the sending task's credentials — not by anything the sender wrote into the message.
 > Everything downstream in `system_server` trusts `Binder.getCallingUid()` precisely because of these
@@ -1515,8 +1515,8 @@ the transaction code and calls the real method.
 **File:** `frameworks/base/core/java/android/os/Binder.java`
 **Method:** `execTransact` — the single funnel through which **every** incoming Java Binder call passes.
 
-> **🔍 Pentester's Note**
-> `Binder.execTransact` is the highest-leverage single hook point on the whole device. One Frida hook
+> **Pentester's Note**
+> `Binder.execTransact` is the highest-value single hook point on the whole device. One Frida hook
 > there logs every incoming Binder call to every Java service in a process, with the calling UID and PID
 > already available. Section 7 gives the script. It is also, for exactly the same reason, the place to
 > patch when you build an instrumented AOSP image.
@@ -1642,7 +1642,7 @@ solely by Unix file permissions and SELinux.
 the same name return the same object and why cross-process sharing does **not** work (`MODE_MULTI_PROCESS`
 was deprecated because it was never reliable).
 
-> **⚠️ Warning**
+> **Warning**
 > `MODE_WORLD_READABLE` and `MODE_WORLD_WRITEABLE` were deprecated in API 17 and, from `targetSdk` 24
 > onward, **throw `SecurityException`** when used. The check is in `ContextImpl`. If you find an app
 > passing those constants, either its `targetSdk` is below 24 — itself a finding — or it is crashing.
@@ -1705,7 +1705,7 @@ public void apply() {
 }
 ```
 
-> **🔬 Under the Hood — the `QueuedWork` mechanism**
+> **Under the Hood — the `QueuedWork` mechanism**
 > `apply()` is asynchronous, so how does Android guarantee your preferences are not lost when the
 > process is killed a moment later? The answer is `frameworks/base/core/java/android/app/QueuedWork.java`.
 > `ActivityThread` calls `QueuedWork.waitToFinish()` in `handlePauseActivity` and `handleStopActivity`
@@ -1737,7 +1737,7 @@ The write is deliberately crash-safe, and the sequence matters if you are doing 
 On the *next* load, `startLoadFromDisk` checks for `<name>.xml.bak`: if it exists, the previous write did
 not finish, so the backup is renamed over the main file and the partial write is discarded.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Three practical consequences for an engagement:
 > ```bash
 > # adb shell — on a debuggable app, no root needed
@@ -1861,7 +1861,7 @@ Then follow the call. It will lead to one of:
 
 **Code Search query for the interface:** `file:IPermissionManager.aidl` or `file:IPermissionChecker.aidl`
 
-> **🧠 Mental Model**
+> **Mental Model**
 > The fact that this hop moved between releases is not an inconvenience — it is the lesson. **Do not
 > memorise call graphs; memorise the procedure.** Name a symbol, find the implementation, follow the
 > call, look for `extends I*.Stub`, find `Binder.getCallingUid()`. That procedure has worked on every
@@ -1894,7 +1894,7 @@ The definitions of every platform permission — with `protectionLevel` — are 
 **Class:** `AppOpsService`
 **Client side:** `frameworks/base/core/java/android/app/AppOpsManager.java`
 
-> **📖 Definition**
+> **Definition**
 > **App-ops** is a per-package, per-operation permission layer that sits *beside* the permission system.
 > An operation can be `MODE_ALLOWED`, `MODE_IGNORED` (the call silently succeeds but returns nothing),
 > `MODE_ERRORED` (throws), or `MODE_DEFAULT` (fall back to the permission check). Many dangerous
@@ -1913,7 +1913,7 @@ appops set com.example.app READ_CLIPBOARD allow
 cmd appops get com.example.app CAMERA
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > When an app has a permission granted but the API returns empty results, check app-ops before you
 > conclude anything about the app. Equally, when you are testing whether an app degrades gracefully
 > under partial permission, `appops set ... ignore` is a far better test than revoking the permission,
@@ -1954,7 +1954,7 @@ flowchart LR
     style A fill:#f9d0d0
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > This is the answer to the most common beginner question in Android security: *"I hooked
 > `checkSelfPermission` to return `PERMISSION_GRANTED` — why can I still not use the camera?"*
 >
@@ -2028,7 +2028,7 @@ leads to bad advice.
 | **Building a research platform** | A patched userdebug image with framework instrumentation, per section 3.10. |
 | **Diffing OEM against AOSP** | Decompile a vendor's `services.jar`, diff against the AOSP release it derives from, and read only the differences. Vendor additions are less reviewed than AOSP and this narrows the search enormously. |
 
-> **🔍 Pentester's Note — the highest-yield grep in AOSP framework auditing**
+> **Pentester's Note — the highest-yield grep in AOSP framework auditing**
 > ```bash
 > # host — every place the system drops the caller's identity
 > rg -n "clearCallingIdentity" frameworks/base/services/core/java | wc -l
@@ -2332,7 +2332,7 @@ pm list permissions -f | grep -A3 "com.vendor"
 dumpsys package | grep -A3 "com.vendor.permission"
 ```
 
-**Exploitation.** An attacker app simply requests the permission. `normal` permissions are granted at
+**Exploitation.** An attacker app requests the permission. `normal` permissions are granted at
 install with no prompt and no user interaction.
 
 ```xml
@@ -2369,7 +2369,7 @@ package-install or system-configuration capability. **Low** if it gates somethin
 class of finding — a custom permission with `protectionLevel="normal"` on a preinstalled app — is worth
 checking on every OEM engagement because it is quick and it is common.
 
-> **⚠️ Warning**
+> **Warning**
 > A related trap: a permission declared with **no** `android:protectionLevel` attribute defaults to
 > `normal`. When auditing, absence is as important as a wrong value.
 
@@ -2503,7 +2503,7 @@ code tells you exactly what it means.
 | `logd` buffers | `system/core/logd/` | Recent log lines, including anything an app logged carelessly |
 | `/data/system/usagestats/` | `UsageStatsService` | Per-app foreground time and launch events |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `/data/system/packages.xml` is the single most useful file on a device you have root on. It contains,
 > for every installed package: the signing certificate (so you can group apps by signer and find
 > everything in the platform trust domain), the install source, the granted install-time permissions,
@@ -2569,7 +2569,7 @@ diff -ru services-aosp/sources/com/android/server/pm \
 Then read only the differences, looking for the patterns in §5.3: missing permission checks, checks after
 `clearCallingIdentity`, caller-supplied paths, new Binder interfaces.
 
-> **⚠️ Warning**
+> **Warning**
 > On modern devices `services.jar` may contain only a stub, with the real code in a pre-compiled
 > `services.odex`/`.vdex` under `/system/framework/oat/<arch>/`. Extract the DEX from the VDEX before
 > decompiling:
@@ -2704,7 +2704,7 @@ dumpsys -l
 pm list packages --apex-only
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `service list` on the target versus `service list` on a stock image of the same release is a two-minute
 > exercise that produces the vendor's added attack surface as a list. Do it before anything else on an
 > OEM engagement. [`scripts/aosp-device-recon.sh`](scripts/aosp-device-recon.sh) collects everything on
@@ -2768,7 +2768,7 @@ Java.perform(function () {
 });
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > Changing the return value in that hook changes what the app *believes*, not what it *may do* — Trace C,
 > step 5. It is useful for making an app take its permitted-branch code path so you can analyse it. It
 > grants nothing. If a report claims a permission was bypassed by a client-side hook, the report is
@@ -2791,7 +2791,7 @@ dmesg | grep -i avc
 logcat -b all | grep -i avc
 ```
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > The `binder` ftrace events come from tracepoints compiled into `drivers/android/binder.c`. They give
 > you transaction-level visibility with **no** instrumentation of user space at all, which means an app
 > cannot detect them and cannot disable them. On a device where you have root but cannot patch the
@@ -3317,12 +3317,12 @@ environment should not be allowed to bias effort toward the parts that happen to
 **Q: Google publishes AOSP but keeps GMS proprietary. Analyse that arrangement from a security standpoint.**
 It has genuine benefits and genuine costs and a good answer names both. Benefits: the platform's core —
 kernel, runtime, framework, sandbox, SELinux policy — is auditable by anyone, which has produced a large
-body of public research and a mature ecosystem of analysis tooling that simply does not exist for closed
+body of public research and a mature ecosystem of analysis tooling that does not exist for closed
 platforms. Costs: the closed part is not peripheral. Play Integrity, Play Protect, the Play Store's
 install path, Play services' privileged surface and the attestation infrastructure are exactly the
 components a security architecture depends on, and none can be independently verified. That produces an
 awkward position where the *substrate* is auditable and the *controls* are not. It also creates the CTS
-arrangement: GMS licensing is conditioned on compatibility, which gives Google leverage to enforce
+arrangement: GMS licensing is conditioned on compatibility, which lets Google enforce
 security requirements across manufacturers it does not employ — genuinely valuable, and also a
 concentration of power that is worth naming. A strong candidate also observes that Mainline shifted the
 balance: components that were once OEM-controlled now update through Play, which materially shortens
@@ -3363,7 +3363,7 @@ public.
 Reject the framing that this is a testing problem. Begin with measurement, because you cannot manage
 what you cannot see: automated collection of `ro.build.version.security_patch`,
 `ro.vendor.build.security_patch`, kernel version and Mainline module versions across the fleet, plotted
-over time, which converts a vague concern into a number an executive can act on. Then leverage: patch
+over time, which converts a vague concern into a number an executive can act on. Then procurement: patch
 cadence is a procurement term, so it belongs in the contract with a defined SLA and a remedy, and the
 next hardware decision should weight it. Then architecture: prefer devices where GKI and Treble decouple
 the kernel and vendor layers, and where the components you care about are Mainline-updatable, because
@@ -3373,7 +3373,7 @@ operations gated on the server, MDM policy enforcing minimum patch levels for ac
 segmentation for devices that cannot meet it. Finally, targeted verification: pick the two or three
 bulletin entries in the gap that affect components the fleet actually has, and demonstrate exploitability
 or its absence, because one demonstration changes an organisation's behaviour more than a hundred
-inventory rows. The judgement to state explicitly is that the security team's leverage here is
+inventory rows. The judgement to state explicitly is that the security team's levers here are
 commercial and architectural, not technical, and a programme that responds to a bad patch record with
 more penetration testing is spending its budget in the wrong place.
 

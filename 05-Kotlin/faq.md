@@ -18,12 +18,12 @@ bodies into their callers. Those transformations are exactly what makes decompil
 and you cannot interpret JADX output without knowing which parts the developer wrote and which parts
 the compiler added.
 
-There is a second, practical reason. Kotlin's null-safety rules mean a huge class of Java bugs simply
+There is a second, practical reason. Kotlin's null-safety rules mean a huge class of Java bugs
 cannot be expressed. When you audit a Kotlin codebase you can stop hunting for ordinary null-pointer
 dereferences and spend that time on the places where the developer deliberately opted out of safety,
 which is a much shorter and much more interesting list.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Java is a language that describes bytecode fairly directly. Kotlin is a language that describes
 > *intent*, and the compiler writes a considerable amount of Java-equivalent code on your behalf. When
 > you decompile, you are reading the compiler's Java, not the developer's Kotlin.
@@ -64,7 +64,7 @@ Think of it as reading versus writing. You read Java and you write Kotlin.
 
 ### 4. What is a platform type and why does it break null safety?
 
-> **📖 Definition**
+> **Definition**
 > A **platform type**, written `T!` in error messages but never written by hand in source, is a type
 > that came from Java and whose nullability the Kotlin compiler does not know. Kotlin declines to
 > guess: it lets you treat the value as either nullable or non-null, and inserts **no** runtime check.
@@ -86,13 +86,13 @@ println(name.length)                    // NullPointerException if getName retur
 The crash is a plain `NullPointerException` from the JVM, not a Kotlin `IllegalStateException`, and it
 happens at the point of use rather than the point of assignment, which makes it harder to trace.
 
-> **⚠️ Warning**
+> **Warning**
 > Every value crossing the Java-to-Kotlin boundary is a platform type unless the Java side is annotated
 > with `@Nullable` or `@NonNull`. That includes all of `android.*`, all of `org.json.*`, everything
 > returned by JNI, and every value your app reads from an `Intent`, a `Bundle`, or a `Cursor` — in other
 > words, precisely the attacker-controlled inputs.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Platform types are the highest-value place to look for crashes in an otherwise null-safe app. Find
 > the Kotlin function that reads `intent.getStringExtra("x")` into a non-null `String`, send an Intent
 > without that extra, and you have a reproducible denial of service. Chapter
@@ -115,7 +115,7 @@ Because `kotlin.collections.List` and `kotlin.collections.MutableList` are the *
 crosses into Java, the checker is no longer involved, and Java sees a perfectly ordinary mutable
 `java.util.ArrayList`.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > Kotlin maps its collection interfaces onto the Java ones through the compiler's built-in mapping
 > table rather than by generating wrapper classes. `List<String>` has the JVM descriptor
 > `Ljava/util/List;`. This is why decompiled Kotlin shows plain `java.util.List` everywhere and gives
@@ -149,7 +149,7 @@ public final void login(String username, String password) {
 Private and internal functions frequently skip the check, because the compiler can prove every caller
 within the module already satisfies the contract.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Those string literals are the single most useful free gift in a Kotlin APK. String constants are not
 > renamed by R8, so even in a fully obfuscated app where the class is `a` and the method is `b`, the
 > line `Intrinsics.checkNotNullParameter(str, "encryptionKey")` tells you exactly what the first
@@ -205,9 +205,9 @@ public final class TokenStore {
 
 Call sites become `TokenStore.Companion.create()`. If the developer annotated the member `@JvmStatic`,
 the compiler additionally generates a genuine `public static TokenStore create()` on `TokenStore` that
-simply forwards to the companion instance, so both call forms exist.
+forwards to the companion instance, so both call forms exist.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > This directly changes your Frida target. To hook `TokenStore.Companion.create()` you must
 > `Java.use("com.app.TokenStore$Companion")` — note the dollar sign — and hook `create` there. Hooking
 > `create` on `com.app.TokenStore` silently does nothing unless `@JvmStatic` was used. If your hook
@@ -393,7 +393,7 @@ produced by the *previous* suspension point. Any local variable that must surviv
 promoted to a field on the continuation class, typically named `L$0`, `L$1`, `I$0`, and so on — which is
 exactly where you look for secrets at runtime.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > The `default` branch throwing `IllegalStateException("call to 'resume' before 'invoke' with coroutine")`
 > is a fixed string in the Kotlin compiler. Grepping a DEX for that exact sentence is a fast way to
 > count how many suspending code blocks an app contains.
@@ -448,7 +448,7 @@ The classic pattern is an exported `Activity` or `BroadcastReceiver` that does
 the target on demand. If the target is a persistent service — a VPN client, a password manager's
 autofill service, a device-management agent — the availability impact is real.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > When triaging, grep the decompiled output for `Intrinsics.checkNotNull(` (the one-argument form, which
 > is `!!`, as opposed to `checkNotNullParameter`) and cross-reference each hit against the exported
 > components in `AndroidManifest.xml`. See [chapter 26 — Intent](../26-Intent/README.md) for delivery
@@ -484,7 +484,7 @@ constructor plus a single static instance field on its outer class is a companio
 `toString` methods that concatenate field names and values in the exact source order are recognisable
 by shape.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Names are cheap to change and structure is expensive. Build your Kotlin identification on structural
 > patterns and treat names as a convenience, and obfuscation stops mattering nearly as much.
 > [Lab 01](labs/lab-01-spot-the-kotlin.md) drills exactly this.
@@ -511,7 +511,7 @@ A single `Log.d("net", "$session")` therefore writes the auth token to logcat. T
 innocuous-looking line; the compiler supplied the leak. This is one of the most common findings in
 Kotlin app reviews and maps to MASVS-STORAGE.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Search the decompiled output for `toString()` methods whose returned string contains `token`, `key`,
 > `password`, `pin`, `secret`, or `session`, then search for call sites that pass the enclosing type to
 > any `Log`, `println`, `Timber`, or crash-reporting call. Also check `Crashlytics`-style custom keys,
@@ -563,7 +563,7 @@ continuation object instead.
 
 ### 23. What is structured concurrency and why should I care as a reverse engineer?
 
-> **📖 Definition**
+> **Definition**
 > **Structured concurrency** means every coroutine belongs to a `CoroutineScope` and cannot outlive it.
 > Cancelling the scope cancels every child; a child's failure propagates to the parent; and the parent
 > does not complete until all children have.
@@ -575,7 +575,7 @@ custom application scopes. If you can reach and cancel a scope from a hook, you 
 call, poll, and timer inside it — which is a very direct way to neutralise, say, a licence-check loop
 or an anti-tamper heartbeat without touching the check itself.
 
-It also explains a common analysis surprise: a suspend function whose work simply stops mid-way with no
+It also explains a common analysis surprise: a suspend function whose work stops mid-way with no
 exception in the log. That is cancellation, delivered as a `CancellationException` that the framework
 deliberately swallows because it is considered normal control flow rather than an error.
 

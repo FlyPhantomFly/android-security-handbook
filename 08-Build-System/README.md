@@ -56,7 +56,7 @@ on to it; section 5 is largely about its consequences.
 This chapter keeps the two systems in separate lanes throughout. Where a heading applies to only one,
 it is marked **(A) Platform** or **(B) App**.
 
-> **📖 Definition**
+> **Definition**
 > A **build system** is a program whose job is to turn source files into shippable artefacts by
 > running the right tools, in the right order, only when necessary. The three hard problems it solves
 > are *dependency ordering* (compile the library before the thing that uses it), *incrementality*
@@ -85,7 +85,7 @@ APK does not:
   pulling it in from a library. You cannot explain that from the APK; you can explain it instantly
   from the merged manifest report the build produces.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Think of the APK as a *photograph* of a building and the Gradle files as its *architectural plans*.
 > The photograph shows you what is visible from outside. The plans tell you which contractor supplied
 > the wiring, whether the fire doors were value-engineered out, and who signed off. In a
@@ -127,7 +127,7 @@ build executor: it does not parse a language, it reads a pre-generated dependenc
 commands. **Kati** is the bridge: it reads the remaining legacy `Android.mk` files and *also* emits
 Ninja, so both systems feed one graph.
 
-> **📖 Definition**
+> **Definition**
 > **Soong** is the Go program that reads `Android.bp` files and generates a Ninja build graph.
 > **Blueprint** is the library Soong is built on, and also the name of the file format's syntax.
 > **Ninja** is the low-level build executor that actually runs compiler commands.
@@ -148,11 +148,11 @@ outputs. Gradle computes which tasks are out of date by hashing inputs, then run
 dependency order, in parallel where it can.
 
 The crucial and uncomfortable fact is that a `build.gradle` file is **code** — Groovy or Kotlin — that
-Gradle *executes* in order to discover what the tasks are. There is no sandbox. `build.gradle` can
+Gradle *executes* to discover what the tasks are. There is no sandbox. `build.gradle` can
 open sockets, read `~/.ssh/id_rsa`, and exfiltrate your CI secrets, and it runs before a single line of
 your app has been compiled.
 
-> **⚠️ Warning**
+> **Warning**
 > Never run `./gradlew` on an untrusted project — including an APK's decompiled source that someone
 > reconstructed into a Gradle project, a "proof of concept" repository from a bug report, or a client
 > codebase you have not reviewed. Opening the project in Android Studio is enough: Studio runs the
@@ -389,7 +389,7 @@ pipeline feeds into the code pipeline.
 Kotlin output through the Kotlin compiler's stub generation), then Java. Annotation processors run and
 may generate additional sources. Everything becomes JVM `.class` files. Those `.class` files contain
 constructs Android's runtime may not support on older API levels, so a **desugaring** step rewrites
-them. Then the fork: if `minifyEnabled` is false, `D8` simply translates `.class` to `.dex`; if it is
+them. Then the fork: if `minifyEnabled` is false, `D8` translates `.class` to `.dex`; if it is
 true, `R8` does shrinking, optimisation, obfuscation and translation in one pass and additionally emits
 `mapping.txt`, which is the file that lets you de-obfuscate a stack trace — and the file whose leakage
 undoes the obfuscation entirely.
@@ -487,7 +487,7 @@ repository that has been built once. The `build/` directory contains the merged 
 mapping file, the full resource merge, and the intermediate DEX — all of which answer questions faster
 than re-running the build. Ask for it, or run one build yourself and then read `build/`.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The first three commands to run on any Android source repository you are handed:
 > ```bash
 > # host — in the project root
@@ -533,7 +533,7 @@ farm for every release candidate.
 **Where the entry point is.** `build/envsetup.sh` (a symlink into `build/make/envsetup.sh`) defines the
 shell functions. The real driver is `soong_ui`, whose Go source lives in `build/soong/ui/`.
 
-> **📖 Definition**
+> **Definition**
 > A **module** in the platform build is a named unit of output — a library, a binary, an APK, a set of
 > files copied into an image. Every module has a **type** (`cc_library`, `java_library`, …), a unique
 > `name`, and a set of properties. The name is globally unique across the whole tree, which is why AOSP
@@ -562,7 +562,7 @@ The three build **variants** are a security-relevant choice, not a convenience:
 | `userdebug` | 1 | 1 | Allowed | Off | `debug`-tagged too | The build QA and security researchers want |
 | `eng` | 1 | 0 | Allowed, and `adbd` may start as root | On | Everything, including `eng`-tagged | Developer builds; never shipped |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `adb shell getprop ro.build.type` on a client's device tells you which of these you are holding. If a
 > production handset, a kiosk, a set-top box or an in-vehicle unit reports `userdebug` or `eng`, stop
 > and write it up before you test anything else. It means `run-as` works on every application, `adb
@@ -585,7 +585,7 @@ The three build **variants** are a security-relevant choice, not a convenience:
 | `m dist` | Build and copy release artefacts into `out/dist/` | What a build farm runs |
 | `m nothing` | Run only the parsing phase | Measuring null-build time; validating `Android.bp` syntax |
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > `m snod` is the one to remember for research. Once you have a full build, you can drop a patched
 > binary or a modified `sepolicy` into `out/target/product/<device>/system/` and run `m snod` to get a
 > flashable `system.img` in under a minute, without the build system re-deriving whether your change
@@ -638,7 +638,7 @@ environment variable. Conditional behaviour is expressed by structured propertie
 … } }`, `target: { android: { … } }`), or by `soong_config_module_type`, which lets a product
 configuration select among *pre-declared* alternatives — not compute arbitrary ones.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Make is a *program that computes a build*. Blueprint is a *description of a build*. That single
 > difference is why Soong builds are fast, analysable, and — importantly for you — **statically
 > auditable**. You can answer "which modules link against `libcrypto`?" by grepping `Android.bp` files
@@ -671,7 +671,7 @@ configuration select among *pre-declared* alternatives — not compute arbitrary
 | `rust_library` / `rust_binary` | Rust artefacts | Increasingly common in newer AOSP for parsers |
 | `cc_defaults` / `java_defaults` | A reusable property bundle | `defaults: ["x"]` pulls it in; you must follow it to see the real flags |
 
-> **⚠️ Warning**
+> **Warning**
 > `genrule` is the hole in Blueprint's "no arbitrary code" guarantee. A `genrule` declares a `cmd`
 > string that Ninja executes in a shell, with `$(in)`, `$(out)` and `$(location <tool>)` substitutions.
 > It is sandboxed to declared inputs and outputs in modern Soong, but the command itself is arbitrary.
@@ -735,7 +735,7 @@ There is a conversion tool, `androidmk` (source in `build/soong/androidmk/`), th
 translates simple `Android.mk` files into `Android.bp`. It fails on anything conditional, which is
 precisely the code you most want to read.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > On an OEM tree, `Android.mk` files are where the vendor-specific weirdness lives, because the vendor's
 > integration work predates their Soong migration. Search for `$(shell`, `LOCAL_POST_INSTALL_CMD`,
 > `LOCAL_ADDITIONAL_DEPENDENCIES` and `include $(BUILD_PREBUILT)` with a `LOCAL_SRC_FILES` pointing at a
@@ -806,7 +806,7 @@ The **test band** is the part most people miss. `sepolicy_freeze_test` fails the
 modifies a *frozen* public type — this is how the platform's stable policy interface is enforced.
 `treble_sepolicy_tests` checks that vendor code does not reach into platform-private types.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > The reason `init` sometimes takes noticeably longer to boot after you flash a new `system.img` onto an
 > old `vendor.img` is exactly this: the precompiled policy's hash no longer matches the platform policy
 > shipped in `system`, so `init` discards it and runs `secilc` on the device at boot. The hashes live in
@@ -852,7 +852,7 @@ code". If you are auditing a Bazel-based Android tree, the equivalent of "read e
 | `out/target/product/<device>/module-info.json` | Module name → installed paths, classes, source dirs |
 | `out/dist/` | Release artefacts from `m dist` |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `out/target/product/<device>/symbols/` is a gift. It contains the **unstripped** version of every
 > native binary and library on the device, with full symbol tables and often DWARF debug information.
 > If you are given a build tree along with a device, load the symbol version into Ghidra or IDA and
@@ -896,7 +896,7 @@ sequenceDiagram
 
 **Initialisation** decides *which projects exist*. `settings.gradle` is evaluated first, and it is the
 only place where `pluginManagement` and (in modern Gradle) `dependencyResolutionManagement` can be
-declared. This is the highest-leverage file in a Gradle project for both attack and defence, and it is
+declared. This is the highest-value file in a Gradle project for both attack and defence, and it is
 the one reviewers skip.
 
 **Configuration** evaluates every `build.gradle`. This is where your `android { … }` block runs, where
@@ -908,7 +908,7 @@ project to populate the IDE.
 **Execution** runs the subset of tasks needed for the requested goal, checking each task's declared
 inputs and outputs against a hash cache to skip work.
 
-> **⚠️ Warning**
+> **Warning**
 > `./gradlew --dry-run` does **not** make a project safe to open. `--dry-run` skips the *execution*
 > phase only. The configuration phase — the one that runs arbitrary code — still executes in full. So
 > does `./gradlew tasks`, `./gradlew help`, and importing the project into an IDE. There is no
@@ -1043,7 +1043,7 @@ These two are confused constantly, including by developers, and the confusion pr
 | Can vary per variant | No | Yes, via `applicationIdSuffix` and flavours |
 | Security relevance | Determines where `BuildConfig` lands in the DEX | Determines the sandbox UID mapping, the data directory `/data/data/<applicationId>`, the permission namespace, and what an attacker must impersonate |
 
-> **⚠️ Warning**
+> **Warning**
 > Custom permissions are declared with a name string, not with `applicationId`. If an app declares
 > `com.example.app.permission.ADMIN` and an attacker installs first with the same permission name and a
 > `normal` protection level, the attacker's definition wins on older Android versions. Android 5.0
@@ -1054,7 +1054,7 @@ These two are confused constantly, including by developers, and the confusion pr
 
 ### 3.9 Build variants: types, flavours, and source sets
 
-> **📖 Definition**
+> **Definition**
 > A **build type** describes *how* the app is built (debug versus release: shrinking, debuggability,
 > signing). A **product flavour** describes *what* app is built (free versus paid, staging versus
 > production, one white-label brand versus another). A **build variant** is one combination of one
@@ -1104,7 +1104,7 @@ Each variant has its own set of **source sets**, merged in a defined priority or
 
 Higher priority wins for a conflicting resource or manifest attribute. **Java and Kotlin source sets do
 not merge — they concatenate.** Two source sets in the same variant may not define the same class, but
-a class defined in `src/debug/java` simply does not exist in the release variant.
+a class defined in `src/debug/java` does not exist in the release variant.
 
 | Artefact type | Merge behaviour across source sets |
 |---|---|
@@ -1115,7 +1115,7 @@ a class defined in `src/debug/java` simply does not exist in the release variant
 | JNI libs (`jniLibs/`) | Overlaid by relative path |
 | Dependencies | Additive: `debugImplementation` adds to `implementation` |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `src/debug/` is where you find the good stuff, and it is also where you find the *reason* a control
 > you expected is missing. Common patterns: a `src/debug/java/.../NetworkModule.kt` that installs a
 > trust-all `X509TrustManager`; a `src/debug/AndroidManifest.xml` that adds
@@ -1180,7 +1180,7 @@ That is the entire attack surface in one sentence.
 | `<meta-data>` | Configuration read by other SDKs |
 | `android:name` on `<application>` | A custom `Application` class — libraries rarely do this, but it is possible and would be a serious red flag |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Take a release APK, decode the manifest, and list every exported component. Then take the
 > application's source repository and list every component declared in `src/main/AndroidManifest.xml`.
 > **The difference is what the libraries added.** In real applications that difference is routinely ten
@@ -1234,7 +1234,7 @@ The remediation for an unwanted injected component is exactly this mechanism:
 </manifest>
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > `tools:node="remove"` deletes the component from the manifest, but the SDK's **code is still in the
 > APK**. If the SDK's own initialisation calls into the removed component, you will get a runtime
 > crash instead of a security improvement. Removing an injected component is a legitimate fix, but it
@@ -1273,14 +1273,14 @@ ADDED from [com.thirdparty:sdk:3.4.1] .../AndroidManifest.xml:41:9-47:20
 That is a complete answer to "where did this component come from, and who is responsible for it",
 including the exact Maven coordinate. In a report you can name the SDK and the version.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Treat every third-party SDK as a **co-author of your manifest with commit access and no code review**.
 > That is literally what a dependency is in the Android build model. The manifest merger report is your
 > `git blame` for the manifest, and it is the only place the truth is written down.
 
 ### 3.11 Dependency configurations
 
-> **📖 Definition**
+> **Definition**
 > A **configuration** in Gradle is a named bucket of dependencies with defined semantics about where
 > those dependencies appear: on the compile classpath, on the runtime classpath, in the published API,
 > or in the packaged output.
@@ -1303,7 +1303,7 @@ The distinction between `api` and `implementation` is usually taught as a build-
 `implementation`, changing a transitive dependency does not force recompilation of downstream modules.
 That is true, but the security framing is more useful.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > `api` is a **transitive trust declaration**. It says: "everyone who uses my module also gets this
 > dependency's types on their compile classpath, whether they wanted them or not." A dependency graph
 > full of `api` is a graph where a single compromised leaf artefact is visible to, and callable from,
@@ -1311,7 +1311,7 @@ That is true, but the security framing is more useful.
 > APK — the code is still there and still runs — but it does bound which of *your* code can be written
 > against it, which bounds accidental coupling and makes removal possible later.
 
-> **⚠️ Warning**
+> **Warning**
 > `compileOnly` is the one that surprises people. A `compileOnly` dependency is **not in the APK**. If
 > any code path actually reaches it at runtime, the app throws `NoClassDefFoundError`. Conversely, and
 > more importantly for you: seeing a dependency in `build.gradle` does **not** prove it is in the APK.
@@ -1361,7 +1361,7 @@ differs per environment is very often a credential.
 
 The result is a `public static final String` in the DEX.
 
-> **⚠️ Warning**
+> **Warning**
 > A `String` constant in `BuildConfig` is not merely "in the APK". Because it is `static final` and
 > initialised with a compile-time constant, the Java compiler **inlines** it at every use site. The
 > value therefore appears in the string pool of the DEX and, additionally, at every call site. R8
@@ -1382,7 +1382,7 @@ Common variants of the mistake, all of which are equivalent:
 | An `assets/config.json` | Plain file in the APK |
 | A key XORed or Base64-ed in code before use | DEX, plus the decoding routine right next to it |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The correct question to ask a developer is never "is the key obfuscated?" — it is "**what can this
 > key do, and who can revoke it?**". Some keys genuinely must ship: a Firebase Web API key, a Maps API
 > key, an OAuth *public* client identifier. Those are identifiers, not secrets, and their security
@@ -1411,7 +1411,7 @@ if shipped.
 | WebView contents debugging | `WebView.setWebContentsDebuggingEnabled(true)` | `chrome://inspect` can drive the WebView | Search the DEX for the call |
 | Extra dependencies | `debugImplementation` | Flipper, Chucker, LeakCanary present, sometimes with a listening socket | `unzip -l` and look for their packages |
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > `BuildConfig.DEBUG` is a `static final boolean`. In a release build it is `false`, and because it is a
 > compile-time constant, `javac` performs **dead-code elimination on the `if` statement itself** — the
 > guarded block is not emitted into the `.class` file at all. This is genuine, not a shrinking pass.
@@ -1424,7 +1424,7 @@ if shipped.
 > add `-assumenosideeffects class android.util.Log { *; }` **and** optimisation is enabled. The
 > overwhelmingly common outcome in real applications is that logging ships.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Debug artefacts reach production by three routes, and it is worth naming which one you found:
 > (1) the wrong variant was uploaded — check the signing certificate; a debug-keystore signature is
 > conclusive; (2) the release build type was misconfigured — `isDebuggable = true` on `release`, which
@@ -1443,7 +1443,7 @@ rules are simple and brutal:
   `sharedUserId`.
 - `signature`-level permissions are granted only to apps signed by the declaring app's key.
 
-> **📖 Definition**
+> **Definition**
 > A **keystore** is an encrypted file (Java `JKS`, or the modern `PKCS#12`) containing one or more
 > **key entries**. Each entry is a private key plus its certificate chain, identified by an **alias**,
 > and protected by a **key password**; the file itself is protected by a **store password**. Losing the
@@ -1490,7 +1490,7 @@ apksigner sign \
   --out app-release-signed.apk app-release-unsigned.apk
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > Rotation breaks every **client-side** integrity assumption that was written against the old
 > certificate hash. Certificate pinning inside a companion app, a server-side check of
 > `PackageManager.getPackageInfo(..., GET_SIGNING_CERTIFICATES)`, an MDM allowlist, a Play Integrity
@@ -1531,7 +1531,7 @@ The consequences a tester must hold in mind:
 | An APK downloaded from a third-party mirror may be signed by anyone | Always verify the certificate digest against the Play-installed copy before analysing a "the same" APK from an APK site |
 | Play may re-optimise the delivered artefacts | Do not assume byte-identity between what you build and what the device receives |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Establish provenance before you analyse. Pull the APK set off a real device with
 > `adb shell pm path <pkg>` and `adb pull`, then record `apksigner verify --print-certs` output and the
 > SHA-256 of every file in your evidence directory. Analysing an APK from a download site and reporting
@@ -1572,7 +1572,7 @@ flowchart LR
 | `android.enableR8.fullMode=true` | AGP 8.0 default | More aggressive assumptions | Requires more precise keep rules; more breakage if reflection is undeclared |
 | `-keep class ** { *; }` in `proguard-rules.pro` | — | Keeps everything | **Completely defeats obfuscation and shrinking.** A single line. |
 
-> **⚠️ Warning**
+> **Warning**
 > Obfuscation is a **cost multiplier, not a control**. It does not protect a secret, it does not stop a
 > determined analyst, and it must never be the answer to "how do you protect this key". What it does is
 > raise the time cost of understanding the app, which has real value against opportunistic attackers,
@@ -1583,7 +1583,7 @@ flowchart LR
 `mapping.txt` deserves its own warning. It is the file that maps obfuscated names back to original
 names, and it lives at `app/build/outputs/mapping/<variant>/mapping.txt`.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Look for `mapping.txt` in three places during a source-assisted review: committed to the repository
 > (`git log --all -- '**/mapping.txt'`), attached to a public GitHub release, and inside the APK itself
 > — some builds accidentally package it, and the Play Console upload flow encourages developers to keep
@@ -1631,7 +1631,7 @@ classes that are only referenced by name from XML and instantiated reflectively.
 | `res/**` binary XML | APK | `apktool d` to get readable XML |
 | `R.jar` | `build/intermediates/compile_and_runtime_not_namespaced_r_class_jar/` | `javap` |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `resources.arsc` is a frequently overlooked place for secrets. `resValue("string", …)` in Gradle, the
 > Google Services plugin's output, and hand-written `res/values/secrets.xml` all land here, and none of
 > them are touched by obfuscation. Run `aapt2 dump resources app.apk | grep -iE
@@ -1696,7 +1696,7 @@ for so in $(find nat -name '*.so'); do
 done
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > R8 renames Java classes and methods. JNI symbols are named after the **Java** class and method they
 > bind to (`Java_com_example_Crypto_decrypt`). If R8 renames `com.example.Crypto`, the runtime lookup
 > for the native method fails with `UnsatisfiedLinkError` — unless a keep rule preserves it. The
@@ -1717,13 +1717,13 @@ An APK is a ZIP file with rules.
 | Align | `zipalign` | `-p 4` aligns uncompressed entries; `-P 16` aligns `.so` to 16 KB pages for Android 15+ devices |
 | Sign | `apksigner` | Inserts the APK Signing Block between the entries and the central directory |
 
-> **⚠️ Warning**
+> **Warning**
 > `zipalign` must run **before** `apksigner`, never after. Signature schemes v2 and later cover the
 > exact byte layout of the file; re-aligning afterwards moves bytes and invalidates the signature. If
 > you rebuild an APK by hand and get `INSTALL_PARSE_FAILED_NO_CERTIFICATES` or a v2 verification
 > failure, this is the first thing to check.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > Storing `.so` files uncompressed (`useLegacyPackaging = false`, the default since AGP 4.2 for
 > `minSdk >= 23`) is not just a size trade-off. Uncompressed and page-aligned libraries can be `mmap`ed
 > directly from the APK by the dynamic linker, so they are never extracted to
@@ -1738,7 +1738,7 @@ but works on an old one, this is a leading candidate.
 
 ### 3.19 AAB, `bundletool`, splits and dynamic feature modules
 
-> **📖 Definition**
+> **Definition**
 > An **Android App Bundle** (`.aab`) is a publishing format, not an installable one. It contains the
 > app's code and resources organised so that a *generator* can produce per-device APKs from it. Google
 > Play is that generator for Play installs; `bundletool` is the same generator, available locally.
@@ -1783,7 +1783,7 @@ adb shell pm path com.example.app
 # package:/data/app/~~x/split_config.xxhdpi.apk
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Always analyse the **complete split set**, not just `base.apk`. Splits carry native libraries and
 > resources, so a base-only analysis will tell you an app has no native code when it has several
 > megabytes of it. `adb shell pm path <pkg>` lists every split; pull all of them. The
@@ -1819,7 +1819,7 @@ The security-relevant properties of on-demand modules:
 | Manifest merge still applies | A feature module's components appear in the merged manifest and can be exported |
 | Analysis impact | A static analysis of the base APK **misses feature code entirely**. Trigger the feature in the app, then re-pull the split set. |
 
-> **⚠️ Warning**
+> **Warning**
 > A dynamic feature is not a code-loading vulnerability by itself — the platform verifies split
 > signatures. The genuine risk is analytical: if you scan only the base APK, you will report "no
 > WebView usage", "no native code", "no exported components beyond these" and be wrong, because the
@@ -1828,7 +1828,7 @@ The security-relevant properties of on-demand modules:
 
 ### 3.20 Reproducible builds
 
-> **📖 Definition**
+> **Definition**
 > A build is **reproducible** if the same source, built with the same toolchain and configuration,
 > produces bit-identical output. It is the property that lets a third party verify that a published
 > binary really corresponds to published source.
@@ -1846,7 +1846,7 @@ Android builds are not reproducible by default. The sources of variation are wel
 | Dependency version ranges (`1.+`, `-SNAPSHOT`) | Resolves differently over time | Pin exact versions; use dependency locking |
 | Native toolchain version | Different `clang` output | Pin `ndkVersion` |
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Reproducibility is the *verification* half of supply-chain security. Signing tells you **who** built
 > an artefact. Reproducibility tells you **what** they built. Without it, "the source is on GitHub" is a
 > claim you cannot check: the published APK could contain anything, and no amount of reading the
@@ -1911,7 +1911,7 @@ project without any source at all.
 | `prebuilts/` | Binary | Checked-in toolchains: `prebuilts/clang/host/linux-x86/`, `prebuilts/jdk/`, `prebuilts/build-tools/`, `prebuilts/sdk/`. |
 | `system/sepolicy/` | SELinux `.te`, Make/Blueprint | Policy source and the rules that compile it. |
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > `prebuilts/` deserves a moment. AOSP does not build its own compiler; it ships a **checked-in binary
 > clang** under `prebuilts/clang/host/linux-x86/clang-rXXXXXX/`. Likewise a checked-in JDK, a
 > checked-in `ninja`, a checked-in Python. This is deliberate: it makes the build hermetic and
@@ -1939,7 +1939,7 @@ project without any source at all.
 | `build/make/tools/releasetools/sign_target_files_apks.py` | How a release build is re-signed from test keys to production keys |
 | `system/sepolicy/Android.bp` | How the policy is compiled into `plat_sepolicy.cil` and friends |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `build/make/tools/releasetools/sign_target_files_apks.py` is the script that takes a build signed
 > with AOSP's **public test keys** and re-signs it with the OEM's production keys. When a device turns
 > out to be signed with the AOSP test keys — whose private halves are published in
@@ -1980,7 +1980,7 @@ sets up `out/`, and runs the phases in order: product config, Kati, Soong, then 
 `PRODUCT_PACKAGES`, `PRODUCT_COPY_FILES`, `BOARD_*` — written into `out/soong/soong.variables` as JSON.
 This is the bridge from the Make world into the Go world.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `out/soong/soong.variables` is a single JSON file describing the entire product configuration of the
 > build: architecture, SELinux settings, whether the build is `Eng` or `Debuggable`, which sanitizers
 > are globally enabled, VNDK version, and dozens of feature flags. On a firmware review where you have
@@ -2018,7 +2018,7 @@ grep -n "binder/Parcel.cpp" out/soong/build.ninja | head
 cat out/target/product/<device>/module-info.json | python3 -m json.tool | less
 ```
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Soong is a *compiler for build descriptions*. `Android.bp` is its source language, the module graph
 > is its intermediate representation, mutators are its optimisation passes, and `build.ninja` is its
 > object code. Ninja is the linker-and-loader. Once you see it this way, "why does one `cc_library`
@@ -2064,7 +2064,7 @@ sequenceDiagram
     RT->>RT: priv-app + privapp-permissions XML →<br/>signature|privileged permissions granted
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > Every step above is a decision made by a *build file*, not by any code in the app. An OEM that adds
 > `certificate: "platform"` to a third-party partner's application — which happens, because it is the
 > quickest way to make an integration work — has granted that partner code equivalent to system
@@ -2123,7 +2123,7 @@ head -50 app/build/outputs/mapping/release/seeds.txt
 head -50 app/build/outputs/mapping/release/usage.txt      # what it REMOVED
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `configuration.txt` is the file that answers "the developer's `proguard-rules.pro` looks reasonable,
 > so why is nothing obfuscated?" Every AAR can ship a `proguard.txt` / `consumer-rules.pro` that is
 > **merged into the app's keep rules automatically and silently**. One dependency with
@@ -2306,7 +2306,7 @@ suspend fun charge(amountMinor: Long, currency: String): ChargeResult =
 | Third-party SaaS write key (analytics ingest, feature flags) | **Medium** | Data pollution, sometimes read access to configuration |
 | Firebase Web API key, Google Maps API key, OAuth **public** client ID | **Informational** | These are designed to ship. Security comes from server-side restrictions. Report only if the restrictions are absent — which you must *verify*, not assume. |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Verify Firebase and Maps keys rather than rating them blind. For Firebase, the finding is not the key
 > — it is an open database. Test the actual security rules against the project the key names. For Maps,
 > the finding is an unrestricted key (no SHA-1 + package restriction), which is a *billing* issue, and
@@ -2463,7 +2463,7 @@ vulnerability. Severity comes entirely from what the component *does* when you r
 | Triggers a network call to an attacker-supplied host with the user's session | Medium |
 | Displays a screen or logs an event and nothing else | Informational |
 
-> **⚠️ Warning**
+> **Warning**
 > Do not report every exported component as a finding. Automated scanners do this, clients have learned
 > to discount it, and it buries your real findings. Reach each one, observe what it does, and report
 > only those with demonstrated impact — with the `am` command that proves it.
@@ -2672,7 +2672,7 @@ signing.properties
 
 The organisational fix is stronger than either: enrol in **Play App Signing** so the key that matters
 is held by Google and the developer holds only a resettable upload key; keep even that key in a CI
-secret store or an HSM; and rotate any key that was ever committed. Note that rotation does not undo
+secret store or an HSM; and rotate any key that was ever committed.rotation does not undo
 the exposure for already-published versions — see the rotation warning in §3.14.
 
 **Honest severity.** **Critical** for a self-managed app signing key. **High** for an upload key under
@@ -2741,7 +2741,7 @@ present and no artefact yet exists to inspect.
 
 #### 5.4.1 Dependency confusion
 
-> **📖 Definition**
+> **Definition**
 > **Dependency confusion** (also called a substitution attack) is the exploitation of a build tool's
 > repository search order. If a build resolves an artefact coordinate by asking several repositories in
 > turn, and an attacker can publish that same coordinate to a repository that is consulted — especially
@@ -2813,7 +2813,7 @@ dependencyResolutionManagement {
 }
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > In a source-assisted review, `settings.gradle(.kts)` is the file to open **first**, before any Kotlin
 > or Java. Three questions answer themselves in thirty seconds: are any non-standard repositories
 > declared (and are they HTTPS)? Is there any `content { }` filtering (usually not — that is a finding)?
@@ -2885,7 +2885,7 @@ detects it.
 ./gradlew assembleRelease
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > `--write-verification-metadata` records the checksums of whatever you resolve **at that moment**. If
 > the project was already compromised, you have just blessed the compromise. Generate verification
 > metadata from a known-good state, review the resulting file in the pull request like any other code,
@@ -2893,7 +2893,7 @@ detects it.
 
 #### 5.4.3 `buildSrc` and `build-logic`
 
-> **📖 Definition**
+> **Definition**
 > **`buildSrc`** is a magic directory name. If a directory called `buildSrc` exists at the root of a
 > Gradle build, Gradle compiles it as a separate project **before evaluating anything else**, and puts
 > its output on the classpath of every build script. `build-logic` is the modern convention for the same
@@ -2973,7 +2973,7 @@ sha256sum gradle/wrapper/gradle-wrapper.jar
 gradle wrapper --gradle-version 8.9 --gradle-distribution-sha256-sum <official-sum>
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Public tooling exists to validate wrapper JARs across an organisation's repositories, and it exists
 > because tampered wrapper JARs have been found in the wild. In a repository review, this is a ten
 > second check with a binary answer, and it is one of the few build findings that is objectively
@@ -3053,7 +3053,7 @@ compiling them, and the source is untouched.
 | `--no-build-cache` for release builds | A release should be compiled, not fetched |
 | Reproducible builds and periodic clean rebuilds | Detects divergence between cached and freshly built output |
 
-> **🧠 Mental Model**
+> **Mental Model**
 > A build cache is a *memoisation table for a function you assume is pure*. Poisoning it is exactly
 > equivalent to corrupting a memoised result: the inputs look right, nobody re-derives the answer, and
 > the wrong value propagates silently forever. Anything that can write to that table has the same power
@@ -3146,7 +3146,7 @@ specific thing to extract, and the right-hand column says what you do with it.
 | 32 | `lintOptions`/`lint { abortOnError }` and whether lint runs in CI | Suppressed findings |
 | 33 | Whether any security scanning runs at all | Programme-level finding |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Run this checklist **before** you open JADX. It takes forty minutes on a real repository and it
 > routinely produces two or three reportable findings on its own, plus a map that makes the rest of the
 > engagement faster. The script `scripts/gradle-audit.py` in this chapter automates items 1–27 and
@@ -3185,7 +3185,7 @@ Patterns that recur in public Android programmes, described as classes rather th
 | Dependency confusion in a public repository's build config | Demonstrated the internal coordinate was resolvable from a public repository (**responsibly** — never by publishing a package) |
 | Signing key committed in git history | Found via history search, demonstrated by opening the keystore with the committed password |
 
-> **⚠️ Warning**
+> **Warning**
 > Do **not** demonstrate dependency confusion by actually publishing a package to a public repository.
 > Publishing to a namespace you do not own is at best a terms-of-service violation and at worst an
 > unauthorised-access offence, it affects every other consumer of that coordinate, and it cannot be
@@ -3217,7 +3217,7 @@ Malware interacts with the build system on the *authoring* side. The techniques 
 | Kotlin `.kotlin_module` files and `DebugProbesKt.bin` | Kotlin and coroutines versions; `DebugProbesKt.bin` is a debug-mode artefact that should not ship |
 | Absence of `mapping.txt`-consistent naming | Whether the sample was obfuscated at all — useful for attributing build sophistication |
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > `DebugProbesKt.bin` is worth knowing by name. It is packaged by the `kotlinx-coroutines-debug`
 > artefact. Its presence in a release APK proves a debug-oriented dependency reached production —
 > exactly the `implementation`-instead-of-`debugImplementation` mistake from §5.3.3 — and it is a
@@ -3270,7 +3270,7 @@ echo "== Signing =="    ; apksigner verify --verbose --print-certs "$APK" | head
 echo "== Badging =="    ; aapt2 dump badging "$APK" | grep -E "package:|sdkVersion|targetSdkVersion|debuggable|native-code"
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `META-INF/version-control-info.textproto` is a modern AGP feature (`android { buildTypes { release {
 > vcsInfo { include = true } } } }`, on by default for release builds in recent AGP) that embeds the
 > **git repository URL and commit SHA** in the shipped APK. On a black-box engagement this occasionally
@@ -3311,7 +3311,7 @@ grep -rn --include=*.java -E '"(release|debug)"' out/sources/ | head
 strings -n 8 classes.dex | grep -E "^https?://" | sort -u
 ```
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > There is a subtlety worth understanding. `BuildConfig.API_BASE` is a `static final String` initialised
 > with a compile-time constant, so `javac` **inlines** it into every call site. R8's tree shaker can
 > then legitimately remove the `BuildConfig` class entirely, because after inlining nothing references
@@ -3339,7 +3339,7 @@ sget-object v0, Lcom/example/app/BuildConfig;->ENDPOINTS:[Ljava/lang/String;
 
 ```smali
 # BuildConfig.DEBUG in a release build: javac performed dead-code elimination.
-# The guarded block is not present at all. You will see the call site simply absent,
+# The guarded block is not present at all. You will see the call site absent,
 # NOT an "if-eqz" comparing against a false constant. If you DO see this pattern:
 sget-boolean v0, Lcom/example/app/BuildConfig;->DEBUG:Z
 if-eqz v0, :cond_0
@@ -3384,7 +3384,7 @@ grep -rn -B8 "Landroid/util/Log;->d(" out/smali*/ | grep -c "BuildConfig;->DEBUG
 | `res/` contents | All densities and locales | Shrunk, if `shrinkResources` is on |
 | `applicationId` | Often has a `.debug` suffix | Clean |
 
-> **⚠️ Warning**
+> **Warning**
 > "Class names are obfuscated, therefore this is a release build" is a bad inference and it gets made
 > constantly. `minifyEnabled` is a property of the *build type*, and a team can perfectly well ship a
 > release build with `minifyEnabled = false` — many do, to keep crash reports readable. Conversely a
@@ -3432,7 +3432,7 @@ than reporting a version number alone. See [52-StaticAnalysis](../52-StaticAnaly
 | Anything named in a layout XML | Kept |
 | `BuildConfig` values | Inlined and preserved; the class may vanish while the values remain |
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Obfuscation renames the *map*, not the *territory*. Every string the app must present to the outside
 > world — a URL it connects to, a permission it requests, a component name the platform must resolve, a
 > JNI symbol the linker must find — is a name in somebody else's namespace, and therefore cannot be
@@ -3492,7 +3492,7 @@ grep execve build.strace | grep -vE "gradle|java|clang|aapt2|d8|r8" | head -40
 grep openat build.strace | grep -E "\.ssh|\.aws|\.gnupg|credentials|id_rsa|\.netrc"
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The `openat` grep above is the highest-signal single command for detecting a hostile build script. A
 > legitimate Android build has no reason to open `~/.ssh/id_rsa`, `~/.aws/credentials` or `~/.netrc`. If
 > anything does, you have found it, and you have the process tree from `strace -f` to say *which* plugin
@@ -3520,7 +3520,7 @@ find app/build/intermediates -name "AndroidManifest.xml" -path "*erged*"
 ./gradlew assembleRelease --scan
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > `--scan` uploads a detailed description of the client's build — module names, dependency coordinates,
 > task inputs, environment details, plugin versions — to a Gradle-operated service, and produces a URL
 > that is unauthenticated by default. Never run it on a client project without written permission, and
@@ -3633,7 +3633,7 @@ verify its output. It reports the manifest analysis (exported components, `debug
 the certificate, hardcoded-secret candidates from `strings` and `resources.arsc`, and the native
 library hardening flags.
 
-> **⚠️ Warning**
+> **Warning**
 > MobSF's "hardcoded secrets" section has a high false-positive rate by design: it flags anything
 > matching entropy and keyword heuristics, so it reports Firebase and Maps keys, Base64-encoded
 > resources, and UUIDs as secrets. Treat it as a *candidate list*, and validate each candidate against
@@ -3809,7 +3809,7 @@ grep -rhoE "['\"][a-zA-Z0-9._-]+:[a-zA-Z0-9._-]+:[0-9][^'\"]*['\"]" \
 wc -l coords.txt
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > A dependency scanner reports the **declared** graph. It cannot see that a library was included via
 > `compileOnly` and is therefore absent from the APK, and it cannot see a vendored copy of a
 > vulnerable library that was shaded into the app under a different package name. Confirm every
@@ -4135,7 +4135,7 @@ class SecurityGatePlugin : Plugin<Project> {
 # >   - Unreviewed permission: android.permission.ACCESS_FINE_LOCATION
 ```
 
-> **🧠 Mental Model**
+> **Mental Model**
 > This inverts the usual relationship between security and the build. Normally the build produces an
 > artefact and security inspects it afterwards, once per release, by hand. A gate makes the *security
 > property* an input to the build, so an SDK upgrade that silently adds an exported receiver fails the
@@ -4554,7 +4554,7 @@ from minutes to seconds — a change that alters how engineers work. The module 
 object, which enables correct incrementality, remote execution, and machine rewriting of build files.
 And, decisively for security, the build description becomes *auditable by grep*: "which modules link
 against `libcrypto`?" and "which apps are signed with the platform key?" have complete, mechanically
-verifiable answers, which is simply not true of a Makefile that can compute a library name at build
+verifiable answers, which is not true of a Makefile that can compute a library name at build
 time. The residual `genrule` escape hatch is the honest caveat, and the right conclusion is that the
 correct design is a declarative core with a small, explicitly enumerable set of escape hatches — which
 is also the argument for Starlark in the Bazel migration, sitting between Blueprint's pure data and

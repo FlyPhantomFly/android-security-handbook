@@ -282,7 +282,7 @@ do its job. It is high-value precisely because it is privileged **and** reachabl
 app on the device by design. The characteristic vulnerability is the **confused deputy**: performing a
 privileged action on an app's behalf without checking that the app was entitled to request it. Note
 this is a bug in the service, not in Binder — Binder delivers an unspoofable caller UID; the service
-simply has to check it.
+has to check it.
 
 **Q13–Q15.** A `0666` socket is reachable by every app on the device, entirely outside the framework
 permission model — no permission check, no Binder UID verification. Abstract-namespace sockets are

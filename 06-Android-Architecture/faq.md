@@ -331,9 +331,9 @@ Because it runs as UID 1000 with a very large set of permissions, hosts most of 
 services, and is reachable over Binder by **every app on the device** by design.
 
 The characteristic vulnerability is the **confused deputy**: `system_server` performs a privileged
-action on an app's behalf without properly checking that the app was entitled to request it. Note that
+action on an app's behalf without properly checking that the app was entitled to request it.
 this is a bug in `system_server`, not in Binder — Binder faithfully delivers an unspoofable caller UID;
-the service simply has to check it.
+the service has to check it.
 
 ---
 

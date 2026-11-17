@@ -48,7 +48,7 @@ By the end you will have:
 - Compared `/proc/<pid>/ns/mnt` inode numbers to prove two processes are in different namespaces.
 - Explained, in your own words, why an app cannot detect a namespace-based hide by reading files.
 
-> **📖 Definition — Inter-process communication (IPC)**
+> **Definition — Inter-process communication (IPC)**
 > Any mechanism by which two processes exchange data or synchronise, given that they have separate
 > address spaces and cannot touch each other's memory. Every mechanism must answer three questions:
 > how the endpoints find each other, who is authorised to connect, and how the receiver learns who
@@ -71,7 +71,7 @@ By the end you will have:
 sudo apt update && sudo apt install -y socat python3 util-linux iproute2
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > Part E creates and destroys mounts. Every mount in this lab is inside `~/lab03` or
 > `/tmp/lab03`, is created with an explicit source and target you type yourself, and is unmounted in
 > Part G. Do not experiment with bind mounts over `/etc`, `/usr` or `/`. A stray
@@ -116,7 +116,7 @@ The `|` created a pipe: a kernel buffer with a read end and a write end, handed 
 as file descriptors. The shell pointed `ls`'s descriptor 1 at the write end and `grep`'s descriptor 0
 at the read end.
 
-> **📖 Definition — Pipe**
+> **Definition — Pipe**
 > A unidirectional in-kernel byte buffer (64 KiB by default on Linux) created by the `pipe()`
 > syscall, which returns two descriptors. The writer blocks when the buffer is full; the reader
 > blocks when it is empty. When the last writer closes, the reader sees end-of-file. When the last
@@ -224,7 +224,7 @@ Now only you can read or write it. Set it to `666` and any process on the system
 user, can inject data into whatever is reading. That is the whole security model of a FIFO: file
 permissions, and nothing else. The reader has no way to find out who wrote the bytes.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > A world-writable FIFO in a shared directory is a message-injection channel. On Android this turns
 > up in apps that bundle a native daemon and use a FIFO under `/data/data/<pkg>/` or, far worse,
 > under `/data/local/tmp` or shared storage, to talk to it. Look for `mkfifo` in decompiled native
@@ -278,7 +278,7 @@ unlike a FIFO, the connection is bidirectional and the kernel knows who connecte
 
 **B2. Peer credentials — the thing that makes UNIX sockets different.**
 
-> **📖 Definition — `SO_PEERCRED`**
+> **Definition — `SO_PEERCRED`**
 > A socket option on a connected UNIX-domain socket that returns a `struct ucred` containing the PID,
 > UID and GID of the process at the other end, **as recorded by the kernel at connect time**. The
 > peer cannot lie about it. There is no equivalent for a FIFO, and no equivalent for a plain TCP
@@ -363,7 +363,7 @@ Read those modes. `property_service` is `srw-rw----` owned by `root:root` — on
 DNS resolution, and its authorisation therefore *must* come from `SO_PEERCRED` or SELinux rather than
 from the mode.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The triage question for any `/dev/socket` entry is not "what is its mode" but "**given that
 > `untrusted_app` can reach it, does the daemon check who is calling?**" A daemon running as root
 > that accepts a command over a `0666` socket and does not call `getsockopt(SO_PEERCRED)` is a
@@ -477,7 +477,7 @@ which gives **127.0.0.1**.
 **C4. Decode the port.** Take `1F90`. That is four hex digits, two bytes — and here is the trap that
 catches everyone the first time:
 
-> **⚠️ Warning**
+> **Warning**
 > **The address is byte-reversed. The port is not.** The kernel prints the port in network byte
 > order, which is big-endian, so you read it straight. `1F90` is `0x1F90`, not `0x901F`.
 
@@ -659,7 +659,7 @@ FILE: /proc/net/tcp   (IPv4)
 The script exists so you can *verify* your arithmetic, not replace it. On a device with no Python and
 no tooling — which happens — you will decode by hand, and you can.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Everything you just did, a hardened app can do to you. `/proc/net/tcp` is world-readable, so an app
 > can scan it from inside its own sandbox with no permissions at all, looking for a listener on 27042
 > (Frida), 23946 (IDA), or 5555 (adb over TCP). Running `frida-server -l 127.0.0.1:1337` changes the
@@ -702,7 +702,7 @@ Now the second half: making one process see a different filesystem from another,
 
 **E1. What a bind mount is.**
 
-> **📖 Definition — Bind mount**
+> **Definition — Bind mount**
 > A mount that makes an existing directory or file appear at a second location in the tree. Both
 > paths then refer to the same underlying inodes; it is not a copy and not a symlink. The original
 > contents of the mount point are hidden — not deleted — for as long as the mount exists.
@@ -757,7 +757,7 @@ root: the real partition is untouched, so `dm-verity` and Verified Boot remain s
 **E3. Mount namespaces.** So far the bind mount was visible to every process on the machine. A
 **mount namespace** makes a mount visible to only some of them.
 
-> **📖 Definition — Namespace**
+> **Definition — Namespace**
 > A kernel mechanism that gives a set of processes their own instance of a global resource. Linux has
 > seven kinds: **mount** (`mnt`), **process IDs** (`pid`), **network** (`net`), **IPC** (`ipc`),
 > **hostname** (`uts`), **users** (`user`) and **cgroup**. A process in a different mount namespace
@@ -959,7 +959,7 @@ rm -rf ~/lab03
 rm -rf /data/local/tmp/lab03
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > Verify with `mount | grep lab03` that nothing remains before deleting the directory. Deleting the
 > mount point of a live bind mount leaves a confusing, hard-to-remove entry in the mount table.
 

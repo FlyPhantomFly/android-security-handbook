@@ -10,7 +10,7 @@ you were embarrassed to ask it, it is probably question 1, 2 or 3.
 Because Android's sandbox is enforced by the **Linux kernel**, and the Linux kernel does not know what
 a username is. It only knows numbers.
 
-> **📖 Definition — UID (user identifier)**
+> **Definition — UID (user identifier)**
 > A UID is a 32-bit integer the Linux kernel attaches to every process. Every time a process tries to
 > open a file, the kernel compares that integer against the file's owner number and permission bits.
 > The kernel never sees text.
@@ -69,7 +69,7 @@ hard-coded path in the world, user 0's directory stayed physically at `/data/dat
 | `/data/user/10/com.example.app` | real directory | 10 (work profile etc.) |
 | `/data/user_de/0/com.example.app` | real directory | 0, device-encrypted |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Write your tooling against `/data/user/<N>/<pkg>`, never `/data/data/<pkg>`. The moment your target
 > is inside a work profile, hard-coded `/data/data` paths silently look at the wrong (personal
 > profile) copy of the app and you will report "no sensitive data found" about a directory you never
@@ -119,7 +119,7 @@ val ok2 = packageManager.hasSigningCertificate(
 )
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > `getCallingPackage()` on an `Activity` is *not* the same as `Binder.getCallingUid()`. It relies on
 > the caller having used `startActivityForResult` and can be absent or misleading. Derive the package
 > from the UID, not the other way round.
@@ -157,7 +157,7 @@ The reason it is dangerous is **blast radius**. A vulnerability in the least imp
 little "companion" app nobody audits — is a full compromise of the most important member's private
 data. Attackers know this, and the companion app is exactly where they look.
 
-> **⚠️ Warning**
+> **Warning**
 > `android:sharedUserId` is **deprecated from API 29**. It cannot be added to a new app on modern
 > tooling without warnings, and — critically — **it can never be removed from a shipped app**.
 > Removing it changes the package's UID, which Android treats as a different identity, so the upgrade
@@ -202,7 +202,7 @@ dumpsys package com.example.app | grep -E 'userId=|sharedUser'
 # sharedUser=SharedUserSetting{a1b2c3 com.example.shared/10234}
 ```
 
-**From the UID table** — the most robust check, because it catches shared UIDs regardless of how they
+**From the UID table** — the most reliable check, because it catches shared UIDs regardless of how they
 were declared. Two packages with the same UID number *are* sharing, full stop:
 
 ```bash
@@ -213,7 +213,7 @@ adb shell pm list packages -U | tr -d '\r' | sed 's/package://;s/uid://' \
 ```
 
 The script [`scripts/uid-map.py`](scripts/uid-map.py) does this properly against
-`/data/system/packages.list`, including the `<shared-user>` groups, and flags them for you. Note that
+`/data/system/packages.list`, including the `<shared-user>` groups, and flags them for you.
 you will always find legitimate shared UIDs on any device — `android.uid.system` (1000),
 `android.uid.phone` (1001), `android.uid.bluetooth` (1002) and so on. Those are platform components
 signed with the platform key. What you are hunting for is a *third-party* group in the 10000+ range.
@@ -265,7 +265,7 @@ Your options on a release build without root are: repackage with the Gadget (see
 [`../67-BypassingProtections/README.md`](../67-BypassingProtections/README.md)), get a rooted device
 or a rooted emulator image, or use a Google APIs (non-Play) emulator image where `adb root` works.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > Making an APK debuggable by patching `AndroidManifest.xml` and re-signing works, but it changes the
 > signature. Any app that pins its own certificate, uses signature-level permissions, or talks to a
 > backend that attests the install will notice. Prefer a rooted device for realistic testing.
@@ -313,12 +313,12 @@ pm clear com.example.app                  # app stays installed, data dirs empti
 signature** reattaches it to the old data. With a *different* signature the install is rejected until
 the leftover record is removed — a classic "why can't I install my rebuilt APK" trap.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > On a device you are triaging, `pm list packages -u -3` reveals third-party packages that were
 > uninstalled but left data behind. That is often where the interesting artefacts of a removed
 > malware sample still live.
 
-Also note that appIds are **reused**. Uninstall an app with appId 10234 and the next install may well
+AppIds are **reused**. Uninstall an app with appId 10234 and the next install may well
 receive 10234. Any file, log entry or database row that recorded only a UID and not a package name is
 now ambiguous. Never treat a bare UID from an old artefact as an identity.
 
@@ -349,7 +349,7 @@ that wants early initialisation adds a `<meta-data>` entry pointing at an `Initi
 SDKs — analytics, crash reporting, ads, attribution — either use it or ship their own provider that
 does the same thing.
 
-> **⚠️ Warning**
+> **Warning**
 > A provider declared in an AAR's manifest is merged into **your** app's manifest by the Gradle
 > manifest merger. You will not see it in your source tree, you did not write it, and it runs before
 > your first line of code. From a supply-chain perspective, adding a dependency to `build.gradle` is
@@ -504,7 +504,7 @@ Direct Boot exists so that alarm clocks, accessibility services, phone dialers a
 function on a device that rebooted at 3 a.m. and has not been unlocked. Those components must be
 marked `directBootAware` and must use the DE context for any data they touch before unlock.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > DE storage is a recurring source of findings. Developers reach for
 > `createDeviceProtectedStorageContext()` to fix a "my `SharedPreferences` are empty at boot" bug and
 > quietly move tokens, session identifiers or cached PII into a store that is readable in a
@@ -670,7 +670,7 @@ am start --user 10 -n com.example.app/.MainActivity
 pm uninstall --user 10 com.example.app
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Two mistakes recur in work-profile assessments. The first is analysing the personal-profile copy of
 > an app and reporting on data the enterprise does not care about. The second is missing cross-user
 > attack surface entirely: components that a badly written DPC or a privileged helper exposes across

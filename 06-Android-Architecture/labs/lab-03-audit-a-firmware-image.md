@@ -36,7 +36,7 @@ You need a factory image. Legitimate sources:
 | Your own AOSP build | See [07-AOSP](../../07-AOSP/README.md) |
 | A vendor image you are authorised to analyse | Real-world vendor content |
 
-> **⚠️ Warning**
+> **Warning**
 > Only analyse images you are authorised to analyse. Manufacturer firmware is copyrighted, and some
 > licences restrict reverse engineering. Pixel factory images and AOSP builds are unambiguous; a
 > leaked vendor image is not. When in doubt, use a Pixel image for the lab and apply the technique to

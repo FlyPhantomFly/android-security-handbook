@@ -46,7 +46,7 @@ python3 ../scripts/manifest-merge-diff.py \
   --emit-am-commands
 ```
 
-> **⚠️** `05-hostile-plugin-DEFANGED.kt` is deliberately non-functional as an attack: it prints what it
+> **** `05-hostile-plugin-DEFANGED.kt` is deliberately non-functional as an attack: it prints what it
 > *would* read and sends nothing anywhere. Do not add exfiltration to it. Its purpose is to make the
 > capability concrete during a review conversation with developers, and it is more persuasive as a
 > printout than as a working implant.

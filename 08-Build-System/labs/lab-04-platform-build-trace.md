@@ -265,7 +265,7 @@ adb reboot
 
 **Record:** the total wall-clock time from edit to observing the change on the device.
 
-> **⚠️** `m snod` repacks whatever is currently in `out/.../system/`, **without** re-deriving whether
+> **** `m snod` repacks whatever is currently in `out/.../system/`, **without** re-deriving whether
 > those files were legitimately produced by the tree. That is exactly why it is fast, and exactly why an
 > `out/` directory produced by someone else must be treated as untrusted: it may contain files no source
 > in the tree ever produced. See §3.1.

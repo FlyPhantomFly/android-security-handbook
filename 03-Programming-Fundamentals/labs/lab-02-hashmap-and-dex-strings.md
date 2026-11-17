@@ -18,7 +18,7 @@ The payoff is that [12-DEX-Internals](../../12-DEX-Internals/README.md) and
 format probably looks like a pile of tables somebody invented. By the end of this lab you will be
 able to say *why* each one is shaped the way it is, from first principles.
 
-> **🧠 Mental Model.** A file format is a data structure that has been written to disk. Every
+> **Mental Model.** A file format is a data structure that has been written to disk. Every
 > decision in the DEX format is a data-structure decision — sorted or hashed, contiguous or linked,
 > indexed or scanned — made under the constraints of "must be memory-mapped" and "must be looked up a
 > million times per second". Once you think of it that way, the format stops being a specification to

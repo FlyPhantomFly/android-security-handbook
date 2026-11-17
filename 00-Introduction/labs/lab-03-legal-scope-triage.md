@@ -8,7 +8,7 @@ important lab in this chapter. Technical skill is what gets you a finding. Scope
 keeps the finding from becoming a criminal matter, and it is the single characteristic that
 distinguishes a professional from a hobbyist with the same tooling.
 
-> **⚠️ Warning — this is not legal advice.** The author is not your lawyer and this repository is
+> **Warning — this is not legal advice.** The author is not your lawyer and this repository is
 > educational material, not a legal opinion. Statutes are summarised here to build judgement about
 > *when to ask*, not to substitute for asking. Where a real engagement is concerned, the answer to
 > "is this allowed?" comes from a signed document and, where the document is ambiguous, from
@@ -39,7 +39,7 @@ future piece of work in this repository and in your career.
 
 ### The one idea underneath every computer crime statute
 
-> **🧠 Mental Model.** Nearly every computer misuse law in the world is built on a single concept:
+> **Mental Model.** Nearly every computer misuse law in the world is built on a single concept:
 > **authorisation**. The law does not care how clever your technique was, how trivially exposed the
 > data was, or whether you intended harm. It asks one question: *did the person who controls this
 > system permit you to do what you did?* A door left unlocked is still not an invitation to enter.
@@ -48,7 +48,7 @@ future piece of work in this repository and in your career.
 
 ### The instruments you should be able to name
 
-> **📖 Definition — CFAA.** The United States *Computer Fraud and Abuse Act*, 18 U.S.C. § 1030,
+> **Definition — CFAA.** The United States *Computer Fraud and Abuse Act*, 18 U.S.C. § 1030,
 > criminalises accessing a "protected computer" **without authorisation** or in a manner that
 > **exceeds authorised access**. In *Van Buren v. United States* (2021) the Supreme Court narrowed
 > "exceeds authorised access" to obtaining information from areas of a system that are off-limits to
@@ -59,7 +59,7 @@ future piece of work in this repository and in your career.
 > but a prosecutorial policy is a promise about discretion, not a legal right, and it binds no
 > private plaintiff bringing a civil claim.
 
-> **📖 Definition — Computer Misuse Act 1990 (UK).** Section 1 creates the offence of causing a
+> **Definition — Computer Misuse Act 1990 (UK).** Section 1 creates the offence of causing a
 > computer to perform a function with intent to secure **unauthorised access** to a program or data.
 > Section 2 aggravates that where the access is intended to facilitate a further offence. Section 3
 > covers unauthorised acts impairing operation, including denial of service. Section 3ZA covers
@@ -68,7 +68,7 @@ future piece of work in this repository and in your career.
 > responsibly, are matters of mitigation rather than a defence to the offence. Section 1 has a low
 > threshold — the mere act of causing a computer to attempt unauthorised access satisfies it.
 
-> **📖 Definition — Information Technology Act 2000 (India).** Section 43 imposes **civil** liability
+> **Definition — Information Technology Act 2000 (India).** Section 43 imposes **civil** liability
 > (compensation to the affected person) for accessing a computer resource without the permission of
 > its owner or the person in charge, and for downloading, extracting, damaging, disrupting, or
 > introducing contaminants. Section 66 makes the same acts a **criminal** offence where they are
@@ -76,7 +76,7 @@ future piece of work in this repository and in your career.
 > covers tampering with computer source documents. Section 72 addresses breach of confidentiality.
 > As with the UK Act, permission of the owner is the pivot on which everything turns.
 
-> **🔍 Pentester's Note.** Three practical consequences follow from the shape of these statutes.
+> **Pentester's Note.** Three practical consequences follow from the shape of these statutes.
 > First, **your authorisation is only as broad as the document that grants it** — a scope excerpt in
 > a chat message is not a contract. Second, **jurisdiction follows the system, the data, and you**;
 > a researcher in India testing a UK company's app whose backend is hosted in the US can plausibly
@@ -260,7 +260,7 @@ Impact is demonstrated by showing the door opens, not by walking through it and 
 building. Triage teams understand this; a report saying "I confirmed the key authenticates and
 stopped there" is graded no lower and is very often graded higher.
 
-> **🔍 Pentester's Note.** Every bug bounty programme's policy page is a contract of adhesion that
+> **Pentester's Note.** Every bug bounty programme's policy page is a contract of adhesion that
 > you accept by testing. Read it before you touch anything, save a dated copy of it as a PDF, and
 > re-read it when the programme changes. Scope changes silently, and "it was in scope last month" is
 > not a defence.
@@ -289,7 +289,7 @@ What you actually do is worth spelling out because it is the correct professiona
 2. Document exactly what you observed passively — the endpoint, the parameter, and why it looks
    dangerous — from traffic that the app generated on its own.
 3. Email `security@acme.example`, the named point of contact, the same day. Describe the observation
-   and state clearly that you have **not** tested it and will not without written authorisation from
+   and state explicitly that you have **not** tested it and will not without written authorisation from
    the processor.
 4. Raise it in the report as an observation with a recommendation that the client obtain
    authorisation and have it tested, or ask the processor directly.
@@ -440,31 +440,31 @@ invited to.
 Copy this into your notes. Complete it, in writing, before the first command of any engagement. If
 any row cannot be answered, you are not ready to start, and saying so is the job.
 
-| # | Question | Evidence required | ✅ |
+| # | Question | Evidence required | |
 |---|---|---|---|
-| 1 | Who owns the target system, and who owns the data in it? | Named legal entity, not a person's job title | ☐ |
-| 2 | Who has authorised this work, and are they entitled to? | Signed SOW, bounty policy, or written client authorisation | ☐ |
-| 3 | What exactly is in scope? | Explicit list of package names, hostnames, IP ranges, and app versions | ☐ |
-| 4 | What is explicitly out of scope? | The exclusions list, copied verbatim into your notes | ☐ |
-| 5 | Which environment may I touch? | Named hostnames. "Not production" is not a hostname | ☐ |
-| 6 | What is the testing window? | Start and end date/time with time zone | ☐ |
-| 7 | Which techniques are prohibited? | DoS, social engineering, physical, spam, automated scanning limits | ☐ |
-| 8 | What accounts may I use? | Test credentials issued to me, in writing | ☐ |
-| 9 | What is the rule on other users' data? | Written; assume "do not touch" until told otherwise | ☐ |
-| 10 | Are third-party services in the request path? | Enumerated, with their authorisation status recorded separately | ☐ |
-| 11 | Which jurisdictions are involved? | Where I am, where the company is, where the data is hosted | ☐ |
-| 12 | Who do I contact if I find something critical or break something? | Name, email, phone, and an out-of-hours route | ☐ |
-| 13 | What is the disclosure agreement? | Embargo period, publication rights, redaction requirements | ☐ |
-| 14 | Is there a safe-harbour clause, and what conditions attach? | Quoted verbatim in my notes | ☐ |
-| 15 | Have I saved a dated copy of the scope document? | PDF or screenshot with a timestamp | ☐ |
-| 16 | What is my stop condition? | The written trigger that makes me halt and call | ☐ |
+| 1 | Who owns the target system, and who owns the data in it? | Named legal entity, not a person's job title | [ ] |
+| 2 | Who has authorised this work, and are they entitled to? | Signed SOW, bounty policy, or written client authorisation | [ ] |
+| 3 | What exactly is in scope? | Explicit list of package names, hostnames, IP ranges, and app versions | [ ] |
+| 4 | What is explicitly out of scope? | The exclusions list, copied verbatim into your notes | [ ] |
+| 5 | Which environment may I touch? | Named hostnames. "Not production" is not a hostname | [ ] |
+| 6 | What is the testing window? | Start and end date/time with time zone | [ ] |
+| 7 | Which techniques are prohibited? | DoS, social engineering, physical, spam, automated scanning limits | [ ] |
+| 8 | What accounts may I use? | Test credentials issued to me, in writing | [ ] |
+| 9 | What is the rule on other users' data? | Written; assume "do not touch" until told otherwise | [ ] |
+| 10 | Are third-party services in the request path? | Enumerated, with their authorisation status recorded separately | [ ] |
+| 11 | Which jurisdictions are involved? | Where I am, where the company is, where the data is hosted | [ ] |
+| 12 | Who do I contact if I find something critical or break something? | Name, email, phone, and an out-of-hours route | [ ] |
+| 13 | What is the disclosure agreement? | Embargo period, publication rights, redaction requirements | [ ] |
+| 14 | Is there a safe-harbour clause, and what conditions attach? | Quoted verbatim in my notes | [ ] |
+| 15 | Have I saved a dated copy of the scope document? | PDF or screenshot with a timestamp | [ ] |
+| 16 | What is my stop condition? | The written trigger that makes me halt and call | [ ] |
 
-> **🔍 Pentester's Note.** Row 15 is the one people skip and the one that saves them. Scope pages
+> **Pentester's Note.** Row 15 is the one people skip and the one that saves them. Scope pages
 > change. Programmes get retired. A client's memory of what they authorised can be creative once a
 > finding is embarrassing. A dated PDF of the scope as it stood when you tested is your record, and
 > it costs ten seconds.
 
-> **⚠️ Warning — the stop condition.** Decide *before* you start what makes you stop: evidence of a
+> **Warning — the stop condition.** Decide *before* you start what makes you stop: evidence of a
 > prior compromise, access to another customer's data, a production outage, or discovery of personal
 > data you were not meant to see. In the moment, curiosity is louder than judgement. Write the rule
 > down while you are still calm, and follow the rule rather than the curiosity.

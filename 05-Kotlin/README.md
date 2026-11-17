@@ -61,7 +61,7 @@ null" and have the compiler enforce it. `NullPointerException` was, by a wide ma
 most common crash in Android applications, and the language offered nothing but discipline and
 annotations to prevent it.
 
-> **🧠 Mental Model.** Java says "a reference either points at an object or points at nothing, and
+> **Mental Model.** Java says "a reference either points at an object or points at nothing, and
 > you cannot tell which until you try." Kotlin says "the type itself tells you, and the compiler
 > will not let you forget to check." That one change is the reason Kotlin exists.
 
@@ -98,7 +98,7 @@ Three consequences follow, and they define the whole chapter:
    *throw*. They are not enforced by ART, and they can be removed by patching or hooking. A Kotlin
    app is exactly as attackable as a Java one.
 
-> **🔍 Pentester's Note.** The very first question to answer when you open an unfamiliar APK is
+> **Pentester's Note.** The very first question to answer when you open an unfamiliar APK is
 > "is this Kotlin?", because the answer changes how you read every class. The answer takes ten
 > seconds: search the decompiled output for `Intrinsics.checkNotNullParameter` or for the
 > `@Metadata` annotation. The script [scripts/detect-kotlin.py](scripts/detect-kotlin.py) in this
@@ -143,7 +143,7 @@ disappeared from the *bytecode*, because the JVM still requires them; the compil
 | `String[] args` | An overload taking no arguments plus, for `main`, a synthetic bridge |
 | `System.out.println` | `println` is a top-level function in `kotlin.io`, which compiles to a static call that forwards to `System.out.println` |
 
-> **📖 Definition — top-level function.** A function declared outside any class. The JVM has no such
+> **Definition — top-level function.** A function declared outside any class. The JVM has no such
 > concept, so the Kotlin compiler creates a synthetic class named after the file (`Hello.kt` becomes
 > `HelloKt`) and makes the function a `public static` method on it. This is why decompiled Kotlin
 > apps are full of classes ending in `Kt` that no developer wrote.
@@ -305,7 +305,7 @@ halves. The left half evaporates at compile time and provides no runtime protect
 right half survives as real instructions — and because those instructions execute inside a process
 the attacker controls, they can be neutralised in a single line of Frida or a two-byte Smali edit.
 
-> **⚠️ Warning.** "The app is written in Kotlin, so it is null-safe" is not a security claim. Null
+> **Warning.** "The app is written in Kotlin, so it is null-safe" is not a security claim. Null
 > safety protects against developer error, not against an adversary. Worse, the *runtime* half
 > throws exceptions, and an exception thrown inside a security check whose caller has a broad
 > `try`/`catch` is a fail-open condition. Kotlin's safety mechanisms are therefore also a new place
@@ -375,7 +375,7 @@ println(b!!.length)      // not-null assertion: throw NullPointerException if b 
 
 #### Platform types — where the guarantee stops
 
-> **📖 Definition — platform type.** A type that came from Java, whose nullability Kotlin does not
+> **Definition — platform type.** A type that came from Java, whose nullability Kotlin does not
 > know. Written `String!` in IDE tooltips, though you cannot write it yourself. Kotlin permits you
 > to treat it as either nullable or non-null, and *does not check*.
 
@@ -427,7 +427,7 @@ and in Smali:
 .end method
 ```
 
-> **🔍 Pentester's Note.** Notice the second argument: the **parameter's original name as a string
+> **Pentester's Note.** Notice the second argument: the **parameter's original name as a string
 > literal**. Kotlin therefore leaks parameter names into the DEX string table even in release
 > builds, and even under R8 name obfuscation, because the string is an argument value rather than a
 > symbol. In a heavily obfuscated Kotlin app where every method is named `a`, the `Intrinsics`
@@ -451,7 +451,7 @@ Older Kotlin releases used `checkParameterIsNotNull` and `checkExpressionValueIs
 renamed them to the `checkNotNull*` forms. Seeing the old names dates the compiler, which is useful
 when you are profiling how stale an app's toolchain is.
 
-> **🔬 Under the Hood.** `Intrinsics.checkNotNullParameter` throws
+> **Under the Hood.** `Intrinsics.checkNotNullParameter` throws
 > `NullPointerException` with a message built at throw time, and the compiler marks the call so R8
 > can remove it under `-assumenosideeffects`-style configuration. Some release builds therefore lack
 > the checks. Their *absence* is not evidence of Java; look for `@Metadata` as well.
@@ -470,7 +470,7 @@ count += 1
 about shared state.
 
 In bytecode, a `val` property becomes a `private final` field plus a getter; a `var` becomes a
-`private` field plus a getter and a setter. A local `val` is simply a local variable — `final` is
+`private` field plus a getter and a setter. A local `val` is a local variable — `final` is
 not representable on locals in bytecode, so **the `val`/`var` distinction is completely erased for
 locals**. In JADX you cannot tell whether a local was `val` or `var`.
 
@@ -485,7 +485,7 @@ type, so nothing is inferred at runtime and nothing is lost to the decompiler.
 | `@JvmField val x = 1` | `public final int x`, no getter | A bare public field |
 | `lateinit var x: Foo` | `private Foo x` + null-checking getter | Getter calls `throwUninitializedPropertyAccessException` |
 
-> **🔍 Pentester's Note.** `const val` behaves exactly like Java's `static final`: the value is
+> **Pentester's Note.** `const val` behaves exactly like Java's `static final`: the value is
 > inlined at every use site, so patching the declaration achieves nothing. This trips up beginners
 > patching licence flags. See [chapter 04](../04-Java/README.md) section 3.17.
 
@@ -526,7 +526,7 @@ And the call site `connect("api.example.com")` becomes
 `connect$default("api.example.com", 0, false, 6, null)`, where `6` is the bitmask `0b110` marking
 parameters 2 and 3 as defaulted.
 
-> **🧠 Mental Model.** Every `$default` method is a compiler-written switchboard. The integer
+> **Mental Model.** Every `$default` method is a compiler-written switchboard. The integer
 > argument that looks meaningless is a bitmask of "which arguments were omitted", and the trailing
 > `null` is an unused marker parameter that exists to keep the synthetic signature distinct.
 
@@ -567,7 +567,7 @@ public String toString() {
 }
 ```
 
-> **🔍 Pentester's Note.** Data-class `toString` puts the **class name and every property name** into
+> **Pentester's Note.** Data-class `toString` puts the **class name and every property name** into
 > the DEX string table as literals, and it does so even under R8 renaming unless the app explicitly
 > disables it. In an obfuscated app, dumping strings and looking for the
 > `Xyz(a=` … `, b=` pattern hands you the original field semantics of the app's model objects. It
@@ -586,7 +586,7 @@ hand-written.
 
 ### 3.5 Sealed classes and `when`
 
-> **📖 Definition — sealed class.** A class whose direct subclasses are all known at compile time,
+> **Definition — sealed class.** A class whose direct subclasses are all known at compile time,
 > because they must be declared in the same package and module. It lets the compiler verify that a
 > `when` expression covers every case.
 
@@ -631,7 +631,7 @@ in a synthetic class that JADX renders as `WhenMappings` with a field named
 `$EnumSwitchMapping$0`. Seeing `WhenMappings` is a Kotlin fingerprint; seeing `$SwitchMap$` is a
 Java one.
 
-> **🔬 Under the Hood.** `NoWhenBranchMatchedException` exists because exhaustiveness is verified
+> **Under the Hood.** `NoWhenBranchMatchedException` exists because exhaustiveness is verified
 > against the subclasses visible at *compile* time. If a library adds a subclass and the consumer is
 > not recompiled, the branch is genuinely unreachable-in-theory but reachable-in-practice, and the
 > exception makes that failure loud rather than silent. In decompiled code, its presence tells you
@@ -654,7 +654,7 @@ Kotlin's class defaults differ from Java's in two ways that matter to you:
 | `protected` | `ACC_PROTECTED` | Yes |
 | `private` | `ACC_PRIVATE`, or package-private if accessed from a nested class | Yes, via reflection or patching |
 
-> **⚠️ Warning.** `internal` is **not** an access control at runtime. It compiles to `public` with a
+> **Warning.** `internal` is **not** an access control at runtime. It compiles to `public` with a
 > mangled name so that another module cannot accidentally link against it. Anything `internal` can
 > be called by any code in the process, including your Frida script, by using the mangled name. The
 > mangling suffix — typically `$<module>_<variant>`, such as `$app_release` — is itself a useful
@@ -732,7 +732,7 @@ Four things to internalise, because this pattern appears in nearly every Kotlin 
   class — unless annotated `@JvmStatic`, which additionally generates a static forwarder on the
   outer class.
 
-> **🔍 Pentester's Note.** This is the number-one cause of "my Frida hook does not exist". To hook
+> **Pentester's Note.** This is the number-one cause of "my Frida hook does not exist". To hook
 > `Crypto.encrypt` you must write `Java.use("com.app.Crypto$Companion").encrypt.implementation = …`,
 > not `Java.use("com.app.Crypto")`. Remember the `$` in the class name and remember that the method
 > is an instance method with `this` bound to the companion.
@@ -790,7 +790,7 @@ repeatTwice { println("hi") }               // trailing lambda syntax
 val doubled = listOf(1, 2, 3).map { it * 2 } // `it` is the implicit single parameter
 ```
 
-> **📖 Definition — higher-order function.** A function that takes a function as a parameter or
+> **Definition — higher-order function.** A function that takes a function as a parameter or
 > returns one. Kotlin gives function types first-class syntax: `(Int, String) -> Boolean`.
 
 A non-inline lambda compiles to an object implementing one of the `kotlin.jvm.functions.FunctionN`
@@ -827,7 +827,7 @@ Why inline exists: a lambda would otherwise allocate an object per call and add 
 which is expensive in a hot loop. Inlining also enables non-local `return` from inside a lambda and
 `reified` type parameters, neither of which is possible otherwise.
 
-> **⚠️ Warning.** This is the most common cause of failed instrumentation in Kotlin apps. If you
+> **Warning.** This is the most common cause of failed instrumentation in Kotlin apps. If you
 > cannot hook a function, check whether it is `inline`. An inlined function has **no runtime
 > existence**; there is nothing to hook. The workaround is to hook the functions it calls, or to
 > find the call sites and patch them individually. The entire Kotlin standard library's scope
@@ -863,7 +863,7 @@ what the block receives and what the expression returns.
 | `also` | `it` (parameter) | The object itself | Side effects such as logging, without changing the value |
 
 All five are `inline`, so **none of them appears in decompiled code**. `apply { }` around ten setter
-calls simply becomes ten setter calls on a temporary local. This is good news: scope functions add
+calls becomes ten setter calls on a temporary local. This is good news: scope functions add
 zero obfuscation and zero runtime cost, and they leave the decompiled output *more* readable than
 the source in some cases.
 
@@ -881,7 +881,7 @@ intent.putExtra("user", user);
 intent.setFlags(67108864);
 ```
 
-Note that the constant `Intent.FLAG_ACTIVITY_CLEAR_TOP` has been inlined to its numeric value
+the constant `Intent.FLAG_ACTIVITY_CLEAR_TOP` has been inlined to its numeric value
 `67108864`. Keeping a mental table of common framework flag values, or looking them up, is part of
 reading decompiled Android code fluently.
 
@@ -899,7 +899,7 @@ Kotlin does not ship its own collection implementations on the JVM. `List<T>` is
 | `Array<T>` | `T[]` | Yes |
 | `IntArray` | `int[]` | Yes, and avoids boxing |
 
-> **⚠️ Warning.** Read-only is not immutable. `List<T>` is the same object as the `MutableList<T>`
+> **Warning.** Read-only is not immutable. `List<T>` is the same object as the `MutableList<T>`
 > someone else may still hold, and a `List` obtained from Java is a platform type that may be
 > mutated behind your back. Calling `.toList()` makes a defensive copy; the type alone does not.
 
@@ -950,7 +950,7 @@ suspend fun loadProfile(id: String): Profile {
 Nothing here blocks. At each suspension point the function returns to its caller, freeing the thread
 entirely, and resumes later on whatever thread the dispatcher chooses.
 
-> **📖 Definition — suspend function.** A function that may suspend its execution and resume later
+> **Definition — suspend function.** A function that may suspend its execution and resume later
 > without blocking a thread. It can only be called from another suspend function or from a coroutine
 > builder. At bytecode level it is an ordinary function with **one extra parameter**, a
 > `kotlin.coroutines.Continuation`, and a return type of `Object`.
@@ -1055,7 +1055,7 @@ Every element of that listing is a fingerprint:
 | `IllegalStateException("call to 'resume' before 'invoke'…")` | The `default` branch; a literal you can grep for |
 | A nested class named like `Foo$loadProfile$1` extending `ContinuationImpl` | The generated state machine class |
 
-> **🧠 Mental Model.** Read the `switch` cases in numerical order and concatenate their bodies,
+> **Mental Model.** Read the `switch` cases in numerical order and concatenate their bodies,
 > deleting the bookkeeping. `case 0` is the code before the first `await`; `case 1` is the code
 > between the first and second; and so on. The `L$n` fields are the local variables, in declaration
 > order. With that recipe you can reconstruct the original suspend function in a couple of minutes,
@@ -1063,7 +1063,7 @@ Every element of that listing is a fingerprint:
 
 #### Structured concurrency
 
-> **📖 Definition — structured concurrency.** The rule that every coroutine belongs to a scope, that
+> **Definition — structured concurrency.** The rule that every coroutine belongs to a scope, that
 > a scope does not complete until all its children complete, and that cancelling a scope cancels
 > every child. It makes leaks and orphaned work structurally impossible rather than merely
 > discouraged.
@@ -1116,7 +1116,7 @@ the lambda body. In JADX you will see classes named like `Foo$tokens$1` and
 coroutine classes is a matter of following the naming: `Outer$function$N` is generated for the
 `N`-th lambda or suspend block inside `function`.
 
-> **🔍 Pentester's Note.** Because every coroutine ends up in a class named after its enclosing
+> **Pentester's Note.** Because every coroutine ends up in a class named after its enclosing
 > function, coroutine class names are a **map of the app's original function names**, and R8 does not
 > always rename them consistently with the functions themselves. In a partially obfuscated app, the
 > generated coroutine class names frequently reveal the original names of the functions that
@@ -1181,7 +1181,7 @@ Kotlin must be callable from Java, and the mapping is not always what a Java cal
 | `@Throws` | Adds a `throws` clause so Java callers can catch it | Kotlin has no checked exceptions |
 | `@file:JvmName("Utils")` | Names the file class `Utils` instead of `UtilsKt` | A `*Kt` class you cannot find may have been renamed |
 
-> **🔍 Pentester's Note.** `@JvmName` on a file changes the synthetic class name, so an extension
+> **Pentester's Note.** `@JvmName` on a file changes the synthetic class name, so an extension
 > function you cannot locate may live in a class with an arbitrary name. When hunting for a
 > top-level function, search the *method* name across all classes rather than guessing the class.
 
@@ -1210,7 +1210,7 @@ For Android security work you mainly need to recognise the artefacts:
   classes and `SerialDescriptor` objects contain the **full field names and types of every
   serialisable model**, which is a substantial information leak in an otherwise obfuscated app.
 
-> **🔍 Pentester's Note.** If you see classes ending in `$$serializer` with a
+> **Pentester's Note.** If you see classes ending in `$$serializer` with a
 > `PluginGeneratedSerialDescriptor` and a sequence of `addElement("fieldName")` calls, you have the
 > app's complete data model including field names, regardless of obfuscation. Dump those strings
 > first.
@@ -1220,7 +1220,7 @@ For Android security work you mainly need to recognise the artefacts:
 ## 4. Source Code Walkthrough (AOSP)
 
 Kotlin is not part of AOSP the way Java's `libcore` is, and this distinction is worth stating
-clearly because it changes where you look.
+because it changes where you look.
 
 - **Java's standard library is part of the platform.** `java.lang.String` lives in the boot
   classpath, shared by every app, and its source is in AOSP under `libcore/`.
@@ -1246,7 +1246,7 @@ to, never the system.
 | `kotlin.coroutines.intrinsics.IntrinsicsKt` | `kotlin-stdlib` | Supplies `COROUTINE_SUSPENDED` |
 | `kotlinx.coroutines.*` | `kotlinx-coroutines-android`, a separate dependency | Dispatchers, `Job`, `Flow`, builders |
 
-> **🔬 Under the Hood.** `Dispatchers.Main` on Android is provided by
+> **Under the Hood.** `Dispatchers.Main` on Android is provided by
 > `kotlinx-coroutines-android`, which registers a `MainCoroutineDispatcher` backed by a `Handler` on
 > the main `Looper`. That is the bridge between the coroutine machinery and Android's message loop,
 > described in [06 — Android Architecture](../06-Android-Architecture/README.md). If that artifact is
@@ -1288,7 +1288,7 @@ Java.perform(function () {
 });
 ```
 
-> **⚠️ Warning.** Doing this is a diagnostic technique, not a bypass in itself. Removing the check
+> **Warning.** Doing this is a diagnostic technique, not a bypass in itself. Removing the check
 > lets a null propagate deeper, where it will usually cause a different crash. Its real value is in
 > reaching code paths the developer assumed unreachable, and in confirming which parameter a check
 > was guarding.
@@ -1412,7 +1412,7 @@ handler if not. In `async`, the exception is *stored in the `Deferred`* and only
 `await` is called — so an `async` whose result is never awaited swallows its exception completely.
 A security check performed in an un-awaited `async` therefore fails silently.
 
-> **⚠️ Warning.** The pattern `val ok = async { verifySignature() }` followed by code that never
+> **Warning.** The pattern `val ok = async { verifySignature() }` followed by code that never
 > calls `ok.await()` is a genuine fail-open bug and it is invisible in review, because the code
 > looks like it performs the check. Look for `async` results that are dropped.
 
@@ -1483,7 +1483,7 @@ annotations contain the original signatures, `Intrinsics` calls leak parameter n
 leak property names, and coroutine classes leak function names. A Kotlin sample that has not been
 carefully stripped is *easier* to analyse than an equivalently obfuscated Java one.
 
-> **🔍 Pentester's Note.** When triaging an unknown Kotlin sample, dump the `@Metadata` annotations
+> **Pentester's Note.** When triaging an unknown Kotlin sample, dump the `@Metadata` annotations
 > first. `kotlinx-metadata-jvm` can parse them programmatically, and they contain the original
 > function names, parameter names, types, and nullability for every declaration — even when the
 > class and method names in the DEX have been renamed to single letters.
@@ -1838,7 +1838,7 @@ Java.perform(function () {
 });
 ```
 
-> **🔍 Pentester's Note.** In JavaScript, `$` is a legal identifier character, so
+> **Pentester's Note.** In JavaScript, `$` is a legal identifier character, so
 > `Auth.login$default` is valid Frida syntax with no escaping. Where a name is genuinely awkward, use
 > the bracket form: `Auth['login$default']`.
 
@@ -1943,7 +1943,7 @@ Java.perform(function () {
 });
 ```
 
-Iterating `overloads` rather than naming one signature is the robust pattern, because the exact
+Iterating `overloads` rather than naming one signature is the reliable pattern, because the exact
 overload set differs between Kotlin versions. Wrapping each hook in `try`/`catch` means one missing
 method does not abort the script — a discipline that matters far more with Kotlin than with Java,
 because the runtime library's shape varies with the compiler version bundled into each app.
@@ -2058,7 +2058,7 @@ grep -rhoE 'd2 = \{[^}]*\}' out-jadx/sources | tr ',' '\n' | grep -oE '"[^"]+"' 
 Even without decoding `d1`, the `d2` string table alone typically contains the original class name,
 every function name, every property name, and every parameter name.
 
-> **🔍 Pentester's Note.** An app that ships `@Metadata` in a release build has effectively opted
+> **Pentester's Note.** An app that ships `@Metadata` in a release build has effectively opted
 > out of name obfuscation for its Kotlin declarations, whatever its ProGuard configuration claims.
 > This is a legitimate, reportable resilience finding under MASVS-RESILIENCE, with a concrete
 > remediation: strip the annotation with an explicit rule if Kotlin reflection is not used.
@@ -2164,7 +2164,7 @@ public final class Session {
 }
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The string literal in `checkNotNullParameter(x, "username")` is the **original parameter name**,
 > and obfuscators generally leave it alone because removing it changes exception messages. On a
 > heavily obfuscated app where every class is `a.b.c`, harvesting these literals recovers a
@@ -2218,7 +2218,7 @@ Three things to internalise:
 | `@JvmStatic` | an additional static forwarding method on the outer class |
 | secondary synthetic constructor | `Companion(DefaultConstructorMarker)` — a marker parameter, always `null` |
 
-> **🧠 Mental Model**
+> **Mental Model**
 > `DefaultConstructorMarker` is the compiler's way of creating an overload that cannot collide with a
 > real one. Whenever you see it, you are looking at compiler-generated plumbing, not application
 > logic. Ignore it.
@@ -2257,7 +2257,7 @@ public static /* synthetic */ String request$default(
 The `mask` is a **bitmask of which arguments were omitted** — bit *n* set means parameter *n* was not
 supplied and its default should be used.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > This matters for hooking. If you hook `request` you see the *resolved* values, which is usually what
 > you want. If you hook `request$default` you see the mask and can tell which arguments the caller
 > actually passed — occasionally the more interesting question, for example when you want to know
@@ -2337,7 +2337,7 @@ final class LoginRepository$login$2 extends SuspendLambda
 To reconstruct the original: read the cases **in order**, and treat each `return coroutine_suspended`
 as "await this call". [Lab 03](labs/lab-03-coroutine-state-machine.md) walks this end to end.
 
-> **⚠️ Warning**
+> **Warning**
 > Hooking a `suspend` function with Frida requires matching the *generated* signature, which has the
 > extra `Continuation` parameter. `Java.use("...").login.overload("java.lang.String",
 > "java.lang.String", "kotlin.coroutines.Continuation")` — not the two-argument form you see in the
@@ -2371,7 +2371,7 @@ What the reverse engineer gets:
 | `by lazy` | a `Lazy` field plus a null check on first access | Where initialisation really happens |
 | `Delegates.observable` | an `ObservableProperty` subclass | A single interception point for every write |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `data class` generating `toString()` is a recurring real-world finding. A developer logs
 > `Log.d(TAG, "state $new")`, the data class dutifully renders **every field including the token**,
 > and the secret lands in logcat. Grep decompiled output for `Log\.[dviwe]` near data-class types, and
@@ -2391,7 +2391,7 @@ syntax, coroutines and data classes. Crucially for security work, an app written
 identical runtime with the identical security model; nothing in [13-ART](../13-ART/README.md) changes.
 
 **Q: What is the difference between `val` and `var`?**
-`val` is a read-only reference (like Java's `final`), `var` is reassignable. Note that `val` makes the
+`val` is a read-only reference (like Java's `final`), `var` is reassignable.`val` makes the
 *reference* immutable, not the object — a `val` `MutableList` can still be modified.
 
 **Q: What do `?`, `?.`, `?:` and `!!` mean?**
@@ -2436,7 +2436,7 @@ propagates exceptions from the prior step.
 every call site, so the function does not exist as a separate method in the DEX at all. This is
 categorically different from ART's runtime inlining, which
 `cmd package compile -m verify -f` can reverse. No amount of forcing interpretation brings an
-`inline` function back, because ART never saw a call. When a hook target is simply absent from the
+`inline` function back, because ART never saw a call. When a hook target is absent from the
 decompiled output, suspect compile-time inlining and look for the code inside the callers. See
 [13-ART §3.17](../13-ART/README.md).
 

@@ -22,7 +22,7 @@ The practical order is: learn Java first because it is what you read, then learn
 [05 — Kotlin](../05-Kotlin/README.md) because it is what you write when you build test apps and
 because Kotlin adds its own recognisable artefacts on top.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Java is the language the *artefact* speaks. Kotlin is a language the *author* speaks. As a reverse
 > engineer you spend your life reading artefacts, so you must be fluent in the artefact's language
 > first.
@@ -42,7 +42,7 @@ Install a JDK. It contains everything else. As a security person you specificall
 which is a JDK tool and is absent from a JRE-only install, because `javap -c` is how you read
 bytecode without any third-party tooling.
 
-> **⚠️ Warning**
+> **Warning**
 > Since Java 11 there is no separate downloadable JRE from most vendors. If a tutorial tells you to
 > "install the JRE", it is old. Install a current JDK (Temurin, Zulu, Oracle, or your distribution's
 > `openjdk-21-jdk` package) and move on.
@@ -61,7 +61,7 @@ using profiles gathered from real use, so the app you attack on a device is usua
 machine code, not interpreted DEX. What remains genuinely slower than C is startup time, memory
 footprint, and anything that allocates heavily, because garbage collection is not free.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The "Java is slow" folklore matters to you in one concrete way: developers sometimes push
 > performance-sensitive or security-sensitive logic into native code via JNI, believing native code
 > is both faster and harder to reverse. That belief moves your target from
@@ -127,7 +127,7 @@ public class Cache {
 }
 ```
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > The cache is `java.lang.Integer.IntegerCache`, an inner class whose upper bound can be raised with
 > `-XX:AutoBoxCacheMax` on HotSpot. This means the exact threshold is a tunable implementation
 > detail, not a language guarantee. That is precisely why relying on it is a bug rather than a
@@ -162,7 +162,7 @@ because `private static final String KEY = "..."` still puts `"..."` in the shar
 with Frida can read it without reflection at all, by walking the object layout. An attacker with a
 memory dump reads it out of the heap.
 
-> **⚠️ Warning**
+> **Warning**
 > `private`, `final`, and package-private communicate *intent to other developers*. Treat any
 > sentence of the form "it is safe because the field is private" as a finding, not a mitigation. The
 > only real boundaries on Android are process boundaries, the kernel, and hardware-backed key storage
@@ -183,7 +183,7 @@ contains the password in plain text. That is the reason the JDK's own password A
 `javax.crypto.spec.PBEKeySpec` and `java.net.PasswordAuthentication`, take `char[]` rather than
 `String`: a `char[]` can be overwritten with `Arrays.fill(pw, '\0')` the moment you are done.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > "Password is held in a `String`" is a legitimate, reportable finding under
 > `MASVS-STORAGE`. Confirm it by dumping the heap of a running app and searching for the credential.
 > The technique lives in [51 — Dynamic Analysis](../51-DynamicAnalysis/README.md).
@@ -279,7 +279,7 @@ own top-level class file whose name encodes the relationship with a `$`.
 | lambda compiled by `javac` | method `lambda$foo$0` in `Outer` | none |
 | lambda desugared by D8/R8 | `Outer$$ExternalSyntheticLambda0` | captured values as fields |
 
-> **🧠 Mental Model**
+> **Mental Model**
 > `$` in a class name means "the compiler made this, not the programmer". Numbers after `$` are
 > allocation order within the enclosing class, which means `Outer$1` is the first anonymous class in
 > the source file, `Outer$2` the second, and so on. That ordering is a genuinely useful hint when you
@@ -301,7 +301,7 @@ construction time. This is why captured locals must be effectively final.
 that an inner class can read or write a `private` member of the outer class without violating the
 verifier. Each distinct accessed member gets its own numbered accessor.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Synthetic accessors are a small but real attack surface: `access$000` is package-private, not
 > private, so a class you inject into the same package can call it and reach a member that the source
 > code declared `private`. Modern `javac` targeting Java 11+ can use nestmates instead of synthetic
@@ -396,7 +396,7 @@ between them and lose an increment no matter how `volatile` the field is.
 | Lazy singleton initialisation | static holder class, or `volatile` with double-checked locking done exactly right |
 | Compound check-then-act | an explicit lock around the whole sequence |
 
-> **⚠️ Warning**
+> **Warning**
 > Security checks written as check-then-act are the concurrency bug class you should care about
 > most. "Verify the file's owner, then open the file" and "check the permission, then perform the
 > action" are both exploitable if anything can change between the two steps. That is a

@@ -26,13 +26,13 @@ rather than merely that it is "needed".
 | apktool | Unpacks and repacks an APK, decoding binary XML and resources | `apktool --version` |
 | unzip | An APK is a ZIP file; you will open it as one constantly | `unzip -v` |
 
-> **📖 Definition — toolchain.** A *toolchain* is the ordered set of programs that transform an
+> **Definition — toolchain.** A *toolchain* is the ordered set of programs that transform an
 > artefact from one representation into another. In Android security the chain runs from the signed
 > APK on disk, through unpacking, through decompilation, to a readable representation, and then
 > back the other way when you patch and repack. Each tool in the chain assumes the previous one
 > succeeded, which is why a single broken link produces errors that look unrelated to the real cause.
 
-> **🧠 Mental Model.** Think of the toolchain as a mechanic's bay rather than a single machine. The
+> **Mental Model.** Think of the toolchain as a mechanic's bay rather than a single machine. The
 > JDK is the electricity supply — nothing Java-based runs without it. `adb` is the ramp that gets
 > the vehicle into the bay. `jadx` and `apktool` are the ways you take the engine apart. Frida is
 > the diagnostic probe you clip onto the engine *while it is running*. You would not judge a
@@ -52,7 +52,7 @@ rather than merely that it is "needed".
   [02 — Linux Basics](../../02-Linux-Basics/README.md) first; this lab will still work, but you
   will be typing rather than understanding.
 
-> **⚠️ Warning.** Do not install these tools on a machine you need to keep pristine for other work,
+> **Warning.** Do not install these tools on a machine you need to keep pristine for other work,
 > and never on a machine that holds client data for an unrelated engagement. Analysis workstations
 > routinely execute untrusted code — that is their entire purpose. A dedicated laptop or a virtual
 > machine you can snapshot and roll back is the professional norm.
@@ -84,7 +84,7 @@ is sufficient on its own, though some tools below are only packaged for Chocolat
 sudo apt update
 ```
 
-> **🔬 Under the Hood.** A package manager is a database plus an unpacker. It records which files
+> **Under the Hood.** A package manager is a database plus an unpacker. It records which files
 > belong to which package and which packages depend on which others, so removal is exact and
 > upgrades do not leave orphans. When you later install `frida-server` on a device by hand, you are
 > doing manually what a package manager would otherwise do for you, which is exactly why it is easy
@@ -114,7 +114,7 @@ javac -version
 You should see a version line naming a build of Java 17 or newer. If `javac` is missing but `java`
 works, you installed a JRE.
 
-> **⚠️ Warning — JAVA_HOME.** Many Java tools read the `JAVA_HOME` environment variable instead of
+> **Warning — JAVA_HOME.** Many Java tools read the `JAVA_HOME` environment variable instead of
 > searching your `PATH`. If it is unset, or points at an old JDK you deleted, `apktool` will fail
 > with messages that mention neither Java nor `JAVA_HOME`.
 
@@ -137,7 +137,7 @@ still doesn't work" reports.
 not need the whole Android Studio installation to do security work, though you will want it later
 for the emulator and for building test apps.
 
-> **📖 Definition — adb.** The *Android Debug Bridge* is a three-part system: a client (`adb` on
+> **Definition — adb.** The *Android Debug Bridge* is a three-part system: a client (`adb` on
 > your host), a server (a background process on your host that owns the USB and TCP connections),
 > and a daemon (`adbd`) running on the device. Commands you type reach `adbd` over USB or TCP, and
 > `adbd` executes them with whatever privileges it holds. The protocol itself is dissected in
@@ -163,7 +163,7 @@ fail to see the device at all.
 Python hosts Frida, Objection, and most of your own tooling. Install Python 3.10 or newer, then
 create a **virtual environment**.
 
-> **📖 Definition — virtual environment.** A *virtualenv* is a directory containing its own copy of
+> **Definition — virtual environment.** A *virtualenv* is a directory containing its own copy of
 > the Python interpreter's script entry points and its own `site-packages` folder. Activating it
 > prepends that directory to `PATH`, so `pip install` writes there instead of into the system
 > Python. This matters because Frida is version-sensitive: the `frida` Python package and the
@@ -202,7 +202,7 @@ that must run **on the device**, usually as root, and whose version must match t
 You will place it there in [Lab 02](lab-02-first-60-minutes.md)'s follow-on chapters; the mechanics
 belong to [53 — Frida](../../53-Frida/README.md).
 
-> **🔍 Pentester's Note.** Record the exact Frida version in your engagement notes on day one. When
+> **Pentester's Note.** Record the exact Frida version in your engagement notes on day one. When
 > a client asks six months later why a finding no longer reproduces, "Frida 16.x against Android 14"
 > is the difference between a credible answer and a shrug. Tool versions are evidence.
 
@@ -320,18 +320,18 @@ because you will misattribute failures to the target app.
 
 | # | Check | Command | Expected result | Done |
 |---|---|---|---|---|
-| 1 | JDK present, not just JRE | `javac -version` | A version line, Java 17+ | ☐ |
-| 2 | `JAVA_HOME` set and correct | `echo $JAVA_HOME` / `$env:JAVA_HOME` | A path that contains `bin/javac` | ☐ |
-| 3 | `adb` on PATH | `adb version` | Version 1.0.41 or newer | ☐ |
-| 4 | adb server starts | `adb start-server` | `daemon started successfully` or silence | ☐ |
-| 5 | Python 3.10+ | `python3 --version` | 3.10 or newer | ☐ |
-| 6 | Virtualenv active | prompt shows `(androidsec)` | Prefix visible | ☐ |
-| 7 | Frida client | `frida --version` | A 16.x or newer version | ☐ |
-| 8 | Objection | `objection version` | A version line | ☐ |
-| 9 | jadx | `jadx --version` | A version line | ☐ |
-| 10 | apktool | `apktool --version` | A version line | ☐ |
-| 11 | unzip | `unzip -v` | Banner line | ☐ |
-| 12 | Repo script passes | `sh scripts/verify-toolchain.sh` | Exit code 0 | ☐ |
+| 1 | JDK present, not just JRE | `javac -version` | A version line, Java 17+ | [ ] |
+| 2 | `JAVA_HOME` set and correct | `echo $JAVA_HOME` / `$env:JAVA_HOME` | A path that contains `bin/javac` | [ ] |
+| 3 | `adb` on PATH | `adb version` | Version 1.0.41 or newer | [ ] |
+| 4 | adb server starts | `adb start-server` | `daemon started successfully` or silence | [ ] |
+| 5 | Python 3.10+ | `python3 --version` | 3.10 or newer | [ ] |
+| 6 | Virtualenv active | prompt shows `(androidsec)` | Prefix visible | [ ] |
+| 7 | Frida client | `frida --version` | A 16.x or newer version | [ ] |
+| 8 | Objection | `objection version` | A version line | [ ] |
+| 9 | jadx | `jadx --version` | A version line | [ ] |
+| 10 | apktool | `apktool --version` | A version line | [ ] |
+| 11 | unzip | `unzip -v` | Banner line | [ ] |
+| 12 | Repo script passes | `sh scripts/verify-toolchain.sh` | Exit code 0 | [ ] |
 
 ### Troubleshooting table
 

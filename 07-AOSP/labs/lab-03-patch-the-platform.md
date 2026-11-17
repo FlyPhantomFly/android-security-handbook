@@ -341,7 +341,7 @@ echo 0 > /sys/kernel/debug/tracing/events/binder/enable
 **Record:** whether the observation held, and what the clean-image method could **not** show you that
 the patch could.
 
-> **⚠️** A patched platform is a **research instrument**, not evidence. Every finding demonstrated on a
+> **** A patched platform is a **research instrument**, not evidence. Every finding demonstrated on a
 > patched image must be reproduced on an unmodified one before it goes in a report, and the report must
 > state which image each piece of evidence came from. The failure mode is embarrassing and common: a
 > "vulnerability" that exists only because a check was commented out three weeks earlier and forgotten.

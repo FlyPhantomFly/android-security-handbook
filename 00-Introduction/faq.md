@@ -28,7 +28,7 @@ a line, and they come before any Android content, because reading a decompiled A
 Java. Do not skip them because you are impatient to get to Frida — the people who skip them are the
 people who are still stuck two years later.
 
-> **🧠 Mental Model** — Reverse engineering is reading comprehension in a language you did not choose,
+> **Mental Model** — Reverse engineering is reading comprehension in a language you did not choose,
 > about a program you did not write, with half the words removed by the compiler. Learning to code
 > first is learning the language. Everything else in this repository is learning to read fast under
 > those bad conditions.
@@ -48,7 +48,7 @@ exceptions and reflection. Then learn Kotlin, mostly so you can recognise what K
 like *after* compilation, and so you can read modern app source when you are handed it. Modern
 Android development is Kotlin-first, so if you ever work inside a product team you will write Kotlin.
 
-> **🔬 Under the Hood** — The compiler pipeline is Java or Kotlin source, then `.class` JVM bytecode,
+> **Under the Hood** — The compiler pipeline is Java or Kotlin source, then `.class` JVM bytecode,
 > then `d8`/`r8` produces DEX, and ART executes DEX. Both languages converge at the `.class` stage,
 > which is precisely why the decompiler can only ever give you Java back. Details are in
 > [12-DEX-Internals](../12-DEX-Internals/README.md) and [42-R8](../42-R8/README.md).
@@ -85,7 +85,7 @@ Mac is effectively mandatory.
 The practical recommendation is: use whatever you already own, and add WSL2 if you are on Windows.
 Install commands for all three platforms are in [cheatsheet.md](cheatsheet.md).
 
-> **⚠️ Warning** — If you are on Windows and run `adb` inside WSL2 while the device is attached to
+> **Warning** — If you are on Windows and run `adb` inside WSL2 while the device is attached to
 > Windows, the two `adb` servers will fight over port 5037 and USB. Pick one side to own the device.
 > Running `adb` on the Windows host and reaching it from WSL2 over TCP is the least painful pattern.
 
@@ -113,14 +113,14 @@ private data under `/data/data/<pkg>`, install a certificate into the system tru
 access, large parts of dynamic analysis are closed to you.
 
 There are three ways to get it. The cheapest is an emulator running a `google_apis` system image,
-where `adb root` simply works — no unlocking, no warranty questions, no risk. The second is a
+where `adb root` works — no unlocking, no warranty questions, no risk. The second is a
 physical device with an unlockable bootloader patched with [Magisk](../62-Magisk/README.md), which
 gives you systemless root. The third, for situations where root is unavailable, is repackaging: patch
 the APK, add a `networkSecurityConfig` that trusts your CA, inject a Frida gadget library, re-sign,
 and install. That last route is how you test on devices you are not allowed to root, and it is a real
 professional skill rather than a fallback for beginners.
 
-> **⚠️ Warning** — Unlocking a bootloader wipes the device, and on many models it permanently trips a
+> **Warning** — Unlocking a bootloader wipes the device, and on many models it permanently trips a
 > hardware-backed flag that some banking and payment apps check via Play Integrity. Never do this to
 > the phone that holds your own banking apps, your authenticator, or your only SIM.
 
@@ -144,7 +144,7 @@ Move to hardware when the emulator stops being able to answer your question:
 | NFC, telephony, real SIM, sensors | Limited or absent | Real |
 | Performance on ARM apps | Poor unless the image matches your host arch | Native |
 
-> **🔍 Pentester's Note** — On a client engagement the target app very often refuses to run on an
+> **Pentester's Note** — On a client engagement the target app very often refuses to run on an
 > emulator, and you will not have time to discover that on day one. Test your device setup against
 > the target before the engagement window opens, not during it.
 
@@ -165,7 +165,7 @@ issuing unlock codes, any device where the community has not published a working
 device you cannot afford to destroy. A rooted phone with an unlocked bootloader is not a secure
 device and should never hold real accounts.
 
-> **🧠 Mental Model** — Treat the test phone the way a chemist treats glassware: it is equipment, not
+> **Mental Model** — Treat the test phone the way a chemist treats glassware: it is equipment, not
 > property. It gets wiped, reflashed, and misconfigured constantly. The moment you start protecting
 > it, it stops being useful.
 
@@ -181,7 +181,7 @@ The free alternatives are genuinely good. OWASP ZAP is fully featured and open s
 excellent for scripted interception and for traffic that is not HTTP. For non-HTTP protocols you will
 end up in `tcpdump` and Wireshark regardless of which proxy you paid for.
 
-> **🔍 Pentester's Note** — Buy Burp Professional when a client is paying for your time, not while you
+> **Pentester's Note** — Buy Burp Professional when a client is paying for your time, not while you
 > are learning. Employers supply licences. The skill that gets you hired is knowing *what* to send in
 > Repeater, and Community teaches that identically.
 
@@ -204,7 +204,7 @@ line of it by hand. See [55-MobSF](../55-MobSF/README.md) for how to use it corr
 [71-OWASP-Mobile](../71-OWASP-Mobile/README.md) for the manual methodology it is supposed to
 accelerate rather than replace.
 
-> **⚠️ Warning** — Delivering a MobSF export as a penetration test report is the fastest way to lose a
+> **Warning** — Delivering a MobSF export as a penetration test report is the fastest way to lose a
 > client and a reputation. A report is what *you* concluded, with evidence; a scanner export is input
 > to that process.
 
@@ -232,7 +232,7 @@ commercial app for learning, understand that you are relying on jurisdiction-spe
 and that publishing what you found is a very different act from looking at it privately. The
 jurisdiction table in [cheatsheet.md](cheatsheet.md) lists the statutes by name.
 
-> **📖 Definition** — **Authorisation** in this field means a specific, written, dated statement from
+> **Definition** — **Authorisation** in this field means a specific, written, dated statement from
 > someone with the authority to grant it, naming what you may test and how. A verbal "sure, go
 > ahead", a forum post, or your own belief that the owner would not mind are not authorisation.
 
@@ -246,11 +246,11 @@ and §66 prohibit.
 
 The legitimate routes are: a public bug bounty programme whose scope explicitly lists the app, a
 vulnerability disclosure programme, or a signed engagement. In every one of those, the scope document
-*is* your authorisation. Read it fully, save a dated copy, and stay inside it. Note that "the app is
+*is* your authorisation. Read it fully, save a dated copy, and stay inside it."the app is
 in scope" does not automatically mean the API is in scope, and it never means other users' accounts
 are in scope.
 
-> **⚠️ Warning** — Automated scanning against production is prohibited by most bounty programmes even
+> **Warning** — Automated scanning against production is prohibited by most bounty programmes even
 > when the target is in scope. Firing a scanner at an in-scope host without checking the rules is one
 > of the most common ways researchers get banned from a platform.
 
@@ -315,7 +315,7 @@ magic. `Java.perform` becomes "attach to the ART runtime on a thread that has a 
 `Interceptor.attach` becomes "rewrite the prologue and trampoline out". At that point you can write
 your own hooks for a target nobody has blogged about, which is the entire job.
 
-> **🧠 Mental Model** — Learning Frida before internals is learning to drive by memorising the route to
+> **Mental Model** — Learning Frida before internals is learning to drive by memorising the route to
 > one shop. It works until you need to go anywhere else.
 
 ### How long until I am employable?
@@ -327,13 +327,13 @@ because stages one and three collapse dramatically. If you are already a web pen
 looking at three to six months, since methodology, reporting and HTTP are already yours.
 
 What makes you employable is not elapsed time, it is demonstrable output. Concretely, a hiring manager
-wants to see that you can take an unfamiliar APK, find something real in it, and explain it clearly.
+wants to see that you can take an unfamiliar APK, find something real in it, and explain it in depth.
 The portfolio that gets interviews is roughly: two or three full write-ups of vulnerable apps done
 properly rather than at walkthrough depth, at least one bypass you performed and explained yourself,
 one small tool or Frida script you wrote, and a couple of accepted bug bounty reports or a CVE if you
 can get them.
 
-> **🔍 Pentester's Note** — In interviews the differentiating question is almost always "walk me
+> **Pentester's Note** — In interviews the differentiating question is almost always "walk me
 > through how you approach an app you have never seen". Candidates who name tools fail it. Candidates
 > who describe a methodology — enumerate the surface, map trust boundaries, test the assumptions —
 > pass it, even when their tool knowledge is thinner.
@@ -371,7 +371,7 @@ public bug bounty reports, a clear technical blog or write-up portfolio, a confe
 open-source tool people use, and then certifications. Certifications get your CV past a filter;
 nothing else on that list needs to.
 
-> **⚠️ Warning** — Collecting certificates instead of producing findings is a recognised failure mode.
+> **Warning** — Collecting certificates instead of producing findings is a recognised failure mode.
 > If you have three certifications and have never written a full report on an app, you are optimising
 > the wrong variable.
 
@@ -439,7 +439,7 @@ trust store into an updatable APEX module, so the path you need may be under `/a
 `/system/`. Full treatment lives in [44-NetworkSecurityConfig](../44-NetworkSecurityConfig/README.md)
 and [36-CertificatePinning](../36-CertificatePinning/README.md).
 
-> **🔬 Under the Hood** — Android's `TrustManagerImpl` builds its trust anchors from the system store,
+> **Under the Hood** — Android's `TrustManagerImpl` builds its trust anchors from the system store,
 > and the `subject_hash_old` filename is inherited from OpenSSL's directory-hash lookup format, which
 > lets the lookup find an issuer certificate by hashing the subject name instead of scanning every
 > file. That is why the filename is not arbitrary.
@@ -456,7 +456,7 @@ Then pick a niche and go deep rather than testing many apps shallowly. Mobile-sp
 produce findings consistently: exported components that accept attacker-controlled data, deep-link
 handlers that skip authentication, `PendingIntent` mutability issues, WebView bridges reachable from
 untrusted content, secrets in `shared_prefs` or in the APK, backup and export paths that leak data,
-and — most reliably of all — the API behind the app, where the mobile client is simply the map to
+and — most reliably of all — the API behind the app, where the mobile client is the map to
 undocumented server endpoints.
 
 Read the scope document properly before you touch anything, and read the programme's list of known
@@ -465,7 +465,7 @@ informative. When you report, write it for the triager: one clear impact stateme
 steps, the request and response, and a suggested fix. A well-written medium beats a badly written high
 in both payout speed and reputation.
 
-> **🔍 Pentester's Note** — Duplicates are not wasted work. A duplicate means you found a real bug that
+> **Pentester's Note** — Duplicates are not wasted work. A duplicate means you found a real bug that
 > someone else found first, which is proof your methodology works. Keep a record of them; they are
 > legitimate interview material even though they paid nothing.
 
@@ -493,7 +493,7 @@ twenty minutes after a break. If a full day passes with no movement, ask for hel
 detail of what you already tried, because a well-formed question gets answered and "it doesn't work"
 does not.
 
-> **🧠 Mental Model** — Debugging is binary search over your own assumptions. Every experiment should
+> **Mental Model** — Debugging is binary search over your own assumptions. Every experiment should
 > eliminate half of what could be wrong. If an experiment cannot possibly eliminate anything, do not
 > run it.
 
@@ -530,7 +530,7 @@ down through the framework into Binder and, where relevant, into native code and
 skill is the subject of [07-AOSP](../07-AOSP/README.md), and every later chapter in this repository
 cites real file paths so you practise it continually.
 
-> **🔬 Under the Hood** — A typical trace looks like this: an app calls a framework method in
+> **Under the Hood** — A typical trace looks like this: an app calls a framework method in
 > `frameworks/base/core/java/android/...`, which is a thin client-side proxy that marshals a Binder
 > transaction, which is received by a service in `frameworks/base/services/core/java/...` running
 > inside `system_server`, which performs the permission check and does the real work, possibly

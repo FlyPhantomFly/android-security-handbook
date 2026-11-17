@@ -265,7 +265,7 @@ combines several conditions — chiefly whether the calling package currently ho
 active input method, plus the `READ_CLIPBOARD` app-op and the caller's user and device-policy state —
 and if the caller does not satisfy them it returns an empty result rather than throwing. Consequently an
 application that reads the clipboard in the background does not crash and does not see an exception; it
-simply receives nothing, which is why this behaviour is so often misdiagnosed as an unrelated bug.
+receives nothing, which is why this behaviour is so often misdiagnosed as an unrelated bug.
 
 ### Verification on a device
 

@@ -4,7 +4,7 @@ Every entry has a one-line annotation saying **why you would open it**. Links to
 `refs/heads/main`; if a file has moved in the release you are studying, use the tree search on
 `android.googlesource.com` rather than assuming the path is wrong.
 
-> **⚠️ Warning**
+> **Warning**
 > AOSP file paths in this repository are real, but AOSP *line numbers* are not quoted anywhere,
 > because they change with every commit. Where a paper, talk or vulnerability is listed without a
 > URL, that is deliberate — the title and venue are given so you can find the authoritative copy

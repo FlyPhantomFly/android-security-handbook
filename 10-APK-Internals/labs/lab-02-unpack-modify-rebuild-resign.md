@@ -7,7 +7,7 @@
 
 ---
 
-> ## ⚠️ Read this before you start: what is measured here, and the trap that nearly broke it
+> ## Read this before you start: what is measured here, and the trap that nearly broke it
 >
 > **Every `apktool` and `apksigner` console block in this lab is real output from the machine this
 > lab was written on.** That is worth stating explicitly, because an earlier revision of this file
@@ -19,14 +19,14 @@
 > resolves a bare name, so it finds nothing — while cmd and PowerShell resolve both instantly:**
 >
 > ```powershell
-> # host (PowerShell) — ✅ Measured
+> # host (PowerShell) — Measured
 > Get-Command apktool, apksigner | Select-Object Name, Source
 > # apktool    C:\apktool\apktool.bat
 > # apksigner  C:\Users\<you>\AppData\Local\Android\Sdk\build-tools\35.0.1\apksigner.bat
 > ```
 >
 > ```bash
-> # host (Git Bash) — ✅ Measured. The bare name misses; the .bat name hits.
+> # host (Git Bash) — Measured. The bare name misses; the .bat name hits.
 > command -v apktool       # prints nothing, exit 1
 > command -v apktool.bat   # /c/apktool/apktool.bat
 > ```
@@ -35,7 +35,7 @@
 > devices — `shell` vs `app` vs `root` seeing different property sets, `su -c` vs `su 0` — and it
 > fails the same way: silently, and in the direction that looks like absence.
 >
-> > **🧠 Mental Model**
+> > **Mental Model**
 > > A tool-availability check answers **"can this shell resolve this name"**, never **"is this tool
 > > installed"**. The two answers diverge whenever a shim, an extension rule, a `PATH` difference or
 > > a shell builtin sits between them — and the divergence reads as *absent*, which is the one
@@ -46,7 +46,7 @@
 >
 > ### Three apktools, one `PATH`, and they are not interchangeable
 >
-> Read straight out of each jar's `apktool.properties` — **✅ Measured**:
+> Read straight out of each jar's `apktool.properties` — **Measured**:
 >
 > | `apktool.jar` location | `application.version` | On `PATH`? |
 > |---|---|---|
@@ -67,8 +67,8 @@
 >
 > | Marker | Meaning |
 > |---|---|
-> | **✅ Measured** | Produced by running the stated command on this machine. Tool versions are named; only usernames are anonymised. |
-> | **📘 Unverified** | Not executed here — either it needs a target this machine does not have, or it describes a variant of the output. Treat the exact spelling as illustrative. |
+> | **Measured** | Produced by running the stated command on this machine. Tool versions are named; only usernames are anonymised. |
+> | **Unverified** | Not executed here — either it needs a target this machine does not have, or it describes a variant of the output. Treat the exact spelling as illustrative. |
 >
 > ### The target the measured blocks were run against
 >
@@ -130,19 +130,15 @@ intercepting proxy works, or adding a `System.loadLibrary` call to inject an ins
 | An APK you are authorised to modify | — | Your own debug build, an open-source app, or a purpose-built target |
 | Optional: `jadx` | `jadx --version` | Reading Java is much easier than reading Smali when locating the method |
 
-> **⚠️ Warning — authorised testing only.** Modifying and redistributing someone else's application
-> may breach copyright, the app's licence, or computer-misuse law depending on your jurisdiction.
-> Do this on applications you own, applications explicitly in scope for an engagement you are
-> engaged on, or purpose-built targets. Nothing in this lab is a licence to distribute a modified
-> build of a commercial app.
+> See [SECURITY.md](../../SECURITY.md) for authorised-testing scope.
 
-> **📖 Definition — Smali.** A human-readable assembly language for Dalvik bytecode, the
+> **Definition — Smali.** A human-readable assembly language for Dalvik bytecode, the
 > instruction set stored in `classes.dex`. `apktool` converts DEX into `.smali` text files that you
 > can edit and converts them back. It is not Java; it is one level below Java, comparable to reading
 > x86 assembly instead of C. Chapter [12-DEX-Internals](../../12-DEX-Internals/README.md) covers
 > the instruction set properly.
 
-> **📖 Definition — keystore.** A password-protected file holding one or more private keys and
+> **Definition — keystore.** A password-protected file holding one or more private keys and
 > their certificates. Android signing uses a key from a keystore. `keytool`, shipped with the JDK,
 > creates them.
 
@@ -178,9 +174,9 @@ apksigner verify -v --print-certs target.apk | tee original-signature.txt
 aapt2 dump badging target.apk | head -20 | tee original-badging.txt
 ```
 
-Expected `original-signature.txt` shape. The **format is ✅ Measured** — it is exactly what
+Expected `original-signature.txt` shape. The **format is Measured** — it is exactly what
 `apksigner` 0.9 prints, as you can see in full at [Step 4.4](#step-44--verify) — but the **values
-below are 📘 illustrative placeholders**, because they describe whatever app *you* chose as a
+below are illustrative placeholders**, because they describe whatever app *you* chose as a
 target, which this machine has no copy of:
 
 ```
@@ -209,7 +205,7 @@ of this lab it will be a different number, and that difference is the whole poin
 apktool d -f -o work target.apk
 ```
 
-Output — **✅ Measured**, apktool 3.0.1 via `apktool.bat`, against the target described at the top of
+Output — **Measured**, apktool 3.0.1 via `apktool.bat`, against the target described at the top of
 this lab. Only the username in the framework path is anonymised:
 
 ```
@@ -236,7 +232,7 @@ Four lines there are worth pinning down now, because each one bites someone even
 | `Copying original files...` | What populates `original/`, which is what `apktool b -c` later needs |
 | `Press any key to continue . . .` | The `.bat` shim's `pause`, **not** apktool. See the scripting-hazard note at the top of this lab |
 
-> **📘 Unverified** — a production APK adds lines this deliberately minimal target cannot produce:
+> **Unverified** — a production APK adds lines this deliberately minimal target cannot produce:
 > `I: Baksmaling classes2.dex...` (and `classes3`, …) for a multidex app, and
 > `I: Copying assets and libs...` when `assets/` or `lib/` are present. Their absence above is a
 > property of the target, not of apktool.
@@ -268,7 +264,7 @@ Read `apktool.yml` now — it explains several later failures:
 cat work/apktool.yml
 ```
 
-**✅ Measured** — the actual `apktool.yml` written by apktool 3.0.1 for this lab's minimal target:
+**Measured** — the actual `apktool.yml` written by apktool 3.0.1 for this lab's minimal target:
 
 ```yaml
 version: 3.0.1
@@ -288,7 +284,7 @@ doNotCompress:
 - arsc
 ```
 
-**📘 Unverified** — and here is the same file as apktool **2.x** writes it for a realistic app with
+**Unverified** — and here is the same file as apktool **2.x** writes it for a realistic app with
 native libraries and assets. The file is not just longer, it is a *different schema*: note the
 `!!brut.androlib.meta.MetaInfo` type tag, the quoted scalars, `packageInfo`/`forcedPackageId` where
 3.x writes `resourcesInfo`/`packageId`, and keys (`compressionType`, `isFrameworkApk`,
@@ -334,14 +330,14 @@ I: Copying unknown files/dir...
 I: Built apk into: cross2.apk
 ```
 
-**✅ Measured**; the resulting APK carries the same three entries, `classes.dex` among them. 2.x
+**Measured**; the resulting APK carries the same three entries, `classes.dex` among them. 2.x
 ignores the keys it does not recognise and falls back to defaults for the ones it wants and cannot
 find. So mixing versions is *tolerated*, not *guaranteed* — the failure mode when it does bite is a
 silently different rebuild rather than an error, which is the worst kind. Decode and rebuild with
 the same binary when you can, and if you cannot, diff the entry list against the original before
 you trust the result.
 
-> **🔬 Under the Hood** `doNotCompress` is not a cosmetic setting. `resources.arsc` must be STORED
+> **Under the Hood** `doNotCompress` is not a cosmetic setting. `resources.arsc` must be STORED
 > (uncompressed) and 4-byte aligned for apps targeting API 30 and above, because the framework
 > memory-maps it. Native libraries must be STORED and page-aligned when
 > `android:extractNativeLibs="false"`, because the dynamic linker maps them straight out of the
@@ -457,12 +453,12 @@ Edit `work/smali/com/example/target/security/RootDetector.smali` so the method b
 .end method
 ```
 
-> **⚠️ Warning** Do **not** delete the rest of the method body. Smali labels (`:cond_0`) and
+> **Warning** Do **not** delete the rest of the method body. Smali labels (`:cond_0`) and
 > try/catch directives (`.catch`) reference each other; removing lines piecemeal produces
 > assembler errors that are tedious to debug. Leaving dead code after an unconditional `return` is
 > perfectly legal and assembles cleanly.
 
-> **⚠️ Warning** Do not lower `.locals`. If the original said `.locals 4` and you only use `v0`,
+> **Warning** Do not lower `.locals`. If the original said `.locals 4` and you only use `v0`,
 > leave it at 4. Raising it is safe; lowering it is not.
 
 Common variants you will meet:
@@ -510,7 +506,7 @@ Add `android:debuggable="true"` to the `<application>` element:
     ... >
 ```
 
-> **🔍 Pentester's Note** `android:debuggable="true"` is the highest-leverage single-attribute
+> **Pentester's Note** `android:debuggable="true"` is the highest-value single-attribute
 > change in Android testing. It lets you attach a JDWP debugger, use `run-as` to read the app's
 > private data directory, and makes Frida attachment simpler on non-rooted devices. It is also the
 > attribute that anti-tamper code checks most often, via
@@ -590,7 +586,7 @@ and create the file at `work/res/xml/network_security_config.xml` as above.
 apktool b work -o rebuilt.apk
 ```
 
-Output — **✅ Measured**, apktool 3.0.1, rebuilding the tree decoded in Step 1.1:
+Output — **Measured**, apktool 3.0.1, rebuilding the tree decoded in Step 1.1:
 
 ```
 I: Using Apktool 3.0.1 on target.apk with 8 threads
@@ -604,7 +600,7 @@ Press any key to continue . . .
 `on target.apk` names the **original** APK, read back out of `apktool.yml` — it is not the name of
 what you are producing. `-o rebuilt.apk` decides that, and the last line confirms it.
 
-> **📘 Unverified** — on a larger project this run also prints
+> **Unverified** — on a larger project this run also prints
 > `I: Smaling smali_classes2 folder into classes2.dex...` per extra dex,
 > `I: Copying libs... (/lib)`, and `I: Copying unknown files/dir...`. apktool 2.x additionally
 > prints `I: Checking whether sources has changed...` and
@@ -660,7 +656,7 @@ grep -n -A 6 "\.method public static isDeviceRooted" \
 apksigner verify -v rebuilt.apk
 ```
 
-Output — **✅ Measured**, `apksigner` 0.9 from build-tools 35.0.1, on the APK apktool had just
+Output — **Measured**, `apksigner` 0.9 from build-tools 35.0.1, on the APK apktool had just
 rebuilt. Note how short the real diagnosis is:
 
 ```
@@ -710,7 +706,7 @@ zipalign -c -v 4 aligned.apk | tail -3
 echo "exit code: $?"        # 0 means aligned
 ```
 
-> **⚠️ Warning — order of operations.** Align first, sign second. `apksigner` preserves existing
+> **Warning — order of operations.** Align first, sign second. `apksigner` preserves existing
 > alignment when it inserts the signing block. `zipalign` does *not* preserve signatures: it moves
 > entry data, which changes the v2/v3 digests and produces
 > `INSTALL_PARSE_FAILED_NO_CERTIFICATES` at install time. If you only remember one rule from this
@@ -742,13 +738,13 @@ Generating 2,048 bit RSA key pair and self-signed certificate (SHA384withRSA) wi
 keytool -list -v -keystore lab.keystore -storepass androidlab | head -20
 ```
 
-> **⚠️ Warning** `androidlab` is a lab password written in a public document. This keystore is for
+> **Warning** `androidlab` is a lab password written in a public document. This keystore is for
 > testing on devices you control and nothing else. A real signing key protects the identity of an
 > application to every user who has ever installed it: losing it means you can never update the app
 > again, and leaking it means anyone can publish an "update" that Android will happily accept.
 > Real keys belong in an HSM or a Play App Signing arrangement, not in a repository.
 
-> **🔬 Under the Hood** The certificate `keytool` generates is self-signed. Android does not build
+> **Under the Hood** The certificate `keytool` generates is self-signed. Android does not build
 > or validate a chain to a trust anchor for app signing — there is no certificate authority for
 > APKs. The only property Android enforces is *continuity*: an update must be signed by the same
 > key as the installed version, or by a key that the installed key delegated to through a v3
@@ -791,7 +787,7 @@ API 24 makes the APK uninstallable.
 apksigner verify -v --print-certs final.apk
 ```
 
-Output — **✅ Measured**, `apksigner` 0.9 from build-tools 35.0.1, on an APK signed with a key from
+Output — **Measured**, `apksigner` 0.9 from build-tools 35.0.1, on an APK signed with a key from
 the exact `keytool` command in Step 4.2. This is the whole block, unedited:
 
 ```
@@ -1053,7 +1049,7 @@ adb uninstall com.example.target
 
 If uninstalling would lose data you need, back it up first with `adb backup` (for apps that allow
 it) or `run-as` on a debuggable build, or change the `package` attribute so your build installs
-alongside the original — note that renaming the package requires updating every fully-qualified
+alongside the original —renaming the package requires updating every fully-qualified
 reference, which `apktool`'s `--rename-manifest-package` handles only partially.
 </details>
 

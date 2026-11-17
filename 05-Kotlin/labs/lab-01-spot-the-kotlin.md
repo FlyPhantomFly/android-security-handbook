@@ -16,7 +16,7 @@ nested class, the `INSTANCE` static field, and `DefaultConstructorMarker` parame
 understand which of those signals survive obfuscation and which do not, which matters because the real
 APKs you assess will be obfuscated.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > The compiler cannot hide its own footprints. Every convenience Kotlin gives the developer costs some
 > generated code, and generated code has a fixed shape. You are learning to read a signature, not to
 > guess a style.
@@ -223,7 +223,7 @@ Read the fields as follows.
 | `d2` | String table for `d1` | **Human-readable**: original names, JVM signatures, parameter names |
 | `xi` | Extra integer flags | `48` is common on modern releases |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The `d2` array is a free gift. Even when R8 has renamed the class to `a` and the methods to `b` and
 > `c`, the `d2` strings often still contain the original Kotlin names and signatures, because the
 > default shrinker rules do not rewrite annotation string constants unless explicitly told to. Read

@@ -64,7 +64,7 @@ man 2 chmod                # the syscall, not the command
 man 7 signal | less -p 'SIGQUIT'      # jump straight to a term inside a page
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > There is **no `man` on an Android device.** Toybox has `--help` on each applet and nothing more.
 > Read the manual on your laptop, then check the flag actually exists on the device with
 > `toybox <cmd> --help`. This mismatch is the source of a large fraction of "the command does not
@@ -244,7 +244,7 @@ Listed by CVE identifier and one-line description. These are named in the chapte
 | **CVE-2022-0847** — "Dirty Pipe" | Overwriting read-only page cache through pipe buffer flags. The clearest modern example of "a file you cannot write is not necessarily a file you cannot change" |
 | **CVE-2014-6271** — "Shellshock" | Bash parsing function definitions out of environment variables. The reason this chapter insists that environment inheritance is an attack surface |
 
-> **⚠️ Warning**
+> **Warning**
 > Never cite a CVE number you have not looked up. Search the identifier at
 > <https://nvd.nist.gov/vuln> or <https://cve.org> and read the actual description before it goes in
 > a report. A wrong CVE in a deliverable destroys your credibility faster than a missed finding.

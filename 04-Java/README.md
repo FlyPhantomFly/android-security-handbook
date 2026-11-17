@@ -59,7 +59,7 @@ program to three kinds of computer you compiled it three times, on three machine
 compilers, and you debugged three different sets of bugs caused by three different compilers'
 interpretations of your code.
 
-> **📖 Definition — machine code.** The numeric instruction encoding that a physical CPU executes
+> **Definition — machine code.** The numeric instruction encoding that a physical CPU executes
 > directly. Each CPU architecture (x86-64, ARM64, RISC-V) has its own incompatible encoding. A
 > program in machine code is bound to one architecture forever.
 
@@ -74,7 +74,7 @@ That imaginary processor is the **Java Virtual Machine**. The compiled output fo
 slogan, the core idea worked and is the reason Java became the language of enterprise servers,
 smartcards, Blu-ray players, and — most importantly for you — Android applications.
 
-> **📖 Definition — bytecode.** A compact, architecture-independent instruction encoding produced by
+> **Definition — bytecode.** A compact, architecture-independent instruction encoding produced by
 > a compiler and executed by a virtual machine rather than by hardware. "Byte" code because each
 > instruction opcode fits in a single byte, giving at most 256 possible instructions.
 
@@ -97,7 +97,7 @@ Java, for four reasons that will govern your entire career:
 4. **Legacy targets are everywhere.** Banking, telecom, government, and industrial apps are often a
    decade old and entirely Java. These are also the apps with the most interesting findings.
 
-> **🧠 Mental Model.** Java is not "the old language you can skip". Java is the *lingua franca of
+> **Mental Model.** Java is not "the old language you can skip". Java is the *lingua franca of
 > the decompiler*. Kotlin, Scala, Groovy, and Java itself all converge on the same bytecode, and the
 > decompiler renders all of them back as Java. Learning Java is learning the language your tools
 > think in.
@@ -122,7 +122,7 @@ a security property you rely on daily:
   reversing a stripped C binary. It is also the reason obfuscation tools exist
   ([41 — ProGuard](../41-ProGuard/README.md), [42 — R8](../42-R8/README.md)).
 
-> **🔍 Pentester's Note.** The single most consequential fact in this chapter is that *compiled Java
+> **Pentester's Note.** The single most consequential fact in this chapter is that *compiled Java
 > retains its symbol names by design*. The bytecode format needs the string `"getUserPassword"` at
 > runtime to perform dynamic linking, so it must be stored in the file. Every APK therefore ships a
 > readable table of every class, method, and field name it uses. Obfuscation renames them but cannot
@@ -149,7 +149,7 @@ The pipeline on Android has one extra stage that does not exist anywhere else:
 Source.java --javac--> Source.class (JVM bytecode) --d8/r8--> classes.dex (Dalvik bytecode) --> APK
 ```
 
-> **📖 Definition — DEX.** Dalvik Executable. A single file format holding *all* classes of an
+> **Definition — DEX.** Dalvik Executable. A single file format holding *all* classes of an
 > application, with shared, deduplicated tables of strings, types, prototypes, fields, and methods.
 > The deduplication is why an APK is far smaller than the equivalent JAR, and the shared string
 > table is why hardcoded secrets are so trivially recoverable.
@@ -189,7 +189,7 @@ That last row is the whole reason this chapter is written the way it is. The lit
 anyone holding the APK can dump in one command. Replace it with `"sk_live_51H8xQ..."` and you have
 just described 30% of all real-world mobile findings.
 
-> **⚠️ Warning.** Nothing you write inside your application's code is secret from the person holding
+> **Warning.** Nothing you write inside your application's code is secret from the person holding
 > the APK. Not a string, not a private field, not a method you deleted from the UI. The only secrets
 > an app can hold are ones it never possesses in plaintext, or ones held by hardware
 > ([49 — KeyStore](../49-KeyStore/README.md), [50 — Hardware-Backed Security](../50-HardwareBackedSecurity/README.md)).
@@ -255,7 +255,7 @@ with all three:
   the AOT-compiled copy is frequently the reason, a subject taken up in
   [13 — ART](../13-ART/README.md) and [53 — Frida](../53-Frida/README.md).
 
-> **🔬 Under the Hood.** `d8` is the modern DEX compiler; `dx` is the deprecated one you will still
+> **Under the Hood.** `d8` is the modern DEX compiler; `dx` is the deprecated one you will still
 > see in old build logs. `r8` is `d8` plus shrinking, optimisation, and obfuscation — it is the
 > tool behind the ProGuard-style rules in a modern `build.gradle`. All three consume `.class` files,
 > which is why *any* JVM language can target Android.
@@ -305,7 +305,7 @@ class, method, field, or string directly. Everything refers to an *index* into t
 and the constant pool holds the actual UTF-8 names. That indirection is what makes dynamic linking
 possible, and it is also what guarantees that human-readable names are present in the file.
 
-> **📖 Definition — constant pool.** A per-class table of literal constants and symbolic references
+> **Definition — constant pool.** A per-class table of literal constants and symbolic references
 > (class names, method names and descriptors, field names and descriptors, string literals, numeric
 > constants). The DEX equivalent is split into several global tables shared across the whole
 > application: `string_ids`, `type_ids`, `proto_ids`, `field_ids`, and `method_ids`.
@@ -335,7 +335,7 @@ find the object's class and its lock/hash state. Local variables of primitive ty
 frame of the executing method. The class's *code* is not on the heap at all: it is either
 interpreted straight out of the memory-mapped DEX file or executed from the AOT-compiled `.odex`.
 
-> **📖 Definition — heap.** The region of a process's memory used for dynamically allocated objects
+> **Definition — heap.** The region of a process's memory used for dynamically allocated objects
 > whose lifetime is not tied to a function call. Contrast with the **stack**, which holds one frame
 > per active method call and is unwound automatically on return. Both are defined at length in
 > [01 — Computer Science Basics](../01-Computer-Science-Basics/README.md) and mapped concretely in
@@ -404,7 +404,7 @@ methods, and they can never be `null`.
 | `float` | 32 | IEEE 754 single | `F` | `0.0f` |
 | `double` | 64 | IEEE 754 double | `D` | `0.0d` |
 
-Note that `Z` means boolean and `J` means long. Those two are the ones everybody gets wrong; `B` was
+`Z` means boolean and `J` means long. Those two are the ones everybody gets wrong; `B` was
 taken by byte and `L` was taken by the "object" prefix, so the designers reached for the next
 available letters. You will read these descriptors thousands of times in Smali and in Frida errors.
 
@@ -416,7 +416,7 @@ The descriptor for a class type is `L` + the fully qualified name with dots repl
 `;`. So `java.lang.String` is `Ljava/lang/String;`. An array adds one `[` per dimension:
 `int[][]` is `[[I`, and `String[]` is `[Ljava/lang/String;`.
 
-> **🔍 Pentester's Note.** When Frida says
+> **Pentester's Note.** When Frida says
 > `Error: check(): argument types do not match any overload`, you fix it by naming the exact
 > descriptor: `.overload('java.lang.String', '[B', 'int')`. Fluency in descriptors turns that error
 > from a mystery into a two-second fix.
@@ -440,7 +440,7 @@ System.out.println(a == b);      // true  — both come from the cache
 System.out.println(c == d);      // false — two distinct objects
 ```
 
-> **🔬 Under the Hood.** `Integer.valueOf(int)` returns cached instances for values in the range
+> **Under the Hood.** `Integer.valueOf(int)` returns cached instances for values in the range
 > −128 to 127 inclusive; the upper bound is tunable on a desktop JVM with
 > `-XX:AutoBoxCacheMax`. Android's `libcore` implements the same cache. In bytecode you will see
 > `Integer.valueOf(...)` for boxing and `Integer.intValue()` for unboxing, and *those calls appear
@@ -471,7 +471,7 @@ This is a real and recurring finding, in two opposite directions:
   like `if (signature == null || signature == GOOD)` combined with `==` semantics has produced real
   signature-verification bypasses in shipped apps.
 
-> **⚠️ Warning.** Comparing secrets with `.equals()` is correct for logic but wrong for
+> **Warning.** Comparing secrets with `.equals()` is correct for logic but wrong for
 > cryptography, because `String.equals` returns as soon as it finds a mismatched character and
 > therefore leaks the number of matching leading characters through timing. For MACs, tokens, and
 > password hashes use a constant-time comparison such as `java.security.MessageDigest.isEqual`.
@@ -497,7 +497,7 @@ Why immutable? Three reasons that all matter to you:
    mutated after a permission check but before use, you would have a time-of-check-to-time-of-use
    vulnerability in every API that takes a string. Immutability closes that door by construction.
 
-> **📖 Definition — string pool (string interning).** A runtime-managed table of unique `String`
+> **Definition — string pool (string interning).** A runtime-managed table of unique `String`
 > instances. Every string *literal* in the source is placed in this pool at class load, so two
 > identical literals anywhere in the program are the same object. `String.intern()` puts a
 > runtime-built string into the pool manually.
@@ -517,7 +517,7 @@ That crude approach works but produces noise. The precise approach is to parse t
 table directly, which is what [scripts/dump-strings.py](scripts/dump-strings.py) in this chapter
 does, and what [12 — DEX Internals](../12-DEX-Internals/README.md) explains byte by byte.
 
-> **🔍 Pentester's Note.** On virtually every engagement, dumping the string table and grepping for
+> **Pentester's Note.** On virtually every engagement, dumping the string table and grepping for
 > `AKIA`, `sk_live`, `-----BEGIN`, `Bearer `, `.amazonaws.com`, `firebaseio.com`, `://`, and
 > `password` yields something within five minutes. Do this before you open a decompiler. It is the
 > highest findings-per-minute activity in mobile testing.
@@ -539,7 +539,7 @@ This rewrite is why decompiled Android code is full of `StringBuilder` chains th
 author never typed. It is normal. It also means the *fragments* — `"user="`, `"&id="` — are separate
 entries in the string table, so a URL assembled from pieces still leaks all its pieces.
 
-> **🔬 Under the Hood.** On desktop Java 9+ the compiler uses `invokedynamic` with
+> **Under the Hood.** On desktop Java 9+ the compiler uses `invokedynamic` with
 > `StringConcatFactory` instead of `StringBuilder`. Android's `d8` does **not** support that
 > strategy for concatenation in the shipped DEX; it desugars back to `StringBuilder`. That is why
 > decompiled Android code looks like Java 8 even when the source used Java 17 features.
@@ -551,7 +551,7 @@ entries in the string table, so a URL assembled from pieces still leaks all its 
 | `StringBuffer` | Yes | Yes, synchronised | Legacy; almost never correct today |
 | `char[]` | Yes | No | Passwords and key material you want to zero after use |
 
-> **⚠️ Warning.** Storing a password in a `String` means you cannot erase it: you have no way to
+> **Warning.** Storing a password in a `String` means you cannot erase it: you have no way to
 > overwrite an immutable object, and the garbage collector will leave the bytes in the heap until it
 > happens to reuse that memory. This is exactly why
 > `javax.crypto.spec.PBEKeySpec` and `java.security.KeyStore` take `char[]`. In a memory dump of a
@@ -559,9 +559,9 @@ entries in the string table, so a URL assembled from pieces still leaks all its 
 
 ### 3.3 Classes, objects, constructors, and `this`
 
-> **📖 Definition — class.** A named template describing what data an object holds (**fields**) and
+> **Definition — class.** A named template describing what data an object holds (**fields**) and
 > what it can do (**methods**).
-> **📖 Definition — object (instance).** A concrete block of memory laid out according to a class.
+> **Definition — object (instance).** A concrete block of memory laid out according to a class.
 
 ```java
 public class Session {
@@ -602,7 +602,7 @@ invoke-direct {v0, v1}, Lcom/app/Session;-><init>(Ljava/lang/String;)V
 When you patch Smali, moving or deleting one of those two instructions produces a verification error
 rather than a working patch — a classic beginner mistake covered in section 11.
 
-> **🧠 Mental Model.** A class is a cookie cutter; an object is a cookie. `static` members belong to
+> **Mental Model.** A class is a cookie cutter; an object is a cookie. `static` members belong to
 > the cutter, instance members to each cookie. `this` is a cookie's way of saying "me".
 
 #### Static versus instance, and why it matters when hooking
@@ -625,7 +625,7 @@ invariant. If `balance` is public, nothing can guarantee it never goes negative.
 
 **Security angle:** encapsulation is a *correctness* mechanism, not a *security* mechanism. It stops
 honest code from making mistakes. It does not stop an attacker, because reflection defeats it in
-three lines (section 3.9) and because the attacker can also simply read the field's value out of a
+three lines (section 3.9) and because the attacker can also read the field's value out of a
 decompiled binary or a heap dump. A field marked `private` is private from *other classes in the
 same program*, never from the person holding the phone.
 
@@ -662,10 +662,10 @@ question when opening a heavily obfuscated app.
 **What it is:** a reference of type `Animal` may point at a `Dog`, and calling `speak()` runs the
 `Dog` version. The decision is made at runtime by looking at the object's actual class.
 
-> **🔬 Under the Hood.** ART implements this with a **vtable** (virtual method table): an array
+> **Under the Hood.** ART implements this with a **vtable** (virtual method table): an array
 > per class where index *n* always holds the implementation of the *n*-th virtual method of the
 > hierarchy. A call compiles to "load the object's class pointer, load vtable slot 7, jump". A
-> subclass that overrides a method simply has a different pointer in the same slot. Interface calls
+> subclass that overrides a method has a different pointer in the same slot. Interface calls
 > cannot use a fixed index because a class implements many interfaces, so they use an interface
 > method table with a lookup, which is why `invoke-interface` is slower than `invoke-virtual`.
 
@@ -708,7 +708,7 @@ implementation" is a standard opening move.
 | Typical role | A capability or contract | A partial implementation with shared state |
 | DEX invoke opcode | `invoke-interface` | `invoke-virtual` |
 
-> **🔬 Under the Hood.** Java 8 `default` methods were retrofitted so that interfaces like
+> **Under the Hood.** Java 8 `default` methods were retrofitted so that interfaces like
 > `java.util.Collection` could gain `stream()` without breaking every existing implementor. On
 > Android, `default` and `static` interface methods require API 24+ *unless* the build uses
 > **desugaring**, in which case `d8` rewrites them into static helper methods on a synthetic class.
@@ -739,7 +739,7 @@ APK is on someone's device, and both are trivially bypassed by an attacker:
 3. **Reading the decompiled source** requires no bypass at all: `private` affects *callability*, not
    *visibility to a human*. A private field holding an API key is printed by JADX in full.
 
-> **⚠️ Warning.** "We made the method private so it can't be called" is not a mitigation, and you
+> **Warning.** "We made the method private so it can't be called" is not a mitigation, and you
 > should write it up as such when a developer offers it as one. The mitigation for "this must not be
 > callable by an attacker" is to move the operation server-side or behind hardware-backed key
 > material, never to change a Java access modifier.
@@ -819,7 +819,7 @@ by the API.
 | `ArrayDeque` | Circular array | — | O(n) | O(1) at ends | Insertion | No nulls |
 | `ConcurrentHashMap` | Striped bucket array | — | O(1) | O(1) | None | No nulls |
 
-> **🧠 Mental Model.** `ArrayList` is a numbered row of lockers: instant access if you know the
+> **Mental Model.** `ArrayList` is a numbered row of lockers: instant access if you know the
 > number, but inserting in the middle means shifting everything. `LinkedList` is a treasure hunt
 > where each note points to the next: cheap to splice, expensive to reach item 500. In real Android
 > code `ArrayList` wins almost always, because CPU cache locality beats theoretical complexity at
@@ -861,7 +861,7 @@ Treeification caps the damage at O(log n) for `Comparable` keys such as `String`
 modern Java is far more resistant than Java 7 was, but a parser that builds a `HashMap` from
 untrusted input with a *non-`Comparable`* custom key type remains vulnerable.
 
-> **📖 Definition — the `equals`/`hashCode` contract.** If `a.equals(b)` is true then
+> **Definition — the `equals`/`hashCode` contract.** If `a.equals(b)` is true then
 > `a.hashCode() == b.hashCode()` must be true. Violating it means an object stored in a `HashMap`
 > can never be found again, because lookup goes to the wrong bucket. This produces "impossible"
 > bugs, including security ones such as a revocation set that silently fails to contain the token
@@ -888,7 +888,7 @@ them — it replaces `T` with `Object` (or with the leftmost bound, if the param
 inserts casts at the call sites. The `.class` file contains no runtime record of the type argument
 apart from an optional `Signature` attribute used by reflection and IDEs.
 
-> **📖 Definition — type erasure.** The compile-time removal of generic type arguments, so that
+> **Definition — type erasure.** The compile-time removal of generic type arguments, so that
 > `List<String>` and `List<Integer>` become the same runtime type `List`. It was chosen for backward
 > compatibility: erased generics let Java 5 code and Java 1.4 libraries interoperate.
 
@@ -904,7 +904,7 @@ Consequences you must internalise:
   `(Token)` cast appears at every read. Do not conclude the developer wrote sloppy code; conclude
   the metadata was stripped.
 
-> **🔍 Pentester's Note.** The presence or absence of generic signatures is a quick fingerprint of
+> **Pentester's Note.** The presence or absence of generic signatures is a quick fingerprint of
 > ProGuard/R8 configuration. If JADX shows full generics, `-keepattributes Signature` was in effect,
 > which usually also means `SourceFile`, `LineNumberTable`, and annotations survived — a much
 > richer target. See [41 — ProGuard](../41-ProGuard/README.md).
@@ -991,7 +991,7 @@ In Smali the table appears as labels and directives:
 .end method
 ```
 
-> **🔍 Pentester's Note.** `.catch Ljava/lang/Exception; {...}` wrapped around a *security check* is
+> **Pentester's Note.** `.catch Ljava/lang/Exception; {...}` wrapped around a *security check* is
 > one of the most productive patterns to grep for. A root check, a pinning check, or a signature
 > check whose failure path is `catch (Exception e) { return true; }` fails open, and you can often
 > trigger the exception without touching the check itself — for example by deleting the file the
@@ -1008,7 +1008,7 @@ smell and a frequent finding, because it converts a failed integrity check into 
 runtime — a plugin, a serialiser, a dependency-injection framework, or a platform API that exists
 only on newer Android versions.
 
-> **📖 Definition — reflection.** A set of APIs that let a running program inspect and manipulate
+> **Definition — reflection.** A set of APIs that let a running program inspect and manipulate
 > classes, fields, methods, and constructors *by name, as data*, rather than by compiled-in
 > reference. The entry points live in `java.lang.Class` and the `java.lang.reflect` package.
 
@@ -1103,7 +1103,7 @@ invoke-virtual {v3, v5, v6}, Ljava/lang/reflect/Method;->invoke(Ljava/lang/Objec
 The chapter script [scripts/find-reflection.sh](scripts/find-reflection.sh) automates exactly this
 search across a whole APK.
 
-> **🔍 Pentester's Note.** Reflection is not by itself a finding. Every dependency-injection
+> **Pentester's Note.** Reflection is not by itself a finding. Every dependency-injection
 > framework, every JSON library, and every AndroidX compatibility shim uses it. What makes it a
 > finding is *reflection whose target is not a literal string* — because that means the target is
 > computed, which means it is hidden, which means somebody wanted it hidden. Grep for
@@ -1116,7 +1116,7 @@ constrained to a signature-verified, integrity-checked payload.
 
 ### 3.12 Annotations
 
-> **📖 Definition — annotation.** Metadata attached to a declaration, written `@Name`, that does not
+> **Definition — annotation.** Metadata attached to a declaration, written `@Name`, that does not
 > change behaviour by itself but can be read by the compiler, by build tools, or at runtime through
 > reflection.
 
@@ -1135,7 +1135,7 @@ the only part with direct RE consequences:
 | `CLASS` (default) | Yes | No | Yes, as an annotation on the declaration |
 | `RUNTIME` | Yes | Yes | Yes |
 
-> **🔍 Pentester's Note.** Runtime-retained annotations are a gift. Frameworks such as Retrofit
+> **Pentester's Note.** Runtime-retained annotations are a gift. Frameworks such as Retrofit
 > declare the entire REST API surface in annotations — `@GET("/v1/users/{id}")`, `@Header`,
 > `@Body` — and those strings sit in the DEX. Dumping every Retrofit annotation from an APK
 > reconstructs the backend's API surface without touching the network, which is often the fastest
@@ -1147,7 +1147,7 @@ the only part with direct RE consequences:
 **Problem it solves:** a phone has eight cores and a UI that must never freeze. Work must happen off
 the main thread, and results must come back safely.
 
-> **📖 Definition — thread.** An independently scheduled sequence of execution inside a process,
+> **Definition — thread.** An independently scheduled sequence of execution inside a process,
 > with its own stack but sharing the process's heap. Because the heap is shared, two threads can
 > read and write the same object simultaneously, and that is where all concurrency bugs come from.
 
@@ -1168,7 +1168,7 @@ Two mechanisms keep shared data correct, and they solve *different* problems:
   the compiler and CPU may not reorder around it. It does **not** make `count++` atomic, because
   that is a read, an add, and a write.
 
-> **🔬 Under the Hood — the Java Memory Model.** Without synchronisation, the compiler, the JIT, and
+> **Under the Hood — the Java Memory Model.** Without synchronisation, the compiler, the JIT, and
 > the CPU are all free to reorder and cache memory operations, so a thread can observe a
 > half-constructed object or an eternally stale value. The JMM defines a *happens-before* relation:
 > everything before a monitor release happens-before everything after the matching acquire, and a
@@ -1190,7 +1190,7 @@ instructions, whereas a `synchronized` *block* compiles to explicit `monitor-ent
 `monitor-exit` instructions with a `.catch` around them so the monitor is released on exception.
 Recognising the paired `monitor-enter`/`monitor-exit` in Smali tells you the source used a block.
 
-> **⚠️ Warning.** Hooking a `synchronized` method with Frida and doing slow work inside the hook can
+> **Warning.** Hooking a `synchronized` method with Frida and doing slow work inside the hook can
 > deadlock the app, because you extend the time the monitor is held. If an app freezes only when
 > your script is loaded, suspect this before suspecting anti-instrumentation.
 
@@ -1232,7 +1232,7 @@ Two synthetic artefacts appear with them and confuse everyone the first time:
   because an inner class is a separate class at bytecode level, so it cannot legally touch the
   outer class's `private` members; the compiler adds a package-private static accessor on the outer
   class and routes through it. When you see `Outer.access$000(this.this$0)` in JADX, the source
-  simply read `secret`.
+  read `secret`.
 - **`val$local`** is the captured copy of an effectively-final local variable inside an anonymous or
   local class. Anonymous classes cannot see the caller's stack frame after it returns, so the value
   is copied into a synthetic field at construction. That is exactly why Java requires captured
@@ -1247,7 +1247,7 @@ Two synthetic artefacts appear with them and confuse everyone the first time:
 .end method
 ```
 
-> **🧠 Mental Model.** Every `$` in a decompiled class name is a compiler artefact, not something a
+> **Mental Model.** Every `$` in a decompiled class name is a compiler artefact, not something a
 > human typed. Reading `$` as "the compiler made this" instantly separates authored code from
 > generated code, which is half of orienting yourself in an unfamiliar APK.
 
@@ -1256,7 +1256,7 @@ Two synthetic artefacts appear with them and confuse everyone the first time:
 **Problem it solves:** anonymous classes are six lines of ceremony to express one line of behaviour,
 and each one becomes a separate class file, bloating the DEX.
 
-> **📖 Definition — functional interface.** An interface with exactly one abstract method, such as
+> **Definition — functional interface.** An interface with exactly one abstract method, such as
 > `Runnable`, `Comparator<T>`, or `View.OnClickListener`. A lambda expression is shorthand for an
 > implementation of one.
 
@@ -1280,7 +1280,7 @@ lambda usually appears as a real, compiler-generated class. In JADX you will see
   naming, or
 - a private static method named `lambda$onCreate$0` holding the lambda body, in both cases.
 
-> **🔍 Pentester's Note.** When hooking a callback you cannot find, remember that the code you want
+> **Pentester's Note.** When hooking a callback you cannot find, remember that the code you want
 > may live in `MainActivity.lambda$onCreate$0` or in a separate `$$ExternalSyntheticLambda` class,
 > not in the class you expect. Enumerating loaded classes with Frida and filtering for
 > `ExternalSyntheticLambda` or `lambda$` finds it. This is one of the most common "my hook doesn't
@@ -1308,7 +1308,7 @@ class Session implements Serializable {
 
 The vulnerability class is well known and worth stating precisely:
 
-> **⚠️ Warning — deserialization of untrusted data.** `ObjectInputStream.readObject()` constructs
+> **Warning — deserialization of untrusted data.** `ObjectInputStream.readObject()` constructs
 > objects of whatever types the *stream* names, and runs their `readObject`, `readResolve`, and
 > `finalize` methods. An attacker who controls the byte stream therefore controls which classes are
 > instantiated and which of their callbacks run. If any class on the classpath has a `readObject`
@@ -1335,7 +1335,7 @@ allowed one part of a `Bundle` to be reinterpreted as another. Detailed treatmen
 | Persistence to disk | Reasonable | Explicitly **not** safe — the format is not versioned |
 | Attack surface | Class instantiation from the stream | Type confusion between write and read order |
 
-> **⚠️ Warning.** Writing a `Parcel` to persistent storage is a documented mistake: the marshalled
+> **Warning.** Writing a `Parcel` to persistent storage is a documented mistake: the marshalled
 > format may change between Android versions, so data written by one version may be misinterpreted
 > by the next. Misinterpreted parcels are a type-confusion primitive.
 
@@ -1351,7 +1351,7 @@ class Native {
 }
 ```
 
-> **🔍 Pentester's Note.** `<clinit>` is where anti-tamper and packer code lives, because it runs
+> **Pentester's Note.** `<clinit>` is where anti-tamper and packer code lives, because it runs
 > before anything else in the class. When you attach Frida with `-f` (spawn) rather than attaching
 > to a running process, you are trying to win the race against exactly this code. Root detection
 > implemented in `<clinit>` of the `Application` class is a standard pattern; see
@@ -1383,7 +1383,7 @@ constructs each constant. A `switch` over an enum compiles to a lookup through a
 `$SwitchMap$com$app$Level`. Seeing that array is how you recognise an enum switch in decompiled
 output.
 
-> **🔬 Under the Hood.** Enums are relatively expensive on Android — each constant is a full object,
+> **Under the Hood.** Enums are relatively expensive on Android — each constant is a full object,
 > and the `$VALUES` array plus the switch map add DEX size. That is why Android historically pushed
 > `@IntDef` annotations as a lighter alternative, and why R8 can optimise simple enums back into
 > integers. When you see `@IntDef` in decompiled framework code, you are looking at that trade-off.
@@ -1456,7 +1456,7 @@ Android's behaviour, not the behaviour documented on Oracle's website.
 | `art/runtime/native/` | JNI implementations of `java.lang.*` native methods |
 | `frameworks/base/core/java/android/` | The Android framework classes an app actually calls |
 
-> **⚠️ Warning.** AOSP moves. File paths in this section are stable across many releases, but do not
+> **Warning.** AOSP moves. File paths in this section are stable across many releases, but do not
 > quote line numbers in a report; quote the method name and the release you checked. The repository
 > style guide forbids inventing line numbers for exactly this reason.
 
@@ -1536,7 +1536,7 @@ target SDK level. `setAccessible(true)` does *not* turn off the hidden-API check
 apps and instrumentation frameworks contain separate, well-known "hidden API bypass" code that
 performs the reflection from a caller ART considers to be platform code.
 
-> **🔬 Under the Hood.** The list of restricted members is baked into the platform as
+> **Under the Hood.** The list of restricted members is baked into the platform as
 > `hiddenapi-flags.csv` during the build, and enforcement policy varies by the app's
 > `targetSdkVersion`: older targets get warnings, newer targets get exceptions. This is why an old
 > app can touch internals that a modern app cannot, and why "raise your targetSdk" is a real
@@ -1561,7 +1561,7 @@ The delegation model is: ask your parent first; only if the parent cannot find t
 in your own path. Android's application loader is a `PathClassLoader` whose parent chain ends at the
 boot classloader holding the framework.
 
-> **🔍 Pentester's Note.** `InMemoryDexClassLoader` is the modern packer's favourite tool, because
+> **Pentester's Note.** `InMemoryDexClassLoader` is the modern packer's favourite tool, because
 > the decrypted DEX never exists as a file you can pull with `adb`. The counter-technique is to hook
 > the loader itself or to dump the DEX from memory once ART has mapped it, which is what tools in
 > [68 — Reverse Engineering](../68-ReverseEngineering/README.md) automate. Any app that calls
@@ -1598,7 +1598,7 @@ behaviour surprises you. Two worked starting points:
   surface that your code cannot validate.
 - **"What exactly does a permission check do?"** Start at
   `frameworks/base/core/java/android/content/Context.java` (`checkSelfPermission`), then
-  `frameworks/base/services/core/java/com/android/server/pm/permission/`, and note that the check
+  `frameworks/base/services/core/java/com/android/server/pm/permission/`, and confirm that the check
   happens in `system_server` over Binder, not in your process. That is why a client-side permission
   check is advisory and a server-side one is authoritative — the exact same reasoning you apply to
   client-side authentication logic in an app.
@@ -1687,7 +1687,7 @@ The following are recurring, reportable patterns rather than individual reports:
 - **The constant-time failure.** A token or licence comparison using `String.equals`, exploited by
   timing when the comparison is performed server-adjacent or in a loop the attacker can drive.
 
-> **⚠️ Warning.** Demonstrating impact with a live third-party key means spending someone's money or
+> **Warning.** Demonstrating impact with a live third-party key means spending someone's money or
 > touching someone's data. Stay inside the programme's scope document, make the smallest possible
 > proof, and never enumerate. The legal framing in the repository
 > [README](../README.md#legal-and-ethical-scope) applies to all of this.
@@ -1978,7 +1978,7 @@ Second, the stack trace is obtained by constructing a Java `Exception` and askin
 `android.util.Log` to format it, which gives you Java frames rather than the native frames
 `Thread.backtrace` would produce.
 
-> **⚠️ Warning.** Hooking `String.equals` globally is extremely noisy and slows the app
+> **Warning.** Hooking `String.equals` globally is extremely noisy and slows the app
 > dramatically, because the framework calls it thousands of times per second. Always filter, and
 > prefer hooking the app's own comparison method once you have found it.
 
@@ -2045,7 +2045,7 @@ Java.perform(function () {
 });
 ```
 
-> **🔍 Pentester's Note.** Run this script and then exercise the app normally. Within a minute you
+> **Pentester's Note.** Run this script and then exercise the app normally. Within a minute you
 > will have a complete list of every dynamically resolved class and method, including the ones the
 > obfuscator worked hardest to hide. This single script converts most string-obfuscated malware from
 > "impossible to read" into "annotated".
@@ -2132,7 +2132,7 @@ The four outputs serve different purposes and you will usually want all of them.
 reading; apktool's Smali is for accuracy and for patching; the raw DEX is for string tables and
 structural work; and the unzipped APK is for the manifest, resources, and native libraries.
 
-> **🔍 Pentester's Note.** `--show-bad-code` tells JADX to emit its best effort even when
+> **Pentester's Note.** `--show-bad-code` tells JADX to emit its best effort even when
 > decompilation fails, with the problem marked in a comment. Methods JADX cannot decompile are
 > disproportionately interesting: obfuscators specifically target the decompiler, so "JADX failed
 > here" often means "somebody did not want you reading this". Read those methods in Smali.
@@ -2220,7 +2220,7 @@ grep -nE 'android:(debuggable|allowBackup|usesCleartextTraffic)' out-apktool/And
 grep -rniE 'key|token|secret|url' out-apktool/res/values/strings.xml
 ```
 
-> **⚠️ Warning.** From Android 12 (API 31) onwards, any component with an intent filter must declare
+> **Warning.** From Android 12 (API 31) onwards, any component with an intent filter must declare
 > `android:exported` explicitly, so an absent attribute no longer means "implicitly exported". Check
 > the app's `targetSdkVersion` before concluding anything from an absent attribute.
 
@@ -2539,7 +2539,7 @@ public final class PluginLoader {
 }
 ```
 
-> **🔍 Pentester's Note.** When you meet this pattern in a real app, test each control in order.
+> **Pentester's Note.** When you meet this pattern in a real app, test each control in order.
 > Is the digest checked at all? Is it checked against the *same file* that is loaded, or against a
 > copy? Is the optimized directory on external storage (a historical, serious vulnerability)? Is the
 > class name constrained? Is the type checked before construction? In practice, at least one of the

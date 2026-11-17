@@ -30,7 +30,7 @@ unzip -l app.apk | head -20
 file app.apk        # "Android package (APK), with ... " or "Zip archive data"
 ```
 
-> **📖 Definition — ZIP central directory.** The index at the end of a ZIP file listing every
+> **Definition — ZIP central directory.** The index at the end of a ZIP file listing every
 > entry and where its data begins. ZIP readers find it by reading the last 22+ bytes of the file
 > (the End Of Central Directory record), not by reading from the start. This "read from the end"
 > behaviour is the root cause of several Android signature bugs.
@@ -119,7 +119,7 @@ designed exactly for this check.
 
 ## 4. What is the difference between `apktool b` and just re-zipping the folder?
 
-They solve different problems. `apktool d` does not simply extract the ZIP — it *decodes* it. The
+They solve different problems. `apktool d` does not merely extract the ZIP — it *decodes* it. The
 binary manifest becomes text XML, `resources.arsc` becomes a `res/` tree of readable XML plus a
 `res/values/public.xml` mapping resource IDs to names, and `classes*.dex` becomes Smali assembly.
 `apktool b` reverses all of that: it recompiles the resource tree with `aapt2` back into a new
@@ -224,7 +224,7 @@ Because the two schemes cover different byte ranges, and that difference is the 
 
 APK Signature Scheme v1 is inherited from Java's JAR signing. `META-INF/MANIFEST.MF` contains one
 section per entry with a `SHA-256-Digest` of that entry's *uncompressed content*. The verifier
-walks the manifest's list and checks each listed entry. An entry that is not listed simply is not
+walks the manifest's list and checks each listed entry. An entry that is not listed is not
 checked. So adding a brand-new file to a v1-signed APK does not break anything: no digest covers it.
 That is exactly what made repackaging trivial before Android 7.0.
 
@@ -249,7 +249,7 @@ apksigner verify -v broken.apk
 # Verified using v2 scheme (APK Signature Scheme v2): false
 ```
 
-> **🔍 Pentester's Note** If an app is v1-only in 2026, that is a finding on its own. It cannot be
+> **Pentester's Note** If an app is v1-only in 2026, that is a finding on its own. It cannot be
 > installed at all if it targets API 30+, and if it targets lower it is exposed to the whole
 > repackaging class. Report it against MASVS-CODE.
 
@@ -691,7 +691,7 @@ against the platform:
 | These are all the DEX files | `unzip -l app.apk \| grep '\.dex$'` and check for duplicates |
 | The manifest is what apktool shows | Three-way diff from question 3 |
 
-> **⚠️ Warning** A "clean" MobSF report on an APK that also fails the three-way manifest diff is a
+> **Warning** A "clean" MobSF report on an APK that also fails the three-way manifest diff is a
 > strong signal, not a clean bill of health. Report the divergence itself as the finding.
 
 ---
@@ -772,7 +772,7 @@ grep -i '0x7f0a0012' work/res/values/public.xml
 aapt2 dump resources app.apk | grep -B2 -A6 '0x7f0a0012'
 ```
 
-> **🧠 Mental Model** `resources.arsc` is a database. The package chunk is the schema, type chunks
+> **Mental Model** `resources.arsc` is a database. The package chunk is the schema, type chunks
 > are tables partitioned by configuration (language, density, orientation), and a resource ID
 > `0xPPTTEEEE` is a primary key made of package, type and entry. Resolving `@string/foo` is a name
 > lookup followed by a "best matching row for the current configuration" query.

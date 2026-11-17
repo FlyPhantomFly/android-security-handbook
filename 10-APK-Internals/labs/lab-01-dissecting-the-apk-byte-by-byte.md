@@ -39,16 +39,16 @@ container can.
 | An Android device or emulator with USB debugging | To obtain a real APK | `adb devices` |
 | Android SDK build-tools on `PATH` (optional) | `apksigner` for the final cross-check | `apksigner version` |
 
-> **📖 Definition — hex editor / hex dump.** Computers store files as sequences of bytes, each
+> **Definition — hex editor / hex dump.** Computers store files as sequences of bytes, each
 > being a number from 0 to 255. A hex dump prints those numbers in base 16 (two characters per
 > byte) next to their textual interpretation, so you can see structure that a text editor hides.
 > `xxd` is the hex dump program shipped with most Unix-like systems.
 
-> **📖 Definition — offset.** The position of a byte counted from the start of the file, where the
+> **Definition — offset.** The position of a byte counted from the start of the file, where the
 > very first byte is offset 0. Offsets are conventionally written in hexadecimal with a `0x`
 > prefix, so `0x10` means "the seventeenth byte".
 
-> **📖 Definition — little-endian.** ZIP stores multi-byte numbers with the least significant byte
+> **Definition — little-endian.** ZIP stores multi-byte numbers with the least significant byte
 > first. The four bytes `50 4B 03 04` therefore represent the 32-bit number `0x04034B50`, not
 > `0x504B0304`. Every number in this lab is little-endian. Getting this backwards is the single
 > most common beginner mistake.
@@ -118,7 +118,7 @@ cp base.apk target.apk
 ls -l target.apk
 ```
 
-> **⚠️ Warning** Only pull and analyse APKs you are authorised to analyse. Your own apps, apps you
+> **Warning** Only pull and analyse APKs you are authorised to analyse. Your own apps, apps you
 > built, and open-source apps are always fine. Commercial apps may be covered by terms of service
 > that restrict reverse engineering; that is a legal question, not a technical one, and it is your
 > responsibility to answer it before you start.
@@ -238,7 +238,7 @@ Decode the first record field by field. Everything is little-endian.
 | `0x1E` | `41 6e 64 …` | `AndroidManifest.xml` | file name | 19 bytes, no terminator. |
 | `0x31` | `78 9c …` | — | file data | `78 9c` is a zlib/deflate header — this really is compressed data. |
 
-> **🔬 Under the Hood** Notice that the local header's CRC and sizes are zero. That is legal and
+> **Under the Hood** Notice that the local header's CRC and sizes are zero. That is legal and
 > common: general purpose bit flag bit 3 tells the reader "I did not know the sizes when I wrote
 > this header; look for a data descriptor after the data, or better, look in the central
 > directory." This is precisely why the *central directory* is authoritative on Android, and why a
@@ -253,7 +253,7 @@ head -c 4 target.apk | xxd -p
 
 Expected: `504b0304`.
 
-> **🔍 Pentester's Note** If those four bytes are `6465780a` — ASCII `dex\n` — you are looking at a
+> **Pentester's Note** If those four bytes are `6465780a` — ASCII `dex\n` — you are looking at a
 > file with a DEX prepended to a ZIP. That is the Janus construction (CVE-2017-13156): the archive
 > still parses, because ZIP readers work from the end of the file, but the code-loading path on
 > Android 5.0–8.0 read the magic at offset 0 and executed the prepended DEX. A one-line check
@@ -263,7 +263,7 @@ Expected: `504b0304`.
 
 A ZIP reader does not read from the front. It reads the **last** record in the file — the End Of
 Central Directory (EOCD) — and uses a pointer inside it to find the index. Because the EOCD ends
-with a variable-length comment, a reader cannot simply seek to `filesize - 22`; it must scan
+with a variable-length comment, a reader cannot seek to `filesize - 22`; it must scan
 backwards for the signature `50 4B 05 06`.
 
 ```bash
@@ -309,7 +309,7 @@ stat -f%z target.apk     # macOS
 If the numbers do not match, either you mis-decoded a field (check your endianness) or the file has
 data appended after the EOCD — which is itself worth investigating.
 
-> **🧠 Mental Model** Think of the EOCD as the back cover of a book that says "the table of
+> **Mental Model** Think of the EOCD as the back cover of a book that says "the table of
 > contents starts on page 4,094,464 and is 49,572 characters long, and there are 918 chapters."
 > Everything else follows from that one sentence. Corrupt or move that sentence and the whole book
 > becomes unreadable — but *prepend* a hundred blank pages and a reader who only reads the back
@@ -360,7 +360,7 @@ The record is `46 + nameLen + extraLen + commentLen` bytes long, so the next rec
 `0x3E7A00 + 46 + 58 = 0x3E7A68`. Walking 918 of these by hand is not the point — Part 3 automates
 it — but decoding one gives you the vocabulary.
 
-> **⚠️ Warning** The central directory says this entry's local header is at offset 0. Compare that
+> **Warning** The central directory says this entry's local header is at offset 0. Compare that
 > with Step 2.1, where offset 0 held `AndroidManifest.xml`. In a real APK the two agree; the
 > mismatch above is an artefact of using illustrative values from two different files. When you run
 > this on your own APK, the name at the local header offset **must** equal the name in the central
@@ -435,7 +435,7 @@ Every pair you walk gives you a 32-bit ID. Match it against this table:
 | `0x2146444e` | Google Play metadata added at serving time (observed, undocumented) |
 | anything else | Unknown — dump the value and look at it |
 
-> **🔍 Pentester's Note** The ID-value pairs are *not* covered by any signature digest. The v2/v3
+> **Pentester's Note** The ID-value pairs are *not* covered by any signature digest. The v2/v3
 > digests cover the entry data, the central directory and the EOCD — the signing block is excluded
 > because it cannot contain its own hash. That makes an unknown ID-value pair a signature-safe
 > hiding place for arbitrary data. On a routine assessment, enumerate the pairs; anything you cannot

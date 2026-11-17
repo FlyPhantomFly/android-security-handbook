@@ -86,7 +86,7 @@ ls .repo/manifests/
 - The `<default revision=...>` — is it a mutable branch name or an immutable tag?
 - Every `<include>`, and what each included manifest adds.
 
-> **🔍** On a *vendor* tree, this is where you find projects fetched from a chipset vendor's server, and
+> **** On a *vendor* tree, this is where you find projects fetched from a chipset vendor's server, and
 > `.repo/local_manifests/` is where you find whatever the vendor added locally. See §3.2.
 
 ### A4. Sync
@@ -223,7 +223,7 @@ python3 -m json.tool out/soong/soong.variables | grep -iE "debuggable|eng|selinu
 
 **Record:** three things about the product configuration you can state from this file alone.
 
-> **🔍** On an unfamiliar vendor tree, this file answers in thirty seconds what would otherwise be an
+> **** On an unfamiliar vendor tree, this file answers in thirty seconds what would otherwise be an
 > hour of Makefile archaeology. See §3.9.
 
 ### C2. Symbols
@@ -390,7 +390,7 @@ adb logcat -s <your-tag>
 
 **Record:** the total wall-clock time from edit to observing the change.
 
-> **⚠️** `m snod` repacks whatever is in `out/.../system/` **without** re-deriving whether those files
+> **** `m snod` repacks whatever is in `out/.../system/` **without** re-deriving whether those files
 > were legitimately produced by the tree. That is why it is fast — and why an `out/` directory produced
 > by someone else must be treated as untrusted. See §3.9.
 

@@ -75,7 +75,7 @@ and is about to send the fork request. See [README §4.3 step 2](../README.md).
 | `--nice-name` | The process name you see in `ps` |
 | `android.app.ActivityThread` | The entry point the child will run |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Everything the sandbox will be is decided by `system_server` **before** the fork and sent as text.
 > The app has no say in it. This is why `PackageManagerService` is the authority on app identity, and
 > why a bug there is far more serious than a bug in Zygote itself.
@@ -140,7 +140,7 @@ another's `Android/data` directory even on shared storage — the mount table di
 ```
 **Step 2: supplementary groups.** GID 3003 is `AID_INET`. **This is the moment the `INTERNET`
 permission becomes real** — it is not a framework check at all, it is a Linux group that lets the
-process create network sockets. An app without `INTERNET` simply does not have 3003 here, and
+process create network sockets. An app without `INTERNET` does not have 3003 here, and
 `socket()` fails in the kernel.
 
 ```text

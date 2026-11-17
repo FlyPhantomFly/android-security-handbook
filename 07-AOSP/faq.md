@@ -39,7 +39,7 @@ cross-references a local grep cannot match.
 For most work, no. Reading is better in Code Search: it has cross-references, blame, history, and it
 indexes multiple branches. You need a local checkout for four things: `git log -S` to find the commit
 that introduced or removed a string, cross-release diffing, complex multi-pattern searches with
-`ripgrep`, and anything in a vendor tree, which is not indexed anywhere. And obviously for building.
+`ripgrep`, and anything in a vendor tree, which is not indexed anywhere. And for building.
 
 ---
 
@@ -162,7 +162,7 @@ record the value in your evidence exactly as you record the Android version.
 ### 13. Why does a hidden-API denial look like a completely unrelated bug?
 
 Because it throws the ordinary reflection exception — `NoSuchMethodException`, `NoSuchFieldException` —
-rather than anything named "denied". An app that catches those broadly and falls back will simply behave
+rather than anything named "denied". An app that catches those broadly and falls back will behave
 differently with no visible cause. `logcat | grep -i "Accessing hidden"` shows you what actually
 happened.
 

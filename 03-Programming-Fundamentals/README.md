@@ -71,12 +71,12 @@ ever invented is one answer to the same question:
 Everything else — types, objects, garbage collection, exceptions, package managers, forty years of
 arguments about which language is best — is detail hanging off that single question.
 
-> **📖 Definition — program.** A finite, ordered description of a computation, written in a notation
+> **Definition — program.** A finite, ordered description of a computation, written in a notation
 > that can be mechanically translated into the instructions a specific machine executes. "Finite"
 > and "ordered" matter: a program is not a description of a result, it is a description of the
 > *steps* that produce the result.
 
-> **📖 Definition — programming language.** A formal notation with a precisely defined grammar
+> **Definition — programming language.** A formal notation with a precisely defined grammar
 > (**syntax** — what arrangements of symbols are legal) and a precisely defined meaning
 > (**semantics** — what each legal arrangement makes the machine do). The precision is the point.
 > English has neither, which is why you cannot write software in English.
@@ -98,7 +98,7 @@ cake batter. That "next room" might be the return address the CPU will jump to w
 finishes ([chapter 01, call stack](../01-Computer-Science-Basics/README.md)), which is how a badly
 written function that copies a name into a fixed-size buffer becomes remote code execution.
 
-> **🧠 Mental Model.** A computer is not a smart assistant. It is an infinitely fast, infinitely
+> **Mental Model.** A computer is not a smart assistant. It is an infinitely fast, infinitely
 > obedient, and infinitely literal clerk with no common sense and no self-preservation instinct.
 > Every security vulnerability in history is a consequence of a human assuming the clerk would
 > exercise judgement it does not have. Your job as a security researcher is to find the places where
@@ -127,7 +127,7 @@ There are five reasons, and they get progressively more important:
    somebody who knows how compilers transform code can tell "the developer wrote a dangerous thing"
    apart from "the decompiler rendered a safe thing confusingly."
 
-> **🔍 Pentester's Note.** The highest-value skill in this entire repository is not Frida, not
+> **Pentester's Note.** The highest-value skill in this entire repository is not Frida, not
 > Ghidra, and not Burp. It is the ability to open 40 000 lines of unfamiliar decompiled code and,
 > within twenty minutes, be able to say "the interesting part is these three classes, and here is
 > why." That skill has a method, it is teachable, and it is taught in
@@ -215,12 +215,12 @@ reconstructible — imperfectly — in the other. When you decompile an APK you 
 upwards: DEX bytecode back into something that looks like Java source. The climb loses comments,
 local variable names, and the exact shape of loops, because those were destroyed on the way down.
 
-> **📖 Definition — abstraction.** A description that deliberately omits detail in order to be
+> **Definition — abstraction.** A description that deliberately omits detail to be
 > usable. `x = a + b` is an abstraction over "load a into a register, load b into another register,
 > issue an integer add, store the result." The omitted detail still happens; you just are not
 > writing it.
 
-> **⚠️ Warning.** Abstraction hides detail; it does not remove it. Every vulnerability class in this
+> **Warning.** Abstraction hides detail; it does not remove it. Every vulnerability class in this
 > repository lives in the detail the abstraction hid. `String s = a + b;` in Java hides an
 > allocation, a copy, and a potential `OutOfMemoryError`. In C, `strcpy(dst, src)` hides an
 > unbounded write. The hidden detail is your attack surface.
@@ -275,7 +275,7 @@ contains. That difference decides what a reverse engineer receives.
 Android's actual pipeline uses three of these at once and is drawn in full in
 [section 3.18](#318-compilation-interpretation-bytecode-vms-jit-and-aot). For now hold this:
 
-> **🧠 Mental Model.** Your `.apk` contains **bytecode** (DEX). At install and during idle
+> **Mental Model.** Your `.apk` contains **bytecode** (DEX). At install and during idle
 > maintenance, some of it is **AOT-compiled** to native code in an `.odex`/`.vdex`/`.art` set. At
 > run time, cold methods are **interpreted** and hot methods are **JIT-compiled**. This is why
 > the same method can exist in three forms simultaneously on one device, and why a Frida hook and a
@@ -393,7 +393,7 @@ Now the important part. Line them up.
 Every row is the same operation. The differences are **notation**, **who checks the types**, and
 **who manages the memory** — not what the machine ends up doing.
 
-> **🔬 Under the Hood.** There is one row where the four versions genuinely differ, and it is a
+> **Under the Hood.** There is one row where the four versions genuinely differ, and it is a
 > security-relevant difference. In Python, `total` can grow arbitrarily large; integers are
 > arbitrary-precision objects on the heap, so `total` never overflows. In C and Java, `total` is a
 > 32-bit signed integer in a register, and if it exceeds 2 147 483 647 it silently wraps to a
@@ -449,7 +449,7 @@ time. It produces the ELF file described in
 
 Finally the **dynamic linker** maps the file into the process and fixes up addresses.
 
-> **🔍 Pentester's Note.** Ask yourself at every stage "what did I lose here?" You lose macro names
+> **Pentester's Note.** Ask yourself at every stage "what did I lose here?" You lose macro names
 > at preprocessing, you lose types and variable names at the back end, and you lose local symbols at
 > `strip`. Everything you *do* recover in Ghidra survived all of those stages, which is why symbol
 > names in a stripped library are so precious when they appear: they only exist because they were
@@ -564,7 +564,7 @@ value is stored.
 
 **The precise definition, and the one that matters.**
 
-> **📖 Definition — variable.** A variable is a *binding* between an identifier in the source text
+> **Definition — variable.** A variable is a *binding* between an identifier in the source text
 > and a **storage location** — a specific range of bytes at a specific address — together with a
 > **type** that says how those bytes are to be interpreted. At run time the identifier does not
 > exist. Only the bytes exist.
@@ -603,7 +603,7 @@ address. The name `counter` is drawn underneath because it is *annotation*, not 
 | Heap | Dynamically allocated region | Until explicitly freed or garbage collected | `malloc()`, `new`, every Java object | Use-after-free, heap spraying, secrets recoverable long after use |
 | Static / global | Fixed address inside the loaded image | Whole process lifetime | `static int x;`, `.data`/`.bss` | Always at a known offset from the module base; a favourite patch target |
 
-> **🧠 Mental Model.** "Where does this variable live?" is not an academic question. It decides
+> **Mental Model.** "Where does this variable live?" is not an academic question. It decides
 > whether you can find its value with `frida-trace`, whether it appears in a heap dump, whether an
 > overflow of the thing next to it can reach it, and whether patching it once is permanent.
 
@@ -635,9 +635,9 @@ full treatment it gets there.
 
 #### 3.1.3 Scope and lifetime are different things
 
-> **📖 Definition — scope.** The region of the *source text* in which a name is visible.
+> **Definition — scope.** The region of the *source text* in which a name is visible.
 
-> **📖 Definition — lifetime.** The interval of *run time* during which the storage exists and holds
+> **Definition — lifetime.** The interval of *run time* during which the storage exists and holds
 > a meaningful value.
 
 They are usually aligned and occasionally not, and every time they are not, there is a bug:
@@ -655,14 +655,14 @@ char *get_name(void) {
 reclaimed. The returned pointer aims at memory that the next function call will overwrite. This is a
 **dangling pointer**, and it is the stack-based cousin of use-after-free.
 
-> **🔍 Pentester's Note.** In native Android libraries this exact pattern still appears, usually in
+> **Pentester's Note.** In native Android libraries this exact pattern still appears, usually in
 > code that formats a log message or builds a filename. Ghidra will show a function returning a
 > stack address; that is worth immediate attention because attacker-timed calls can control what
 > lands in that reclaimed frame.
 
 ### 3.2 Primitive types — sizes, signedness, and why you must memorise them
 
-> **📖 Definition — primitive type.** A type whose values are stored directly as a fixed number of
+> **Definition — primitive type.** A type whose values are stored directly as a fixed number of
 > bytes, interpreted by the CPU's own instructions, rather than as a reference to a structure
 > elsewhere. Integers, floating-point numbers, characters, and booleans.
 
@@ -696,7 +696,7 @@ Note the asymmetry that catches everybody: **Java has no unsigned integer types*
 A Java `byte` holds −128 to 127. When you read a byte from a file in Java and it is `0xFF`, you get
 `-1`, and `if (b > 0x7F)` is never true. The idiom `b & 0xFF` exists solely to undo this.
 
-> **⚠️ Warning.** `byte b = data[i]; int v = b;` in Java **sign-extends**. If `data[i]` is `0x80`,
+> **Warning.** `byte b = data[i]; int v = b;` in Java **sign-extends**. If `data[i]` is `0x80`,
 > `v` is `-128`, not `128`. Parsers written by developers who forgot this produce spectacular
 > misbehaviour on any input with the high bit set — which is to say, on any binary input, and on any
 > UTF-8 text outside ASCII. When auditing a Java binary parser, search for `& 0xFF` and note every
@@ -718,7 +718,7 @@ In AArch64 assembly this is visible directly: `B.LT` and `B.GT` are the *signed*
 `B.LO` and `B.HI` are the *unsigned* ones. When you are reading a disassembly and you see a length
 check using `B.LT`, ask immediately whether the length can be negative.
 
-> **🔬 Under the Hood.** In C, mixing signed and unsigned in one comparison triggers the **usual
+> **Under the Hood.** In C, mixing signed and unsigned in one comparison triggers the **usual
 > arithmetic conversions**: the signed operand is converted to unsigned. So
 > `int len = -1; if (len < sizeof(buf))` is **false**, because `-1` becomes `0xFFFFFFFFFFFFFFFF`
 > which is not less than 64. Compilers warn about this (`-Wsign-compare`); production Android
@@ -751,7 +751,7 @@ printf("%d\n", s);         /* prints 4464 */
 In Java the same narrowing requires an explicit cast, which is a small safety improvement — the
 compiler forces you to *say* you meant it — but the truncation still happens silently at run time.
 
-> **🔍 Pentester's Note.** In JNI code ([chapter 16](../16-JNI/README.md)) you constantly see
+> **Pentester's Note.** In JNI code ([chapter 16](../16-JNI/README.md)) you constantly see
 > `jint` (32-bit) values converted to `size_t` (64-bit) and back. Every one of those conversions is
 > a place where a negative Java `int` becomes an enormous unsigned C length. Grep native code for
 > `(size_t)` next to anything that came from `GetArrayLength` or a Java parameter.
@@ -779,7 +779,7 @@ In Java this is *defined behaviour*: `Integer.MAX_VALUE + 1 == Integer.MIN_VALUE
 language specification, no exception thrown. In C, signed overflow is **undefined behaviour**, which
 is worse — the compiler is allowed to assume it never happens and delete your check.
 
-> **⚠️ Warning.** This is the trap that catches experienced C programmers. Writing
+> **Warning.** This is the trap that catches experienced C programmers. Writing
 > `if (a + b < a) { /* overflow! */ }` to detect signed overflow does not work with an optimising
 > compiler. The compiler reasons: "signed overflow is undefined, therefore `a + b` is always ≥ `a`,
 > therefore this branch is dead" and removes it. The correct check uses unsigned arithmetic or a
@@ -829,8 +829,8 @@ sizeof      = 8
 true product= 0x80000000  =      2 147 483 648      -- fits in uint32_t, fine
 ```
 
-Now set `count = 0x20000000`? That is rejected by the check. So take the largest allowed value and
-note that `0x10000000 * 8 = 0x80000000`, which still fits. The check *works* for this multiplier.
+Now set `count = 0x20000000`? That is rejected by the check. So take the largest allowed value :
+`0x10000000 * 8 = 0x80000000`, which still fits. The check *works* for this multiplier.
 
 Now change one thing — the developer later adds a field, making the record 16 bytes, and forgets to
 revisit the constant:
@@ -888,11 +888,11 @@ if (len > buf_size || offset > buf_size - len) return -1;     /* subtract, never
 if (__builtin_mul_overflow(count, elem_size, &alloc_size)) return -1;  /* compiler builtin */
 ```
 
-> **🔍 Pentester's Note — how you actually find this in Android.** Load a native library in Ghidra.
+> **Pentester's Note — how you actually find this in Android.** Load a native library in Ghidra.
 > Look for `MUL` or `LSL` (shift-left is multiplication by a power of two) whose result feeds
 > directly into a call to `malloc`, `calloc`, `operator new`, or `mmap`. Then look backwards for
 > where the multiplicand came from. If it came from a file, a socket, a `Parcel`, or a JNI
-> parameter, you have a candidate. Note that `calloc(n, size)` is *safe* — it checks for overflow
+> parameter, you have a candidate.`calloc(n, size)` is *safe* — it checks for overflow
 > internally — so a codebase that uses `malloc(n * size)` where `calloc(n, size)` would do is
 > telling you something about its habits.
 
@@ -917,11 +917,11 @@ size computed by multiplying an attacker-controlled count.
 A CPU has no notion of text. It has bytes. To store the word `Hi` you must agree on a mapping from
 characters to numbers. That agreement is an **encoding**, and there have been hundreds of them.
 
-> **📖 Definition — character set.** A set of abstract characters, each assigned a number called a
-> **code point**. Unicode is a character set: `A` is code point U+0041, `€` is U+20AC, `😀` is
-> U+1F600.
+> **Definition — character set.** A set of abstract characters, each assigned a number called a
+> **code point**. Unicode is a character set: `A` is code point U+0041, `€` is U+20AC, `𝐀` is
+> U+1D400.
 
-> **📖 Definition — encoding.** A rule for turning code points into bytes. UTF-8, UTF-16, and
+> **Definition — encoding.** A rule for turning code points into bytes. UTF-8, UTF-16, and
 > MUTF-8 are three different encodings of the *same* character set.
 
 Beginners conflate the two constantly. "Unicode" is not an encoding. "UTF-8" is not a character set.
@@ -982,15 +982,15 @@ cont:  10 101100  = 0xAC
 result: E2 82 AC
 ```
 
-**`😀` = U+1F600.** In range 4. `0x1F600` = `0 0001 1111 0110 0000 0000`. Split 3 + 6 + 6 + 6:
-`000`, `011111`, `011000`, `000000`.
+**`𝐀` = U+1D400.** In range 4. `0x1D400` = `0 0001 1101 0100 0000 0000`. Split 3 + 6 + 6 + 6:
+`000`, `011101`, `010000`, `000000`.
 
 ```
 lead:  11110 000  = 0xF0
-cont:  10 011111  = 0x9F
-cont:  10 011000  = 0x98
+cont:  10 011101  = 0x9D
+cont:  10 010000  = 0x90
 cont:  10 000000  = 0x80
-result: F0 9F 98 80
+result: F0 9D 90 80
 ```
 
 Two properties make UTF-8 excellent and one makes it dangerous. It is self-synchronising (you can
@@ -1006,17 +1006,17 @@ Java's `char` is a 16-bit unsigned value, and a Java `String` is conceptually a 
 **code units**. Code points up to U+FFFF are one unit. Anything above needs a **surrogate pair**:
 two units, from reserved ranges `0xD800–0xDBFF` (high) and `0xDC00–0xDFFF` (low).
 
-The conversion for `😀` = U+1F600:
+The conversion for `𝐀` = U+1D400:
 
 ```
-cp        = 0x1F600
-cp - 0x10000 = 0x0F600           = 0000 1111 0110 0000 0000  (20 bits)
-high 10 bits = 0000111101 = 0x03D  → high surrogate = 0xD800 + 0x03D = 0xD83D
-low  10 bits = 1000000000 = 0x200  → low  surrogate = 0xDC00 + 0x200 = 0xDE00
-UTF-16 (BE): D8 3D DE 00
+cp        = 0x1D400
+cp - 0x10000 = 0x0D400           = 0000 1101 0100 0000 0000  (20 bits)
+high 10 bits = 0000110101 = 0x035  → high surrogate = 0xD800 + 0x035 = 0xD835
+low  10 bits = 0000000000 = 0x000  → low  surrogate = 0xDC00 + 0x000 = 0xDC00
+UTF-16 (BE): D8 35 DC 00
 ```
 
-> **⚠️ Warning.** `"😀".length()` in Java is **2**, not 1. `charAt(0)` returns half a character.
+> **Warning.** `"𝐀".length()` in Java is **2**, not 1. `charAt(0)` returns half a character.
 > Every length check, every substring, and every truncation in Java operates on code units, not
 > characters. A server that truncates a username to 20 `char`s can split a surrogate pair and
 > produce an unpaired surrogate — which is not valid text and which different downstream systems
@@ -1027,7 +1027,7 @@ UTF-16 (BE): D8 3D DE 00
 Now the payoff. Android does not store strings in a DEX file as UTF-8. It uses **MUTF-8**, "Modified
 UTF-8", inherited from the JVM's class-file format and carried into DEX.
 
-> **📖 Definition — MUTF-8.** UTF-8 with two deliberate deviations: (1) the code point U+0000 is
+> **Definition — MUTF-8.** UTF-8 with two deliberate deviations: (1) the code point U+0000 is
 > encoded as the two-byte sequence `C0 80` instead of the single byte `00`; (2) code points above
 > U+FFFF are first converted to a UTF-16 surrogate pair, and then *each surrogate* is encoded
 > separately in the three-byte form, giving six bytes total instead of four.
@@ -1041,37 +1041,37 @@ appears inside string data, so C-style `strlen` and `strcpy` work on the raw byt
 runtime's internal string representation is UTF-16. Encoding surrogates individually means the
 decoder can produce UTF-16 code units with no special case for 4-byte sequences.
 
-Worked comparison for the string `"a😀"`:
+Worked comparison for the string `"a𝐀"`:
 
 | Encoding | Bytes | Length |
 |---|---|---|
-| UTF-8 (strict) | `61 F0 9F 98 80` | 5 |
-| UTF-16 (big-endian) | `00 61 D8 3D DE 00` | 6 |
-| **MUTF-8 (DEX)** | `61 ED A0 BD ED B8 80` | 7 |
+| UTF-8 (strict) | `61 F0 9D 90 80` | 5 |
+| UTF-16 (big-endian) | `00 61 D8 35 DC 00` | 6 |
+| **MUTF-8 (DEX)** | `61 ED A0 B5 ED B0 80` | 7 |
 
-Deriving the MUTF-8 bytes for `😀`, since this is the part people get wrong:
+Deriving the MUTF-8 bytes for `𝐀`, since this is the part people get wrong:
 
 ```
-Step 1: U+1F600 → surrogate pair D83D, DE00       (as computed in 3.5.4)
+Step 1: U+1D400 → surrogate pair D835, DC00       (as computed in 3.5.4)
 
-Step 2: encode D83D in the 3-byte UTF-8 form
-        D83D = 1101 1000 0011 1101
-        split 4/6/6:  1101 | 100000 | 111101
+Step 2: encode D835 in the 3-byte UTF-8 form
+        D835 = 1101 1000 0011 0101
+        split 4/6/6:  1101 | 100000 | 110101
         lead:  1110 1101 = 0xED
         cont:  10 100000 = 0xA0
-        cont:  10 111101 = 0xBD
+        cont:  10 110101 = 0xB5
 
-Step 3: encode DE00 in the 3-byte UTF-8 form
-        DE00 = 1101 1110 0000 0000
-        split 4/6/6:  1101 | 111000 | 000000
+Step 3: encode DC00 in the 3-byte UTF-8 form
+        DC00 = 1101 1100 0000 0000
+        split 4/6/6:  1101 | 110000 | 000000
         lead:  1110 1101 = 0xED
-        cont:  10 111000 = 0xB8
+        cont:  10 110000 = 0xB0
         cont:  10 000000 = 0x80
 
-Result: ED A0 BD ED B8 80
+Result: ED A0 B5 ED B0 80
 ```
 
-Note that `ED A0 BD` is **invalid strict UTF-8** — the range U+D800–U+DFFF is permanently reserved
+`ED A0 B5` is **invalid strict UTF-8** — the range U+D800–U+DFFF is permanently reserved
 for surrogates and must never be encoded directly. Standard UTF-8 decoders reject it.
 
 #### 3.5.6 What a string looks like inside a DEX file
@@ -1084,16 +1084,16 @@ The DEX format stores every string exactly once, in a shared pool. A `string_dat
 +--------------------------+------------------------------+------+
 ```
 
-> **📖 Definition — uleb128.** Unsigned Little-Endian Base 128. A variable-length integer encoding:
+> **Definition — uleb128.** Unsigned Little-Endian Base 128. A variable-length integer encoding:
 > each byte carries 7 bits of value in its low bits, and its high bit is 1 if another byte follows.
 > The value 0x2A is `2A`; the value 0x80 is `80 01`; the value 0x3FFF is `FF 7F`. DEX uses it
 > everywhere to keep the file small.
 
-Concretely, the string `"a😀"` inside a DEX file is stored as:
+Concretely, the string `"a𝐀"` inside a DEX file is stored as:
 
 ```
-03            <- uleb128: 3 UTF-16 code units ('a', D83D, DE00)
-61 ED A0 BD ED B8 80   <- MUTF-8 bytes
+03            <- uleb128: 3 UTF-16 code units ('a', D835, DC00)
+61 ED A0 B5 ED B0 80   <- MUTF-8 bytes
 00            <- NUL terminator
 ```
 
@@ -1109,14 +1109,14 @@ Three details of security consequence follow directly:
    a package name, a class name, or a path, someone is probably trying to confuse a tool that uses
    C string functions on data another tool treats as length-delimited.
 
-> **🔬 Under the Hood.** ART's conversion routines live in `art/libdexfile/dex/utf.cc` and
+> **Under the Hood.** ART's conversion routines live in `art/libdexfile/dex/utf.cc` and
 > `art/libdexfile/dex/utf.h` in the AOSP tree, with functions named along the lines of
 > `ConvertModifiedUtf8ToUtf16`, `ConvertUtf16ToModifiedUtf8`, and `CountModifiedUtf8Chars`. The
 > same file provides `ComputeUtf16Hash`, which is the hash function used for interned strings —
 > see [section 3.10](#310-data-structures-ii--hash-maps-and-why-they-matter-for-dex) and
 > [section 4](#4-source-code-walkthrough-aosp).
 
-> **🔍 Pentester's Note.** When a tool shows you a class name that does not match what the device
+> **Pentester's Note.** When a tool shows you a class name that does not match what the device
 > loads, suspect an encoding trick. Attackers have historically used homoglyphs (`а` U+0430
 > Cyrillic versus `a` U+0061 Latin), right-to-left override characters (U+202E) in filenames, and
 > unpaired surrogates to make one string display as another. Always compare the *bytes*, not the
@@ -1235,7 +1235,7 @@ Notice that the Smali has the *same inverted shape* as the ARM assembly: `if-ne 
 Dalvik bytecode is register-based and combines the compare and the branch into one instruction, but
 the logic is identical.
 
-> **🔍 Pentester's Note — the single most common Android bypass.** A root check, a certificate pin
+> **Pentester's Note — the single most common Android bypass.** A root check, a certificate pin
 > check, or a licence check ends in exactly this shape: compare, branch, return true or false. To
 > defeat it statically you change `if-ne` to `if-eq`, or replace the whole method body with
 > `const/4 v0, 0x0` and `return v0`. To defeat it dynamically you hook the method with Frida and
@@ -1262,7 +1262,7 @@ performance optimisation, it is a semantic guarantee, and the code above depends
 | `\|` | bitwise/non-short-circuit OR | No | both sides evaluated, then `ORR` |
 | `!` | logical NOT | — | inverted branch condition |
 
-> **⚠️ Warning.** `if (checkA() & checkB())` with a single `&` evaluates **both** functions. If
+> **Warning.** `if (checkA() & checkB())` with a single `&` evaluates **both** functions. If
 > `checkB()` has a side effect — writing a log, incrementing a counter, sending a request — that
 > side effect happens even when `checkA()` already failed. Auditors find authentication bypasses
 > here: a "verify" function that is called for its side effect but whose result is discarded.
@@ -1298,7 +1298,7 @@ A compiler has two strategies:
     .end packed-switch
 ```
 
-> **🔬 Under the Hood.** Recognising a jump table in native disassembly is a core reversing skill.
+> **Under the Hood.** Recognising a jump table in native disassembly is a core reversing skill.
 > The pattern is a bounds check, a shift or multiply by the pointer size, a load from a table of
 > addresses, and an indirect branch (`BR x_n` on AArch64). Ghidra usually recovers it; when it does
 > not, the function will appear to end abruptly at the indirect branch and you must reconstruct the
@@ -1312,7 +1312,7 @@ Doing something once is easy. Doing it a variable number of times without writin
 number of times requires the machine to jump *backwards*. That backward jump is the entirety of what
 a loop is.
 
-> **📖 Definition — loop.** A control structure that causes a block of code to execute repeatedly
+> **Definition — loop.** A control structure that causes a block of code to execute repeatedly
 > until a termination condition holds. At machine level: a conditional forward branch out of the
 > body, plus an unconditional backward branch to the test.
 
@@ -1391,7 +1391,7 @@ branch per iteration:
 .Lempty:
 ```
 
-> **🔬 Under the Hood.** The optimiser may also **unroll** the loop (emit the body four times and
+> **Under the Hood.** The optimiser may also **unroll** the loop (emit the body four times and
 > step by four), **vectorise** it (use SIMD registers to add four values at once), or replace it
 > entirely with the closed-form formula `n*(n+1)/2`. All three make the disassembly unrecognisable
 > compared to the source. If a function in Ghidra looks nothing like the algorithm you expected,
@@ -1426,7 +1426,7 @@ not.** It is one of the most useful asymmetries in your job.
 | Modification during iteration | Removing from a list while iterating it | `ConcurrentModificationException` in Java; corruption in C |
 | Missing progress | `while (len > 0) { n = read(...); len -= n; }` with `n == 0` | Infinite loop; denial of service |
 
-> **🔍 Pentester's Note.** The "unbounded loop on attacker input" row is how you turn a
+> **Pentester's Note.** The "unbounded loop on attacker input" row is how you turn a
 > missing-NUL-terminator bug into an information leak. If a parser copies until it finds a zero
 > byte, and you supply data with no zero byte, the copy continues into whatever follows in memory —
 > and if the result is later returned to you, you have just read the heap.
@@ -1439,7 +1439,7 @@ Without functions, every program is one enormous list of instructions, and any r
 be written out again at every use. Functions give a name to a block of behaviour, allow it to be
 invoked from many places, and — crucially — allow it to be invoked with *different data* each time.
 
-> **📖 Definition — function.** A named, parameterised, reusable block of code with a defined entry
+> **Definition — function.** A named, parameterised, reusable block of code with a defined entry
 > point, a defined set of inputs (**parameters**), and a defined output (**return value**). Invoking
 > it is a **call**; the code that invokes it is the **caller**; the code invoked is the **callee**.
 
@@ -1475,7 +1475,7 @@ bounded_sum:
         ret                             ; PC <- X30
 ```
 
-> **🔬 Under the Hood.** `stp x29, x30, [sp, #-32]!` is the single most recognisable instruction in
+> **Under the Hood.** `stp x29, x30, [sp, #-32]!` is the single most recognisable instruction in
 > AArch64 code. The `!` means pre-index writeback: `SP` is decremented by 32 *first*, then the pair
 > is stored. The saved `[FP, LR]` pair is called the **frame record**, and each frame's saved `FP`
 > points at the caller's frame record. That linked list is exactly what a debugger walks to produce
@@ -1499,7 +1499,7 @@ flowchart TD
 
 Every call pushes a frame; every return pops one. `main` called `process_request`, which called
 `parse_header`, which called `memcpy`. The stack pointer is at the bottom. When `memcpy` returns,
-its frame is abandoned simply by moving `SP` back up — the bytes are not erased, which is why stale
+its frame is abandoned by moving `SP` back up — the bytes are not erased, which is why stale
 data from previous calls is routinely visible in fresh frames and why uninitialised local variables
 leak information.
 
@@ -1540,7 +1540,7 @@ static void reassign(StringBuilder sb) {
 
 #### 3.8.5 Recursion
 
-> **📖 Definition — recursion.** A function that calls itself, directly or indirectly. Each call
+> **Definition — recursion.** A function that calls itself, directly or indirectly. Each call
 > gets its own stack frame with its own copy of the local variables. Termination requires a **base
 > case** — an input for which the function returns without recursing.
 
@@ -1567,7 +1567,7 @@ frame 1: returns 4 * 6  = 24
 Each level occupies a real stack frame with a real return address. There is no magic. Recursion is
 just "call a function that happens to have the same name," and the stack is what makes it work.
 
-> **⚠️ Warning — stack exhaustion.** A recursion with no base case, or with a base case an attacker
+> **Warning — stack exhaustion.** A recursion with no base case, or with a base case an attacker
 > can avoid reaching, consumes one frame per call until the stack region is exhausted. In native
 > code the next write hits the guard page and the process dies with `SIGSEGV`. In Java you get
 > `StackOverflowError`. Both are denial of service. Deeply nested attacker-controlled structures —
@@ -1580,7 +1580,7 @@ just "call a function that happens to have the same name," and the stack is what
 | Java on ART | Managed stack limited separately from native stack | `StackOverflowError` thrown |
 | Python (CPython) | ~1000 frame recursion limit | `RecursionError` raised |
 
-> **🔍 Pentester's Note.** When you find a parser that recurses on nesting depth and does not carry
+> **Pentester's Note.** When you find a parser that recurses on nesting depth and does not carry
 > a depth counter, you have a reliable denial-of-service finding and sometimes more. In native code,
 > if the recursion frame is large, a single call can jump *over* the guard page into unrelated
 > mapped memory — a "stack clash" — which converts a crash into a memory-corruption primitive.
@@ -1604,7 +1604,7 @@ caused the crash is almost always visible in the register dump immediately above
 ---
 ### 3.9 Data structures I — arrays, linked lists, stacks, queues
 
-> **📖 Definition — data structure.** A specific arrangement of data in memory, together with the
+> **Definition — data structure.** A specific arrangement of data in memory, together with the
 > algorithms that operate on that arrangement, chosen so that the operations you perform most often
 > are cheap.
 
@@ -1660,12 +1660,12 @@ a[10] = 1               # raises IndexError
 a[-1] = 1               # legal! sets the LAST element
 ```
 
-> **⚠️ Warning.** Python's negative indexing is a genuine security consideration when Python
+> **Warning.** Python's negative indexing is a genuine security consideration when Python
 > parses attacker data. `data[user_offset]` with `user_offset = -1` silently reads the last element
 > instead of failing, so a validation of the form `if offset < len(data)` is insufficient — it must
 > be `if 0 <= offset < len(data)`.
 
-> **🔬 Under the Hood — how Java's bounds check appears in ART.** Every `aget`/`aput` Dalvik
+> **Under the Hood — how Java's bounds check appears in ART.** Every `aget`/`aput` Dalvik
 > instruction is preceded, in the AOT-compiled native code, by a comparison of the index against the
 > length field stored in the array object's header, and a branch to a throw helper. ART's optimising
 > compiler eliminates the check when it can *prove* the index is in range (bounds check
@@ -1722,7 +1722,7 @@ int list_length(struct node *head) {
 | Memory overhead | none | one pointer (8 bytes) per element |
 | Cache behaviour | Excellent — sequential | Poor — random access pattern |
 
-> **🔍 Pentester's Note.** Linked structures are where use-after-free lives. If node B is freed
+> **Pentester's Note.** Linked structures are where use-after-free lives. If node B is freed
 > while node A still points at it, A's `next` is a **dangling pointer**. An attacker who can get a
 > new allocation of the same size placed at B's old address controls the bytes that the program
 > will interpret as `data` and `next`. Unlinking operations (`prev->next = node->next;
@@ -1822,7 +1822,7 @@ The `% buf.length` is the ring: when an index runs off the end it wraps to zero,
 serves as an unbounded-looking queue. Ring buffers are everywhere in kernels and drivers precisely
 because they need no allocation at run time.
 
-> **⚠️ Warning.** Ring buffers are a classic source of bugs when `head`, `tail` and `size` are
+> **Warning.** Ring buffers are a classic source of bugs when `head`, `tail` and `size` are
 > allowed to disagree. If a producer and a consumer run on different threads without
 > synchronisation, `size` can be read while it is being updated, and the queue will hand out the
 > same slot twice or overwrite an unread element. In native code that is a memory-safety issue, not
@@ -1844,11 +1844,11 @@ O(1).
 
 Turn the key into a number, use that number as an array index. That is all a hash map is.
 
-> **📖 Definition — hash function.** A function that maps data of arbitrary size to a fixed-size
+> **Definition — hash function.** A function that maps data of arbitrary size to a fixed-size
 > integer, such that equal inputs always produce equal outputs, and unequal inputs *usually* produce
 > unequal outputs. "Usually" is doing enormous work in that sentence.
 
-> **📖 Definition — hash map (hash table, dictionary, associative array).** A data structure storing
+> **Definition — hash map (hash table, dictionary, associative array).** A data structure storing
 > key–value pairs, in which the storage slot for a key is computed from a hash of the key rather
 > than searched for.
 
@@ -1899,7 +1899,7 @@ Two different strings, same hash. That is a **collision**, and collisions are no
 mathematically unavoidable, because there are infinitely many strings and only 2^32 hash values.
 A hash map must handle them.
 
-> **🔬 Under the Hood.** Why 31? It is odd (so multiplication is invertible modulo 2^32, spreading
+> **Under the Hood.** Why 31? It is odd (so multiplication is invertible modulo 2^32, spreading
 > bits well), prime, and `31 * h` can be computed as `(h << 5) - h`, which was faster than a
 > multiply on 1990s hardware. You will actually see `LSL` followed by `SUB` in ART-compiled string
 > hashing.
@@ -1939,7 +1939,7 @@ lookup "BC" → hash mod 8 = 1 → slot 1 holds "Ab", not equal → probe slot 2
 | Load factor limit | Can exceed 1.0 | Must stay well below 1.0 |
 | Used by | `java.util.HashMap` | ART's internal `HashSet`, many C++ tables |
 
-> **📖 Definition — load factor.** Number of stored entries divided by number of buckets. As it
+> **Definition — load factor.** Number of stored entries divided by number of buckets. As it
 > rises, collisions rise and performance degrades. `java.util.HashMap` resizes (doubling the bucket
 > array and rehashing everything) when the load factor exceeds 0.75.
 
@@ -2021,7 +2021,7 @@ showed that a single HTTP POST of form parameters could pin a server CPU for min
 responded by randomising hash seeds per process, by switching to collision-resistant hashes, or by
 converting long bucket chains into balanced trees.
 
-> **🔍 Pentester's Note.** On Android the equivalent target is any component that puts
+> **Pentester's Note.** On Android the equivalent target is any component that puts
 > attacker-controlled strings into a `HashMap` or `Bundle` without a size limit: a
 > `ContentProvider` ([chapter 27](../27-ContentProviders/README.md)) that indexes query parameters,
 > a JSON parser that builds a map of object keys, or an `Intent` ([chapter 26](../26-Intent/README.md))
@@ -2078,7 +2078,7 @@ Three practical consequences for you:
 
 #### 3.11.1 Trees
 
-> **📖 Definition — tree.** A collection of **nodes** in which every node except one (the **root**)
+> **Definition — tree.** A collection of **nodes** in which every node except one (the **root**)
 > has exactly one **parent**, and there are no cycles. A node with no children is a **leaf**. The
 > **depth** of a node is its distance from the root; the **height** of the tree is the greatest
 > depth.
@@ -2123,7 +2123,7 @@ but all of which are trees:
 
 #### 3.11.2 Graphs
 
-> **📖 Definition — graph.** A set of **vertices** (nodes) and a set of **edges** (connections
+> **Definition — graph.** A set of **vertices** (nodes) and a set of **edges** (connections
 > between vertices). Unlike a tree, a graph may have cycles, may be disconnected, and a vertex may
 > have any number of incoming and outgoing edges. Edges may be **directed** (one-way) or
 > **undirected**.
@@ -2140,7 +2140,7 @@ flowchart LR
     F --> G
 ```
 
-That is a **call graph**: vertices are functions, edges are "calls". Note that `decrypt` and
+That is a **call graph**: vertices are functions, edges are "calls".`decrypt` and
 `nativeCheck` each have two callers, which a tree cannot express. Call graphs are the single most
 useful artefact in reverse engineering, because "what reaches this function?" and "what does this
 function reach?" are the two questions you ask most.
@@ -2184,13 +2184,13 @@ Use BFS when you want the *shortest* path — "what is the shortest call chain f
 `Activity` to this `Cipher.getInstance` call?" is a BFS question, and the answer is your
 reachability argument in a report. Use DFS when you want to enumerate everything reachable.
 
-> **🔍 Pentester's Note.** Ghidra, IDA, JADX, and jadx-gui all build call graphs internally, and
+> **Pentester's Note.** Ghidra, IDA, JADX, and jadx-gui all build call graphs internally, and
 > all of them expose "find references to this function". That is a reverse BFS on the call graph.
 > Learning to think in graphs is what turns "I found a suspicious function" into "I found a
 > suspicious function reachable in three hops from an exported component", which is the difference
 > between a note and a finding.
 
-> **⚠️ Warning — cycles.** Every graph algorithm needs a "have I been here?" set. Without it, a
+> **Warning — cycles.** Every graph algorithm needs a "have I been here?" set. Without it, a
 > cycle produces infinite recursion, which is stack exhaustion, which is
 > [section 3.8.5](#385-recursion). Attacker-supplied graphs — dependency graphs, XML entity
 > references, symbolic link chains, `Intent` redirect chains — are a reliable way to find code that
@@ -2198,10 +2198,10 @@ reachability argument in a report. Use DFS when you want to enumerate everything
 
 ### 3.12 Algorithms and Big-O — enough to reason about performance
 
-> **📖 Definition — algorithm.** A finite, unambiguous procedure that transforms an input into an
+> **Definition — algorithm.** A finite, unambiguous procedure that transforms an input into an
 > output. A program is an algorithm expressed in a language.
 
-> **📖 Definition — Big-O notation.** A description of how an algorithm's cost grows as its input
+> **Definition — Big-O notation.** A description of how an algorithm's cost grows as its input
 > grows, ignoring constant factors and lower-order terms. O(n) means "cost grows proportionally to
 > input size". It says nothing about actual speed at any specific size.
 
@@ -2249,14 +2249,14 @@ for (int i = 0; i < n; i++) {
 }
 ```
 
-> **🔍 Pentester's Note — algorithmic complexity attacks.** The third example is the shape of a real
+> **Pentester's Note — algorithmic complexity attacks.** The third example is the shape of a real
 > denial-of-service finding. Others worth hunting: regular expressions with nested quantifiers
 > (`(a+)+$` against a long string of `a`s is exponential — "ReDoS"); string concatenation in a loop
 > (`s += x` in Java copies the whole string each time, so building an n-character string is O(n²));
 > and sorting with a comparator that itself does O(n) work. All three appear in real Android apps,
 > usually in a parser handling data from a server you can influence.
 
-> **🧠 Mental Model.** Big-O tells you the *shape* of the curve, not the height. An O(n²) algorithm
+> **Mental Model.** Big-O tells you the *shape* of the curve, not the height. An O(n²) algorithm
 > can beat an O(n log n) one for small n, which is exactly why real sorting implementations switch
 > to insertion sort below about 32 elements. Never argue from Big-O alone when n is small; always
 > argue from Big-O when n is attacker-controlled.
@@ -2280,7 +2280,7 @@ This subsection fixes the vocabulary first, then explains the mechanics.
 
 The single sentence that resolves 90% of the confusion:
 
-> **🧠 Mental Model.** A **Java reference and a C pointer are the same thing at the byte level** —
+> **Mental Model.** A **Java reference and a C pointer are the same thing at the byte level** —
 > an address. They differ entirely in what the *language* permits you to do with it. C lets you add
 > 7 to it, cast it to a different type, and dereference it. Java lets you do exactly two things:
 > follow it to access a member, or compare it with another reference. Everything else about
@@ -2355,7 +2355,7 @@ is available". If the attacker can cause an allocation of the same size class an
 contents, `s->is_admin` reads attacker data. This is the mechanism behind a large fraction of
 Android kernel and native-library privilege escalations.
 
-> **🔬 Under the Hood.** Android's hardened allocator, Scudo, and the MTE (Memory Tagging Extension)
+> **Under the Hood.** Android's hardened allocator, Scudo, and the MTE (Memory Tagging Extension)
 > hardware feature on ARMv8.5+ exist specifically to break this. Scudo quarantines freed chunks and
 > checks headers; MTE tags each allocation with a 4-bit colour stored in the top byte of the pointer
 > and traps when a load's tag does not match the memory's tag. See
@@ -2381,7 +2381,7 @@ System.out.println(a == c);       // false — different addresses, different ob
 System.out.println(a.toString().equals(c.toString()));  // true — same content
 ```
 
-> **⚠️ Warning — the `==` versus `.equals()` trap.** `==` on references compares **addresses**.
+> **Warning — the `==` versus `.equals()` trap.** `==` on references compares **addresses**.
 > `.equals()` compares **content**, if the class implements it. `String` is where this bites hardest
 > because the compiler interns string *literals*, so `"abc" == "abc"` is true, while
 > `new String("abc") == "abc"` is false, and `sb.toString() == "abc"` is false. Authentication code
@@ -2467,7 +2467,7 @@ buf = NULL;                     /* defensive: make later use crash loudly */
 | Mismatched allocator | `new[]` freed with `free()` | Undefined behaviour |
 | Unchecked NULL | Using `malloc`'s result without checking | Null deref under memory pressure |
 
-> **🔬 Under the Hood.** Android's libc allocator (Scudo since Android 11 on most configurations,
+> **Under the Hood.** Android's libc allocator (Scudo since Android 11 on most configurations,
 > jemalloc before that) stores metadata — chunk size, state, checksums — adjacent to or alongside
 > the data it hands you. A heap overflow therefore corrupts *allocator metadata*, and the next
 > `malloc` or `free` performs pointer arithmetic on attacker-controlled values. That indirection is
@@ -2475,7 +2475,7 @@ buf = NULL;                     /* defensive: make later use crash loudly */
 
 #### 3.14.3 Garbage collection
 
-> **📖 Definition — garbage collection (GC).** An automatic process that identifies heap objects
+> **Definition — garbage collection (GC).** An automatic process that identifies heap objects
 > that the program can no longer reach and reclaims their memory. "Reachable" means: findable by
 > following references starting from a set of **roots** — the stack of every thread, the CPU
 > registers, static fields, and JNI global references.
@@ -2550,7 +2550,7 @@ try {
 }
 ```
 
-> **🔍 Pentester's Note — this is a repeatable, high-value test.** Drive the app to the point just
+> **Pentester's Note — this is a repeatable, high-value test.** Drive the app to the point just
 > after login. Then capture the managed heap and search it:
 >
 > ```bash
@@ -2566,14 +2566,14 @@ try {
 > plaintext credential here is a legitimate MASVS-STORAGE finding and one of the easiest wins
 > available. The Frida approach is in [section 7](#7-dynamic-analysis).
 
-> **⚠️ Warning.** The same reasoning applies to `Bitmap`s of ID documents, decrypted database rows,
+> **Warning.** The same reasoning applies to `Bitmap`s of ID documents, decrypted database rows,
 > and byte arrays holding session keys. "It's in RAM, so it's safe" is false on a rooted device, on
 > a device with a debuggable build, and in any crash dump the app uploads to a third-party
 > reporting service.
 
 ### 3.15 Type systems
 
-> **📖 Definition — type system.** The rules a language uses to assign types to expressions and to
+> **Definition — type system.** The rules a language uses to assign types to expressions and to
 > decide which operations on which types are legal. Its purpose is to reject programs that would be
 > meaningless before they run.
 
@@ -2616,7 +2616,7 @@ console.log("5" - 2);      //  3     — string coerced to number
 console.log([] + {});      // "[object Object]"
 ```
 
-> **🔍 Pentester's Note — where the type system is a security boundary.** On Android, the DEX
+> **Pentester's Note — where the type system is a security boundary.** On Android, the DEX
 > **verifier** is a real defence. Before ART executes a method it checks that every instruction
 > operates on registers of the right type, that the stack of every path agrees, and that no
 > instruction can produce a value of a type the following instruction does not expect. If the
@@ -2625,7 +2625,7 @@ console.log([] + {});      // "[object Object]"
 > to arbitrary read/write. This is exactly why hand-written Smali is verified with the same
 > strictness as compiler output, and why historical verifier bugs were high-severity issues.
 
-> **🧠 Mental Model.** Weak typing is not "convenient". It is "the language will silently
+> **Mental Model.** Weak typing is not "convenient". It is "the language will silently
 > reinterpret your bytes." Every silent reinterpretation is a place where two pieces of code can
 > disagree about what a value means, and every such disagreement is a candidate vulnerability.
 > When auditing JavaScript in a WebView ([chapter 43](../43-WebView/README.md)), the coercion table
@@ -2633,7 +2633,7 @@ console.log([] + {});      // "[object Object]"
 
 ### 3.16 Programming paradigms — the same program three ways
 
-> **📖 Definition — paradigm.** A style of organising a program: what the primary unit of structure
+> **Definition — paradigm.** A style of organising a program: what the primary unit of structure
 > is, and how state is managed.
 
 | Paradigm | Primary unit | State | Typical languages |
@@ -2715,12 +2715,12 @@ The four pillars of object orientation, since you will meet the words constantly
 | **Polymorphism** | One call site invokes different implementations depending on the runtime type | Static analysis cannot always resolve the target — the root cause of false negatives |
 | **Abstraction** | Programming to an interface, not an implementation | The interface is what you hook; find implementations with `Xposed`/Frida class enumeration |
 
-> **⚠️ Warning.** `private` in Java prevents *compilation* of outside access. It does not prevent
+> **Warning.** `private` in Java prevents *compilation* of outside access. It does not prevent
 > *runtime* access. `field.setAccessible(true)` reads any private field of any object. Treating
 > `private` as a security control is a developer mistake you will report often, especially in SDKs
 > that hold API keys in "private" static fields.
 
-> **🔍 Pentester's Note — polymorphism and hooking.** If `PaymentProcessor` is an interface with
+> **Pentester's Note — polymorphism and hooking.** If `PaymentProcessor` is an interface with
 > three implementations and you hook `PaymentProcessor.process`, Frida hooks the *declaration*, and
 > whether that intercepts calls depends on how you hook. Hooking each concrete implementation class
 > is reliable; hooking the interface is not. This is the most common reason a "correct-looking"
@@ -2755,7 +2755,7 @@ if (n == 0 && ferror(f)) { ... }    /* MUST check */
 fclose(f);
 ```
 
-> **🔍 Pentester's Note — unchecked return values are a vulnerability class in their own right.**
+> **Pentester's Note — unchecked return values are a vulnerability class in their own right.**
 > The highest-value instances are cryptographic and permission-related. If
 > `EVP_DecryptFinal_ex()` returns 0 (authentication tag mismatch, meaning the ciphertext was
 > tampered with) and the caller ignores it, the app happily uses forged plaintext. If
@@ -2765,7 +2765,7 @@ fclose(f);
 
 #### 3.17.3 Exceptions
 
-> **📖 Definition — exception.** An object representing an abnormal condition, which when *thrown*
+> **Definition — exception.** An object representing an abnormal condition, which when *thrown*
 > abandons normal execution and searches enclosing scopes — first in the current function, then in
 > its caller, then in *its* caller — for a matching `catch` block. If none is found, the thread
 > terminates.
@@ -2839,7 +2839,7 @@ library versions. That is a free map of the application's internals, and it is w
 try to *provoke* an exception during testing: send a malformed value to every input and read what
 comes back.
 
-> **🧠 Mental Model — fail closed, not open.** A security check has two failure directions. "Fail
+> **Mental Model — fail closed, not open.** A security check has two failure directions. "Fail
 > closed" means an error denies access. "Fail open" means an error grants it. Every `catch` block
 > around a security decision is a place where the developer chose a direction, often without
 > realising they were choosing. Find those blocks and read them.
@@ -2876,7 +2876,7 @@ Read it in this order:
    `android.view.View.performClick` downwards is the platform. The last *app* frame going down is
    the entry point into your code, and it tells you what event started this.
 
-> **🔍 Pentester's Note.** Frames 4 through 6 are the standard Android main-thread stack:
+> **Pentester's Note.** Frames 4 through 6 are the standard Android main-thread stack:
 > `ActivityThread.main` runs the `Looper`, `Handler.dispatchMessage` delivers a message,
 > `View.performClick` dispatches a touch. Seeing that tail tells you the code ran on the main
 > thread. If you instead see `Binder$ProxyTransact` or `BinderProxy.transact` in the tail, the code
@@ -2942,10 +2942,10 @@ native code: not because it is unbreakable, but because it raises the cost.
 The compromise: compile once to an instruction set for an *imaginary* machine, then have a small
 program on each real machine execute those instructions.
 
-> **📖 Definition — bytecode.** A compact, architecture-independent instruction encoding produced by
+> **Definition — bytecode.** A compact, architecture-independent instruction encoding produced by
 > a compiler and executed by a virtual machine. Opcodes are typically one byte, hence the name.
 
-> **📖 Definition — virtual machine (in this sense).** A program that implements the semantics of a
+> **Definition — virtual machine (in this sense).** A program that implements the semantics of a
 > defined instruction set in software. Not to be confused with a system VM such as QEMU or a
 > hypervisor guest.
 
@@ -2967,7 +2967,7 @@ JVM (.class)                    Dalvik (.dex)
   istore_3     ; pop into c
 ```
 
-> **🔬 Under the Hood.** Register-based bytecode was chosen for Dalvik because fetching and decoding
+> **Under the Hood.** Register-based bytecode was chosen for Dalvik because fetching and decoding
 > an instruction is expensive on the low-power ARM CPUs of 2008; fewer, fatter instructions meant
 > fewer dispatches. The practical consequence for you is that **Smali reads much more like ordinary
 > code than JVM bytecode does**, which makes manual Smali patching realistic. Compare
@@ -2995,7 +2995,7 @@ and it can also be **deoptimised** back to the interpreter when an assumption th
 stops holding — for example when a new subclass is loaded that makes a previously monomorphic call
 site polymorphic, or when a debugger attaches.
 
-> **🔍 Pentester's Note.** Deoptimisation is why attaching a debugger or a Frida agent changes
+> **Pentester's Note.** Deoptimisation is why attaching a debugger or a Frida agent changes
 > timing and sometimes changes behaviour. It is also the mechanism many hooking frameworks rely on:
 > to make a hook take effect, the runtime must be persuaded to stop using previously compiled native
 > code for that method. When a Frida hook "doesn't fire", one real cause is that the method is
@@ -3072,7 +3072,7 @@ performance improves over the first days of use.
 | 9–12 | Same, plus Cloud Profiles delivered via Play | Common hot methods precompiled at first install |
 | 13+ | Same, with ART updatable as a Mainline module | ART behaviour can change without an OS update |
 
-> **⚠️ Warning.** Because a method may exist as DEX bytecode, as AOT native code, and as JIT native
+> **Warning.** Because a method may exist as DEX bytecode, as AOT native code, and as JIT native
 > code simultaneously, **patching the DEX does not necessarily change what runs** until the compiled
 > artefacts are invalidated. When a Smali patch appears to have no effect, clear the app's compiled
 > state (reinstall) rather than assuming the patch was wrong.
@@ -3109,12 +3109,12 @@ Three reasons, and the third is the one that gets you findings:
 Almost everybody learns git as a list of commands and stays confused forever. Learn the data
 structure instead and the commands become obvious.
 
-> **📖 Definition — commit.** A complete snapshot of the tracked files at one moment, plus metadata
+> **Definition — commit.** A complete snapshot of the tracked files at one moment, plus metadata
 > (author, timestamp, message) and a pointer to its parent commit or commits. It is identified by
 > the SHA-1 (or SHA-256) hash of its own content, which is why commit IDs look like
 > `9f3a1c4d8b…`.
 
-> **📖 Definition — DAG.** Directed Acyclic Graph. A graph whose edges have direction and which
+> **Definition — DAG.** Directed Acyclic Graph. A graph whose edges have direction and which
 > contains no cycles. Git's history is a DAG of commits: edges point from child to *parent*, and
 > nothing can be its own ancestor.
 
@@ -3154,7 +3154,7 @@ Once you hold that picture, the commands stop being arbitrary:
 | `git cherry-pick c` | Copies the *changes* of one node as a new node here |
 | `git tag v1.0` | A name pointing at a commit that does not move |
 
-> **🧠 Mental Model.** Git almost never deletes anything. `reset --hard`, `rebase`, and amended
+> **Mental Model.** Git almost never deletes anything. `reset --hard`, `rebase`, and amended
 > commits leave the old objects in the repository, unreferenced, until garbage collection removes
 > them — typically after 30 days. `git reflog` lists where `HEAD` has been and is the recovery tool
 > for "I destroyed my work". **The same fact is why a secret you removed is still there.**
@@ -3207,7 +3207,7 @@ git reflog                                  # every position HEAD has held
 git fsck --lost-found                       # dangling commits and blobs
 ```
 
-> **🔍 Pentester's Note — recovering secrets from history.** If you obtain a repository (from a
+> **Pentester's Note — recovering secrets from history.** If you obtain a repository (from a
 > leaked archive, an exposed `.git` directory, or an APK that shipped one in `assets/`), the
 > workflow is:
 >
@@ -3224,7 +3224,7 @@ git fsck --lost-found                       # dangling commits and blobs
 > `config.properties`, `google-services.json`, `keystore.jks`, and `.env` files after realising the
 > mistake, and the deletion commit tells you exactly what to go and extract.
 
-> **⚠️ Warning.** Rotating the secret is the only remediation. "We removed it in a later commit" is
+> **Warning.** Rotating the secret is the only remediation. "We removed it in a later commit" is
 > not remediation, and neither is `git rm`. Rewriting history with `filter-repo` removes it from the
 > repository you control but not from any clone, fork, or CI cache that already has it.
 
@@ -3235,7 +3235,7 @@ Everything in [section 3](#3-deep-internal-working) is abstract until you see it
 Android source tree. This section traces four of the chapter's concepts — strings and MUTF-8,
 hashing, hash maps, and garbage collection — into real AOSP files.
 
-> **⚠️ Warning.** AOSP moves files between releases. Paths below are given as directory plus file
+> **Warning.** AOSP moves files between releases. Paths below are given as directory plus file
 > name, which has been stable across recent releases, and no line numbers are quoted. Always verify
 > against the branch you are studying with
 > `git log --oneline -- <path>` inside your AOSP checkout, or by browsing
@@ -3348,7 +3348,7 @@ It is an excellent, short read if you want to see the open-addressing scheme of
 [section 3.10.4](#3104-collision-resolution--the-two-real-strategies) implemented in production
 C++, including the load factor policy and the tombstone-free "empty slot" convention.
 
-> **🔍 Pentester's Note.** Because every string literal in the process is interned and reachable,
+> **Pentester's Note.** Because every string literal in the process is interned and reachable,
 > enumerating live `java.lang.String` instances on the heap enumerates essentially every literal the
 > app has executed. That is the theoretical basis for the Frida heap-search technique in
 > [section 7.4](#74-finding-secrets-in-the-art-heap-with-frida).
@@ -3402,7 +3402,7 @@ mArray:   [ k0,v0,  k1,v1,  k2,v2,  k3,v3,  k4,v4 ]   parallel, key/value interl
 | Insertion in the middle | O(1) | O(n) — `System.arraycopy` to make room |
 | Intended size | Any | Small maps (tens of entries) |
 
-> **🔍 Pentester's Note.** `ArrayMap` trades worst-case robustness for memory. An attacker who can
+> **Pentester's Note.** `ArrayMap` trades worst-case performance for memory. An attacker who can
 > put thousands of same-hash keys into a `Bundle` gets a linear scan per lookup on top of an O(n)
 > insert, which is quadratic overall. The delivery vehicle is an `Intent` with a very large number
 > of crafted extras sent to an exported component. Whether this is exploitable in a given app
@@ -3447,7 +3447,7 @@ reading them teaches the safe patterns from [section 3.4.3](#343-the-other-three
 | `bionic/libc/bionic/malloc_common.cpp` and the Scudo integration | Allocation entry points, including the overflow check inside `calloc` |
 | `system/core/libcutils` | Small utility routines used across the platform, a good source of defensive C idioms |
 
-> **🔬 Under the Hood.** `Parcel` is the single most security-relevant parser in Android, because
+> **Under the Hood.** `Parcel` is the single most security-relevant parser in Android, because
 > every Binder transaction ([chapter 25](../25-Binder/README.md)) flows through it and both sides of
 > a transaction may be malicious relative to the other. Reading `Parcel.cpp` alongside
 > `frameworks/base/core/java/android/os/Parcel.java` is the best single exercise for connecting
@@ -3524,7 +3524,7 @@ Cited conservatively; only well-documented, widely referenced identifiers are us
 | **CVE-2017-13156 ("Janus")** | Format/parser disagreement (3.5, 3.15) | An APK could be both a valid DEX and a valid APK; the signature verifier and the loader disagreed about which bytes mattered. |
 | 28C3 (2011) hash-flooding research | Algorithmic complexity (3.10.6) | The talk *"Efficient Denial of Service Attacks on Web Application Platforms"* showed that crafted colliding keys turn hash-map insertion into O(n²) across many platforms. |
 
-> **⚠️ Warning.** Do not cite a CVE in a report unless you have read its advisory and confirmed the
+> **Warning.** Do not cite a CVE in a report unless you have read its advisory and confirmed the
 > affected versions. A wrong CVE number in a client deliverable is worse than no CVE number. When in
 > doubt, describe the class ("an unchecked multiplication producing an undersized allocation") and
 > cite the vendor bulletin rather than guessing an identifier.
@@ -3690,7 +3690,7 @@ The same function compiled by clang for AArch64 at `-O0` is essentially the pseu
 | Native migration | Java-level readability | The exported JNI symbol name, which encodes the Java class and method |
 | Packing / dynamic DEX loading | Static visibility of the real code | The loader, and the decrypted DEX in memory at run time |
 
-> **🧠 Mental Model.** Obfuscation cannot remove information the runtime needs. The runtime needs
+> **Mental Model.** Obfuscation cannot remove information the runtime needs. The runtime needs
 > the framework's API names, the JNI symbol names, the class names used in reflection, and the
 > actual bytes of every string at the moment it is used. Everything an obfuscator can safely destroy
 > is something *only humans* needed. That is why "hook the point of use" always beats "read the
@@ -3761,7 +3761,7 @@ section covers debugging as a professional skill, then the Android-specific tool
 Most people "debug" by staring at code until inspiration strikes. That does not scale. Debugging is
 a **search procedure**, and it has a method.
 
-> **🧠 Mental Model — debugging is binary search over a hypothesis space.** You have a set of
+> **Mental Model — debugging is binary search over a hypothesis space.** You have a set of
 > possible causes. Every observation you make should eliminate roughly half of them. If an
 > experiment cannot possibly change your mind, do not run it.
 
@@ -3808,7 +3808,7 @@ frida-trace -U -n com.target.app -i 'malloc' -i 'memcpy' -i '*decrypt*'
 
 #### 7.1.2 Breakpoints and stepping
 
-> **📖 Definition — breakpoint.** An instruction inserted at an address (on AArch64, `BRK #0`, which
+> **Definition — breakpoint.** An instruction inserted at an address (on AArch64, `BRK #0`, which
 > raises `SIGTRAP`) or a hardware debug-register watchpoint, which suspends the process and hands
 > control to the debugger.
 
@@ -3989,7 +3989,7 @@ Java.perform(function () {
 });
 ```
 
-> **🔍 Pentester's Note.** Run this **after logging out**. A hit for a session token after logout is
+> **Pentester's Note.** Run this **after logging out**. A hit for a session token after logout is
 > a clean MASVS-STORAGE finding with a trivially reproducible proof. Note also that
 > `Java.choose` walks the heap, so it will see strings from the shared Zygote image
 > ([section 4.6](#46-garbage-collection--artruntimegc)); filter aggressively or you will drown in
@@ -4094,7 +4094,7 @@ each time with a better vocabulary, and each pass is faster than the last.
 
 #### 8.1.1 Move 1 — find the entry points
 
-> **📖 Definition — entry point.** Any place where control enters the code from outside it. Not
+> **Definition — entry point.** Any place where control enters the code from outside it. Not
 > where *you* would start reading, but where the *system* starts executing.
 
 Code does not begin at line 1 of file 1. It begins wherever something external calls in. Until you
@@ -4119,7 +4119,7 @@ readelf --dyn-syms lib/arm64-v8a/libtarget.so | grep -E ' FUNC .* (GLOBAL|WEAK) 
 readelf --dyn-syms lib/arm64-v8a/libtarget.so | grep 'Java_'
 ```
 
-> **🔍 Pentester's Note.** An entry point that no external party can reach is not attack surface, no
+> **Pentester's Note.** An entry point that no external party can reach is not attack surface, no
 > matter how dangerous the code behind it is. Conversely, boring-looking code behind an exported
 > `ContentProvider` is worth more of your time than exciting-looking crypto that only the app's own
 > UI can invoke. **Ranking your reading by reachability is the whole game.** Every hour you spend on
@@ -4181,7 +4181,7 @@ The mechanical tools for this are the same three, in every environment:
 | Where does this string live? | Search → Text | Search → For Strings | `grep -rn '"literal"'` |
 | What writes this field? | Find Usages on the field | References to the data address | `grep -rn '\.field ='` |
 
-> **🧠 Mental Model — read backwards, not forwards.** Forward reading ("what does this function do?")
+> **Mental Model — read backwards, not forwards.** Forward reading ("what does this function do?")
 > is unbounded: a function calls ten others, each calling ten more. Backward reading ("who can reach
 > this dangerous thing?") is bounded and converges, because the call graph narrows towards entry
 > points. Start at the sink — `Cipher.getInstance`, `Runtime.exec`, `loadUrl`, `memcpy`,
@@ -4227,7 +4227,7 @@ wc -l app_owned_classes.txt
 Running that on a real app typically reduces 8 000 classes to 400. Those 400 are the app. Everything
 else is somebody else's code you can look up.
 
-> **⚠️ Warning.** "Ignore" means "deprioritise", not "assume safe". A vulnerable bundled library
+> **Warning.** "Ignore" means "deprioritise", not "assume safe". A vulnerable bundled library
 > version is a legitimate finding, but it is found by *checking versions* against a database, not by
 > reading its source. Match the technique to the question.
 
@@ -4265,7 +4265,7 @@ classes, methods, fields, and variables, and both persist the renames in a proje
 each rename permanently reduces the cognitive load of every later read, and the renames compound.
 After two hours of renaming, the code reads like code.
 
-> **🧠 Mental Model — you are building a map, not reading a book.** A book is read once, forwards.
+> **Mental Model — you are building a map, not reading a book.** A book is read once, forwards.
 > A map is built incrementally, from landmarks outwards, and its value is that you can return to it.
 > Every note and every rename is a landmark. When you finish an engagement, the map is the
 > deliverable's evidence base.
@@ -4302,7 +4302,7 @@ never have found it by reading from the top.
 | Assuming names are honest | `SecureRandomUtil` uses `java.util.Random` | Read the body of anything whose name makes a claim |
 | Stopping at the first finding | One easy finding reported, five missed | Finish the map, then rank findings |
 
-> **🔍 Pentester's Note.** The last row is worth money. The first finding is usually the easiest one
+> **Pentester's Note.** The last row is worth money. The first finding is usually the easiest one
 > and rarely the most severe. Complete the map before you start writing, because severity is a
 > property of the whole system — a hardcoded key is Low if it unlocks nothing and Critical if it
 > signs transactions, and you cannot tell which until the map is done.
@@ -4380,7 +4380,7 @@ judgement.
 | Reports a vulnerable library from a manifest, but the vulnerable class is stripped by R8 | Version matching ignores shrinking | Check whether the class survives in the DEX |
 | Misses a bug in native code entirely | Most tools do not analyse `.so` files deeply | Do it yourself with Ghidra |
 
-> **🔍 Pentester's Note.** The style guide for this repository sets the standard: you are finished
+> **Pentester's Note.** The style guide for this repository sets the standard: you are finished
 > only when you can explain *why an automated tool's finding is a false positive*. That explanation
 > always takes the same shape — "the tool matched pattern X, but at this call site the value comes
 > from Y, which is not attacker-controlled / is overwritten before use / is unreachable from any
@@ -4389,7 +4389,7 @@ judgement.
 ---
 ## 9. Examples
 
-> **✅ Verified against a compiler.** All five C files in `examples/` — including the three
+> **Verified against a compiler.** All five C files in `examples/` — including the three
 > `debug-challenge/` bugs — compile **clean** with `-Wall -Wextra` using
 > `aarch64-linux-android21-clang` from **NDK 25.2.9519653**. That the deliberately-buggy ones compile
 > without a single diagnostic is the point of the exercise: `-Wall -Wextra` is a spell-checker, not a
@@ -4442,7 +4442,7 @@ file examples/sum_demo.py /tmp/sum_demo /tmp/SumDemo.class
 | `SumDemo.class` | JVM bytecode | Class, method and field names; full type signatures | Near-source-quality Java |
 | DEX (on Android) | Dalvik bytecode | The same as `.class` | Near-source-quality Java, via JADX |
 
-> **🔍 Pentester's Note.** That table is why Android reversing is so much more productive than
+> **Pentester's Note.** That table is why Android reversing is so much more productive than
 > native reversing. An Android app's Java code decompiles to something a human can read in seconds,
 > because the bytecode was designed to carry names and types for the runtime's own use. The `.so`
 > files in the same APK do not, which is exactly why developers who want to hide something put it
@@ -4520,7 +4520,7 @@ char *read_records(const unsigned char *input, int count) {
 }
 ```
 
-**Why a developer writes this.** The multiplication is obviously correct — sixteen bytes per record,
+**Why a developer writes this.** The multiplication is correct — sixteen bytes per record,
 *count* records. The allocation is checked for failure. `memcpy` is given exactly the number of bytes
 that were allocated. Every individual step is defensible, and the code reads as careful. Nobody
 writing it is thinking about what `count * 16` does when `count` is 200 000 000, because in the
@@ -4617,7 +4617,7 @@ bounded upstream by a schema or a protocol field of eight bits. You cannot rate 
 `count` backwards to its source, which is exactly [move 3 of the reading
 methodology](#813-move-3--follow-the-state).
 
-> **⚠️ Warning.** Java does not save you. `int` in Java is also 32-bit and also wraps silently — the
+> **Warning.** Java does not save you. `int` in Java is also 32-bit and also wraps silently — the
 > language specification requires it. What Java gives you is a bounds check on the *array access*, so
 > the overflow becomes a `NegativeArraySizeException` or an `ArrayIndexOutOfBoundsException` instead
 > of memory corruption. That is a denial of service rather than code execution, which is a real
@@ -4776,7 +4776,7 @@ That is correct. The question was about one piece of state, and the map you buil
 [section 8.1.5](#815-move-5--name-what-you-learn), and rename the classes in JADX as you go. When
 you return tomorrow, `a.a.b` will read as `SessionStore`, and every subsequent read is cheaper.
 
-> **🧠 Mental Model — you are building a map, not reading a book.** Four hours spent reading an APK
+> **Mental Model — you are building a map, not reading a book.** Four hours spent reading an APK
 > linearly produces exhaustion and no conclusions. Forty minutes spent answering one specific
 > question produces a finding, a note file, and a set of renamed classes that make the *next*
 > question faster. The map compounds; the linear read does not.
@@ -4841,7 +4841,7 @@ configuration is a module where every bug in section 3.4 and section 3.13 surviv
 undetected. Writing that up is not glamorous, and it prevents more incidents than most individual
 bug reports.
 
-**Deliver a test, not just a paragraph.** The single highest-leverage thing you can hand an
+**Deliver a test, not just a paragraph.** The single highest-value thing you can hand an
 enterprise client is a failing test, because it converts your finding into something their CI
 enforces forever:
 
@@ -5284,7 +5284,7 @@ classified.
 **Q: You have one week to make the biggest security improvement to a codebase you have never seen.
 What do you do?**
 
-The answer being assessed is whether you optimise for *leverage* rather than for *findings*.
+The answer being assessed is whether you optimise for *impact* rather than for *findings*.
 
 Days one and two: build a map. Entry points, data flows, where secrets live, what is native, what is
 generated. Do not fix anything yet.
@@ -5394,7 +5394,7 @@ is what separates a report you can defend from one you cannot.
 
 ## 11. Common Mistakes
 
-The three audiences in this chapter are stages of a single journey rather than different people. The
+The three audiences in this chapter are stages of one path rather than different people. The
 "pentester" and "reverse engineer" sections below are the mistakes a **learner** makes on the way to
 becoming each, because that is where you are.
 
@@ -5504,7 +5504,7 @@ Full material lives in [`labs/`](labs/). Work them in order — each assumes the
 | [Lab 03 — The debugging challenge](labs/lab-03-debugging-challenge.md) | Six programs, each with one planted bug, from a trivial off-by-one to an integer overflow that only fires on one input. Find each by bisection, breakpoint and sanitiser, and time yourself | Intermediate |
 | [Lab 04 — Reading code you did not write](labs/lab-04-reading-unfamiliar-code.md) | An unfamiliar codebase, no documentation, five specific questions. Map it using the five-move methodology and answer all five in ninety minutes | **The important one** |
 
-> **🧠 Mental Model.** Lab 04 is the one that matters. Labs 01 to 03 teach you what code *is*; Lab 04
+> **Mental Model.** Lab 04 is the one that matters. Labs 01 to 03 teach you what code *is*; Lab 04
 > teaches you what to *do* when you are handed some. Every engagement you will ever run starts
 > exactly where Lab 04 starts: a pile of code nobody wrote for you, and a question.
 

@@ -89,7 +89,7 @@ getenforce
 | `ro.crypto.state` | `encrypted` | `unencrypted` → HIGH |
 | `persist.sys.usb.config` | — | contains `adb` on a kiosk → HIGH |
 
-⚠️ On **your own** test device, unlocked bootloader / permissive SELinux / root are **methodology**,
+On **your own** test device, unlocked bootloader / permissive SELinux / root are **methodology**,
 not findings. Put them in Test Environment.
 
 ---
@@ -187,7 +187,7 @@ adb reboot recovery
 adb reboot bootloader
 adb reboot fastboot              # fastbootd — needed for dynamic partitions
 fastboot getvar all
-fastboot boot patched_boot.img   # ⚠️ ALWAYS test with 'boot' before 'flash'
+fastboot boot patched_boot.img   # ALWAYS test with 'boot' before 'flash'
 ```
 
 ---

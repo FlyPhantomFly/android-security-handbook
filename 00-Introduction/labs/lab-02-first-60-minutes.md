@@ -8,7 +8,7 @@ nothing more exotic than an unzip utility, and look at what an app *is* on disk.
 technique you will keep using unchanged for years — it is the map you need before any of the later
 techniques mean anything.
 
-> **🧠 Mental Model.** An installed Android app is a sealed shipping container. It has a manifest
+> **Mental Model.** An installed Android app is a sealed shipping container. It has a manifest
 > stapled to the outside declaring what is inside and what the container is allowed to do, a cargo
 > hold of compiled code, a crate of pre-translated text and images, and a tamper seal. In this lab
 > you locate the container, take a copy of it, cut the shrink-wrap, and inventory the contents. You
@@ -39,7 +39,7 @@ Starting from a machine that has `adb`, `unzip`, and `jadx` (built in
 - Either a physical Android phone you personally own, or 12 GB of free disk for an emulator.
 - No knowledge of Java, Android, or reverse engineering. Terms are defined as they appear.
 
-> **⚠️ Warning — legality.** Pull APKs only from devices you own and from apps you are permitted to
+> **Warning — legality.** Pull APKs only from devices you own and from apps you are permitted to
 > analyse. In this lab, use either an app you wrote, a deliberately vulnerable training app, or a
 > pre-installed AOSP app on an emulator. [Lab 03](lab-03-legal-scope-triage.md) covers where the
 > boundary sits and which statute applies where you live. Read it before you point these commands at
@@ -51,7 +51,7 @@ Starting from a machine that has `adb`, `unzip`, and `jadx` (built in
 
 ### Option A — an Android Virtual Device (recommended for your first run)
 
-> **📖 Definition — AVD.** An *Android Virtual Device* is a configuration describing a virtual
+> **Definition — AVD.** An *Android Virtual Device* is a configuration describing a virtual
 > phone: its screen, its CPU architecture, the amount of RAM, and which **system image** (a full
 > Android OS build) it boots. The emulator process runs that image under hardware-assisted
 > virtualisation on your host. It is a real Android system, not a simulator that fakes API responses.
@@ -66,7 +66,7 @@ for security work are the ones people usually skip past:
 | API level | 33 or 34 to start | Recent enough to be realistic, old enough that most tooling is stable against it |
 | ABI | `x86_64` on Intel/AMD hosts, `arm64-v8a` on Apple Silicon | An ABI mismatch causes `INSTALL_FAILED_NO_MATCHING_ABIS` when you install real-world APKs |
 
-> **📖 Definition — ABI.** An *Application Binary Interface* is the contract describing how compiled
+> **Definition — ABI.** An *Application Binary Interface* is the contract describing how compiled
 > machine code is laid out and how functions call each other on a given processor family. Android's
 > ABI names are `armeabi-v7a`, `arm64-v8a`, `x86`, and `x86_64`. Java code in an APK is
 > architecture-independent; native `.so` libraries are not, and are shipped once per ABI — which is
@@ -81,7 +81,7 @@ avdmanager create avd -n pentest-35 -k "system-images;android-35;google_apis;x86
 emulator -avd pentest-35 -wipe-data -no-boot-anim
 ```
 
-> **🔍 Pentester's Note.** An emulator is the right place to *learn* and the wrong place to
+> **Pentester's Note.** An emulator is the right place to *learn* and the wrong place to
 > *conclude*. Many production apps detect emulators and change behaviour, and hardware-backed
 > KeyStore, StrongBox, and biometric behaviour differ fundamentally from real silicon. Findings
 > demonstrated only on an emulator will be challenged, correctly, by the client's engineers. See
@@ -114,7 +114,7 @@ enabling debugging by a phone scammer.
 
 In **Developer options**, turn on **USB debugging**.
 
-> **📖 Definition — USB debugging.** Enabling this starts `adbd`, the ADB daemon, on the device and
+> **Definition — USB debugging.** Enabling this starts `adbd`, the ADB daemon, on the device and
 > allows it to accept connections from an authorised host. `adbd` runs as the `shell` user on a
 > production build. The `shell` user is a real Unix account on the device with its own UID, its own
 > set of granted permissions, and considerably more privilege than a normal app — it can list all
@@ -122,7 +122,7 @@ In **Developer options**, turn on **USB debugging**.
 > filesystem. It is *not* root, and on a production build it cannot read another app's private data
 > directory.
 
-> **⚠️ Warning.** Leaving USB debugging enabled on a phone you carry is a genuine risk, not a
+> **Warning.** Leaving USB debugging enabled on a phone you carry is a genuine risk, not a
 > theoretical one. A host that has been authorised once keeps a key on the device and can reconnect
 > silently. Malicious charging hardware exploits exactly this. Turn it off when you are not testing,
 > and use **Revoke USB debugging authorisations** in Developer options after an engagement.
@@ -151,7 +151,7 @@ this is your own machine.
 | `no permissions` (Linux) | The `udev` rules do not grant your user access to the USB device | Install `android-sdk-platform-tools-common`, or add a `udev` rule, then replug |
 | Nothing listed | Charge-only cable, USB debugging off, or a driver issue on Windows | Change cable, re-check the toggle, install the OEM USB driver |
 
-> **🔬 Under the Hood.** `adb devices` does not talk to the device directly. Your `adb` client
+> **Under the Hood.** `adb devices` does not talk to the device directly. Your `adb` client
 > connects over a local TCP socket to the ADB *server* on `127.0.0.1:5037`, and that server owns the
 > USB endpoints and any TCP-connected devices. This is why `adb kill-server` fixes so many
 > unexplained states: it discards the server's entire notion of the world and rebuilds it. The
@@ -186,7 +186,7 @@ Type `exit` to return to your host shell.
 
 ### Step 5 — List the installed packages
 
-> **📖 Definition — package name.** Every Android app is identified by a *package name*, a
+> **Definition — package name.** Every Android app is identified by a *package name*, a
 > reverse-DNS string such as `com.android.settings`. It is the app's primary key: two apps with the
 > same package name cannot coexist on one device, and the package name plus the signing certificate
 > together determine update eligibility. It is *not* the app's display name, and the two frequently
@@ -238,7 +238,7 @@ The path tells you a great deal before you open anything:
 | `/system/product/app`, `/system_ext/...`, `/vendor/app` | Partitions introduced by Project Treble to separate Google, OEM, and silicon-vendor content |
 | Multiple lines returned | The app is a **split APK** — see the note below |
 
-> **📖 Definition — split APK.** Since Android 5.0 an application can be installed as several APK
+> **Definition — split APK.** Since Android 5.0 an application can be installed as several APK
 > files that the runtime treats as one app: a `base.apk` plus configuration splits for a specific
 > screen density (`split_config.xxhdpi.apk`), a language (`split_config.en.apk`), or an ABI
 > (`split_config.arm64_v8a.apk`). Apps distributed as Android App Bundles are almost always
@@ -260,7 +260,7 @@ sh 00-Introduction/scripts/pull-apk.sh com.android.settings ~/work/lab02
 
 Use the path **your** `pm path` printed, not the one above — it differs between images.
 
-> **⚠️ Warning — Git Bash on Windows rewrites device paths.** If you are on Windows in Git Bash or
+> **Warning — Git Bash on Windows rewrites device paths.** If you are on Windows in Git Bash or
 > MSYS2 (which [Lab 01](lab-01-build-your-lab.md) suggests), the shell converts any argument that
 > looks like a Unix absolute path into a Windows one *before* `adb` sees it, so the command above
 > fails with
@@ -286,7 +286,7 @@ sha256sum target.apk
 
 ### Step 8 — Open the APK as a ZIP
 
-> **📖 Definition — APK.** An *Android Package* is an ordinary ZIP archive with a mandated internal
+> **Definition — APK.** An *Android Package* is an ordinary ZIP archive with a mandated internal
 > layout and a signature block. There is no proprietary container, no encryption, and no obfuscation
 > at the container level. Renaming it to `.zip` changes nothing about the file; it only changes what
 > your operating system offers to open it with. The full format, including the signing schemes, is
@@ -329,7 +329,7 @@ apktool d target.apk -o decoded
 head -30 decoded/AndroidManifest.xml
 ```
 
-> **🔬 Under the Hood.** AXML begins with a chunk header: a 16-bit type, a 16-bit header size, and a
+> **Under the Hood.** AXML begins with a chunk header: a 16-bit type, a 16-bit header size, and a
 > 32-bit chunk size, followed by a string pool chunk and then the element tree. Attribute values are
 > typed, so `android:exported="true"` is stored as a boolean, not as the string "true". Malformed
 > AXML has repeatedly been used to confuse parsers — one class of attack ships a manifest that the

@@ -149,7 +149,7 @@ This is what a reviewer reads, and every word of it is true of the *source*.
 </manifest>
 ```
 
-> **⚠️ Warning** Each element you intend to target must carry **at least two** attributes, and the
+> **Warning** Each element you intend to target must carry **at least two** attributes, and the
 > targeted one must not be the only one. The builder below moves the targeted attribute to the end of
 > the list and needs a second attribute to hide behind. `android:label` and `android:allowBackup` are
 > there for that reason; do not remove them.
@@ -415,7 +415,7 @@ if __name__ == "__main__":
     main(sys.argv[1] if len(sys.argv) > 1 else "challenge-manifest.xml")
 ```
 
-> **📖 Note** `from widen_attributes import ...` needs the file named with an underscore for Python
+> **Note** `from widen_attributes import ...` needs the file named with an underscore for Python
 > to import it. Either save the builder as `widen_attributes.py` and adjust the command lines, or
 > copy the three helper functions into `both-ways.py` directly.
 
@@ -506,7 +506,7 @@ if __name__ == "__main__":
     main(sys.argv[1], sys.argv[2] if len(sys.argv) > 2 else "final.apk")
 ```
 
-> **🔬 Under the Hood** Read that script's EOCD fix-up carefully, because it is the same subtlety
+> **Under the Hood** Read that script's EOCD fix-up carefully, because it is the same subtlety
 > §5 of the chapter warns about from the other direction. Inserting bytes into the signing block
 > shifts the central directory, so the EOCD's central-directory-offset field has to be corrected —
 > and the v2 digest is *unaffected*, because the verifier substitutes the signing block's start
@@ -531,7 +531,7 @@ python3 add-check.py signed.apk challenge.apk
 apksigner verify -v challenge.apk       # STILL says Verifies — that is the lesson
 ```
 
-> **⚠️ Warning** If `zip` is not installed, replace the manifest with Python:
+> **Warning** If `zip` is not installed, replace the manifest with Python:
 > `python3 -c "import zipfile,shutil; shutil.copy('clean.apk','work.apk'); zipfile.ZipFile('work.apk','a').write('challenge-manifest.xml','AndroidManifest.xml')"`.
 > That leaves **two** entries named `AndroidManifest.xml`, which is a second, unintended puzzle —
 > check with `python3 ../examples/parse_apk_zip.py work.apk | grep -i duplicate` and decide whether
@@ -797,7 +797,7 @@ of the file — the entry data, the central directory and the EOCD — and delib
 The two facts together make an unknown ID-value pair signature-safe storage for arbitrary bytes. See
 README §18.4.
 
-Run `apksigner verify -v` on `signed.apk` and on `challenge.apk` and note that both say `Verifies`,
+Run `apksigner verify -v` on `signed.apk` and on `challenge.apk` and confirm that both say `Verifies`,
 even though the second is 122 bytes larger — a 110-byte token, plus four bytes of ID and an eight-byte
 length prefix. That is not a bug in `apksigner`; it is the format working as specified.
 </details>

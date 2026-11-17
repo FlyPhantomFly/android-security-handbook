@@ -17,7 +17,7 @@ Labs 01 to 03 taught you what code *is*. This one teaches you what to *do* when 
 It is the single most transferable skill in this repository, and it is the one that separates people
 who make progress on an unfamiliar target from people who open thirty tabs and produce nothing.
 
-> **🧠 Mental Model — you are building a map, not reading a book.** A book is read once, forwards,
+> **Mental Model — you are building a map, not reading a book.** A book is read once, forwards,
 > and its value is the experience of reading it. A map is built incrementally, from landmarks
 > outwards, and its value is that you can *return* to it. Every note you take and every symbol you
 > rename is a landmark. Four hours of linear reading produces exhaustion; forty minutes of mapping

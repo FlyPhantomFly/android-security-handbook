@@ -97,7 +97,7 @@ because the lock is the Linux kernel and the Linux kernel has never heard of `co
 caretaker is `PackageManagerService`, a Java service inside the `system_server` process. And two apps
 sharing one flat is `android:sharedUserId`, which is the subject of this chapter's CTF lab.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Every security decision on Android is made at one of two levels. The **framework** decides using
 > names, and can be argued with, tricked, or bypassed if you find a path that does not go through it.
 > The **kernel** decides using numbers, and cannot be argued with at all. When you are assessing a
@@ -116,13 +116,13 @@ the disambiguation, and you should be able to recite it.
 | **Kernel** | One or more processes running under a numeric user id | The **UID** and supplementary **GIDs** | Linux DAC (discretionary access control) on every `open()`, `connect()`, `kill()` | No |
 | **SELinux** | A process in a security domain, with a category set | The **security context**, e.g. `u:r:untrusted_app:s0:c234,c256,c512,c768` | The kernel's SELinux LSM, on every operation | No |
 
-> **📖 Definition — DAC (discretionary access control)**
+> **Definition — DAC (discretionary access control)**
 > The classic Unix permission model: every file has an owner UID, a group GID, and nine permission
 > bits (read/write/execute for owner, group and others). When a process calls `open()`, the kernel
 > compares the process's UID and GIDs against the file's owner, group and bits. It is called
 > *discretionary* because the owner of a file may change its permissions at their own discretion.
 
-> **📖 Definition — MAC (mandatory access control)**
+> **Definition — MAC (mandatory access control)**
 > A second, independent permission system layered on top of DAC in which the *policy*, not the file
 > owner, decides who may do what. On Android this is SELinux. A process cannot relax its own MAC
 > constraints, which is why MAC survives situations where DAC has already been defeated. Chapter
@@ -144,7 +144,7 @@ the same CPU, against the same filesystem, with the same kernel. There is exactl
 the classic Unix model — one UID per person — provides no separation whatsoever. If Android had
 shipped with every app running as the same UID, the torch app could read the bank's session token
 with a single `open()` call, and no amount of framework-level permission checking would help, because
-the app could simply not call the framework.
+the app is free not to call the framework at all.
 
 Android's answer was to **repurpose the Unix user abstraction**: instead of one UID per human, one
 UID per application. This is the single most important design decision in Android security. The
@@ -225,7 +225,7 @@ installation. `PackageManagerService` allocates the appId, derives the per-user 
 computes the GID set from the granted install-time permissions, and hands the `seinfo` string to
 `installd` so the SELinux label can be applied. Nothing the app does at runtime can change any of it.
 
-The **storage** axis is created at install time and then mutated constantly by the app. Note that
+The **storage** axis is created at install time and then mutated constantly by the app.
 there are four distinct locations, that they have different owners and different protections, and that
 one of them (`/sdcard/Android/data/...`) is not protected by the app's UID at all in the way people
 assume — it is mediated by a FUSE layer and a media provider, which is why chapter
@@ -237,7 +237,7 @@ not of the identity. The isolated process is shaded because it is the one place 
 boundary is *also* a privilege boundary: it runs under a throwaway UID and is the standard place to
 put code that parses attacker-controlled input.
 
-> **⚠️ Warning**
+> **Warning**
 > "The app" is not a process. An app with no running process is still installed, still owns its data,
 > still has its UID reserved, and can still be started by an incoming Intent, a broadcast, an alarm,
 > a `ContentProvider` query, or a job. Assessments that only look at what is running miss most of the
@@ -384,7 +384,7 @@ implements it, and *what happens when it is attacked*.
 APK's `AndroidManifest.xml` and baked into the compiled binary manifest at build time. It is the
 primary key of the framework's entire view of installed software.
 
-> **📖 Definition — security principal**
+> **Definition — security principal**
 > A *principal* is the entity to which a security decision is attached: the thing that is granted a
 > permission, that owns a file, that a policy names. On a desktop Linux system the principal is
 > usually a human user. On Android the principal is **the application**, and the package name is how
@@ -410,7 +410,7 @@ name can be installed at a time. `PackageManagerService` enforces that; the seco
 across the world, and inside an APK file sitting on your disk, the package name is nothing but a
 string that anyone can type.
 
-> **⚠️ Warning**
+> **Warning**
 > "We validate that the calling package is `com.ourcompany.app`" is not a security control on its
 > own. Any attacker can build an APK whose manifest declares that package name. The check only becomes
 > meaningful when it is combined with a signature check, because forging the signature requires the
@@ -444,16 +444,16 @@ userId = UID / 100000            (integer division)
 appId  = UID % 100000
 ```
 
-> **📖 Definition — appId**
+> **Definition — appId**
 > The stable, per-package identifier. It belongs to the *package*, is allocated once at first install,
 > and does not change when the app is upgraded or installed for an additional Android user.
 
-> **📖 Definition — userId (Android user)**
+> **Definition — userId (Android user)**
 > The identifier of an Android *user or profile* on the device: 0 is the device owner, 10 and above
 > are secondary users, work profiles, clone profiles and similar. This is a human-level concept and
 > has nothing to do with the Linux notion of a user.
 
-> **📖 Definition — UID (Linux user identifier)**
+> **Definition — UID (Linux user identifier)**
 > The 32-bit integer the kernel attaches to each process and each file. It is the value compared
 > during every DAC check. On Android it encodes both the appId and the Android userId through the
 > arithmetic above.
@@ -495,7 +495,7 @@ with an entry for every app; instead Bionic's `libc` synthesises the name arithm
 `bionic/libc/bionic/grp_pwd.cpp`. `u0` is the Android userId, and `a234` is `appId - 10000`. Decode it
 in your head every time you see it: `u10_a234` is the work-profile instance of appId 10234.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > Because `getpwuid()` computes rather than looks up, an app UID that has never been allocated still
 > produces a valid-looking name. That means a `ps` output showing `u0_a999` proves nothing about any
 > package existing; it only proves a process is running under that number. Always resolve UIDs back
@@ -514,7 +514,7 @@ compares the caller's granted permission set against what the API requires, and 
 small, important minority are enforced by the kernel instead, because the resource they protect is a
 device node or a socket type that the kernel already knows how to guard with a group.
 
-> **📖 Definition — supplementary group (GID)**
+> **Definition — supplementary group (GID)**
 > In addition to its primary group, a Unix process can belong to a list of supplementary groups. The
 > kernel checks all of them during file and socket permission decisions. Android reuses this to
 > implement a handful of permissions with no framework involvement at all.
@@ -546,7 +546,7 @@ The GIDs you will actually meet:
 | 20000+appId′ | per-app cache GID | automatic | cache quota accounting |
 | 50000+appId′ | per-app shared GID | automatic | shared-app resources |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `grep Groups /proc/<pid>/status` is the fastest possible answer to "can this process reach the
 > network?" If 3003 is absent, the app cannot open a TCP socket at all — not because a framework
 > check refuses, but because `socket(AF_INET, …)` returns `EACCES` from the kernel. An app that
@@ -587,7 +587,7 @@ com.example.app 10234 0 /data/user/0/com.example.app default:targetSdkVersion=34
 | 8 | longVersionCode | `42` | `versionCodeMajor << 32 \| versionCode` |
 | 9+ | trailing columns | `null null` | added over releases — **parse tolerantly** |
 
-> **⚠️ Do not expect `1015` and `1028` on a modern device.** The line above is illustrative of an
+> **Do not expect `1015` and `1028` on a modern device.** The line above is illustrative of an
 > older release. On Android 13 (API 33), `platform.xml` declares `READ_EXTERNAL_STORAGE` and
 > `WRITE_EXTERNAL_STORAGE` with **no `<group>` child**, so no storage GID is assigned at all — an app
 > holding both shows `gids=[3002, 3003]`, measured on a physical device. Scoped storage replaced the
@@ -599,7 +599,7 @@ com.example.app 10234 0 /data/user/0/com.example.app default:targetSdkVersion=34
 > process, and includes per-user and per-app GIDs the former never lists. When they disagree, the
 > kernel is the ground truth.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > Field 3 is the entire mechanism behind `run-as`. Read
 > `system/core/run-as/run-as.cpp`: it looks up the package, checks that the debug flag is set, then
 > `setresgid`/`setresuid`s to the app's UID and `exec`s your command. A single character in a text file
@@ -659,7 +659,7 @@ grep -A 20 'package name="com.example.app"' /data/system/packages.xml
 python3 -c "import datetime;print(datetime.datetime.fromtimestamp(int('18f2c1a4c11',16)/1000))"
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > On a device you are triaging, `packages.xml` is the closest thing to an installation history. `it`
 > (first install time) that predates `ut` (last update) by years, an `installer` of `null` on an app
 > that claims to come from the Play Store, or an `installInitiator` naming an unexpected package are
@@ -700,7 +700,7 @@ execution, arbitrary file read, or injection flaw in the least important member 
 equivalent to the same flaw in the most important member. Blast radius becomes a design property
 decided years before the bug is written.
 
-> **⚠️ Warning**
+> **Warning**
 > `android:sharedUserId` is deprecated from API 29, and — this is the part people do not know — **it
 > can never be removed from a shipped app**. Removing it changes the package's UID, and Android will
 > not change an installed package's identity. The upgrade is rejected
@@ -799,7 +799,7 @@ pm list packages --user 10 -U > /data/local/tmp/u10.txt
 | `sendBroadcastAsUser` / `startActivityAsUser` callers | which privileged packages call these, and with what input |
 | Clone profiles (newer releases) | a second instance of the same package in the *same* profile group |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Two mistakes recur in work-profile assessments and both are expensive. The first is analysing the
 > personal-profile copy of the app and reporting on data the enterprise does not care about — always
 > confirm which `userId` your target is in. The second is that any hard-coded `/data/data/<pkg>` path
@@ -891,7 +891,7 @@ cannot veto or modify an install. Any product claiming to "block malicious insta
 app is either a device owner using `DevicePolicyManager`, a privileged verifier holding
 package-verification privileges, or exaggerating.
 
-> **⚠️ Warning**
+> **Warning**
 > A package does **not** receive its own `PACKAGE_ADDED`. It is stopped while being replaced. What it
 > can receive, if it registers for it, is `ACTION_MY_PACKAGE_REPLACED` — which is exactly the
 > mechanism malware uses to re-establish itself immediately after its own update.
@@ -961,7 +961,7 @@ The flags worth knowing, because each one changes the security posture of the re
 | `--install-reason N` | 0 unknown, 1 policy, 2 restore, 3 device setup, 4 user | shows up in `dumpsys` |
 | `--bypass-low-target-sdk-block` | install an old-`targetSdk` APK on API 34+ | keeping legacy targets testable |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `pm install -i com.android.vending` sets `installerPackageName` to the Play Store for an APK that
 > arrived over USB. Any app whose anti-sideloading check is
 > `getInstallerPackageName().equals("com.android.vending")` has just been defeated by one flag. The
@@ -1084,7 +1084,7 @@ Three details that are worth internalising because they come up constantly:
 **`files/`, `databases/` and `shared_prefs/` do not exist immediately after install.** `installd`
 creates only the top-level directory plus `cache/` and `code_cache/`. The rest are created lazily by
 the framework the first time the app calls the corresponding accessor. If you are triaging an app and
-`shared_prefs/` is missing, the app has simply never written a preference — that is not evidence of
+`shared_prefs/` is missing, the app has never written a preference — that is not evidence of
 anything sinister.
 
 **`cache/` has a different group and the setgid bit.** The group is `u0_a234_cache`, numerically
@@ -1148,7 +1148,7 @@ de.getSharedPreferences("boot_state", Context.MODE_PRIVATE)   // available immed
 </receiver>
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > DE storage is a recurring, high-value finding. The usual path is a developer debugging "my
 > `SharedPreferences` are empty at boot", discovering `createDeviceProtectedStorageContext()`, and
 > quietly moving session tokens, cached PII or a device identifier into a store that is readable in a
@@ -1225,7 +1225,7 @@ process is created by `fork()`ing Zygote, so it inherits an already-warm runtime
 `fork()` uses copy-on-write — the preloaded pages are physically shared between every app on the
 device until someone writes to them.
 
-> **📖 Definition — `fork()` and copy-on-write**
+> **Definition — `fork()` and copy-on-write**
 > `fork()` is the Unix syscall that creates a new process as a duplicate of the caller. The kernel
 > does not actually copy the memory; it marks every page read-only in both processes and copies a page
 > only when one of them writes to it. That is *copy-on-write*, and it is why hundreds of Android
@@ -1273,7 +1273,7 @@ can gain privileges, for example through a setuid binary. Then a **seccomp** fil
 syscalls the process may issue at all, and finally the SELinux context is set — after which the
 process cannot change it again.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > `/proc/<pid>/status` shows four UIDs: real, effective, saved-set and filesystem. For an app process
 > all four are the same number, because `setresuid` sets all of them. There is no saved-set UID to
 > restore, and the capabilities were destroyed rather than merely unused. This is why an app cannot
@@ -1363,7 +1363,7 @@ including as the very event that caused your process to be started — so provid
 instant the process is usable. The framework therefore publishes them during the bind-application
 step.
 
-> **⚠️ Warning**
+> **Warning**
 > A `ContentProvider` declared in a third-party library's `AndroidManifest.xml` is merged into **your**
 > app's manifest by the Gradle manifest merger. You did not write it, it is not in your source tree,
 > and it runs before your first line of code, inside your UID, with your permissions. From a supply
@@ -1423,17 +1423,17 @@ flowchart LR
 
 The three classes, defined properly:
 
-> **📖 Definition — `Looper`**
+> **Definition — `Looper`**
 > A thread-local object holding one `MessageQueue` and running `loop()`, which blocks until a message
 > is available and then dispatches it. `Looper.prepareMainLooper()` creates the main thread's; ordinary
 > threads have none unless you call `Looper.prepare()`.
 
-> **📖 Definition — `MessageQueue`**
+> **Definition — `MessageQueue`**
 > A time-ordered linked list of `Message` objects. Its `next()` method blocks in native code on an
 > `epoll` file descriptor, so a waiting main thread consumes no CPU and can also be woken by input
 > events and other native sources, not only by Java `Message`s.
 
-> **📖 Definition — `Handler`**
+> **Definition — `Handler`**
 > The object that both *posts* messages to a queue and *receives* them. A `Handler` is bound to a
 > `Looper` at construction, which is why `new Handler(Looper.getMainLooper())` is the standard way for
 > a background thread to schedule work on the UI thread.
@@ -1445,7 +1445,7 @@ system is watching. That is what produces an ANR.
 
 ### 3.16 ANRs: what they are and how they are produced
 
-> **📖 Definition — ANR (Application Not Responding)**
+> **Definition — ANR (Application Not Responding)**
 > The state the system declares when a component fails to complete a system-initiated operation
 > within a timeout. It is not "the app is slow"; it is "the system asked the app to do something and
 > the app did not answer in time", which usually means the main thread was blocked.
@@ -1476,7 +1476,7 @@ dumpsys activity anrs
 cat /data/anr/anr_*
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > ANR traces are a genuine information source, not just a bug report. They contain a full thread dump
 > of the app: thread names that reveal SDKs, native frames that reveal libraries, and lock-holder
 > chains that reveal internal structure. On a device where you cannot get root, an ANR you *induced*
@@ -1489,12 +1489,12 @@ cat /data/anr/anr_*
 no swap partition by default) or letting the kernel's OOM killer choose badly, Android ranks every
 process by importance and kills from the bottom.
 
-> **📖 Definition — `oom_score_adj`**
+> **Definition — `oom_score_adj`**
 > A per-process integer in `/proc/<pid>/oom_score_adj`, ranging from −1000 to +1000, that biases the
 > kernel's out-of-memory scoring. Lower means "harder to kill". On Android, `system_server` writes
 > this value for every app process and updates it continuously as the app's importance changes.
 
-> **📖 Definition — `lmkd` (low memory killer daemon)**
+> **Definition — `lmkd` (low memory killer daemon)**
 > A small userspace daemon (`system/memory/lmkd/`) that subscribes to kernel memory pressure signals
 > (PSI — pressure stall information — on modern kernels) and kills processes *before* the kernel's own
 > OOM killer has to act. It picks victims by `oom_score_adj`.
@@ -1586,7 +1586,7 @@ ps -A -Z | grep com.example.app
 for p in $(pidof com.example.app); do echo "== $p"; tr '\0' ' ' < /proc/$p/cmdline; echo; done
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Multi-process apps are worth mapping early because your instrumentation must target the right one.
 > `frida -U -f com.example.app` attaches to the process created for the main component; the `:worker`
 > process is a different process that Frida must be told about explicitly. Hooking the wrong process
@@ -1658,7 +1658,7 @@ aapt2 dump xmltree base.apk --file AndroidManifest.xml | grep -B 2 -A 2 'android
 jadx -d out base.apk && grep -rn "implements Initializer\|androidx.startup" out/sources/ | head -30
 ```
 
-> **🧠 Mental Model**
+> **Mental Model**
 > `Application.onCreate()` is not the beginning of your app. It is roughly the middle. Before it:
 > native constructors in any `.so` loaded by a static initialiser, `attachBaseContext()`, and every
 > provider's `onCreate()`. Malware and SDKs both live in that gap, and so should your hooks.
@@ -1668,12 +1668,12 @@ jadx -d out base.apk && grep -rn "implements Initializer\|androidx.startup" out/
 A brief but necessary treatment, because task manipulation is a real attack class and because the
 vocabulary appears throughout the component chapters.
 
-> **📖 Definition — task**
+> **Definition — task**
 > A stack of `Activity` instances that the user perceives as one "app" in Recents. Activities from
 > different packages can share a task, which is what makes "share to another app and come back" feel
-> seamless — and what makes task hijacking possible.
+> smooth — and what makes task hijacking possible.
 
-> **📖 Definition — task affinity**
+> **Definition — task affinity**
 > A string, defaulting to the package name, that says which task an Activity prefers to belong to.
 > `android:taskAffinity=""` (empty) makes an Activity refuse to join any named task.
 
@@ -1725,7 +1725,7 @@ demonstrates the difference.
 
 ### 3.22 What `android:debuggable` really enables
 
-This attribute is worth its own subsection because it is simultaneously the highest-leverage change
+This attribute is worth its own subsection because it is simultaneously the highest-value change
 you can make to a target and the most commonly misunderstood flag in the manifest. It is *not* "just
 the debugger".
 
@@ -1822,7 +1822,7 @@ dumpsys jobscheduler | grep -A 20 com.example.app
 dumpsys alarm | grep -A 10 com.example.app
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > These commands are how you *test* an app's background behaviour rather than guessing at it. Two
 > uses in particular: forcing an app into `restricted` or deep Doze and observing whether it still
 > exfiltrates data tells you whether it holds a battery-optimisation exemption or is abusing a
@@ -1986,7 +1986,7 @@ constructs the class loader over `base.apk` plus every split), creates the `Inst
 `Instrumentation.callApplicationOnCreate()`. That is the ordering from section 3.14, in the source,
 in one method.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > `installContentProviders()` is also where the 10-second provider-publish ANR timeout applies. A
 > provider whose `onCreate()` blocks — for example one that performs a synchronous network call
 > because a well-meaning SDK "initialises" itself there — can ANR the app *before the app has any UI*,
@@ -2060,7 +2060,7 @@ am broadcast -a com.example.target.ACTION --es caller_package com.ourcompany.com
 ```
 
 **Exploit.** Two shapes. Either pass the expected string, as above. Or — where the app checks
-`getCallingPackage()` on an Activity — note that this API returns null unless the caller used
+`getCallingPackage()` on an Activity —this API returns null unless the caller used
 `startActivityForResult`, and that a null-handling bug (`if (pkg == null || pkg.equals(...))`, or a
 `?.` that falls through to a permissive default) turns "no caller identity" into "trusted caller".
 
@@ -2505,7 +2505,7 @@ what kind of engagement you are having.
 | Usage stats and standby bucket history | how often the user actually opened it | `dumpsys usagestats` |
 | Leftover records from `pm uninstall -k` | what used to be installed | `pm list packages -u -3` |
 
-> **⚠️ Warning**
+> **Warning**
 > appIds are recycled. A file owned by UID 10234, or a log line naming `u0_a234`, does **not** by
 > itself identify a package on a device where anything has ever been uninstalled. Correlate against
 > install timestamps before asserting attribution in a report that may end up in front of a court.
@@ -2695,7 +2695,7 @@ logcat -v threadtime PackageManager:V PackageInstaller:V PackageInstallerSession
 | `dex2oat` | the AOT compiler | compiler filter and duration |
 | `ActivityManager` | AMS | `Start proc`, broadcast delivery |
 
-> **⚠️ Warning**
+> **Warning**
 > Tag names drift between releases and vendors. If a tag produces nothing, do not conclude the
 > subsystem did nothing — drop the filter entirely and grep afterwards. Absence of a tag is not
 > absence of the component.
@@ -2805,7 +2805,7 @@ Java.perform(function () {
         return this.doInitialize(cls, set);
       };
   } catch (e) {
-    // androidx.startup is simply not present; not an error.
+    // androidx.startup is not present; not an error.
   }
 
   // ------------------------------------------------------- Application.onCreate
@@ -2938,7 +2938,7 @@ Java.perform(function () {
 });
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The file hook is the fastest way to prove a shared-UID finding in front of a client. Run it on the
 > low-value app, trigger the vulnerable component, and show `open("/data/user/0/com.othercompany.vault/...")`
 > succeeding in the log. It converts an argument about UID arithmetic into a screenshot.
@@ -3181,7 +3181,7 @@ run dumpsys package "$PKG" | sed -n '/Provider Resolver Table/,/Service Resolver
 
 The runnable copy is [`scripts/app-identity-dump.sh`](scripts/app-identity-dump.sh).
 
-> **⚠️ The `adb shell` quoting trap.** Two lines above deserve explanation, because almost everyone
+> **The `adb shell` quoting trap.** Two lines above deserve explanation, because almost everyone
 > writes them the natural way first and then quietly gets wrong results.
 >
 > **`adb shell` does not preserve your quoting.** It joins its arguments with spaces and hands the
@@ -3811,7 +3811,7 @@ the check reads a string the caller supplied — an Intent extra, or `getCalling
 null — the attacker does not even need that. The sound pattern is to take the UID from
 `Binder.getCallingUid()`, which the binder driver stamps from the caller's real credentials, resolve
 it with `getPackagesForUid()`, and verify the signing certificate with `hasSigningCertificate()`,
-which is rotation-aware. Note that `getPackagesForUid()` can return several names when the caller uses
+which is rotation-aware.`getPackagesForUid()` can return several names when the caller uses
 `sharedUserId`, so decide explicitly whether every member must be trusted.
 
 **Q: How would you find code that runs before an app's integrity checks?**
@@ -3996,7 +3996,7 @@ and write a remediation that acknowledges the data-migration cost.
 
 Flag format: `MAS{...}`.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Lab 01 maps the identity model. Lab 02 watches it being created. Lab 03 attacks it. If you only
 > have time for one, do Lab 03 — but do not read its spoiler section, which is deliberately placed
 > behind a warning banner at the bottom of the file.
@@ -4170,7 +4170,7 @@ Answer each in one sentence, out loud, without looking.
 Grouped, with a one-line annotation on each entry saying why you would open it. The full annotated set
 lives in [`references/README.md`](references/README.md); this is the working subset.
 
-> **⚠️ Warning**
+> **Warning**
 > AOSP *file paths* are stable and are cited freely. AOSP *line numbers* are not quoted anywhere in
 > this repository, because they change with every commit. Where an identifier is uncertain, the class
 > of issue is described instead of guessing a CVE number or a report URL.

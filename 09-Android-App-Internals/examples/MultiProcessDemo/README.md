@@ -24,11 +24,11 @@ weeks to this.
 
 **The pentester mistake:** the mirror image. Seeing three processes in `ps` and writing "the app
 runs multiple processes; the sandbox is fragmented" — or hooking a singleton in one process, seeing
-the hook not fire, and concluding the code path is dead when it is simply running in the other
+the hook not fire, and concluding the code path is dead when it is running in the other
 process. A Frida session attaches to **one PID**. `frida -U -f com.example.multiproc` gives you the
 main process and nothing else.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > One UID is one *tenant*. Processes are *rooms* that tenant rents. Every room has a key to the same
 > filing cabinet in the hallway, so anything written down is shared. Nothing memorised in one room is
 > known in another. `android:process` adds rooms. It does not add tenants.
@@ -83,7 +83,7 @@ single-module Android project, or paste them into a new "No Activity" project in
 </manifest>
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > The leading colon is not cosmetic. `android:process="remote"` (no colon) declares a **global**
 > process name. Combined with `sharedUserId` and a shared signing key, that is how two packages end
 > up executing in one ART heap — see [`../../labs/lab-03-ctf-the-shared-uid-heist.md`](../../labs/lab-03-ctf-the-shared-uid-heist.md).

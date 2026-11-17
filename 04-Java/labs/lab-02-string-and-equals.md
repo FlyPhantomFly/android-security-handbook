@@ -29,7 +29,7 @@ you will ever review.
   `strings` step and use the Python script, because the Sysinternals `strings.exe` is a different
   tool with different flags.
 
-> **📖 Definition**
+> **Definition**
 > **String pool** (also called the string intern pool) — a table the runtime maintains of unique
 > `String` objects. Every string *literal* that appears in compiled code is automatically placed in
 > this pool, and every occurrence of the same literal text anywhere in the program resolves to the
@@ -124,7 +124,7 @@ The `interned` row passes, which is the detail that makes this bug genuinely con
 Calling `.intern()` looks up the pool and returns the pooled instance, so identity comparison
 suddenly works again. If any library in the call path interns strings, the behaviour flips.
 
-> **⚠️ Warning**
+> **Warning**
 > The direction of the failure here is "correct password rejected", which is a usability bug rather
 > than a security bug. Reverse the condition and it becomes a security bug. Code of the form
 > `if (suppliedToken != expectedToken) { denyAccess(); }` fails **open** when both references happen
@@ -169,7 +169,7 @@ Note also that both methods contain `ldc #9`, the *same* constant pool entry. Th
 constant inlining you measured in Lab 01 is happening here too: neither method reads the `SECRET`
 field.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > This is your review heuristic, and it is more reliable than reading decompiled source. When you
 > find a comparison involving anything credential-shaped — a password, a token, a PIN, an HMAC, a
 > signature, a licence key — look for a call to `equals`, `equalsIgnoreCase`, `compareTo`,
@@ -287,7 +287,7 @@ Knowing that the string exists tells you there is a secret. Knowing which method
 `const-string` tells you what the secret is *for*, which is the difference between a low-severity
 "hardcoded string" note and a real finding.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > A DEX file has a single `string_ids` table shared by the entire application. Class names, method
 > names, field names, type descriptors, and every string literal all live in it. The table is sorted
 > by the string's UTF-16 code point order, which is why `dump-strings.py` output comes out in a
@@ -419,7 +419,7 @@ password from somewhere. Delete `main`, or move it to a separate test class, rec
 the string dump. Now nothing matches. That is the deliverable: the shipped artefact contains a
 PBKDF2 call and no credential.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Ask of every secret: "if I hand this APK to a stranger, what do they learn?" A hardcoded string
 > teaches them the secret. A salted PBKDF2 hash teaches them only that a password exists and costs
 > them 120 000 iterations per guess. The comparison operator is a correctness question; where the

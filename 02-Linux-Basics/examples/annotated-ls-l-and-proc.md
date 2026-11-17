@@ -191,7 +191,7 @@ State:	S (sleeping)           ← S normal. R running. D stuck in I/O. Z zombie.
 Tgid:	2145                   ← thread group id — the number userspace calls "the pid"
 Pid:	2145                   ← kernel task id. For a thread this differs from Tgid.
 PPid:	483                    ← the parent. This is zygote64. Anything else is unusual.
-TracerPid:	0                  ← ★ THE anti-debugging field. Non-zero names the tracer.
+TracerPid:	0                  ← THE anti-debugging field. Non-zero names the tracer.
 Uid:	10231	10231	10231	10231
                                ← real, effective, saved-set, FILESYSTEM.
                                  File permission checks use the fourth one.
@@ -199,7 +199,7 @@ Uid:	10231	10231	10231	10231
 Gid:	10231	10231	10231	10231
 FDSize:	256                    ← allocated slots, not the number open. A big value hints
                                  at a descriptor leak.
-Groups:	3003 9997 20231 50231  ← ★ 3003 = AID_INET. The INTERNET permission IS this group.
+Groups:	3003 9997 20231 50231  ← 3003 = AID_INET. The INTERNET permission IS this group.
                                  Remove it and the app cannot open a socket, with no
                                  framework involvement at all.
 Threads:	42                 ← an idle Android app still has dozens
@@ -210,10 +210,10 @@ SigCgt:	2000000e400084f8       ← hex bitmask of signals with handlers installe
                                  reporter, a packer, or anti-tamper code.
 CapInh:	0000000000000000
 CapPrm:	0000000000000000
-CapEff:	0000000000000000       ← ★ all zeros: this process holds NO capabilities.
+CapEff:	0000000000000000       ← all zeros: this process holds NO capabilities.
 CapBnd:	0000000000000000         Correct for an app. Anything else is privileged.
 NoNewPrivs:	1                  ← it can never gain privileges through a setuid binary
-Seccomp:	2                  ← ★ 2 = a syscall filter is installed. Normal for an app.
+Seccomp:	2                  ← 2 = a syscall filter is installed. Normal for an app.
                                  A blocked syscall raises SIGSYS (31), not EPERM.
 ```
 

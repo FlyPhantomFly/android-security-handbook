@@ -36,7 +36,7 @@ By the end of this lab you will have:
 - Repeated all of it on a real Android app over `adb shell`.
 - Demonstrated ASLR experimentally by comparing maps across two runs of the same program.
 
-> **📖 Definition**
+> **Definition**
 > A **process** is a running instance of a program, consisting of an *address space* (its private
 > mapping of virtual addresses to physical memory), one or more *threads of execution*, and a set of
 > kernel-held resources — open file descriptors, signal handlers, a working directory, credentials.
@@ -55,7 +55,7 @@ By the end of this lab you will have:
 | A debuggable app, or a rooted/emulator device | You cannot read another UID's `/proc` entries without privilege | See Setup |
 | Lab 01 completed | You will be reading hex addresses constantly | — |
 
-> **⚠️ Warning**
+> **Warning**
 > Do this only against devices and apps you own or are explicitly authorised to test. Reading
 > `/proc/<pid>/maps` of a third-party app on a rooted device is a legitimate research activity on
 > your own hardware and a serious problem on someone else's.
@@ -157,7 +157,7 @@ APP=$(pidof com.example.target); echo "app = $APP"
 cat /proc/$APP/status | grep -E '^(Name|State|Tgid|Pid|PPid|Uid|Gid|Threads)'
 ```
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Zygote is a process that has already loaded and initialised the entire Android framework — every
 > class in `framework.jar`, the JIT caches, the graphics libraries — and then goes to sleep waiting
 > on a socket. When you launch an app, the system does not start a fresh runtime; it asks zygote to
@@ -214,7 +214,7 @@ gdb -p 12345 -batch -ex "shell grep TracerPid /proc/12345/status" -ex detach
 
 You will see `TracerPid` become gdb's PID while gdb is attached, then return to `0`.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > A very large fraction of Android anti-debugging code is one loop that opens `/proc/self/status`,
 > scans for `TracerPid:`, and calls `exit()` or corrupts state if the value is non-zero. It is often
 > implemented in a native library so that it cannot be patched from Java. Knowing that the check
@@ -280,10 +280,10 @@ arithmetic mistake.
 | `---p` | Guard pages and reservations | No access at all; touching one raises `SIGSEGV` on purpose |
 | `rwxp` | Writable **and** executable — JIT code caches, Frida's trampoline pages, some packers | Rare and suspicious; see below |
 
-> **⚠️ Warning**
+> **Warning**
 > The separation of "writable" from "executable" is a hardware-enforced security control, delivered
 > by the NX/XN bit in the page table entry. When it holds, an attacker who corrupts a buffer cannot
-> simply write shellcode into that buffer and jump to it, because the page is `rw-` and the CPU
+> write shellcode into that buffer and jump to it, because the page is `rw-` and the CPU
 > refuses to fetch instructions from it. This is why real-world native exploitation moved to
 > return-oriented programming, and why any `rwx` region in a process is a genuine finding worth
 > writing up.
@@ -402,7 +402,7 @@ ls -l /proc/$SLEEP_PID/fd
 
 Each entry is a symlink named after the descriptor number, pointing at what the descriptor refers to.
 
-> **📖 Definition**
+> **Definition**
 > A **file descriptor** is a small non-negative integer that indexes into a per-process table of open
 > resources held by the kernel. It is not a pointer and it means nothing outside its process. By
 > convention descriptor 0 is standard input, 1 is standard output, and 2 is standard error. Anything
@@ -488,7 +488,7 @@ The addresses differ on every run.
 cat /proc/sys/kernel/randomize_va_space
 ```
 
-> **📖 Definition**
+> **Definition**
 > **ASLR** (Address Space Layout Randomisation) means the kernel and the dynamic linker place the
 > stack, the heap, the shared libraries and (for a PIE binary) the executable itself at addresses
 > chosen randomly at load time. An attacker who knows exactly what code lives at a fixed address can

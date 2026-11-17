@@ -27,11 +27,11 @@ Runnable material for [README.md §9](../README.md#9-examples).
 
 ---
 
-> **⚠️** `03-binder-service-probe/` calls services on a device. Only run it against a device you are
+> **** `03-binder-service-probe/` calls services on a device. Only run it against a device you are
 > authorised to test. Calling an unknown vendor service with an arbitrary transaction code can crash
 > `system_server` and reboot the device — which is itself a (denial-of-service) finding, but make sure
 > that is a result you intended and are permitted to produce.
 
-> **⚠️** `04-binder-trace.patch` produces a **research instrument**, not evidence. Every finding
+> **** `04-binder-trace.patch` produces a **research instrument**, not evidence. Every finding
 > demonstrated on a patched image must be reproduced on an unmodified one before it goes in a report,
 > and the report must say which image each piece of evidence came from.

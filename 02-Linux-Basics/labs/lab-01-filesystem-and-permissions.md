@@ -39,7 +39,7 @@ By the end you will have:
   installed app, its private data directory, and the world-writable scratch space you will use for
   the rest of this repository.
 
-> **📖 Definition — Filesystem**
+> **Definition — Filesystem**
 > The organisation the kernel imposes on stored bytes so that they can be named, found, protected and
 > changed: a tree of *directories* containing *files*, where every file has an owner, a group, a set
 > of permission bits and a type. On Linux there is exactly one tree, rooted at `/`, and storage
@@ -84,7 +84,7 @@ Part F will be restricted, but everything in Parts A–E works.
 
 ### Safety
 
-> **⚠️ Warning**
+> **Warning**
 > Everything in this lab is read-only or confined to a scratch directory you create yourself. Two
 > commands can destroy a system and appear in no step here: `rm -rf /` and `chmod -R 777 /`. If you
 > find yourself typing either, stop. Every write in this lab happens inside `~/lab01` on the host or
@@ -191,11 +191,11 @@ top-level directories of a Linux distribution.
 **A2. Absolute versus relative paths.** This distinction causes more beginner confusion than any
 other single thing.
 
-> **📖 Definition — Absolute path**
+> **Definition — Absolute path**
 > A path that starts with `/`. It is interpreted from the root of the tree and means the same thing
 > no matter where you are standing. `/home/harsh/lab01/notes.txt`.
 
-> **📖 Definition — Relative path**
+> **Definition — Relative path**
 > A path that does **not** start with `/`. It is interpreted starting from your current working
 > directory. `lab01/notes.txt` means something different depending on where you are.
 
@@ -249,7 +249,7 @@ being surprised by them.
 | `/sys` | Kernel device model | `/sys`, identical |
 | `/mnt`, `/media` | Mount points for removable storage | `/storage`, `/mnt` |
 
-> **🧠 Mental Model**
+> **Mental Model**
 > The desktop layout follows the *Filesystem Hierarchy Standard*, which assumes one machine shared by
 > several humans. Android's layout assumes one human sharing a machine with several hundred mutually
 > distrusting applications. Read the two tables above side by side and the shape of Android's threat
@@ -405,7 +405,7 @@ ls -lai
 ls -lt /etc | head
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > On Android, `ls -laZ` is the form you want. The `Z` column shows the SELinux label, and a file whose
 > classic permissions look fine can still be unreachable — or reachable — because of it. A file
 > labelled `u:object_r:app_data_file:s0:c231,c256` carries per-app MLS categories that stop another
@@ -676,7 +676,7 @@ stat -c '%a %n' defaultfile defaultdir
 You did not ask for `644`. The C library asked for `0666` for the file and `0777` for the directory,
 and the kernel removed every bit set in your umask of `0022` — that is, write for group and other.
 
-> **📖 Definition — umask**
+> **Definition — umask**
 > A per-process twelve-bit mask of permission bits to **remove** from newly created files. The kernel
 > applies `requested_mode & ~umask`. It can only take permissions away, never add them. It is
 > inherited across `fork()` and `execve()`.
@@ -991,7 +991,7 @@ Three facts fall out. `/system` is `ro` — you cannot write it regardless of fi
 and important hardening measure. `/storage/emulated` is `noexec` — a binary pushed to `/sdcard`
 cannot be executed no matter what you `chmod` it to.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > This is why `/data/local/tmp` is the standard place to push tools. It is on `/data` (so writable by
 > `shell`), it is not `noexec`, and it is mode `0771` owned by `shell:shell` with the sticky bit on
 > some builds. Pushing to `/sdcard` and wondering why your binary will not run is a rite of passage
@@ -1085,7 +1085,7 @@ ls -d /data/user_de/*/com.example.app 2>/dev/null
 `user` is Credential-Encrypted, readable only after unlock. Anything sensitive belongs in CE; a
 session token found in `user_de` is a real finding.
 
-> **⚠️ Warning**
+> **Warning**
 > When you see UID 1010231 in `packages.list` and think "that is a huge number, it must be
 > privileged", divide by 100000 for the user ID and take the remainder for the app ID. It is an
 > ordinary app in a work profile.

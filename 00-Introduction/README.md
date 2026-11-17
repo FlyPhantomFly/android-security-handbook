@@ -12,7 +12,7 @@ Android version, a Version Matrix says so.
 
 ---
 
-> **📌 "I have two hours. Where do I start?"**
+> **"I have two hours. Where do I start?"**
 > Go straight to **[§3.9 — Your first sixty minutes](#39-your-first-sixty-minutes)**. It takes an
 > application apart end to end — connect to a device, find an app, pull the APK, read its manifest,
 > read its Java, find the native code — explaining every command as it goes, and it is the shortest
@@ -80,7 +80,7 @@ back for it?
 An Android application is that building. The developers built something that works. You are looking
 for the loading bay door.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > A developer asks *"does it work?"* An attacker asks *"what else does it do?"* Every security bug
 > you will ever find lives in the gap between those two questions. The developer tested the path
 > they intended. You test every path that exists.
@@ -104,7 +104,7 @@ Android isolates applications, how a `.dex` file is laid out, and what happens w
 the operating system. That shared foundation is what chapters 01 through 33 of this repository build.
 Only afterwards do the roles diverge into their specialisms.
 
-> **📖 Definition — APK**
+> **Definition — APK**
 > An **APK** (Android Package Kit) is the file format Android uses to distribute and install an
 > application. Despite the extension, it is an ordinary ZIP archive with a mandated internal layout:
 > compiled code in `classes.dex`, a binary-encoded `AndroidManifest.xml`, compiled resources in
@@ -140,10 +140,10 @@ one fact: it must keep those parties apart. Chapters [20](../20-Security-Archite
 through [23](../23-Permissions/README.md) are about the mechanisms Android uses to do it, and every
 one of them is a boundary you will learn to probe.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > When a developer says "but the attacker would need a rooted phone for that," they have usually
 > misunderstood the threat model. The relevant question is not "would a normal user root their
-> phone." It is "would a *motivated attacker* root a phone in order to extract the algorithm that
+> phone." It is "would a *motivated attacker* root a phone to extract the algorithm that
 > generates transaction signatures for every user of this app." The answer is always yes, and it
 > costs them one phone.
 
@@ -173,7 +173,7 @@ is the order in which the underlying machinery must be understood, not the order
 
 ### 1.5 What this chapter gives you
 
-By the end of this chapter you will have done four things.
+This chapter does four things.
 
 1. Understood what the job is at each level of seniority, so you can aim at a specific rung rather
    than "getting into mobile security."
@@ -426,7 +426,7 @@ cannot reproduce and does not know how to fix has produced zero security value. 
 the person who can get traffic flowing through a proxy on a hardened app in twenty minutes instead of
 two days.
 
-> **⚠️ Warning**
+> **Warning**
 > If your entire preparation is "learn to find bugs," you will be slower than a competent peer who also
 > knows how to write, how to estimate severity honestly, and how to fix a bootlooped test device. Those
 > are not soft skills bolted on to the real work. They *are* a large part of the real work.
@@ -508,7 +508,7 @@ component, and a set of stakeholders who disagree with each other.
 | Mentoring | Reviews juniors' findings and raises the standard of the team's output |
 | Communication | Can defend a severity rating to an engineering director who wants it downgraded |
 
-> **🧠 Mental Model**
+> **Mental Model**
 > The junior-to-senior transition is the transition from *"I can find bugs of the kinds I have been
 > taught"* to *"I can determine what kinds of bugs this specific system is capable of having."* The
 > second requires an internal model of the platform. That model is what chapters 06 through 33 build.
@@ -543,7 +543,7 @@ component, and a set of stakeholders who disagree with each other.
 | Deep specialisation plus breadth | World-class in something specific (say, ART internals or Keymaster), competent across everything adjacent |
 | Force multiplication | Value is measured by what other people are able to do because of them |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Do not read this ladder as a timetable. The years are the median, not the requirement. People move
 > faster with focused, deliberate practice on things they cannot yet do, and slower when they spend
 > five years doing the same assessment repeatedly. Time served is not the variable. Range of problems
@@ -623,7 +623,7 @@ bypassable with Frida" as a High. A senior reports it accurately: if the server 
 Informational note about client-side enforcement; if the server does not, it is a High-severity
 broken access control finding in the API, and the mobile bypass is merely how you demonstrated it.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > **Anything the client decides, the client's owner decides.** Write it on a sticky note. Client-side
 > checks are UX, not security. The only security boundary is one where the enforcement happens
 > somewhere the attacker does not control — a server, or a hardware-backed key inside the TEE.
@@ -708,7 +708,7 @@ attached.
 You are also not forbidden from playing. Install the tools in this chapter, run them on a deliberately
 vulnerable app, enjoy it. Just do not mistake that for the curriculum.
 
-> **⚠️ Warning**
+> **Warning**
 > The strongest predictor of a stalled mobile security career is a person whose skill is a collection
 > of scripts. Scripts rot. Android ships a new version every year, apps ship a new build every
 > fortnight, and every published bypass is eventually detected and countered. Models do not rot: a
@@ -744,7 +744,7 @@ Add a physical device when you hit the emulator's limits, which you will: an app
 `arm64-v8a` native libraries, an app that checks Play Integrity, anything involving the hardware
 KeyStore or biometrics, anything involving Bluetooth, NFC, or the camera.
 
-> **📖 Definition — AVD**
+> **Definition — AVD**
 > An **AVD** (Android Virtual Device) is a configuration describing a virtual phone: system image,
 > screen size, RAM, storage, and hardware features. The Android Emulator runs an AVD. An AVD using a
 > **Google APIs** image (not **Google Play**) allows `adb root`, which is what you want; a **Google
@@ -772,7 +772,7 @@ The reasons are practical rather than brand loyalty.
 | Samsung | Unlocking trips the Knox e-fuse permanently, which irreversibly disables Samsung Pay, Secure Folder and Knox-dependent features. Only buy a Samsung as a *target* if you specifically need to test Knox behaviour, and expect the fuse to blow. |
 | Any carrier-locked device | Avoid. Carrier-locked bootloaders often cannot be unlocked at all. |
 
-> **⚠️ Warning**
+> **Warning**
 > Unlocking the bootloader **wipes the device completely** and, on many devices, sets a permanent flag.
 > On Samsung devices it burns the Knox e-fuse and that is irreversible: features that depend on Knox
 > will never work again on that unit. Never do this to your daily phone. Buy a dedicated test device.
@@ -800,9 +800,9 @@ verification command; if verification fails, do not continue until it passes.
 Lab [lab-01-build-your-lab.md](labs/lab-01-build-your-lab.md) walks through the same material as a
 guided exercise with a troubleshooting table.
 
-> **📌 If you have never used a terminal, read this first**
+> **If you have never used a terminal, read this first**
 > This section is the first place in the repository that assumes you can open a shell and type into
-> it. If that sentence is not obviously true of you, read
+> it. If that sentence does not describe you, read
 > [02 — Linux Basics §1.3 "What a shell is, before any commands"](../02-Linux-Basics/README.md#13-what-a-shell-is-before-any-commands)
 > and [§3.1 "The shell: what it actually is"](../02-Linux-Basics/README.md#31-the-shell-what-it-actually-is)
 > **now**, then come back here. Ten minutes there saves an hour of confusion here. Everything else in
@@ -815,28 +815,28 @@ covered properly in
 [02 — Linux Basics §3.19 Environment variables](../02-Linux-Basics/README.md#319-environment-variables-ld_preload-and-ld_library_path);
 these one-liners are enough to get through §3.6.
 
-> **📖 Definition — `PATH`**
+> **Definition — `PATH`**
 > `PATH` is an **environment variable**: a `NAME=value` string your shell hands to every program it
 > starts. Its value is a list of directories. When you type `adb`, the shell does not search your
 > whole disk — it looks in each `PATH` directory in order and runs the first `adb` it finds. "Command
 > not found" almost always means *the program is installed but its directory is not in `PATH`*, not
 > that the program is missing. Print yours with `echo $PATH` (`$env:Path` in PowerShell).
 
-> **📖 Definition — `export`**
+> **Definition — `export`**
 > `export NAME=value` sets an environment variable **and** marks it to be inherited by programs the
 > shell starts. Without `export`, the variable exists only inside that one shell and the tools you
 > launch never see it. `export PATH="/some/dir:$PATH"` means "put `/some/dir` at the front of the
 > existing `PATH`" — `$PATH` on the right is the old value, which is why the rest of your commands
 > keep working.
 
-> **📖 Definition — `~/.bashrc` (and `~/.zshrc`)**
+> **Definition — `~/.bashrc` (and `~/.zshrc`)**
 > `~` is your home directory. `~/.bashrc` is a plain text file of shell commands that Bash runs
 > automatically every time it starts an interactive shell; zsh reads `~/.zshrc` instead. Appending an
 > `export` line to it (`echo '...' >> ~/.bashrc`) is how a setting **survives closing the terminal**.
 > Run `echo $SHELL` to see which one you have. On macOS the default is zsh, so use `~/.zshrc`
 > wherever the commands below say `~/.bashrc`.
 
-> **📖 Definition — `source`**
+> **Definition — `source`**
 > `source ~/.bashrc` re-runs that file in your **current** shell, applying the lines you just
 > appended without opening a new terminal. Running `bash ~/.bashrc` instead would start a *child*
 > shell, set the variables inside it, and then exit — taking them with it. That is exactly the
@@ -867,7 +867,7 @@ Every install step gives several alternatives that look nothing like each other.
 operating system has a different **package manager**, and you use exactly one of them — whichever
 matches your machine. Find your row, ignore the others.
 
-> **📖 Definition — package manager (desktop)**
+> **Definition — package manager (desktop)**
 > A **package manager** is a program that installs other programs for you. Instead of hunting a
 > website, downloading an installer, and clicking Next, you name the software and the tool fetches a
 > signed archive from a curated repository, verifies its signature, installs any other software it
@@ -890,7 +890,7 @@ If none of the three Windows/macOS tools is present, install it once from the ve
 skip the package-manager option entirely and use the direct-download instructions where they are
 given.
 
-> **📖 Definition — `sudo`**
+> **Definition — `sudo`**
 > On Linux and macOS, installing software system-wide requires administrator privilege, which your
 > normal login does **not** have. `sudo` ("substitute user do") runs a single command as `root`, the
 > all-powerful administrator account, after asking for **your own** password. It is the reason the
@@ -900,7 +900,7 @@ given.
 > what `root` actually is, and chapter [02 §3.7](../02-Linux-Basics/README.md#37-permission-bits-octal-notation-and-the-special-bits)
 > explains the mechanism `sudo` uses.
 
-> **⚠️ Warning — two unrelated things are called "package manager"**
+> **Warning — two unrelated things are called "package manager"**
 > The tool described above installs software **on your computer**. Later in this chapter
 > ([§3.9](#39-your-first-sixty-minutes)) you will meet `pm`, Android's *own* "package manager"
 > command, which lists and installs apps **on the device**. They share a name and nothing else:
@@ -1087,7 +1087,7 @@ adb root            # should print "restarting adbd as root" on a google_apis im
 adb shell id        # should now show uid=0(root)
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > If `adb root` returns `adbd cannot run as root in production builds`, you created the AVD with a
 > **Google Play** image. Delete it and recreate with `google_apis`. This is the single most common
 > emulator setup mistake.
@@ -1126,7 +1126,7 @@ python -m venv $HOME\venvs\android
 python -m pip install --upgrade pip
 ```
 
-> **📖 Definition — virtual environment**
+> **Definition — virtual environment**
 > A Python **virtual environment** is a self-contained directory holding its own copy of the Python
 > interpreter's package directory. Packages installed while it is active are visible only inside it.
 > This prevents one project's dependency versions from breaking another's. You must "activate" it in
@@ -1176,7 +1176,7 @@ frida-ps -U
 | `Failed to spawn: unable to find process with name` | App not installed, or wrong package name | `adb shell pm list packages \| grep <fragment>` |
 | Server dies immediately | Wrong ABI binary | Re-check `ro.product.cpu.abi` and download the matching build |
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > `frida-server` listens on TCP port 27042 on the device. `frida -U` does not connect to that port
 > directly over the network; it asks `adb` to forward a local port to it, then speaks Frida's own
 > protocol across that forward. When Frida attaches to an app it uses `ptrace` to stop the process,
@@ -1218,7 +1218,7 @@ jadx-gui --help        # the graphical version; the one you will actually live i
 
 apktool needs Java and is distributed as a JAR plus a wrapper script.
 
-> **⚠️ Warning**
+> **Warning**
 > apktool ships with **no** operating system and is **not** part of the Android SDK — if you skip this
 > step, [§3.9](#39-your-first-sixty-minutes) will stop at `apktool: command not found` when it decodes
 > the manifest. There is a substitute (`aapt2 dump xmltree`, noted there), but installing apktool now
@@ -1309,7 +1309,7 @@ cd Mobile-Security-Framework-MobSF
 ./run.sh            # serves on 127.0.0.1:8000
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > MobSF is a triage tool, not an assessment. It produces findings with a meaningful false-positive
 > rate: it will flag every `Cipher.getInstance("AES")` regardless of context, report every exported
 > component as an issue regardless of whether it is protected by a signature permission, and miss
@@ -1359,7 +1359,7 @@ pass/fail table with install hints for anything missing.
 
 #### Why root at all
 
-> **📖 Definition — root**
+> **Definition — root**
 > **Root** is the Unix superuser, UID 0. A root process bypasses all discretionary access control
 > (file permissions), which on Android means it can read and write any app's private data directory,
 > attach to any process, and modify system files. It does **not** automatically bypass SELinux, which
@@ -1385,7 +1385,7 @@ permanently. That approach is dead for two reasons: **dm-verity** cryptographica
 system partition at boot and refuses to boot if it was modified, and **SafetyNet/Play Integrity**
 attestation notices the modification.
 
-> **📖 Definition — systemless root**
+> **Definition — systemless root**
 > **Systemless root** means gaining superuser capability without modifying the read-only system
 > partitions. Magisk achieves this by patching the **boot image** (which contains the kernel and the
 > `ramdisk` holding `init`) so that its own `init` runs first, sets up an **overlay filesystem** that
@@ -1429,7 +1429,7 @@ the device, using the stock image you supply, so the patch matches your exact bu
 
 #### The procedure, step by step
 
-> **⚠️ Warning**
+> **Warning**
 > Step 2 **erases everything on the device**, including internal storage. It is not reversible without
 > restoring from a backup you made beforehand. Do this only on a device you have designated as a test
 > device. Flashing a boot image from the wrong build will bootloop the device; recovery means flashing
@@ -1485,7 +1485,7 @@ adb shell "su -c id"
 | **DenyList** | Unmounts Magisk's overlays in chosen app processes so they cannot see them | Testing an app that refuses to run on rooted devices — as a *baseline*, not as your finding |
 | **Modules** | Systemless overlay packages | Installing a system CA certificate, custom hosts files, LSPosed |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > DenyList and root-hiding modules are an arms race you should participate in but not depend on. If
 > a client's app detects root, that detection is a *control you are assessing*, not an obstacle to
 > route around silently. Document what the detection does, document how you defeated it, and rate the
@@ -1513,7 +1513,7 @@ certificate authorities. Burp performs a man-in-the-middle: it terminates the ap
 using a certificate that **Burp generated and signed with Burp's own CA**, then makes its own
 connection onwards. For the app to accept that, the app must trust Burp's CA.
 
-> **📖 Definition — certificate authority (CA)**
+> **Definition — certificate authority (CA)**
 > A **certificate authority** is an entity whose signature on a certificate is taken as proof that the
 > certificate legitimately belongs to the named server. A device ships with a **trust store**: a set of
 > CA certificates it accepts. Android has two: the **system** store at
@@ -1587,7 +1587,7 @@ For a persistent solution on a Magisk device, a **module** that supplies the cer
 Magisk's overlay is cleaner than a manual mount, because Magisk re-applies it at every boot. Chapter
 [62](../62-Magisk/README.md) covers writing one.
 
-> **⚠️ Warning**
+> **Warning**
 > A system CA that you can intercept with is, by definition, a device-wide man-in-the-middle
 > capability. Never install your Burp CA on a device you use for personal email, banking, or anything
 > else. Test devices are test devices.
@@ -1642,7 +1642,7 @@ $ANDROID_HOME/build-tools/35.0.1/apksigner sign \
 adb install -r target_signed.apk
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > Re-signing changes the APK's signing certificate. Any check the app performs on its own signature —
 > and any server that pins the app's signing certificate, and Google Play licensing — will now fail.
 > Chapter [38](../38-TamperDetection/README.md) is about exactly this.
@@ -1780,7 +1780,7 @@ adb shell pm list packages -3
 adb shell pm list packages | grep -i calculator
 ```
 
-> **📖 Definition — package name**
+> **Definition — package name**
 > A **package name** such as `com.example.calculator` is an application's unique identity on the
 > device and in the Play Store. It is declared in the manifest and, once published, effectively
 > permanent. Two apps cannot share a package name. It is *not* the display name the user sees.
@@ -1868,8 +1868,7 @@ mkdir extracted && cd extracted && unzip -q ../target.zip
 find . -maxdepth 2 -type d | sort
 ```
 
-Here is what every one of those files is. This table is the most important thing in this chapter for a
-complete beginner.
+Here is what every one of those files is. For a complete beginner, this table is the heart of the chapter.
 
 | Path | What it is | Why an attacker cares |
 |---|---|---|
@@ -1884,7 +1883,7 @@ complete beginner.
 | `META-INF/CERT.RSA` | The signing certificate and the signature over `CERT.SF`. | Contains the developer's public certificate — you can extract and inspect it. |
 | `kotlin/`, `DebugProbesKt.bin` | Kotlin metadata | Tells you the app is written in Kotlin, which affects what decompiled output looks like. |
 
-> **📖 Definition — DEX**
+> **Definition — DEX**
 > **DEX** (Dalvik Executable) is Android's compiled-code format, analogous to a `.class` file in
 > desktop Java but register-based rather than stack-based, and packing all classes into one file.
 > Chapter [12](../12-DEX-Internals/README.md) reads it byte by byte.
@@ -1906,7 +1905,7 @@ apktool d target.apk -o decoded
 cat decoded/AndroidManifest.xml
 ```
 
-> **⚠️ Warning — `apktool: command not found`**
+> **Warning — `apktool: command not found`**
 > `apktool` is **not installed by default on any operating system**, and it is not part of the Android
 > SDK. If you skipped [§3.6.7](#367-apktool), install it now, or use the `aapt2` command immediately
 > below — `aapt2` ships with the SDK build-tools you already installed and reads the same binary
@@ -1957,7 +1956,7 @@ grep -rn "https\?://" jadx-out/sources/ | head -40
 grep -rniE "(password|secret|api[_-]?key|token|bearer)" jadx-out/sources/ | head -40
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Grepping for secrets finds real findings surprisingly often, but it also finds noise: variable names
 > called `token` that hold nothing sensitive, library constants, and test fixtures. A finding is not
 > "the string `api_key` appears." A finding is "this specific value is a live credential for this
@@ -1986,7 +1985,7 @@ and function names even in a stripped binary.
 nm -D --defined-only native/libnative.so 2>/dev/null | grep -i "Java_" | head -20
 ```
 
-> **⚠️ Warning — `nm` is the one tool this section does not tell you to install**
+> **Warning — `nm` is the one tool this section does not tell you to install**
 > `nm` is part of the GNU binutils. It is present by default on most Linux distributions, and on macOS
 > with the Xcode command-line tools — but it is **not present in Git Bash on Windows**, where `file`
 > and `strings` *are*. So on Windows this walk-through works right up to this final command and then
@@ -2023,7 +2022,7 @@ This chapter is orientation rather than a specific Android mechanism, so instead
 call to the kernel, this section teaches you **how to navigate AOSP**, which is a skill you will use
 in every subsequent chapter.
 
-> **📖 Definition — AOSP**
+> **Definition — AOSP**
 > **AOSP** (Android Open Source Project) is the publicly available source code for the Android
 > platform, published by Google. It contains the kernel configuration, the native libraries, the ART
 > runtime, the Java framework, the system services, and the default applications. It does **not**
@@ -2090,7 +2089,7 @@ shape.** Once you have traced one, you can trace any of them. Chapter [25](../25
 makes the Binder hop explicit, and chapter [26](../26-Intent/README.md) follows this exact path in
 full detail.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > The single most valuable habit in this trace is finding the **enforcement point** — the line in
 > `system_server` that calls `enforceCallingPermission` or `checkCallingPermission`. That line is
 > where the security decision genuinely happens, and it is on the far side of a process boundary,
@@ -2108,7 +2107,7 @@ Everything in this repository describes techniques that are lawful when applied 
 authorised to test and criminal when applied to systems you are not. The technique does not change.
 Only the authorisation does.
 
-> **⚠️ Warning**
+> **Warning**
 > Curiosity is not a legal defence. "I did not cause any damage" is not a legal defence. "The bug was
 > obvious" is not a legal defence. "I was going to report it" is not a legal defence, and in several
 > jurisdictions people have been prosecuted after reporting in good faith. Get authorisation in
@@ -2177,7 +2176,7 @@ The variation between jurisdictions is real but the operative question is identi
 
 #### Bug bounty scope as authorisation
 
-> **📖 Definition — scope**
+> **Definition — scope**
 > A bug bounty or vulnerability disclosure programme's **scope** document lists the assets you are
 > permitted to test, the techniques you are permitted to use, and the things you must not do. It is
 > the programme owner's grant of authorisation. Anything outside it is unauthorised.
@@ -2196,7 +2195,7 @@ Read a scope document as a legal instrument, because that is what it is. Specifi
 | Must you use a test account? | Testing against real users' data is almost never authorised, and may breach data protection law independently |
 | What are the disclosure terms? | Publishing before the agreed window can void safe harbour |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Screenshot the scope page, with its date, before you begin. Programmes edit their scope. If a
 > dispute arises six months later about whether an asset was in scope when you tested it, the archived
 > page is your evidence. Keep it with your engagement notes.
@@ -2220,14 +2219,14 @@ a researcher into a defendant.
 | **Malware analyst** | Uses the same environment in reverse: an isolated device, network capture, and instrumentation to characterise a hostile sample. |
 | **Forensic analyst** | Uses `adb`, filesystem knowledge and APK structure to reconstruct what an app did and when, usually on an image rather than a live device. |
 
-> **⚠️ Warning**
+> **Warning**
 > If you analyse malware, do it on a dedicated device with no personal accounts, ideally with no SIM,
 > on an isolated network. Malware samples are live. Chapter [69](../69-MalwareAnalysis/README.md)
 > covers isolation properly.
 
 ### 5.3 OWASP MASVS and MASTG orientation
 
-> **📖 Definition — MASVS and MASTG**
+> **Definition — MASVS and MASTG**
 > The **Mobile Application Security Verification Standard (MASVS)** is OWASP's list of security
 > requirements a mobile app should meet, organised into control groups. The **Mobile Application
 > Security Testing Guide (MASTG)** is the companion document describing how to test each requirement.
@@ -2270,7 +2269,7 @@ nowhere.
 | **No repeatable environment** | Every session begins by fixing the lab | Script the setup. Snapshot the emulator |
 | **Never reading source** | Guesses at framework behaviour | Open AOSP. The answer is written down |
 
-> **🧠 Mental Model**
+> **Mental Model**
 > The self-taught learner's real enemy is not difficulty, it is **the absence of a forcing function**.
 > A university course forces you to complete assignments; a job forces you to deliver. Alone, nothing
 > forces you to finish anything. Manufacture the forcing function deliberately: publish your lab
@@ -2496,7 +2495,7 @@ adb logcat *:E                                  # errors only
 adb logcat | grep -iE "token|password|key"      # a genuinely productive grep
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `adb logcat | grep -i token` finds real, reportable findings with startling regularity. Developers
 > add debug logging during development, forget to remove it, and ship it. Before Android 4.1 any app
 > with `READ_LOGS` could read the whole system log; that is now restricted to privileged apps, which
@@ -2580,7 +2579,7 @@ If you see the package name printed and log lines appearing, your entire toolcha
 you successfully replaced a method implementation in a live process. Everything else in this
 repository builds on those four facts.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > `Java.perform` does not "run Java." It attaches the current native thread to the ART virtual machine
 > via JNI's `AttachCurrentThread`, obtains a `JNIEnv`, and executes your callback with that
 > environment available. `Java.use("android.util.Log")` performs a class lookup through the app's
@@ -2956,7 +2955,7 @@ what a senior consultant actually produces before touching a device.
 | Device inventory and disposal plan | Test devices hold client data | Asset register |
 | Retest terms | When and how fixes are verified | In the SOW |
 
-> **⚠️ Warning**
+> **Warning**
 > The most common serious mistake made by capable testers is testing **the right technique against the
 > wrong asset**: a staging domain that turns out to be shared with another customer, a third-party
 > payment API reached through the client's app, or a second app with a similar package name. Confirm
@@ -3067,7 +3066,7 @@ report.
 I would start by establishing an inventory and a risk tier, because forty apps do not deserve equal
 attention: identify which handle payments, personal data, or authentication, and which are marketing
 brochures. Then I would fix the systemic problems before the individual ones, because at forty apps
-the leverage is in the pipeline: enforce a baseline in CI (no cleartext traffic, no debuggable
+the control point is the pipeline: enforce a baseline in CI (no cleartext traffic, no debuggable
 release builds, no `allowBackup` on data-handling apps, dependency scanning, secrets scanning), and
 provide a hardened shared networking and storage library so that individual teams are not each
 implementing TLS validation. Only then would I schedule deep manual assessments, starting with the
@@ -3117,7 +3116,7 @@ By making the threat model explicit and then being honest about which threats ar
 has a cost and an adversary class it defeats. Root detection defeats a script-kiddie and a mass fraud
 operation running on emulator farms; it does not defeat a targeted attacker, and no amount of
 investment will make it do so. The bar is set by naming the adversary you intend to stop, stating what
-you are conceding to the adversary above that, and ensuring that what you concede does not include
+you are conceding to the adversary above that, and checking that what you concede does not include
 anything that would be catastrophic. The failure I see most often is not choosing too low a bar; it is
 never naming the adversary at all, so nobody can tell whether a control is sufficient, and every
 security discussion becomes an argument about vibes.
@@ -3131,7 +3130,7 @@ security discussion becomes an argument about vibes.
 | Mistake | Consequence | Correct approach |
 |---|---|---|
 | Enforcing authorisation on the client | Trivially bypassed with Frida or by editing stored state | Enforce on the server; the client's decision is a UX hint |
-| Shipping `android:debuggable="true"` | Anyone can attach a debugger and `run-as` the app | Ensure release builds never set it; check in CI |
+| Shipping `android:debuggable="true"` | Anyone can attach a debugger and `run-as` the app | Release builds never set it; check in CI |
 | Leaving `android:allowBackup="true"` on a data-handling app | App data extractable via backup on older versions | Set to `false`, or use `dataExtractionRules` to exclude sensitive files |
 | Hardcoding API keys and secrets in code or resources | Extracted in minutes by anyone with the APK | Keep secrets server-side; if a key must ship, scope it to the minimum and monitor its use |
 | Trusting user-installed CAs to make development easier | Traffic interceptable in production | Use a separate debug build with a debug-only network security config |
