@@ -1686,7 +1686,7 @@ Jump straight to the block you need. Anchors are GitHub's.
 - [APK handling](../../77-UsefulCommands/cheatsheet.md#apk-handling)
 - [Frida / Objection](../../77-UsefulCommands/cheatsheet.md#frida--objection)
 - [Network](../../77-UsefulCommands/cheatsheet.md#network)
-- [Fastboot ⚠️ destructive](../../77-UsefulCommands/cheatsheet.md#fastboot--destructive)
+- [Fastboot — destructive](../../77-UsefulCommands/cheatsheet.md#fastboot--destructive)
 - [Secret regexes](../../77-UsefulCommands/cheatsheet.md#secret-regexes)
 - [Risky API grep list](../../77-UsefulCommands/cheatsheet.md#risky-api-grep-list)
 - [Rules that save you](../../77-UsefulCommands/cheatsheet.md#rules-that-save-you)

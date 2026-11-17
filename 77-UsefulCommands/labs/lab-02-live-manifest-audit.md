@@ -119,7 +119,7 @@ wc -l activities.txt receivers.txt services.txt providers.txt
 For each component, record: fully-qualified name, whether it is exported, any `permission` guarding
 it, and its intent filters (action, category, data scheme/host/path).
 
-> Note that the resolver tables only list components that have intent filters. Components exported
+> The resolver tables only list components that have intent filters. Components exported
 > without a filter appear elsewhere in the output. Search for `exported=true` across the whole file
 > as well:
 > ```bash

@@ -127,7 +127,7 @@ adb shell 'su -c id' 2>/dev/null || echo "su -c did not grant"
 adb shell 'su 0 id'  2>/dev/null || echo "su 0 did not grant"
 ```
 
-> **⚠️ Warning — one failing form does not mean "not rooted".** Magisk's `su` takes
+> **Warning — one failing form does not mean "not rooted".** Magisk's `su` takes
 > `su -c <cmd>`; the AOSP `su` shipped on emulator images takes a **uid** instead, so `su -c id`
 > returns `su: invalid uid/gid '-c'` on it while `su 0 id` returns `uid=0(root)`. Measured on the
 > `sdk_gphone16k_x86_64` API 35 AVD, the `-c` form fails and the `0` form succeeds. Reading the

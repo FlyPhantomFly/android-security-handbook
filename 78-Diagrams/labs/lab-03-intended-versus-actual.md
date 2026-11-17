@@ -28,7 +28,7 @@ This lab uses root as the subject because it is the case where the gap is widest
 and most consequential: detection routines are written from the canonical diagram, and on a device
 where the diagram is wrong they look in the wrong place and report "clean".
 
-> **🧠 Mental Model**
+> **Mental Model**
 > A diagram of a mechanism is a diagram of **one deployment** of that mechanism. "How Magisk works" is
 > not a fact about your device. It is a fact about a device configured the way the author's was.
 
@@ -63,7 +63,7 @@ getenforce  : Enforcing
 id          : uid=2000(shell) ... context=u:r:shell:s0
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > `su -c '…'` through `adb shell` is broken in a way that silently mangles quoting. Use
 > `adb shell "su -c 'cmd'"`, or on this device's `su`, the form used throughout this lab:
 > `adb shell su 0 <cmd>`. Getting this wrong produces empty output that looks like a negative result.
@@ -449,7 +449,7 @@ for d in /sbin /system/bin /system/xbin /vendor/bin /debug_ramdisk /su/bin; do
 done
 ```
 
-If none of them exists, your device is not rooted, and the intended diagram simply does not apply. Use
+If none of them exists, your device is not rooted, and the intended diagram does not apply. Use
 Part 5's app-data-isolation subject instead — it needs no root at all.
 </details>
 

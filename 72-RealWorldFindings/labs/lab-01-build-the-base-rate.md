@@ -59,7 +59,7 @@ adb shell getprop ro.build.version.sdk
 Record the output. If `adb devices -l` prints only the header line, you have no device — go to
 Part A's offline path.
 
-> **⚠️ Warning — identify the device before trusting any version-gated claim.**
+> **Warning — identify the device before trusting any version-gated claim.**
 > This repository has had a phone silently swapped for a different phone mid-session, and has had
 > `frida -U` select an emulator while the phone holding the corpus was attached. A wrong-device
 > attach is the worst class of error, because every subsequent measurement is internally consistent
@@ -78,7 +78,7 @@ have cost this repository real time:
 
 None of these affect this lab, which is pure manifest work — but write the device down anyway.
 
-> **⚠️ And never write `adb shell su -c '…'`.** <!-- lint:allow SU-DASH-C SU-DASH-C-BARE -- the broken form, quoted as the counter-example this warning teaches; covers the next line too -->
+> **And never write `adb shell su -c '…'`.** <!-- lint:allow SU-DASH-C SU-DASH-C-BARE -- the broken form, quoted as the counter-example this warning teaches; covers the next line too -->
 > The outer shell strips the quotes and `su` eats the flag, so `adb shell su -c 'magisk -v'` arrives
 > as `su -c magisk -v` and `-v` is consumed by `su` — printing *su's* version while you believe you
 > are reading Magisk's. Write `adb shell "su -c 'cmd'"`, or `su 0 cmd` on an emulator.
@@ -118,7 +118,7 @@ Watch the first two lines. On the reference device they read:
 **Record both numbers.** The gap between them is your first honest caveat: an APK the tool could not
 read is not an app with nothing in it.
 
-> **🔍 Pentester's Note — why `adb exec-out` and not a shell loop.**
+> **Pentester's Note — why `adb exec-out` and not a shell loop.**
 > `adb` inherits stdin. Inside a `while read` loop it eats the loop's own input, and
 > [64-Xposed](../../64-Xposed/README.md) measured the result: a thirteen-row probe printed **one
 > row** and exited cleanly, reading exactly like a device with nothing on it. If you write your own
@@ -132,7 +132,7 @@ read is not an app with nothing in it.
 python3 -B scripts/manifest-corpus-sweep.py --apk-dir ~/corpus --out ./lab01-out
 ```
 
-> **⚠️ Sweeping `base.apk` measures `base.apk`.**
+> **Sweeping `base.apk` measures `base.apk`.**
 > Modern applications ship code in split APKs. [38-TamperDetection](../../38-TamperDetection/README.md)
 > met an app showing **zero** controls in `base.apk` because its code was entirely in splits. If
 > your corpus is `base.apk` files, your scope statement must say so.
@@ -249,7 +249,7 @@ cd ..
 python3 -B scripts/manifest-corpus-sweep.py --apk-dir ./lab01-corpus/apks --out ./lab01-out
 ```
 
-> **⚠️ XML comments must not contain `--`.**
+> **XML comments must not contain `--`.**
 > `aapt2` rejects them, and the error names the file rather than the reason. This repository has hit
 > it five times, including with `--es`, `--uri` and an em-dash typed as two hyphens.
 
@@ -378,7 +378,7 @@ You should end with at least five. This list is worth more than the lab.
 
 ### C3. The rule
 
-> **📖 The absent-attribute finding.**
+> **The absent-attribute finding.**
 > A finding of the form "the app does not set X" is valid **only** if you have first established what
 > the platform does when X is absent, **at the target's `targetSdkVersion`**. If the default is
 > already safe, the correct output is nothing at all — not a Low, not an Informational.
@@ -422,7 +422,7 @@ item that:
 
 Then delete them, or move them to a "historical" section with the API level that closed them.
 
-> **🧠 Mental Model — finding classes have lifecycles, checklists do not.**
+> **Mental Model — finding classes have lifecycles, checklists do not.**
 > A checklist item is written once and copied forever, while the platform keeps closing classes by
 > changing defaults. Time spent on a closed class is taken from the client's budget.
 
@@ -446,7 +446,7 @@ rather than the ceiling:
 
 ### E1. Grade your own
 
-| # | Does your paragraph state… | ✓ |
+| # | Does your paragraph state… | Done |
 |---|---|---|
 | 1 | The exact N, and what one unit is (an app? an APK? a component?) | |
 | 2 | The composition of the corpus, especially any skew | |

@@ -44,7 +44,7 @@ did not draw do not exist, and readers believe that claim without noticing they 
 This chapter's longest section, [section 7](#7-confusions-and-misuse--how-diagrams-mislead), is about
 that failure, with cases this repository measured rather than imagined.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > A diagram is a *filter* someone else chose, presented as if it were the *territory*. The value is
 > entirely in the filtering — an unfiltered diagram of Android would be unreadable. The danger is
 > entirely in forgetting that filtering happened.
@@ -108,7 +108,7 @@ Every row has the same fields:
 | **Atk** | `yes` when the diagram colours something `#f9d0d0`, this repository's convention for attacker-controlled input |
 | **Location** | A link straight to the file and the section anchor |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The **Boundaries** column is the one to sort by when you are looking for prior art for a report
 > diagram. A diagram with two or more `subgraph` blocks has already done the hard part — deciding
 > where the boundary goes — and that decision is the reusable part, not the boxes.
@@ -179,7 +179,7 @@ own, which the script counts and reports separately, for a repository total of *
 
 Two things in that table are worth stopping on.
 
-**Half the repository is flowcharts.** That is not obviously wrong — flowchart is the general-purpose
+**Half the repository is flowcharts.** That is not wrong in itself — flowchart is the general-purpose
 family — but it is the family that most easily hides ordering. When you see a flowchart in a chapter
 about a protocol, ask whether the author meant a sequence diagram and reached for the familiar tool.
 [Section 6.3](#63-choosing-the-family) is about that choice.
@@ -199,7 +199,7 @@ Convention adoption, which is the interesting part:
 | Draws at least one `subgraph` (a named trust boundary) | 215 | 27.7% |
 | Colours attacker-controlled input `#f9d0d0` | 300 | 38.7% |
 
-> **⚠️ Warning**
+> **Warning**
 > Read those two numbers together and the finding is uncomfortable: **more diagrams mark
 > attacker-controlled input than draw a boundary for it to cross.** 300 diagrams say "this is hostile"
 > and only 215 say where hostile stops being able to reach. Marking the input without drawing the
@@ -239,7 +239,7 @@ python3 -B scripts/diagram-census.py --check
 # checked 80 chapter READMEs; 0 problem(s)
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > "Diagram-poor" is not automatically a defect, and the table above deliberately says so for five of
 > the eight rows. A chapter whose subject is genuinely a list should not be padded with pictures to
 > satisfy a counter. The number is a prompt to *ask*, and the answer is allowed to be "no". Treat
@@ -275,7 +275,7 @@ edit that fixes it:
 | 1 | A **participant id colliding with a keyword** — `participant Opt as Optimiser` | Sequence keywords match case-insensitively, so `Opt` is lexed as the `opt` block keyword and the rest of the diagram collapses | Rename the id. The display name survives via `as` |
 | 1 | Unquoted parentheses in flowchart node text | Same as the mindmap case | Quote the whole label |
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > The keyword-collision case is the one that will bite you personally, because it looks like a working
 > diagram until you add a second message. The reserved ids in a sequence diagram include `opt`, `alt`,
 > `else`, `loop`, `par`, `and`, `rect`, `break`, `critical`, `note`, `end`, `activate`, `deactivate`,
@@ -291,7 +291,7 @@ completely fine in an editor. It was caught by running the validator on this cha
 only reason it is a footnote rather than a defect shipped in the chapter that tells everyone else to
 check theirs.
 
-> **⚠️ Warning**
+> **Warning**
 > Mermaid tells you **where** it stopped, never **why**. Its reported line number is the line where the
 > parser gave up, which is frequently the line *after* the one that broke it: an unterminated message
 > swallows the following line before failing. `validate-mermaid.mjs` prints the reported line, the
@@ -433,7 +433,7 @@ verification of a hardware-backed attestation has cryptographic weight.
 why every app on a device shares the same library layout until reboot — the ASLR weakness in
 [19-Memory](../19-Memory/README.md).
 
-> **⚠️ Warning**
+> **Warning**
 > On the emulator used for this chapter's measurements, `ro.boot.verifiedbootstate` is **empty**. The
 > emulator does not run the first two steps of this diagram at all. A diagram of the boot chain can be
 > *read* on an emulator and cannot be *verified* on one — which is a good example of a picture whose
@@ -556,7 +556,7 @@ string you decrypt. Obfuscation, root detection and pinning all live inside this
 The only line in the diagram with a genuinely enforced boundary on both sides is the one to the
 backend. Everything a client checks, an owner can uncheck.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > When you cannot decide a finding's severity, find the finding on this map. If the data crosses from
 > `Hostile` into `AppProc` and stops, it is a client-side issue and the severity argument is about
 > business risk. If it crosses into `Device` or `Server`, it is a data-and-authorisation issue and the
@@ -675,7 +675,7 @@ The note is on the diagram for the same reason: the single most common wasted ho
 is a root user hitting `Permission denied` and concluding the file does not exist. It is
 [22-SELinux](../22-SELinux/README.md), and the diagram says so where you will be looking.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Measured on the emulator used for this chapter: `su 0 id` returns
 > `uid=0(root) ... context=u:r:su:s0` while SELinux reports `Enforcing`. Both are true at once. Root
 > and unconfined are different properties, and only one of them is on this diagram — which is
@@ -754,7 +754,7 @@ sequenceDiagram
 | `loop` | Repetition, with the condition in the label | — |
 | `Note over A,B` | A statement the arrows cannot carry | The `Note` is usually the most important line in the diagram |
 
-> **⚠️ Warning**
+> **Warning**
 > The dashes matter and they are easy to miss at a glance. `A->>B` followed by `B->>A` describes
 > **two independent calls, in two directions**. `A->>B` followed by `B-->>A` describes **one call and
 > its answer**. In a diagram of an authorisation flow, those are completely different systems, and the
@@ -814,7 +814,7 @@ and it is the one most worth adopting. Drawing a box that the caption then denie
 way to stop a reader from assuming a boundary that is not there, because leaving the box out entirely
 does not stop them — it just leaves them to invent their own.
 
-> **⚠️ Warning**
+> **Warning**
 > `style` does not exist in `sequenceDiagram`. Six diagrams in this repository apply the
 > `fill:#f9d0d0` convention to a sequence diagram and fail to parse as a result. To mark hostility in
 > a sequence diagram, use a `rect rgb(249,208,208)` block around the messages, or state it in a
@@ -934,7 +934,7 @@ The second diagram is uglier and it is the one that is true. It shows that the c
 getter is sufficient. None of that is visible in the first diagram, and all of it is what determines
 whether there is a finding.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The practical rule: **do not draw a decision diamond you have not watched execute.** If you have not
 > traced it, draw the boxes you observed and leave the connection unlabelled, or dotted. An honest gap
 > in a diagram is information. A confident guess is a liability, and it is the thing a client will
@@ -978,7 +978,7 @@ The consequences are asymmetric and always in the same direction:
 | A boundary that does **not** exist | These components are separated | Under-stated severity — the expensive direction |
 | A failure path | The check always fires | A bypass nobody looked for |
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Read every security diagram twice. The first pass reads the arrows. The second pass asks: *what edge
 > would have to exist for this diagram to be dangerously wrong, and has anyone checked?* The second
 > pass is where findings come from.
@@ -1069,7 +1069,7 @@ domain, and never touches `magiskd` at all — even though Magisk is installed a
 running. A detection routine built from the canonical diagram looks for the wrong file, in the wrong
 directory, and concludes the device is clean while an `su` two directories away hands out uid 0.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > This is the general lesson, not a Magisk quirk. **A diagram of a rooting mechanism is a diagram of
 > one deployment of it.** Before you rely on any path in such a picture, ask the device: `command -v
 > su`, then `ls -lZ` the answer. Two commands, and they replace an assumption with a fact.
@@ -1126,7 +1126,7 @@ tried it, 1,495 times. Run
 [`scripts/verify-index-links.py`](scripts/verify-index-links.py) after every regeneration. It takes
 under a second and it resolves every link on disk instead of trusting the shape of the string.
 
-> **⚠️ Warning**
+> **Warning**
 > The single most dangerous artefact you can produce on an engagement is a clean, well-laid-out
 > architecture diagram of a system you have only read about. It will be believed more than your prose,
 > circulated further than your report, and outlive both. Draw what you measured. Where you did not

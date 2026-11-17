@@ -97,7 +97,7 @@ it is. `subgraph G1["Group 1"]` says nothing and should not exist.
 ### 7. Why does `style X fill:#f9d0d0` break my sequence diagram?
 
 Because `sequenceDiagram` has no `style` statement at all. It is not that the syntax is slightly
-different — the grammar simply does not contain that production.
+different — the grammar does not contain that production.
 
 Six diagrams in this repository apply the repository's own attacker-marking convention to a sequence
 diagram and fail to parse as a direct result. It is a good illustration of a convention outrunning the

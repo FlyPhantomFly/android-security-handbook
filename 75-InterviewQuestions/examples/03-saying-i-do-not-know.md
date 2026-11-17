@@ -12,7 +12,7 @@ that feel, in the room, like the safe option.
 Each transcript below uses the same question, so the only variable is the response. `I` is
 the interviewer, `C` the candidate.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > An interview is a sampling exercise. The interviewer takes a handful of samples of your
 > reasoning and extrapolates to the thousands of decisions you will make unsupervised. A
 > candidate who bluffs once has told them what happens to the other thousand.
@@ -168,7 +168,7 @@ A strong "I don't know" has four parts and takes about twenty seconds:
 | **3. The method** | "I'd `ls -d` both paths and believe the device." | A procedure that survives the next API level. This is the part that gets hired |
 | **4. The receipt** | "I've been caught by that: on an API 30 device…" | Converts the whole answer from a claim about you into evidence about a device |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Part 3 is this repository's entire thesis compressed into one interview sentence.
 > Every chapter here prefers a measurement to a table, and "I would measure it" is the
 > spoken form of that preference. It is also, conveniently, the only answer that is still
@@ -192,7 +192,7 @@ Rehearse it deliberately:
 Step 3 in that order matters. If you read the answer first you are practising recall. If
 you answer first you are practising the thing that will actually happen.
 
-> **⚠️ Warning**
+> **Warning**
 > There is one place where "I would measure it" is the wrong answer, and it is worth
 > knowing so the move does not become a tic: when the interviewer is asking a *design*
 > question. "How would you architect credential storage" cannot be answered with "I'd

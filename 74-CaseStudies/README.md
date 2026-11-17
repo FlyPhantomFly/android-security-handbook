@@ -61,7 +61,7 @@ database, found four candidate values that all turned out to be analytics identi
 the database file's modification time was two days stale, and only then went looking in the right
 place. **None of that is in the report, and all of it is the skill.**
 
-> **📖 Definition — case study.** In this repository, a case study is the complete record of one
+> **Definition — case study.** In this repository, a case study is the complete record of one
 > investigation, told in the order it happened, including every hypothesis that was refuted, the
 > evidence that refuted it, and the moment a wrong conclusion turned into a right one. It is not a
 > summary of a finding. A summary of a finding is a *finding*, and those live in
@@ -87,7 +87,7 @@ A report shows you the run that worked.
 noticing that you are wrong before you publish. That skill is trained by watching corrections happen,
 and corrections are precisely what reports edit out.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > A finished report is the *last frame* of a film. This chapter is the film. You cannot learn
 > cinematography from a poster, no matter how good the poster is.
 
@@ -132,7 +132,7 @@ without a target at all, you are writing 68.
 implementation: eighteen entries, nine of them failures, in the `H`/`P`/`R`/`E`/`O`/`V` form. This
 chapter borrows the notation and supplies the worked instances.
 
-> **📖 Definition — the H/P/R/E/O/V block.** From
+> **Definition — the H/P/R/E/O/V block.** From
 > [68 §1.5](../68-ReverseEngineering/README.md). `H` is the hypothesis; `P` is what you would
 > predict if it were true; **`R` is what would refute it, written *before* you look**; `E` is the
 > experiment; `O` is the raw observation; `V` is the verdict. Writing `R` first is the entire trick:
@@ -157,7 +157,7 @@ or not it is true. Four rules, and every case below states which apply to it.
    measuring, or on applications already installed on it, under the authorised-testing discipline in
    [06-Android-Architecture/scripts/device-posture.sh](../06-Android-Architecture/scripts/device-posture.sh).
 
-> **⚠️ Warning — the ethics of the case study form specifically.**
+> **Warning — the ethics of the case study form specifically.**
 > A case study is a story about a real system, and stories travel further than caveats. If you write
 > one about a client engagement, the vendor name, the version string, the hostnames and the
 > screenshots all have to go, and you have to check that the *combination* of what remains does not
@@ -239,7 +239,7 @@ Every left-hand box is a **true statement about a measurement**. Not one of them
 property really did read `green`; `strings` really did find nothing; `File.exists()` really did
 return `false`. The failure in all six is identical in shape:
 
-> **🧠 Mental Model — the load-bearing sentence of this chapter.**
+> **Mental Model — the load-bearing sentence of this chapter.**
 > **A measurement answers the question you actually asked, which is rarely the question you meant.**
 > `File.exists()` does not answer "is this file present?" — it answers "can I, from here, with these
 > credentials, obtain a successful stat of this path?" Those are different questions, and they
@@ -273,7 +273,7 @@ out to produce this conclusion. **The case study is the act of putting them next
 That is genuinely new work — the synthesis did not exist in any one of the three chapters until
 someone laid them side by side — and it is a good illustration of what this chapter is for.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The `[[ ]]` shape on the TEE follows this repository's diagram convention: hardware and trusted
 > execution environments are drawn with double brackets, kernel components with stadium shapes, and
 > user-space processes as plain rectangles. See [STYLE-GUIDE.md](../STYLE-GUIDE.md) §6. It matters
@@ -349,7 +349,7 @@ V   REFUTED -- H1 dies with it
 staring at: it is not a key that failed to match, it is the absence of any key having verified this
 boot at all.
 
-> **🔬 Under the Hood — why this refutation is decisive and the previous observation was not.**
+> **Under the Hood — why this refutation is decisive and the previous observation was not.**
 > Both readings came off the same device within seconds. The difference is *who signed them*. The
 > property is a string in a shared-memory region that any root process can rewrite. The attestation
 > is a certificate chain signed by a key that never leaves the TEE. **When two sources disagree, the
@@ -389,7 +389,7 @@ V   REFUTED -- exactly three fields were rewritten, and two were left alone
 **Three fields changed, two left alone.** Whoever built the hiding module edited exactly the fields
 detection code reads, because every extra edit is another chance to be caught in an inconsistency.
 
-> **⚠️ Warning — the conclusion most people draw here is wrong.**
+> **Warning — the conclusion most people draw here is wrong.**
 > "This device failed the boot-state check, so every integrity signal on it is untrustworthy" is a
 > reasonable-sounding inference and it is false. **The forgery is targeted.** `vbmeta.digest` and
 > `veritymode` came through honestly and are still usable evidence. Grading a device as
@@ -564,13 +564,13 @@ Here there is no upstream guard. At `-O2` clang **inlined** the body of `lc_veri
 nothing calls. There is no `bl lc_verify_signature` anywhere in `lc_decrypt_flag`. **The check was
 copied, not called.**
 
-> **🧠 Mental Model — one symptom, two mechanisms, and the test that separates them.**
+> **Mental Model — one symptom, two mechanisms, and the test that separates them.**
 > Both look like "my correct patch did nothing." Distinguish them by asking *who calls this
 > function*:
 >
 > | Mechanism | Where measured | Tell |
 > |---|---|---|
-> | The check was **inlined**, so the standalone copy is dead | [18-ARM §5.4](../18-ARM/README.md) | Cross-references on the function return few or no callers, yet the logic clearly runs |
+> | The check was **inlined**, so the standalone copy is dead | [18-ARM §5.4](../18-ARM/README.md) | Cross-references on the function return few or no callers, yet the logic demonstrably runs |
 > | The check is **short-circuited** by an earlier guard | [59-radare2 §5.4](../59-radare2/README.md) | Cross-references find the caller; reading the caller shows an earlier call and a conditional branch |
 >
 > That table is 59's and is reproduced here because the *contrast* is the case study. Neither chapter
@@ -626,7 +626,7 @@ plaintexts — so the construct looked verified. Dumping `.rodata` at the very e
 showed the **ciphertext was missing too**: clang had folded the XOR, proved a comparison always true,
 and deleted both arrays and the whole decode path as dead.
 
-> **🧠 Mental Model — a negative result has more than one cause.**
+> **Mental Model — a negative result has more than one cause.**
 > "The plaintext is absent" is satisfied by *"it is encrypted"* and equally by *"there is nothing
 > there at all."* 58's check passed **for exactly the wrong reason**, which is the version where your
 > own test lies to you by succeeding. A test that can only pass is not a test.
@@ -689,7 +689,7 @@ instead was **interprocedural constant propagation**: every call site passes com
 so it specialised the body against them, and the specialised body is a single 16-byte vector load of
 the finished plaintext.
 
-> **⚠️ Warning — this refutes the general form of a fix recorded elsewhere in this repository.**
+> **Warning — this refutes the general form of a fix recorded elsewhere in this repository.**
 > [58-IDA §11.4](../58-IDA/README.md) records `__attribute__((noinline))` as the repair for this
 > class, and in 58's fixture it worked. **It is not a general remedy.** `noinline` prevents one
 > optimisation; the folding here is performed by a different one that `noinline` does not constrain.
@@ -765,7 +765,7 @@ entirely different reasons**:
 The refusal for the first two happens at `/data/adb`, which is mode `0700 root:root` — **above the
 leaf**. The application never gets far enough to learn anything about the file it asked about.
 
-> **🔬 Under the Hood — why `errno` vanishes.**
+> **Under the Hood — why `errno` vanishes.**
 > `java.io.File.exists()` has no way to report *why*. It returns a `boolean`. Underneath, the native
 > implementation performs a `stat`-family syscall and treats any failure identically: `ENOENT` (not
 > there) and `EACCES` (there, but you may not look) both become `false`. **The distinction that
@@ -773,7 +773,7 @@ leaf**. The application never gets far enough to learn anything about the file i
 
 #### 3.4.3 The consequence, stated precisely
 
-> **⚠️ Warning**
+> **Warning**
 > `new File("/data/adb/lspd").exists()` has **zero discriminating power on a rooted device** — which
 > is the only kind of device where it could ever have mattered. On an unrooted device `/data/adb`
 > does not exist and the check correctly returns `false`; on a rooted device it returns `false`
@@ -893,7 +893,7 @@ The published shell figure reproduces as the **root** figure, to within two line
 figure reproduces as the app figure, to within one. The most economical explanation by a wide margin
 is that **the shell leg of that measurement was taken through `su` and recorded as `shell`.**
 
-> **⚠️ Warning — what I am *not* claiming.**
+> **Warning — what I am *not* claiming.**
 > I have not proven that. I have one device, one session, and a very suggestive arithmetic
 > coincidence. The alternative — that this AVD's shell-visible property set shrank by 380 between
 > the two sessions while its app-visible set moved by one — is not impossible, only unlikely.
@@ -901,7 +901,7 @@ is that **the shell leg of that measurement was taken through `su` and recorded 
 > [`examples/replay-journal.md`](examples/replay-journal.md) records. The value of the case does not
 > depend on resolving it, and inventing a resolution would cost more than the ambiguity does.
 
-> **✅ RESOLVED, after this chapter was written — and the restraint above is why it resolved
+> **RESOLVED, after this chapter was written — and the restraint above is why it resolved
 > correctly.** A third independent measurement (three runs, stable) returned **root ~1,062, shell
 > ~678, app ~638**, reproducing this chapter's numbers rather than 39's. Two further checks settled
 > the cause beyond the arithmetic: `ro.boottime.qemu-props` reads **empty from the shell** and
@@ -943,7 +943,7 @@ measurement is sound. And the thirty-seven are not a random sample:
 | `ro.serialno` | `EMULATOR35X3X11X0` | **(empty)** | `serialno_prop` |
 | `qemu.sf.lcd_density` | `560` | **(empty)** | `qemu_sf_lcd_density_prop` |
 
-> **🔍 Pentester's Note — this is a bigger finding than the count it came from.**
+> **Pentester's Note — this is a bigger finding than the count it came from.**
 > `ro.debuggable`, `ro.secure` and `partition.system.verified` are three of the most commonly
 > recommended integrity properties in published root- and tamper-detection checklists. **An
 > application cannot read any of them on this device.** A check that reads `ro.debuggable` gets the
@@ -982,7 +982,7 @@ Not a wrong number. Three things larger than that:
    nobody could check it against anything. "Which ones?" produced a finding in ten minutes and
    answers the question the count was standing in for.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > When you find a discrepancy in someone's published measurement, the first hypothesis to test is
 > **"they measured something slightly different from what they labelled"** — not "they were careless"
 > and not "the world changed." Labels drift from methods far more often than either.
@@ -1017,7 +1017,7 @@ SUBSTRING AUDIT -- why `grep -i xposed` is not a check
 swept: one browser at 4 and 4; one settings package at 113 against 15 + 98; one Play-services
 package at 30 against 15 + 15.
 
-> **🧠 Mental Model — the arithmetic test.**
+> **Mental Model — the arithmetic test.**
 > This is what separates a measurement from an impression. It is not "most of these look like false
 > positives" — it is **"explain every hit, or the signature is not evidence."** 1,141 and 1,141 is a
 > closed account. Anything less than closure leaves room for the finding you wanted to be in.
@@ -1066,7 +1066,7 @@ a 43-application run — twice, from two different causes. The first was a non-G
 misbehaving on a pipe. The second was command substitution silently stripping NUL bytes and
 truncating a DEX held in a shell variable. **Both runs looked like results.**
 
-> **⚠️ Warning — the standing lesson, now with four independent instances.**
+> **Warning — the standing lesson, now with four independent instances.**
 > This repository has measured the same thing four separate times: chapter 38's mapper first reported
 > a self-signature check in 18 of 18 APKs (real answer: 13); chapter 52 rejected 15 of 17
 > high-confidence leads by hand; chapter 64's `vxp` signature scored 16 of 16 false; chapter 48's
@@ -1102,7 +1102,7 @@ Five recurring techniques, and none of them requires a better tool:
 4. **Change who is asking.** Same command, three uids, three answers. Cases D and E.
 5. **Add a control you did not think you needed.** Case E turned on a column added out of habit.
 
-> **🧠 Mental Model — the question that would have saved every case above.**
+> **Mental Model — the question that would have saved every case above.**
 > *"What would I expect to see if I were wrong?"* Ask it before you look, and write the answer down.
 > That is the `R` line in the H/P/R/E/O/V block, and every case in this chapter was rescued by
 > something that amounts to having written one.
@@ -1124,7 +1124,7 @@ new case.** That is a very high yield for work that feels like clerical checking
 loop at the bottom of the §2.1 diagram is drawn as returning to the correction moment rather than to
 the conclusion.
 
-> **📖 Definition — reproduced / diverged / not re-run.** This chapter uses three verdicts and no
+> **Definition — reproduced / diverged / not re-run.** This chapter uses three verdicts and no
 > others. **Reproduced** means the same command produced the same observation. **Diverged** means it
 > did not, and is *not* a synonym for "the original was wrong" — case E is filed as diverged with the
 > cause unestablished. **Not re-run** is an honest state and appears above twice.
@@ -1190,7 +1190,7 @@ appear in `getprop` output rather than appearing with an empty value. That is wh
 shows up as a count and as absent *names* — and why comparing names rather than counts, as §3.5.4
 does, is the measurement that carries information.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > This also explains why the app's view is a strict subset of the shell's, which the measurement
 > confirmed with zero properties in the other direction. The domains are not siblings with different
 > grants; `untrusted_app` and `runas_app` hold strictly fewer property-read permissions than `shell`.
@@ -1245,7 +1245,7 @@ static String probe(String path) {
 }
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > When you find `new File(...).exists()` in a root- or tamper-detection routine, you have found a
 > check whose *output* is `false` on the devices it was written for. Do not report it as "the root
 > detection can be bypassed" — report it as "this check does not function", which is both more
@@ -1316,7 +1316,7 @@ that an inflated report gets the *remediation* wrong.
 | D | High — "root detection bypass" | **Low / Informational** | The check never functioned. There is no control to bypass. Reporting a bypass implies one existed |
 | F | Critical — "58 apps use Xposed" | **Not a finding at all** | Zero of the 1,141 hits were genuine |
 
-> **🔍 Pentester's Note — the sentence that makes these land.**
+> **Pentester's Note — the sentence that makes these land.**
 > For case D, do not write *"root detection can be bypassed."* Write: **"this check returns `false`
 > on every rooted device, because the process cannot traverse `/data/adb`; it therefore provides no
 > detection capability and should be removed or replaced."** The first invites the developer to add
@@ -1327,7 +1327,7 @@ that an inflated report gets the *remediation* wrong.
 The root README describes this chapter as dissecting public reports, and the honest way to do that is
 to teach the *reading* rather than to retell incidents I cannot verify from here.
 
-> **⚠️ Warning — verify every identifier below before you repeat it.**
+> **Warning — verify every identifier below before you repeat it.**
 > The four rows are widely-documented Android issues included to illustrate the *shape* of a public
 > advisory. **I have not verified these identifiers against the NVD or the Android Security Bulletin
 > in this session, and you should, before citing any of them.** One-line summaries are deliberately
@@ -1352,7 +1352,7 @@ to teach the *reading* rather than to retell incidents I cannot verify from here
 5. **What is *not* said.** Advisories are negotiated documents. Silence about exploitability is not
    evidence of inexploitability.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > A CVE entry is the *finding*, in this chapter's vocabulary — the last frame. The corresponding case
 > study is the researcher's write-up or conference talk, where the dead ends occasionally survive.
 > When both exist, read the talk.
@@ -1485,7 +1485,7 @@ inside a function whose name suggests decoding, means the decode already happene
 | C | n/a | This *is* the obfuscator's failure; a real one operates after the optimiser |
 | B | Symbol names stripped; the control-flow shape is what you read anyway | Control-flow flattening makes §3.2.3's caller-read much harder — read the branch, not the names |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Note the asymmetry. Obfuscation hides *names*, and every case in this chapter is found by
 > *literals* and *shapes*. That is not luck: the things a detection routine must name — a path, a
 > property, a package — are exactly the things the obfuscator is not permitted to change, because
@@ -1524,7 +1524,7 @@ adb -s emulator-5554 shell "su -c id"     # -> su: invalid uid/gid '-c'
 adb -s emulator-5554 shell "su 0 id"      # -> uid=0(root) ... context=u:r:su:s0
 ```
 
-> **⚠️ Warning — the quoting bug this repository was riddled with, and has now been swept for.**
+> **Warning — the quoting bug this repository was riddled with, and has now been swept for.**
 > `adb shell su -c 'cmd'` is **broken**. The outer shell splits on the space, `adb` sends <!-- lint:allow SU-DASH-C SU-DASH-C-BARE -- the broken form, quoted as the counter-example this warning teaches -->
 > `su -c cmd`, and `su` consumes the fragments. Write `adb shell "su -c 'cmd'"` with the quoting
 > inside, or `su 0 cmd`. The classic symptom is `adb shell su -c 'magisk -v'` printing *su's* <!-- lint:allow SU-DASH-C SU-DASH-C-BARE -- the broken form, quoted as the symptom being explained -->
@@ -1556,7 +1556,7 @@ adb -s emulator-5554 shell "pm list packages -3" | sed 's/^package://' | while r
 done
 ```
 
-> **⚠️ Warning — two traps in that loop, both of which this repository has paid for.**
+> **Warning — two traps in that loop, both of which this repository has paid for.**
 > The `< /dev/null` is mandatory: `adb shell` inherits stdin and will consume the `while read` loop's
 > input, so the loop prints one row and exits cleanly, looking exactly like a device with nothing on
 > it. And `run-as` gives you the `runas_app` domain, **not** `untrusted_app` — see §7.5.
@@ -1572,7 +1572,7 @@ adb -s emulator-5554 shell getprop ro.boot.vbmeta.digest         # expect: a 64-
 adb -s emulator-5554 shell "su 0 cat /proc/bootconfig" | grep androidboot
 ```
 
-The last command is the one that turns an observation into an explanation, and note that it needs
+The last command is the one that turns an observation into an explanation, and confirm that it needs
 root — the check's own vantage cannot perform it.
 
 For the attestation half you need a device with a real TEE;
@@ -1687,7 +1687,7 @@ llvm-strings -n 4 lib/arm64-v8a/libfoo.so | grep -F "$SECRET"
 llvm-objdump -s -j .rodata lib/arm64-v8a/libfoo.so | head -40
 ```
 
-> **⚠️ Warning — a device-side `grep` over `.apk` files has a measured blind spot.**
+> **Warning — a device-side `grep` over `.apk` files has a measured blind spot.**
 > Chapter 64 measured 234 `classes*.dex` entries STORED versus 16 DEFLATED across a 237-APK corpus —
 > and **all 16 DEFLATED were in `/data/app`**, across four applications, ten of them one browser's.
 > Every preinstalled APK was STORED. So grepping APKs on-device silently skips the sideloaded and
@@ -1834,7 +1834,7 @@ finding by itself.
 **thirteen environments** — production, pre-production, eight QA hosts and three staging hosts — in
 the shipped production build.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > **Confidence orders your queue; it does not rank importance.** A confidence score answers "how
 > likely is this to be what my rule was looking for", which is a question about the rule. Severity
 > answers "how much does this matter", which is a question about the business. Sorting by the first
@@ -1889,7 +1889,7 @@ code probes.
 unchanged. Name two mechanisms and how you would distinguish them.**
 Inlining (the check was copied into the caller; your standalone copy is dead) and short-circuiting
 (an earlier guard returns before your function is reached). Distinguish by cross-references: inlining
-leaves the function with few or no callers while the logic clearly runs; short-circuiting leaves the
+leaves the function with few or no callers while the logic demonstrably runs; short-circuiting leaves the
 caller intact, and reading it shows an earlier call and a conditional branch. See §3.2.4.
 
 **Q. Why can `-O2` leak a string that `-O0` hides, from identical source?**

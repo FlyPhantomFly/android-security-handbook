@@ -22,7 +22,7 @@ notice how often you reach for a fact you do not actually have.
 
 The discipline this lab teaches is a single rule:
 
-> **🧠 Mental Model**
+> **Mental Model**
 > **One command per claim.** If a box, an arrow or a boundary in your diagram is not backed by
 > something you ran and can paste, it does not go in solid. It goes in dotted, or it does not go in at
 > all.
@@ -112,7 +112,7 @@ adb pull $(adb shell pm path <pkg> | head -1 | cut -d: -f2 | tr -d '\r') app.apk
 aapt2 dump xmltree --file AndroidManifest.xml app.apk | head -80
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > `dumpsys package` and `aapt2 dump xmltree` can disagree with what `jadx` shows you, and when they do,
 > the platform is right. [10-APK-Internals](../../10-APK-Internals/README.md) covers crafted AXML that
 > makes decompilers display one manifest while `PackageManager` parses another. If your diagram is
@@ -175,7 +175,7 @@ That is a useful result and it is worth reading carefully. It says **this build'
 `START_ANY_ACTIVITY`.** A great deal of folklore assumes it does. Yours may differ; measure rather
 than repeat.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `exported="false"` means "not reachable by other **apps**". It does not mean "not reachable". The
 > app's own components reach it, and privileged components may. Your diagram must say which of those
 > it means, and the only honest way to know is to try.
@@ -375,7 +375,7 @@ That is the correct result and it is itself the lesson: **on a non-debuggable ap
 occupy the app's vantage point at all**, so every filesystem claim you make from `adb shell` is a
 claim about the shell.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > [66-Instrumentation](../../66-Instrumentation/README.md) measured the sharpest version of this:
 > `UiAutomation.executeShellCommand` executes at **uid 2000 while running inside the app process**. One
 > process, two vantage points, and the sandbox diagram everyone draws has one box. If your evidence

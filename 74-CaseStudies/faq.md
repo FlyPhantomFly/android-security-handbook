@@ -99,7 +99,7 @@ Count call sites.
 llvm-objdump -d lib.so | grep -oE 'bl[[:space:]]+0x[0-9a-f]+ <[^>]+>' | sort | uniq -c
 ```
 
-Few or no callers, yet the logic clearly runs, means **inlined**. The caller exists and shows an
+Few or no callers, yet the logic demonstrably runs, means **inlined**. The caller exists and shows an
 earlier call plus a conditional branch, means **short-circuited**.
 
 Do not use `grep 'bl.*<name>'`. A call through the Procedure Linkage Table renders as

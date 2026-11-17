@@ -20,7 +20,7 @@ build install, the check that keeps firing.
 That vocabulary lives in your terminal history for a week and then evaporates. Six months later the
 same client sends the next version and you re-derive all of it.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > A general cheat sheet is a **reminder of what is common**. A personal one is a **record of what is
 > specific**. They fail differently: the general one omits your target, the personal one silently
 > assumes it. Both need the same discipline — say what each row assumes.
@@ -130,7 +130,7 @@ From [`../examples/01-anatomy-of-a-sheet-row.md`](../examples/01-anatomy-of-a-sh
 - **`Device`** — `all`, `avd`, `avd≠`, `phys`, `unrun`.
 - **Column four** — what it does, and **what it prints when it does not work**.
 
-> **⚠️ Warning**
+> **Warning**
 > If you cannot fill in the failure shape, you have not seen the command fail. Make it fail. Point it
 > at a package that does not exist, unplug the device, run it against a release build. Sixty seconds
 > now saves an hour later, because the failure you have never seen is the one you will misread as a

@@ -58,7 +58,7 @@ The correct flag hashes to:
 a6d7305b35cc884277f15026069760d8e0a8d8d6738e4276aaaff8ec6ec5798d
 ```
 
-> **⚠️ Do not brute-force it.** With ten of twelve defective there are only 66 possibilities, so a
+> **Do not brute-force it.** With ten of twelve defective there are only 66 possibilities, so a
 > script beats you to the hash in a second and teaches you nothing. The deliverable is the
 > **classification table** in §3, not the string. If you hash your way to the flag without the
 > table, you scored zero.
@@ -216,7 +216,7 @@ Everything from here to the end of §2 is the draft under review. Read it as a r
 > db.query("PRAGMA wal_checkpoint(TRUNCATE);").close()
 > ```
 >
-> Note that `secure_delete` must be set before the data is written to have full effect; enabling it
+> `secure_delete` must be set before the data is written to have full effect; enabling it
 > retrospectively does not scrub content already in the WAL, so existing installations should
 > additionally checkpoint and vacuum on upgrade.
 >
@@ -584,7 +584,7 @@ chapter argues from measurement:
 
 And the two clean sections exist because **the hardest part of review is not flagging things.** A
 reviewer who cannot leave a good finding alone will, over time, train their team to write defensively
-rather than clearly.
+rather than precisely.
 
 ---
 

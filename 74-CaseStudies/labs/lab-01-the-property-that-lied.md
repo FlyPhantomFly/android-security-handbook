@@ -15,14 +15,14 @@ original investigation did, and that is the experience the lab exists to give yo
 read passively teaches you that somebody else was once wrong. A case study you are walked into
 teaches you what being wrong *feels like from the inside*, which is the only useful version.
 
-> **⚠️ Write your answers down before scrolling.** Every stop point below is a fold with the answer
+> **Write your answers down before scrolling.** Every stop point below is a fold with the answer
 > underneath it. Reading ahead costs you the entire lab and takes ninety seconds. Use a text file.
 
 **Objective.** By the end you will be able to say precisely why a client-side verified-boot check is
 not a control, distinguish four possible values of one property, and explain why the fix is an
 allow-list rather than more values in a deny-list.
 
-> **📖 Provenance — this lab is COMPOSED, and you should notice that.**
+> **Provenance — this lab is COMPOSED, and you should notice that.**
 > The evidence you are handed comes from **two different devices**: a rooted Redmi `M2101K6P`
 > (Android 11 / API 30) in Parts 2–4, and the AVD `sdk_gphone16k_x86_64` (Android 15 / API 35) in
 > Part 5. It is assembled from separate measurement sessions into one narrative — a
@@ -71,7 +71,7 @@ adb shell "su 0 id"
 | Fingerprint | |
 | Root form (`su -c` / `su 0` / none) | |
 
-> **⚠️ Warning — the quoting bug.** Write `adb shell "su -c 'cmd'"`, with the quotes inside. Written
+> **Warning — the quoting bug.** Write `adb shell "su -c 'cmd'"`, with the quotes inside. Written
 > as `adb shell su -c 'cmd'`, the host shell splits on spaces, `adb` sends `su -c cmd`, and `su` <!-- lint:allow SU-DASH-C SU-DASH-C-BARE -- the broken form, quoted as the counter-example this warning teaches; covers the next line too -->
 > consumes the fragments. The symptom is confusing: `adb shell su -c 'magisk -v'` prints *su's*
 > version, because `-v` is eaten by `su`.

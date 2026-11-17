@@ -38,7 +38,7 @@ thing in Java and another in JNI. "Signature" means a method's parameter list to
 cryptographic authenticator to a package manager — and Android uses both senses, sometimes on the same
 page of documentation.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > A glossary is not a substitute for a chapter. A one-line definition tells you what a word *points
 > at*; it does not give you the model that makes the word useful. Use this to unblock yourself
 > mid-sentence, then read the linked chapter when the concept actually matters to what you are doing.
@@ -76,7 +76,7 @@ This chapter used to claim it defined *every* term used anywhere in the reposito
 appeared in this chapter's own introduction. Those are written now, and the claim above was narrowed
 to one a script can check.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > "Every term" is not an achievable target and never was. A corpus this size contains thousands of
 > identifiers; a glossary that defined all of them would be a symbol index. What *is* achievable is a
 > watchlist of the vocabulary the prose asks you to understand, checked in both directions — nothing

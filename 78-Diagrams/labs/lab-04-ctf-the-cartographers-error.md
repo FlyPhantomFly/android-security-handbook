@@ -24,7 +24,7 @@ You have been given read access to a small system called **Cartography Vault**, 
 
 Your objective is the flag. Everything you need is on the device.
 
-> **⚠️ Warning**
+> **Warning**
 > This is a self-contained training target you build yourself on your own device. It is deliberately
 > weak. Do not adapt any part of it into anything that guards something real.
 
@@ -154,7 +154,7 @@ adb shell sh /data/local/tmp/setup.sh
 # expected: built /data/local/tmp/cartography
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > On Git Bash / MSYS on Windows, `adb push setup.sh /data/local/tmp/setup.sh` fails with
 > `remote secure_mkdirs() failed`, because MSYS rewrites the device path into a Windows path. Prefix
 > the command with `MSYS_NO_PATHCONV=1`, or use PowerShell. The error message names a `C:\Program
@@ -376,7 +376,7 @@ sh bin/restore.sh '<the decoded value>'
 
 Format `MAPLAB{...}`. It has a hexadecimal suffix.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > If you tried to shortcut this by base64-decoding the blob you can see inside `restore.sh`, you got
 > the flag's first half and no suffix. That is deliberate: the second half is derived from the recovery
 > token, so possession of the script is not possession of the flag. The shortcut still required you to
@@ -592,7 +592,7 @@ the claim a diagram makes by existing. Nothing in this target was cryptographica
 or even mildly clever. Every step was blocked only by the reader's willingness to accept the map as
 the territory.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > When a diagram is complete and the path is still blocked, the diagram is wrong. That is not a
 > setback in the investigation. That **is** the investigation.
 

@@ -23,7 +23,7 @@ least. The default responses are all bad:
 | Edit the lab to match what you saw | **The worst one.** Converts an open question into a confident error the next reader inherits |
 | Write it down and stop | Correct |
 
-> **📖 Definition — divergence.** You re-ran a documented claim and got a different result.
+> **Definition — divergence.** You re-ran a documented claim and got a different result.
 > `DIVERGED` is a verdict about **the pair of observations**, not about either observer. It is
 > emphatically not a synonym for "the original was wrong", and treating it as one is how a
 > divergence report becomes an accusation.
@@ -43,7 +43,7 @@ this is descending order of frequency in this repository's own record.
 | 4 | **Tool version.** Frida host/server especially, then build-tools, then the decompiler | `--version` on both ends |
 | 5 | **One of the two measurements is wrong** | Last, not first. Includes yours |
 
-> **⚠️ Warning.** A test blocked by your own tooling is **not** a divergence. If a command printed a
+> **Warning.** A test blocked by your own tooling is **not** a divergence. If a command printed a
 > success message and did nothing — see [Lab 02 §5.2](../labs/lab-02-the-chain-no-chapter-can-host.md)
 > for a worked case where `am start` reported `Starting:` and delivered no intent — you have not
 > measured anything yet. Establish that your test *could* have succeeded before you record that it
@@ -140,7 +140,7 @@ unverified number with another. The report is more useful than a correction woul
 the next reader *which* term is in doubt and hands them a narrower question than the one it started
 with.
 
-> **🧠 Mental Model.** A recorded divergence is a **question with a shape**. A divergence resolved by
+> **Mental Model.** A recorded divergence is a **question with a shape**. A divergence resolved by
 > assertion is a **claim nobody will re-examine**, because it looks settled. The first compounds; the
 > second rots.
 

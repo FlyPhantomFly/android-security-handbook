@@ -70,7 +70,7 @@ people end up reciting a claim they cannot defend, which is exactly the failure 
 | [09](../../09-Android-App-Internals/README.md#10-common-interview-questions) | What does `android:debuggable="true"` do? |
 | [09](../../09-Android-App-Internals/README.md#10-common-interview-questions) | What is the main thread and why must you not block it? |
 | [10](../../10-APK-Internals/README.md#10-common-interview-questions) | What is an APK? |
-| [10](../../10-APK-Internals/README.md#10-common-interview-questions) | Why can you not simply edit a file inside an APK and install it? |
+| [10](../../10-APK-Internals/README.md#10-common-interview-questions) | Why can you not edit a file inside an APK and install it? |
 | [10](../../10-APK-Internals/README.md#10-common-interview-questions) | What is `AndroidManifest.xml` and why can you not read it with a text editor? |
 | [11](../../11-Android-Runtime/README.md#10-common-interview-questions) | What is a runtime, and why does Android need one? |
 | [11](../../11-Android-Runtime/README.md#10-common-interview-questions) | What is the difference between compiled and interpreted code? |
@@ -1289,7 +1289,7 @@ people end up reciting a claim they cannot defend, which is exactly the failure 
 | [39](../../39-EmulatorDetection/README.md#10-common-interview-questions) | Where does this fit in a defence-in-depth strategy, and what is it defending? |
 | [39](../../39-EmulatorDetection/README.md#10-common-interview-questions) | How do you evaluate a commercial RASP vendor's emulator-detection claim? |
 | [40](../../40-Obfuscation/README.md#10-common-interview-questions) | Where should the boundary be, if not in the client? |
-| [40](../../40-Obfuscation/README.md#10-common-interview-questions) | Design an anti-tamper strategy that is robust against the techniques in this chapter. |
+| [40](../../40-Obfuscation/README.md#10-common-interview-questions) | Design an anti-tamper strategy that survives the techniques in this chapter. |
 | [40](../../40-Obfuscation/README.md#10-common-interview-questions) | How do you measure whether obfuscation is working? |
 | [42](../../42-R8/README.md#10-common-interview-questions) | Argue both sides: should a security team require obfuscation? |
 | [42](../../42-R8/README.md#10-common-interview-questions) | R8 gets more aggressive each release. What is the long-term consequence for reverse engineering Android? |

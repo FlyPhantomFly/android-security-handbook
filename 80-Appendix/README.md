@@ -37,7 +37,7 @@ the table you check before claiming a behaviour applies to a given Android versi
 rubric you use when a client disputes a rating, the template you fill in at 6pm on the last day of an
 engagement.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Learning material is organised by concept. Working material is organised by *the moment you need
 > it*. That is why this chapter looks nothing like the others.
 
@@ -100,7 +100,7 @@ ago. Check here first.
 | 15 | 35 | V | 2024 | Continued tightening of background and storage access |
 | 16 | 36 | — | 2025 | Ongoing platform hardening |
 
-> **⚠️ Warning**
+> **Warning**
 > Dates and API numbers are stable, but per-release feature details evolve. Before writing a
 > version-dependent claim into a report, verify against the official
 > [behaviour changes](https://developer.android.com/about/versions) pages for the specific release.
@@ -123,7 +123,7 @@ security defaults.
 | 33 | `RECEIVER_EXPORTED`/`RECEIVER_NOT_EXPORTED` required for runtime-registered receivers | [29](../29-BroadcastReceivers/README.md) |
 | 34 | `foregroundServiceType` required | [28](../28-Services/README.md) |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > When you find an app with a low `targetSdk`, you have found more than one issue. Low `targetSdk`
 > re-enables a whole set of legacy behaviours: implicitly exported providers, trusted user CAs,
 > permitted cleartext, legacy external storage, and implicitly mutable PendingIntents. Report the low
@@ -176,7 +176,7 @@ Only test where you have written authorisation.
 | **Android VRP (Vulnerability Rewards Program)** | Platform and AOSP vulnerabilities |
 | **Samsung, Xiaomi, OPPO and other OEM programmes** | Device- and vendor-specific attack surface |
 
-> **⚠️ Warning**
+> **Warning**
 > A programme's scope document *is* your authorisation, and it is narrow. "In scope: the Android app"
 > does not authorise attacking the backend, other customers' accounts, or the app's third-party
 > services. Read it fully; when in doubt, ask before you test.
@@ -265,7 +265,7 @@ Informational.
 **Deflation.** Dismissing "root detection bypassed" as not-a-finding and stopping there. The bypass is
 not the finding — but everything you found *after* the bypass is.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Before assigning any severity, answer three questions in writing: **Who** is the attacker in this
 > scenario? **What** do they get? **What** must be true for it to work? If you cannot answer all
 > three concretely, you do not yet have a finding — you have an observation.
@@ -378,7 +378,7 @@ Genuinely. A report with no positives reads as adversarial and gets dismissed.
 1. …
 ```
 
-> **🧠 Mental Model**
+> **Mental Model**
 > A finding list is a deliverable. A *theme* is a service. Clients can fix ten bugs; only themes stop
 > the eleventh from being written next sprint.
 
@@ -521,7 +521,7 @@ Android changes annually and the details in chapters 20–50 shift with it. A su
 - **Continuously:** when a tool breaks, find out *why* rather than downgrading. The reason is usually
   a platform change worth knowing.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > The fundamentals in chapters 01–19 have a half-life measured in decades. The specifics in chapters
 > 37–50 have a half-life measured in months. Invest your study time accordingly — and be suspicious
 > of any resource that is all specifics.
@@ -549,7 +549,7 @@ decide what to test and why, and be right about the risk.
 
 ## 11. Legal reference
 
-> **⚠️ Warning**
+> **Warning**
 > This section is orientation, not legal advice. Laws differ by jurisdiction and change. When in
 > doubt, get written authorisation and, for anything ambiguous, talk to a lawyer.
 
@@ -600,7 +600,7 @@ Not valid:
 - **Coordinated disclosure:** report privately, give a reasonable remediation window, and agree
   publication terms in advance.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The techniques in chapters 36–43 defeat controls that exist to stop attackers. Your legal
 > distinction from an attacker is *authorisation*, and nothing else — not intent, not skill, not
 > employment. Treat the scope document as the most important artefact of the engagement, because

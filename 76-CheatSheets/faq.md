@@ -136,7 +136,7 @@ adb shell "sh -c 'echo A; echo B'"        # prints A, then B
 
 This is the single most common source of "half my script works" on Android.
 
-### 11. My script prints an error under `set -o pipefail` but the data is obviously fine. What?
+### 11. My script prints an error under `set -o pipefail` but the data is fine. What?
 
 `head` and `grep -q` exit the instant they have what they need. That closes the pipe, the writer
 upstream dies of `SIGPIPE`, and `pipefail` promotes the writer's status to the pipeline's — so you

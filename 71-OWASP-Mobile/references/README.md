@@ -138,7 +138,7 @@ the subset the MAS material references.
 | [AndroGoat](https://github.com/satishpatnayak/AndroGoat) | Kotlin source, broad coverage. Another good heatmap target |
 | MASTG test apps, including the Android UnCrackable series | The canonical RESILIENCE progression. Resolve their current `MASTG-APP-*` identifiers on the site rather than citing them from memory |
 
-> **⚠️ Warning**
+> **Warning**
 > Every target above is deliberately vulnerable and licensed for this purpose. Nothing in this
 > chapter authorises testing anything else. See
 > [80-Appendix §11](../../80-Appendix/README.md#11-legal-reference) before you point any of this at

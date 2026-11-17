@@ -88,7 +88,7 @@ Without root, on a debuggable app:
 adb exec-out run-as $PKG tar czf - . > before.tgz
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > Use `adb exec-out`, not `adb shell`. `adb shell` performs line-ending translation that will corrupt
 > a binary stream, and you will get a tar archive that will not extract. This wastes a surprising
 > amount of people's time.

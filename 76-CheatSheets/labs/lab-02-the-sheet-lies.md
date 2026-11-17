@@ -18,7 +18,7 @@ cleanly. Every one of them returns an answer that is **plausible, confidently fo
 
 None of them errors. That is the entire point.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > A command that fails loudly costs you five seconds. A command that returns a *plausible wrong
 > answer* costs you an hour, and sometimes costs you a report. The skill this lab builds is not
 > knowing these six specific commands — it is the reflex of asking *"what would this print if it were

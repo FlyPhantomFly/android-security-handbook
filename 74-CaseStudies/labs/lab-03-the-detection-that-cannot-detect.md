@@ -43,7 +43,7 @@ If nothing is usable, build a minimal debuggable APK — any app with
 `android:debuggable="true"` will do — or use `com.android.settings`-style AOSP debug builds if your
 device is `userdebug`.
 
-> **⚠️ Two traps, both of which this repository has paid for.**
+> **Two traps, both of which this repository has paid for.**
 > **First:** if you write your own enumeration loop, redirect stdin on every `adb` call. `adb shell`
 > inherits stdin and will consume a surrounding `while read` loop's input, so the loop processes one
 > item and exits cleanly — looking exactly like a device with nothing on it. Chapter 64 printed one
@@ -413,7 +413,7 @@ Write the Part 2–3 result as a report finding. Then compare.
 >
 > This is not a bypass; the routine has no detection capability to bypass. Remove it, or replace it
 > with signals reachable from an application uid — `/proc/self/mountinfo` mount sources are readable
-> without permissions — and note that any client-side signal is advisory. Where the answer must be
+> without permissions — and confirm that any client-side signal is advisory. Where the answer must be
 > trusted, use server-validated Play Integrity or key attestation.
 
 Note what it avoids. Not "root detection can be bypassed" — nothing was bypassed, and that phrasing

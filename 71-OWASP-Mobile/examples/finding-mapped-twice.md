@@ -77,7 +77,7 @@ Six things, in ascending order of how much they matter.
 | 5 | **Only one control considered** | The observation touches at least two, and possibly a third |
 | 6 | **The remediation may not fix anything** | `EncryptedSharedPreferences` moves the token behind a KeyStore key. If that key has no user-authentication requirement, an attacker with code execution as the app still gets the token. The fix addresses the symptom, not the property that was missing |
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Mechanical mapping asks "which control does this look like?" Considered mapping asks "what is
 > actually true about this system, and which controls does that touch?" The first question has one
 > answer and it is often the wrong one. The second has several and they are all useful.
@@ -179,7 +179,7 @@ Three changes, in priority order. The first is necessary; the first alone is not
 3. **Exclude the preferences file from backup** via `dataExtractionRules`, covering both
    `<cloud-backup>` and `<device-transfer>`.
 
-Note that applying only change 1 leaves an exfiltrated token valid for 30 days, and applying only
+applying only change 1 leaves an exfiltrated token valid for 30 days, and applying only
 change 2 still leaves the biometric gate decorative. They address different halves.
 
 ### References

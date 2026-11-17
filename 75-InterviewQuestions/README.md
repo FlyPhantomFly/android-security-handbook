@@ -46,7 +46,7 @@ candidate who can say *"the standard answer to that is wrong on a current device
 measured it"* is in a different category — provided they can also say which device, which
 method, and what they did **not** establish.
 
-> **⚠️ Warning — no real company's process appears here**
+> **Warning — no real company's process appears here**
 > Every stage, rubric and question in this chapter is described **generically**. Nothing is
 > reproduced from any organisation's question bank, hiring guide, or NDA-covered material,
 > and no real employer is named. If you are preparing for a specific company, the correct
@@ -137,7 +137,7 @@ whose answers happen to vary enormously in quality. They are not collecting your
 `su` paths. They are collecting evidence about how you reason, what you consider evidence,
 and what you do when the list runs out.
 
-> **📖 Definition — signal**
+> **Definition — signal**
 > In hiring, the **signal** of a question is the property of the candidate it lets the
 > interviewer estimate. The **surface** of a question is what it literally asks. A
 > well-designed question has a surface that is easy to answer at all and a signal that is
@@ -198,7 +198,7 @@ says "does not know X" — narrow, bounded, and often irrelevant to the job. A b
 sample that says "confidence is uncorrelated with correctness", which is unbounded and
 relevant to every job.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Think of yourself as a detector the interviewer is calibrating. They feed you inputs whose
 > ground truth they already know, and they are measuring your **false-positive rate** — how
 > often you assert something confidently that is not so. This repository's standing rule is
@@ -253,7 +253,7 @@ pressure, which is different from what you believe you do.
 
 **The interviewer.** [§3.2](#32-what-a-stage-measures-versus-what-it-asks) and
 [§3.14](#314-red-flags-from-the-interviewers-side-of-the-table) are for you, and so is
-[§11.2](#112-interviewer-mistakes). The single highest-leverage improvement available to
+[§11.2](#112-interviewer-mistakes). The single highest-value improvement available to
 most interviewers is to write down what a question is *for* before asking it, and to discard
 any question whose answer does not change the decision.
 
@@ -262,7 +262,7 @@ and [§5.2](#52-the-take-home-that-is-unpaid-work-or-worse) are the ones with le
 ethical edges. A take-home that hands a candidate a real client's application is not a
 clever assessment; it is an unauthorised-testing problem with a hiring process attached.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > This chapter is the only one in the repository whose subject is people rather than
 > systems, and the temptation to write self-help is strong. The test applied throughout:
 > **would this sentence survive being asked "how do you know?"** Where the answer is "I
@@ -489,7 +489,7 @@ biometric login actually protected anything, and it turned out it did not", they
 something that will get you the next round. Neither sentence is more technical. One is
 *specific*.
 
-> **⚠️ Warning**
+> **Warning**
 > This is the stage where NDA discipline first matters, and where candidates most often slip,
 > because the register is casual and the question ("so what have you been working on?") is
 > friendly. [§5.1](#51-what-you-may-and-may-not-say-about-past-work) is the rule set. The
@@ -555,7 +555,7 @@ hits against real browser data, all 132 false positives**. `64-Xposed` swept 237
 keyword and got **1,141 occurrences, of which 1,141 were the substring inside the English
 word "exposed" — zero unexplained, zero findings.**
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Quoting one of those numbers in a take-home write-up — as the reason you discarded a
 > confident-looking lead — is worth more than the lead would have been. It demonstrates that
 > you know the base rate, and knowing the base rate is what separates a scanner operator from
@@ -625,7 +625,7 @@ The single table this section exists for. If you read nothing else in
 | Behavioural | "A time you were wrong" | Is your model of yourself accurate? | describes a *specific technical* error and its cost, not a humblebrag |
 | Any stage | "Any questions for me?" | What do you optimise for? | asks something that only matters if you intend to do the job well |
 
-> **🧠 Mental Model — the altitude of the question**
+> **Mental Model — the altitude of the question**
 > [`20-Security-Architecture`](../20-Security-Architecture/README.md) uses the vocabulary of
 > *altitude* for the layer at which a control operates, and
 > [`67-BypassingProtections`](../67-BypassingProtections/README.md) maps its seams the same
@@ -678,7 +678,7 @@ question you most want to be asked, because the answer is a measurement.
 answer, "but I'm not sure" sounds like retraction. As the designed final move, it sounds like
 scope.
 
-> **⚠️ Warning — the tool-first opening**
+> **Warning — the tool-first opening**
 > The commonest structural failure is opening at move 3 with a tool: *"I'd run Frida and hook
 > the check."* [`STYLE-GUIDE.md`](../STYLE-GUIDE.md) rejects exactly this in prose — a chapter
 > that opens with "To hook a method with Frida, run…" is wrong — and it fails in an interview
@@ -734,7 +734,7 @@ device integrity the goal, or is the goal transaction legitimacy with device int
 weak input? A Principal answer is often a polite refusal to answer as asked — followed,
 always, by answering as asked anyway, because a refusal without an answer is a dodge.
 
-> **🔬 Under the Hood — why interviewers can tell**
+> **Under the Hood — why interviewers can tell**
 > Level is estimated far more from **what you volunteer unprompted** than from what you can
 > produce on request. A Senior candidate volunteers provenance without being asked. A Staff
 > candidate volunteers the cost. A Principal candidate volunteers the premise. Anyone can
@@ -782,7 +782,7 @@ past the one that mattered.
 *The answer is now about evidence, reachability, and the cost of getting severity wrong.*
 
 **Staff.** The storage question is downstream of a design decision, which is that the client
-holds a long-lived bearer credential. That is the decision with leverage. If access tokens
+holds a long-lived bearer credential. That is the decision that matters. If access tokens
 are short-lived and the refresh token is bound to a non-exportable device key with
 proof-of-possession, the storage question becomes almost uninteresting — and "the security
 question became uninteresting" is what a good design looks like. Organisationally I would
@@ -968,7 +968,7 @@ concrete traps, all measured:
   bind-mounted in. A successful intercept there does **not** prove the app trusts user CAs,
   because the proxy CA is in the *system* store. Measuring the default trust anchors returned
   **139 at every `targetSdk` tried — 23, 24, 28, 30 and 34** — which looks like proof the API
-  24 user-CA rule does not exist. It does. The CA simply is not a user CA any more. Check
+  24 user-CA rule does not exist. It does. The CA is not a user CA any more. Check
   with `mount | grep cacerts` first.
 - **The emulator is a fine Android and not a device.** It has no bootloader:
   `adb reboot bootloader` returns 0, reboots, and comes back as `device` in about 40 seconds
@@ -1027,7 +1027,7 @@ than burying it in the report. Where a candidate distinguishes themselves is on 
 step: what would change your rating? Naming that in advance is what makes you persuadable
 without being movable.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > All ten questions have a common structure: **a claim, and the method that would justify
 > it.** That is not an accident of selection. It is what senior interviews are about, and it
 > is why this repository — which insists on measurement over folklore in every chapter — is
@@ -1040,16 +1040,16 @@ questions that get asked constantly. Deployed well, one of them changes how the 
 interview goes. Deployed badly, you sound like someone correcting the interviewer for sport.
 
 The table first, then the technique. **Every row is verified against the chapter that owns
-it**, and the rows marked ✔ were additionally re-measured on the AVD
+it**, and the rows marked Yes were additionally re-measured on the AVD
 `sdk_gphone16k_x86_64` (Android 15 / API 35) while this chapter was written, using
 [`examples/04-evidence-behind-the-answer.sh`](examples/04-evidence-behind-the-answer.sh).
 
 | The question | The received answer | What measurement showed | Owner | Re-run |
 |---|---|---|---|---|
-| "How do you detect an emulator?" | `Build.FINGERPRINT.startsWith("generic")`, `Build.MODEL.contains("Emulator")`, `/dev/qemu_pipe` exists | **All three false on a stock current AVD.** Fingerprint is `google/sdk_gphone16k_x86_64/emu64xa16k:15/…:userdebug/dev-keys`; `/dev/qemu_pipe` is `ENOENT` and the node is `/dev/goldfish_pipe_dprctd`. The most-copied `isEmulator()` on the internet returns `false` | [39](../39-EmulatorDetection/README.md) | ✔ |
-| "A property with `qemu` in the name means emulator" | obviously true | **Inverted.** A retail Xiaomi sets `qemu.hw.mainkeys` and `ro.kernel.qemu.gles`; the AVD sets neither. The heuristic calls the phone an emulator and the emulator a phone. (`ro.kernel.qemu` itself does still read `1`, so be precise about *which* property) | [39](../39-EmulatorDetection/README.md) | ✔ |
-| "Emulators are slower, so time a loop" | obviously true | **Inverted by 1.47×.** Identical C, same NDK, same app uid: **2.398 ns/iter on the AVD against 3.516 on the phone.** Modern AVDs virtualise on the host CPU | [39](../39-EmulatorDetection/README.md) | — |
-| "How do you detect root? Check `/system/xbin/su`" | a file existence check | On a rooted API 35 AVD the file **is** there, setuid root — and `/system/xbin` is `0750 root:shell`, so an app gets `EACCES` and `File.exists()` returns `false`. **And that binary is not what grants root**: Magisk is, from `/debug_ramdisk` | [37](../37-RootDetection/README.md), [59](../59-radare2/README.md), [63](../63-LSPosed/README.md) | ✔ |
+| "How do you detect an emulator?" | `Build.FINGERPRINT.startsWith("generic")`, `Build.MODEL.contains("Emulator")`, `/dev/qemu_pipe` exists | **All three false on a stock current AVD.** Fingerprint is `google/sdk_gphone16k_x86_64/emu64xa16k:15/…:userdebug/dev-keys`; `/dev/qemu_pipe` is `ENOENT` and the node is `/dev/goldfish_pipe_dprctd`. The most-copied `isEmulator()` on the internet returns `false` | [39](../39-EmulatorDetection/README.md) | Yes |
+| "A property with `qemu` in the name means emulator" | surely true | **Inverted.** A retail Xiaomi sets `qemu.hw.mainkeys` and `ro.kernel.qemu.gles`; the AVD sets neither. The heuristic calls the phone an emulator and the emulator a phone. (`ro.kernel.qemu` itself does still read `1`, so be precise about *which* property) | [39](../39-EmulatorDetection/README.md) | Yes |
+| "Emulators are slower, so time a loop" | surely true | **Inverted by 1.47×.** Identical C, same NDK, same app uid: **2.398 ns/iter on the AVD against 3.516 on the phone.** Modern AVDs virtualise on the host CPU | [39](../39-EmulatorDetection/README.md) | — |
+| "How do you detect root? Check `/system/xbin/su`" | a file existence check | On a rooted API 35 AVD the file **is** there, setuid root — and `/system/xbin` is `0750 root:shell`, so an app gets `EACCES` and `File.exists()` returns `false`. **And that binary is not what grants root**: Magisk is, from `/debug_ramdisk` | [37](../37-RootDetection/README.md), [59](../59-radare2/README.md), [63](../63-LSPosed/README.md) | Yes |
 | "Is biometric authentication secure?" | a `BiometricPrompt` success callback means the user authenticated | The callback proves nothing on its own. `dumpsys fingerprint` separates `accept` from `acceptCrypto`; a measured device read **`accept: 3`, `acceptCrypto: 0`**. And a 24-hour auth-bound key encrypted with **no authentication at all**, while a 30-second key opened because an *unrelated process* performed a credential check | [48](../48-Biometrics/README.md) | — |
 | "How do you find `FLAG_SECURE` usage?" | grep the decompiled output | **True-positive rate of zero.** javac constant-folds `0x2000`; the identifier never reaches the class file or the DEX. Hook `Window.setFlags` instead | [47](../47-Authentication/README.md) | — |
 | "Does a valid attestation chain prove hardware backing?" | yes, that is what it is for | **No.** On an emulator every key is `SOFTWARE`, `hardwareEnforced` is empty, **and the chain still verifies perfectly** | [50](../50-HardwareBackedSecurity/README.md), [49](../49-KeyStore/README.md) | — |
@@ -1059,7 +1059,7 @@ it**, and the rows marked ✔ were additionally re-measured on the AVD
 | "Is `TracerPid` how you detect a debugger?" | yes, it is *the* check | It detects `ptrace` attachment, not a Java debugger. `jdb` was attached, threads enumerated, and `TracerPid` read **0** throughout | [38](../38-TamperDetection/README.md) | — |
 | "Verify the app has not been repackaged with a DEX CRC check" | sound approach | Re-signing with a different key changed the signature digest while `classes.dex` CRC stayed **identical**, because nothing in the code changed. DEX-integrity checks do not detect re-signing, which is the tampering that matters | [38](../38-TamperDetection/README.md) | — |
 
-> **⚠️ Warning — the vantage caveat belongs with every one of these**
+> **Warning — the vantage caveat belongs with every one of these**
 > Most of the rows above were measured from `adb shell`, and **the shell is not an app.** This
 > is the repository's most-repeated finding, hit independently by several chapters from
 > several directions. Prove reachability **from an app** — `run-as`, a probe APK, or Frida
@@ -1133,7 +1133,7 @@ conclusion.** The shell-to-app gap is roughly **40 properties, not roughly 419**
   signals against the shell's **36**. Nearly identical — so **the most quotable statistic was
   also the least relevant one to the question it was being used to answer.**
 
-> **🔍 Pentester's Note — the interview lesson, which is the whole chapter in one paragraph**
+> **Pentester's Note — the interview lesson, which is the whole chapter in one paragraph**
 > A candidate who says *"the shell sees about 1,053 properties and an app 634"* sounds like
 > someone who has measured. They are repeating a number **nobody re-ran**, and that is far more
 > common in interviews than not knowing. The strong answer is not the memorised figure. It is:
@@ -1161,7 +1161,7 @@ get wrong.
 
 One contradiction per interview is plenty. Two is a conversation. Three is a personality.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > The reason these land is not that you know something obscure. It is that each one is
 > evidence you have **run the check yourself rather than repeating it**, and that is the
 > single property interviewers are least able to assess by any other means. It is the whole
@@ -1201,7 +1201,7 @@ Part 3 is this repository's entire thesis compressed into an interview sentence.
 chapter here prefers a measurement to a table; **"I would measure it" is the spoken form of
 that preference**, and it is the only answer still correct after the platform changes.
 
-> **⚠️ Warning — where "I would measure it" is the wrong answer**
+> **Warning — where "I would measure it" is the wrong answer**
 > Design questions. "How would you architect credential storage?" cannot be answered with "I'd
 > measure it", and reaching for the phrase there reads as avoidance. Measurement answers
 > questions about **what is true on a device**. Design questions are about **what should be
@@ -1231,7 +1231,7 @@ ninety-second question and then being cut off on the one you would have answered
 
 Two adjustments matter more than any technique.
 
-**Decide your last sentence before you start the first.** This is the single highest-leverage
+**Decide your last sentence before you start the first.** This is the single highest-value
 habit in this chapter. Knowing where you are going to land converts an open-ended answer into
 a bounded one, and it is what makes the `Landed` state in
 [§2.3](#23-the-state-machine-of-a-single-answer) reachable at all. Practically: after hearing
@@ -1282,7 +1282,7 @@ invites a bare counter-rating and the exchange has nowhere to go.
 | **Honest severity** | the rating you would still give if the client were paying you to say otherwise | the phrase interviewers listen for |
 | **Denominator** | out of how many components, apps, devices | a percentage without one is not a measurement |
 
-> **🔍 Pentester's Note — a worked example of honest severity**
+> **Pentester's Note — a worked example of honest severity**
 > [`33-Storage`](../33-Storage/README.md) measured an ordinary zero-permission app reading
 > another package's private file on a stock Enforcing device — structurally, because
 > `privapp_data_file` carries no per-app MCS categories, the directory is `0711` and the file
@@ -1336,7 +1336,7 @@ guarantee about your future work that a take-home can carry.
 [Lab 02](labs/lab-02-take-home-with-a-rubric.md) is a take-home with the full grader's rubric
 included, so you can mark your own submission before anyone else does.
 
-> **⚠️ Warning**
+> **Warning**
 > If a take-home hands you a **real, named third-party application** and asks you to find
 > vulnerabilities in it, stop and read [§5.2](#52-the-take-home-that-is-unpaid-work-or-worse)
 > before you start. There is an authorisation question there, and the correct response is to
@@ -1379,7 +1379,7 @@ has structured the whole session correctly.
 | "How do you know the device is genuine?" | naming attestation and stopping | attestation, **and** reading the security level from the hardware-enforced list, **and** a graceful path for the population that legitimately has no attestation |
 | "We have three weeks. What do we build?" | designing the ideal system | pick the one control that removes a class of failure, and say what you are consciously not doing |
 
-> **🧠 Mental Model**
+> **Mental Model**
 > [`13-ART`](../13-ART/README.md) states the underlying principle better than any design
 > framework: *the managed/native boundary inside a process is not a security boundary.* It
 > follows that all client-side integrity checking is defeatable by an attacker who can execute
@@ -1435,7 +1435,7 @@ I did not."* That is what surfaced the error in the bullet above, and it is a be
 a story about being right, because it demonstrates a behaviour that scales to colleagues you
 cannot check.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > A candidate who says "I was wrong about X, here is how I found out, here is what I changed"
 > is demonstrating, in miniature, the loop that the entire job consists of. It is the most
 > transferable thing you can show in a behavioural round, and it is much easier to prepare
@@ -1491,7 +1491,7 @@ technical round, "what's the culture like" (unanswerable and everyone says the s
 this team do that it wishes it didn't have to?"* Every honest engineering organisation has an
 answer. A long pause is itself the answer.
 
-> **⚠️ Warning**
+> **Warning**
 > This section cuts both ways. Interviewers: a candidate whose only questions are about
 > compensation and remote policy is not necessarily uninterested in the work — they may have
 > been told by three previous processes that technical questions read as arrogant. Ask them
@@ -1528,7 +1528,7 @@ is the most useful thing in the table:
 | **Total** | **1,258** | **1,320** |
 | **Chapters with a section** | **71** | **75** |
 
-> **⚠️ Warning — do not quote either column**
+> **Warning — do not quote either column**
 > Three sibling chapters were being written **in parallel with this one** and acquired their
 > interview sections between the two runs. The corpus is a **timestamped measurement, not a
 > constant**, and by the time you read this it is larger again. That is not a defect in the
@@ -1574,7 +1574,7 @@ python3 -B scripts/mock-round.py --bank /tmp/bank.json --list-pools
 python3 -B scripts/mock-round.py --bank /tmp/bank.json --round "Deep technical round" --timed
 ```
 
-> **🧠 Mental Model — why an index and not a concatenation**
+> **Mental Model — why an index and not a concatenation**
 > An index is aggregation done well; concatenation is aggregation done badly. The index adds
 > a dimension the source did not have (role, round, tier-across-topics) and costs nothing to
 > keep correct, because a script rebuilds it. A concatenation adds no dimension, duplicates
@@ -1642,7 +1642,7 @@ True count on that run: **1,258 across 71 chapters** — and **1,320 across 75**
 later, because three sibling chapters landed in between. See the warning in
 [§3.16](#316-the-curated-index-by-role-and-by-round).
 
-> **🔬 Under the Hood — the lesson is the repository's own**
+> **Under the Hood — the lesson is the repository's own**
 > A detector that disagrees with **one sample out of 71** is more likely to be wrong than the
 > sample is. This is the same reasoning that corrected `38-TamperDetection`'s 18-of-18 claim
 > and `64-Xposed`'s 16 R8 class names — except inverted: there, the detector agreed with
@@ -1758,7 +1758,7 @@ $ grep -c magisk /proc/self/mountinfo
 Three mount entries whose source is literally `magisk`, readable from every vantage tested.
 That reproduces [`63-LSPosed`](../63-LSPosed/README.md)'s measurement on a second occasion.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The reason this trace is worth memorising is that it converts you from someone who *knows a
 > fact about root detection* into someone who *can derive it*. When the interviewer follows up
 > with "what about `/data/adb/magisk`?" you do not need to have measured that specific path —
@@ -1828,7 +1828,7 @@ prospective employer is not authorisation. Neither is the app being publicly dow
 A good employer answers immediately, because they have thought about it. An employer who
 reacts badly to that question has told you something valuable at zero cost.
 
-> **⚠️ Warning**
+> **Warning**
 > The same rule governs every practical exercise in this chapter. The labs in
 > [`labs/`](labs/) use either the reader's own device, an emulator they control, or
 > intentionally vulnerable applications. **Nothing in this chapter is an invitation to test an
@@ -1861,7 +1861,7 @@ Points 6 and 7 are where candidates separate. The strong answer also says what i
 do: no publication before a reasonable window, no exploitation for gain, and no access to
 other people's data even when the bug permits it.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Where the strongest candidates go next is to name the tension honestly: an indefinite
 > embargo protects the vendor and not the users, and a fixed 90-day clock can publish into an
 > unpatched estate. Saying "there is no policy that is right in every case, and here is how I
@@ -1976,7 +1976,7 @@ only to its content.
 | "OK, moving on." (early) | that thread produced no signal | do not chase it; take the new question cleanly |
 | a long silence | either thinking, or leaving space for you to fill | let it sit for three seconds; do not fill it with hedging |
 
-> **🧠 Mental Model**
+> **Mental Model**
 > The follow-up is the interviewer's *instrumentation*. Just as an analyst forces
 > interpretation with `cmd package compile -m verify -f <pkg>` to make execution observable,
 > an interviewer asks a follow-up to make your reasoning observable. Neither is an attack. In
@@ -2178,11 +2178,11 @@ which holds three questions each answered twice at the same tier:
 Every pair separates in the right direction, which is the only claim being made. It is not a
 claim that the tool would rank two unseen answers correctly.
 
-> **⚠️ Warning — two defects in the first version, both instructive**
+> **Warning — two defects in the first version, both instructive**
 > The vocabulary lists were substrings, and `"i measured"` does not match `"i have
 > measured"` — so a heavily-evidenced answer scored **0 out of 2 for evidence**. And every
 > fallacy pattern fired on the *strong* answers too, because a strong answer discusses a
-> fallacy in order to refute it; hits are now downgraded when the surrounding sentence reads
+> fallacy to refute it; hits are now downgraded when the surrounding sentence reads
 > as a rebuttal. Unfixed, the tool would have punished the best answers hardest. That is the
 > shape of detector failure this repository keeps measuring, reproduced inside this chapter's
 > own tooling.

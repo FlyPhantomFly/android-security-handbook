@@ -120,7 +120,7 @@ Four verdicts, and the distinction between the last three is the whole exercise:
 | **VANTAGE-DEPENDENT** | Correct from one uid and wrong from another, with no error either way |
 | **DEVICE-DEPENDENT** | Correct on the device class it was written for, wrong on yours |
 
-> **⚠️ Warning — the trap in the verdicts themselves.** A row can be more than one. Row 1 is both
+> **Warning — the trap in the verdicts themselves.** A row can be more than one. Row 1 is both
 > DEVICE-DEPENDENT *and* carries a second defect that fires everywhere. If you stop at the first
 > explanation you find, you will miss the second — which is exactly how the row survived three years
 > of use.
@@ -475,7 +475,7 @@ Widen the grep. The node was renamed, not removed, and the new name contains an 
 "deprecated". Compare the two names and you have the token.
 
 While you are there, check the other three artefacts from the same era —
-`/dev/socket/qemud`, `/system/bin/qemu-props`, `libc_malloc_debug_qemu.so` — and note that *those*
+`/dev/socket/qemud`, `/system/bin/qemu-props`, `libc_malloc_debug_qemu.so` — and confirm that *those*
 are genuinely gone. "Renamed" and "removed" are different verdicts and the row deserves the accurate
 one.
 </details>

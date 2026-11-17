@@ -25,7 +25,7 @@ This lab gives you the exercise, the cap, the deliverable format, and — afterw
 rubric the grader would have used**, so you can mark your own submission before anyone else
 does.
 
-> **⚠️ Do not read section 6 until you have submitted.**
+> **Do not read section 6 until you have submitted.**
 > The rubric is the answer key. Reading it first turns this into a copying exercise and
 > destroys the only measurement that matters, which is what you produce unprompted.
 
@@ -142,7 +142,7 @@ adb shell "run-as com.example.target ls -laR /data/data/com.example.target" 2>&1
 adb logcat -d | grep -i com.example.target | tail -50
 ```
 
-> **⚠️ Warning — the `adb shell su -c` trap** <!-- lint:allow SU-DASH-C SU-DASH-C-BARE -- the broken form, named as the subject of this warning; covers the next line too -->
+> **Warning — the `adb shell su -c` trap** <!-- lint:allow SU-DASH-C SU-DASH-C-BARE -- the broken form, named as the subject of this warning; covers the next line too -->
 > `adb shell su -c 'a; b'` loses its quoting and runs only `a`. Write
 > `adb shell "su -c 'a; b'"`. On an emulator, `su` may reject `-c` entirely — use
 > `su 0 <cmd>`, which reads as "not rooted" when it fails and has caught several chapters of

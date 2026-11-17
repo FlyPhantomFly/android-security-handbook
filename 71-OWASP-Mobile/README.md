@@ -51,12 +51,12 @@ examined depended entirely on whether that tester happened to care about biometr
 
 **Reports were incomparable.** Two firms tested the same app and produced findings with no overlap in
 structure, naming or severity philosophy. The client could not tell whether the second firm had found
-more issues or simply used different words.
+more issues or used different words.
 
 **"Secure" meant nothing.** Without a stated bar, "the app passed the security test" is an assertion
 about the tester's mood, not the app.
 
-> **📖 Definition**
+> **Definition**
 > **MASVS** (Mobile Application Security Verification Standard) states *what* must be true for an app
 > to be considered secure, at a chosen level of rigour. **MASTG** (Mobile Application Security Testing
 > Guide) explains *how* to test each of those requirements. **MASWE** (Mobile Application Security
@@ -82,7 +82,7 @@ against Android 11 assumptions may be irrelevant, or actively misleading, on And
 And a standard **cannot rate your finding**. MASVS tells you a control was violated. Whether that
 violation is Critical or Informational depends on a threat model the standard knows nothing about.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Use the standard to guarantee **coverage** — that you did not forget to test an entire category.
 > Use your own judgement to find the things the standard could not anticipate. A report that is only
 > checklist output is a compliance artefact. A report that is only intuition is unrepeatable. You owe
@@ -181,7 +181,7 @@ every storage, crypto, network and authentication control and have zero resilien
 may be entirely correct for its threat model. Resilience controls only matter when the device owner
 is part of your threat model: banking, DRM, gaming, licensing.
 
-> **⚠️ Warning**
+> **Warning**
 > Recommending obfuscation and root detection for an app whose threat model does not include a hostile
 > user is bad advice. It costs the client engineering effort, complicates their crash reporting and
 > support, and buys nothing. Only recommend resilience controls when you can name the adversary they
@@ -358,7 +358,7 @@ Integrity verdicts checked on the client rather than the server.
 **Chapters:** [37-RootDetection](../37-RootDetection/README.md) through
 [42-R8](../42-R8/README.md), [67-BypassingProtections](../67-BypassingProtections/README.md)
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Resilience is the category where honest reporting matters most. You *will* bypass the protections —
 > that is your job, and it proves nothing by itself. The finding is never "I bypassed root detection".
 > The finding is either "these protections are absent or trivially defeated, and here is the
@@ -421,7 +421,7 @@ The MAS project is itself open source, and reading it is worthwhile.
 | MASTG *Apps* | The deliberately vulnerable apps, including the UnCrackable series |
 | MAS Checklist | A spreadsheet mapping every MASVS control to its MASTG tests — the artefact clients actually want |
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > The MASTG restructured significantly between v1 and v2, moving from long narrative chapters to
 > atomic, individually-identified tests. If you inherit an older report citing chapter-style
 > references, or a client's compliance team is working from an older checklist, expect the identifiers
@@ -475,10 +475,10 @@ something to point at when a client disputes that a finding matters.
 | NIST SP 800-163 | US federal mobile app vetting. More process-oriented. |
 | ISO 27001 / SOC 2 | Organisational, not application-level. Your report becomes evidence within them. |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > On most mobile engagements the highest-severity findings are on the **API**, not in the app. The app
 > is a convenient way to discover the API's endpoints and expected requests. Scope ASVS coverage for
-> the backend explicitly, or state clearly that it was out of scope — otherwise a client will
+> the backend explicitly, or state explicitly that it was out of scope — otherwise a client will
 > reasonably assume "you tested our mobile product" included it.
 
 ### Forensic and defensive uses
@@ -577,7 +577,7 @@ Static analysis maps cleanly onto the categories, and the triage sweep in
 | `META-INF/` signature block | CODE (signing scheme), RESILIENCE |
 | `mapping.txt` if present | RESILIENCE (a finding in itself) |
 
-> **⚠️ Warning**
+> **Warning**
 > Automated tools that claim to "check MASVS compliance" produce a mapping, not a verdict. A tool
 > cannot determine whether the data an app stores is *sensitive*, which is the entire question for
 > MASVS-STORAGE. Treat automated MASVS mapping as a coverage tracker and nothing more. See
@@ -611,7 +611,7 @@ You find that the app writes the OAuth refresh token to `SharedPreferences` in p
 **Evidence:** /data/data/com.example/shared_prefs/auth.xml, key "refresh_token"
 ```
 
-Note that the severity argument does the real work. The control violation is a fact; the severity
+the severity argument does the real work. The control violation is a fact; the severity
 comes from the token's lifetime and the absence of device binding, which no standard could have told
 you.
 
@@ -658,7 +658,7 @@ a heatmap. What emerges is almost always a small number of *systemic* issues —
 networking library with weak TLS defaults, an internal SDK that logs verbosely, a copy-pasted
 authentication pattern. Fixing the shared component fixes twenty apps at once.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > At programme scale, the standard's real value is not per-app assurance. It is that a **consistent
 > measurement across many apps reveals the shared causes**, which is where remediation effort actually
 > pays off.
@@ -887,7 +887,7 @@ mindmap
 
 - What is the difference between MASVS, MASWE and MASTG?
 - Name the eight control categories.
-- Why is RESILIENCE not simply a higher security level?
+- Why is RESILIENCE not a higher security level?
 - What can the standard not tell you about a finding you have confirmed?
 - Where do most high-severity mobile findings actually live, and which standard covers that?
 - Why must a MASVS-PLATFORM finding be reproduced from an app rather than from `adb shell`?

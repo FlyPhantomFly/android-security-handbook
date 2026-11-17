@@ -73,8 +73,9 @@ graduated hint ladder; use as few rungs as you can stand.
 - **After each round, write down one sentence**: what you think the panel scored. That sequence
   of five guesses is the actual work of this CTF; the flag is a checksum on it.
 
-**Authorised testing only.** Every command implied by these rounds is read-only and runs
-against your own device. Nothing here asks you to touch anything you do not own.
+Every command implied by these rounds is read-only and runs against your own device. Nothing
+here asks you to touch anything you do not own. See [SECURITY.md](../../SECURITY.md) for
+authorised-testing scope.
 
 ---
 
@@ -185,7 +186,7 @@ written that way on purpose.
 | 4 | that a rating is a negotiation rather than the output of a scale |
 | 5 | that "found nothing" and "there is nothing" are the same statement |
 
-Each token names the concept you must supply in order to refuse cleanly.
+Each token names the concept you must supply to refuse cleanly.
 </details>
 
 <details>

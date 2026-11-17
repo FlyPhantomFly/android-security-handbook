@@ -27,7 +27,7 @@ question is unanswerable in principle. You are graded as much on correctly refus
 as on correctly answering the seven, and a candidate who "answers" all eleven scores lower
 than one who answers seven and refuses four.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > This is calibration measured directly. In interviews the interviewer estimates it
 > indirectly, by seeding questions whose answer they know is counter-intuitive and watching
 > whether you hedge. Here the seeding is explicit and the marking key is published, so you can
@@ -49,10 +49,10 @@ By the end of this lab you will have:
 
 ## 3. Authorisation and setup
 
-**Authorised testing only.** Everything in this lab runs against a device you own — an
-emulator you created, or your own spare handset. Every command below is **read-only**: it
-prints, it does not modify. Nothing is installed, no setting is changed, nothing is written to
-the device.
+Everything in this lab runs against a device you own — an emulator you created, or your own
+spare handset. Every command below is **read-only**: it prints, it does not modify. Nothing is
+installed, no setting is changed, nothing is written to the device. See
+[SECURITY.md](../../SECURITY.md) for authorised-testing scope.
 
 ```bash
 # host — confirm exactly one device, and identify it. Never skip this.
@@ -369,7 +369,7 @@ specifically, an app sees 35 of the relevant `init.svc.*` signals against the sh
 nearly identical, so **the most quotable statistic was also the least relevant one to the
 question it was being used to answer.**
 
-> **🔍 Pentester's Note — the method worth copying**
+> **Pentester's Note — the method worth copying**
 > The chapter that failed to reproduce the figure **changed nothing** in the chapter that
 > published it. It reported its own numbers and the exact command it ran, filed the discrepancy
 > as unresolved, and left adjudication to the owner. *"I could not reproduce your result; here
@@ -392,7 +392,7 @@ on the host CPU; they do not interpret.
 **Correct refusal:** name the missing half, give the method — identical binary, same
 compilation flags, same uid, same thermal state, many iterations — and *then* offer the known
 result as a prior, explicitly labelled as somebody else's measurement on somebody else's
-hardware. Note that the AVD's speed is a property of the **host**, so the result does not
+hardware.the AVD's speed is a property of the **host**, so the result does not
 transfer to a different machine.
 
 ---
@@ -415,7 +415,7 @@ unmistakable — this repository recorded a device where a rooting module had re
 **not** prove the app trusts user-installed CAs, because the proxy CA is in the *system* store.
 Measuring the default trust anchors there returned **139 at every `targetSdk` tried — 23, 24,
 28, 30 and 34** — which looks like proof that the API 24 user-CA rule does not exist. It does.
-The CA is simply not a *user* CA any more. **A device whose posture you have not established
+The CA is not a *user* CA any more. **A device whose posture you have not established
 will teach you the opposite of the truth.**
 
 ---
@@ -478,7 +478,7 @@ a device where the OS is not trusted it is not trustworthy at all.
 
 **Failure:** "yes, the patch level is *date*." That is reading a claim as a measurement.
 
-**Correct refusal:** name what the property is, note that verifying it requires testing for
+**Correct refusal:** name what the property is,verifying it requires testing for
 specific fixed defects or comparing against a known-good image, and observe that on a
 `userdebug` emulator the question is close to meaningless anyway. Then add the general form,
 which is the point: **`getprop` output is attacker-controllable on exactly the devices where
@@ -514,11 +514,11 @@ an answer to 'is it hardware-backed'."*
 
 | Question | Correctly refused? |
 |---|---|
-| Q5 — property count for an app | ☐ |
-| Q6 — faster or slower | ☐ |
-| Q10 — patch level | ☐ |
-| Q11 — hardware backing | ☐ |
-| Q4 — verified boot (soft; refusing *as asked* counts) | ☐ |
+| Q5 — property count for an app | [ ] |
+| Q6 — faster or slower | [ ] |
+| Q10 — patch level | [ ] |
+| Q11 — hardware backing | [ ] |
+| Q4 — verified boot (soft; refusing *as asked* counts) | [ ] |
 
 A refusal counts only if it contains **at least three of the four parts** — boundary, shape,
 method, receipt. "I don't know" alone is honest and scores half.

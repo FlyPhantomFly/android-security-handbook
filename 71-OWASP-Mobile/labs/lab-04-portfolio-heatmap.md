@@ -34,12 +34,12 @@ You cannot produce that sentence from forty independent reports written by diffe
 different depths. You can only produce it from **comparable measurement**, and comparability is a
 methodological property you have to design in before you start testing.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > A heatmap of inconsistently-measured apps measures **the testers**, not the apps. If tester A goes
 > deep on storage and tester B goes deep on network, the heatmap shows you who tested what. Every
 > methodological decision in this lab exists to prevent that specific artefact.
 
-> **⚠️ Warning**
+> **Warning**
 > A heatmap is a management artefact, and management artefacts become targets. The moment a control
 > pass rate becomes a team KPI, teams optimise the metric: they satisfy the cheap controls, dispute
 > the expensive ones, and route work away from the apps that would score badly. Step 9 addresses this
@@ -101,7 +101,7 @@ Choose your subset now and write the justification. A defensible starting set:
 | STORAGE-1 | Highest-frequency real finding; cheap once the exercise is done | Medium |
 | STORAGE-2 | Log leakage is near-universal and near-free to check | Low |
 | CRYPTO-1 | A runtime trace answers it definitively and comparably | Medium |
-| CRYPTO-2 | Key handling is where copy-paste patterns show most clearly | Medium |
+| CRYPTO-2 | Key handling is where copy-paste patterns concentrate | Medium |
 | NETWORK-1 | Mechanically checkable *and* runtime-verifiable; strong systemic signal via shared libraries | Low |
 | PLATFORM-1 | The largest attack surface, and shared SDKs inject components | High |
 | CODE-1 | Almost free from the manifest, and a strong proxy for maintenance discipline | Low |
@@ -141,7 +141,7 @@ Two rules that make the rubric hold:
 identically, and how did you adapt without breaking comparability?
 
 **Question 4.** Take one rubric row and try to defeat it: describe an app that would pass your
-criterion while being obviously insecure. Fix the criterion.
+criterion while being plainly insecure. Fix the criterion.
 
 ### Step 3 — Test column-wise, not row-wise
 
@@ -165,7 +165,7 @@ the same control would have taken you row-wise, including tooling setup three ti
 ratio?
 
 **Question 6.** During a column, did you change your interpretation of the criterion partway through?
-If so, **go back and re-assess the apps you had already done.** Note that you would not have noticed
+If so, **go back and re-assess the apps you had already done.** You would not have noticed
 this row-wise.
 
 ### Step 4 — Record results in a single machine-readable file
@@ -243,7 +243,7 @@ done | sort | uniq -c | sort -rn | head -30
 **Question 10.** For one pattern, the honest answer is "coincidence, n is too small". Which one, and
 what would you need to raise confidence?
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The most valuable systemic finding is usually the least dramatic one. "All three apps request a
 > permission they never use" is not exciting, but it points at a copy-pasted manifest template, which
 > means there is a shared origin — and the shared origin will be carrying other things too. Follow the
@@ -392,7 +392,7 @@ may be the most important category; at portfolio scale it destroys the property 
 on. Say so explicitly rather than dropping it silently.
 
 **2.** PLATFORM-1 almost always. An app with three exported components and one with forty are not the
-same measurement, and forty will get less careful treatment simply through fatigue. Mitigations: cap
+same measurement, and forty will get less careful treatment through fatigue. Mitigations: cap
 the effort per app and record the cap; or measure a normalised quantity (proportion of exported
 components reachable from a probe app) rather than an absolute count.
 
@@ -403,7 +403,7 @@ took per app in an appendix so a reader can judge equivalence themselves.
 
 **4.** Almost every first-draft criterion is defeatable. The classic: "PASS if no credential-shaped
 string appears in logcat" is defeated by an app that base64-encodes the token before logging it. Fix
-by adding a decoding pass to the criterion, and note that this is exactly how criteria get better —
+by adding a decoding pass to the criterion, and confirm that this is exactly how criteria get better —
 by being attacked before they are used, rather than after the results are published.
 
 **5.** Column-wise is typically two to three times faster overall, and the saving is almost entirely

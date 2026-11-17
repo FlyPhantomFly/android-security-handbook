@@ -156,7 +156,7 @@ File paths only. Line numbers move and are never quoted here.
 | OWASP MASTG | The testing process Lab 02 follows, and its evidence standards |
 | OWASP MASTG — testing-process chapters | The closest external analogue to this chapter's static→dynamic→report chain |
 
-> **⚠️ Warning.** MASVS identifiers changed materially between v1 and v2. Cite the version you used,
+> **Warning.** MASVS identifiers changed materially between v1 and v2. Cite the version you used,
 > and do not translate an old identifier into a new one from memory.
 
 ---

@@ -38,7 +38,7 @@ about the *writing*, not the scale.
 no `android:permission`. Querying it from a co-installed application holding **zero** permissions
 returns 4,182 rows containing message bodies, sender identifiers and timestamps.
 
-### ✗ The bad version
+### The bad version
 
 > **HIGH — Insecure Data Storage (M2)**
 >
@@ -61,7 +61,7 @@ Six defects in eight lines:
 | **Remediation is a slogan** | "Implement proper permission controls" is the finding restated as an imperative |
 | **Two control IDs, no reasoning** | Mapping is [71-OWASP-Mobile](../../71-OWASP-Mobile/README.md)'s job and it is a *cross-reference*, not a justification |
 
-### ✓ The good version
+### The good version
 
 > **F-01 — Any installed app can read all stored messages via an unguarded ContentProvider**
 >
@@ -123,7 +123,7 @@ Six defects in eight lines:
 >
 > If an external caller is required in a future release, add
 > `android:readPermission="com.anon.app.permission.READ_MESSAGES"` declared at
-> `android:protectionLevel="signature"`, and note that a `normal`-level permission is granted to any
+> `android:protectionLevel="signature"`, and confirm that a `normal`-level permission is granted to any
 > app that asks for it and is therefore not a control.
 >
 > **Cross-reference.** MASVS-PLATFORM-1. The mapping is a cross-reference; the severity above comes
@@ -142,7 +142,7 @@ is the property a finding needs.
 Eleven components across one feature module are exported with no guard and no intent-filter. All
 eleven are internal screens. None handles attacker-controlled input.
 
-### ✗ The bad version
+### The bad version
 
 Eleven separate findings, `M-04` through `M-14`, each rated **Medium**, each with the same body text
 and a different class name.
@@ -154,7 +154,7 @@ explains *why* eleven components ended up this way — a twelfth exported compon
 It also silently inflates the report's apparent severity: eleven Mediums reads as a worse app than
 one Medium, and the underlying risk is identical.
 
-### ✓ The good version
+### The good version
 
 > **F-06 — Components in the `feature-account` module are exported by an inherited build default**
 >
@@ -208,7 +208,7 @@ one Medium, and the underlying risk is identical.
 `grep` over the decompiled tree returns `AIza…`-shaped strings and a constant named
 `API_SECRET_KEY`.
 
-### ✗ The bad version
+### The bad version
 
 > **CRITICAL — Hardcoded API Key**
 >
@@ -230,7 +230,7 @@ The specific unasked questions here:
 - **What does it authorise?** "Access to the backend API" is a guess dressed as an impact.
 - **Is it in the app's code or a bundled SDK's?** Different owner, different remediation.
 
-### ✓ The good version
+### The good version
 
 > **F-02 — A live server-side API credential is shipped in the application binary**
 >
@@ -277,7 +277,7 @@ simultaneously evidence of thoroughness and the reason they should believe the o
 
 The app runs normally on a rooted device. There is no root detection.
 
-### ✗ The bad version
+### The bad version
 
 > **HIGH — Lack of Root Detection**
 >
@@ -301,7 +301,7 @@ this repository has a whole chapter on doing so ([67-BypassingProtections](../..
 covered only **1 of 5** checks in a small purpose-built app. Rating it High tells the developer you
 cannot tell methodology from risk, and every other rating in the document is discounted accordingly.
 
-### ✓ The good version, when resilience *is* in the threat model
+### The good version, when resilience *is* in the threat model
 
 > **F-09 — Client-side integrity controls are absent, and the threat model requires them**
 >
@@ -332,7 +332,7 @@ cannot tell methodology from risk, and every other rating in the document is dis
 > [71-OWASP-Mobile](../../71-OWASP-Mobile/README.md) on naming the adversary before recommending
 > MASVS-RESILIENCE work.
 
-Note that the *good* version is a **Medium**, not a High, and that its top recommendation deletes
+the *good* version is a **Medium**, not a High, and that its top recommendation deletes
 the finding rather than hardening it.
 
 ---
@@ -344,7 +344,7 @@ the finding rather than hardening it.
 The app calls `GET /api/v2/accounts/{accountId}/statements`, and `accountId` comes from local state
 that can be modified. The backend was **out of scope**.
 
-### ✗ The bad version A — claiming what you did not test
+### The bad version A — claiming what you did not test
 
 > **CRITICAL — Insecure Direct Object Reference (IDOR)**
 >
@@ -355,14 +355,14 @@ The last sentence is a **fabrication**. Nobody tried it. It may well be true; it
 the server checks. Writing an untested consequence in the indicative mood is the fastest way to
 publish something a client can prove false, and one disproved Critical discredits the entire report.
 
-### ✗ The bad version B — the opposite error
+### The bad version B — the opposite error
 
 > Not reported. The backend was out of scope.
 
 Silently dropping it means the client never learns that their most valuable untested surface is
 reachable from a client they *did* pay to have tested.
 
-### ✓ The good version
+### The good version
 
 > **F-04 — Client transmits a user-controllable account identifier; server-side authorisation was
 > not in scope**
@@ -403,18 +403,18 @@ reachable from a client they *did* pay to have tested.
 An app with zero permissions reads a file inside another package's private directory on a stock,
 Enforcing device.
 
-### ✗ The bad version — over-rating
+### The bad version — over-rating
 
 > **HIGH — Sandbox Bypass**
 >
 > An application with no permissions was able to read a file from another application's private data
 > directory, bypassing the Android sandbox.
 
-### ✗ The bad version — under-rating
+### The bad version — under-rating
 
 > Not reported. The file only contained configuration flags.
 
-### ✓ The good version
+### The good version
 
 > **F-07 — A private-directory file is world-readable, on a path with no per-app SELinux categories**
 >

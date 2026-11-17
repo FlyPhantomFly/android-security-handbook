@@ -41,7 +41,7 @@ watched that happen under controlled conditions, you will do one of two things i
 the hypotheses as findings, or discard anything you cannot instantly prove. Both are bad, and the
 second is worse, because it is invisible.
 
-> **🧠 Mental Model.** A static finding is a *witness statement*: someone says they saw something.
+> **Mental Model.** A static finding is a *witness statement*: someone says they saw something.
 > A dynamic confirmation is *the security footage*. Reports built only on witness statements get
 > retracted. Reports built only on footage miss everything the camera did not point at. The work is
 > the correlation, and the correlation is what no single chapter can teach you, because it needs
@@ -91,7 +91,7 @@ Install command complete in 241 ms
 package:com.pentest.ch73.chain
 ```
 
-> **⚠️ Warning.** `chain-target.apk` is 12 KB and does nothing useful. It is a *specimen*, not a
+> **Warning.** `chain-target.apk` is 12 KB and does nothing useful. It is a *specimen*, not a
 > demonstration app. Uninstall it when you are finished:
 > `./build-chain-target.sh --uninstall`.
 
@@ -135,7 +135,7 @@ Success
     versionCode=0 minSdk=23 targetSdk=23
 ```
 
-> **🔍 Pentester's Note.** Distinguish the three refusals, because the fixes are unrelated.
+> **Pentester's Note.** Distinguish the three refusals, because the fixes are unrelated.
 > `INSTALL_FAILED_DEPRECATED_SDK_VERSION` is the platform's own floor and
 > `--bypass-low-target-sdk-block` lifts it. `INSTALL_FAILED_USER_RESTRICTED` is an **OEM** policy —
 > this repository measured it on a MIUI handset, where the working route was a root install from the
@@ -162,7 +162,7 @@ evidence type, and a verdict. Copy the template:
 cp ../examples/evidence-ledger.md ~/ch73-ledger.md
 ```
 
-> **⚠️ Warning.** Keep the ledger **outside** the repository. It is your working artefact, and it
+> **Warning.** Keep the ledger **outside** the repository. It is your working artefact, and it
 > will contain paths and output from your machine.
 
 The ledger is not bureaucracy. It is the mechanism that makes the handoff visible: a finding that
@@ -204,7 +204,7 @@ Two of those six matter. `AndroidManifest.xml` is the attack-surface declaration
 is the code; the `META-INF` entries are the v1 signature and `resources.arsc` is a 40-byte stub
 because this target has no resources.
 
-> **🔍 Pentester's Note.** `unzip -l` does the same job and is what most write-ups use, but it is
+> **Pentester's Note.** `unzip -l` does the same job and is what most write-ups use, but it is
 > **not present on a default Windows + Git Bash machine** — `zip`/`unzip` are not part of Git for
 > Windows. The Python form above works everywhere Python does, which is everywhere this repository's
 > scripts already run. Prefer tools you have measured yourself to have, which is the whole argument
@@ -227,7 +227,7 @@ apktool d -f -o /tmp/ch73-apktool chain-target.apk
 cat /tmp/ch73-apktool/AndroidManifest.xml
 ```
 
-> **🔍 Pentester's Note.** Reach for `aapt2 dump xmltree` before `apktool`. It ships with the SDK
+> **Pentester's Note.** Reach for `aapt2 dump xmltree` before `apktool`. It ships with the SDK
 > you already have, it cannot fail on a resource table it does not understand, and it shows you the
 > *resolved* attribute values including the integers behind constants. Lab 01's survey found
 > `apktool` absent on the machine this lab was verified on, and the lab was completed anyway.
@@ -246,7 +246,7 @@ N: android=http://schemas.android.com/apk/res/android (line=20)
         A: protectionLevel(0x01010009)=0x00000002
 ```
 
-> **🔬 Under the Hood.** `protectionLevel=0x00000002` is the value you must be able to read without
+> **Under the Hood.** `protectionLevel=0x00000002` is the value you must be able to read without
 > looking it up, because it is the whole of §6. `0x0` is `normal`, `0x1` is `dangerous`, **`0x2` is
 > `signature`**, `0x3` is `signatureOrSystem`. A decoded manifest from `apktool` would have shown
 > you the word; `aapt2` shows you the integer, and the integer is what the package manager compares.
@@ -312,7 +312,7 @@ predict:
 **Write your own predictions, not these.** Then compare at the end. The gap between the two tables
 is the thing this lab is trying to give you, and you cannot have it if you copy the answer.
 
-> **📖 Definition — hypothesis, in this context.** A statement about the target that is consistent
+> **Definition — hypothesis, in this context.** A statement about the target that is consistent
 > with everything you have read and has not yet been tested against anything the target *does*. It
 > is not a finding. Calling it one is the single most common failure in a junior report.
 
@@ -330,7 +330,7 @@ Stop. Before running anything, answer three questions in your ledger, in writing
    not the same as an app, and it is not the same as root. Write down which one your claims will be
    about.
 
-> **⚠️ Warning — the vantage error.** This is the most-repeated methodology finding in this
+> **Warning — the vantage error.** This is the most-repeated methodology finding in this
 > repository. `shell` holds permissions an ordinary app does not, and root holds permissions
 > `shell` does not. A result measured from one chair and reported as though from another is wrong
 > even when every command succeeded. §6 shows this happening, with output that is byte-identical
@@ -376,7 +376,7 @@ I ch73chain: query from uid 2000 selection=null
 **Confirmed — and the severity went up.** Statically you could prove the provider was reachable. You
 could not know what it contained. It contains a bearer credential.
 
-> **🔍 Pentester's Note.** This asymmetry is systematic and worth internalising: **static analysis
+> **Pentester's Note.** This asymmetry is systematic and worth internalising: **static analysis
 > under-rates data exposure and over-rates reachability.** It sees the door and not the room. That
 > is exactly backwards from how most people expect the two stages to differ, and it is why a
 > report written from static analysis alone tends to have its severities wrong in *both* directions
@@ -421,7 +421,7 @@ I ch73chain: vault locked; launched by (unknown)
 did nothing at all: the activity was already the top of its task, so the system delivered the intent
 to the running instance — which never re-runs `onCreate` and therefore never reads your extra.
 
-> **⚠️ Warning — this is a false negative, and it is the most dangerous kind.** The command
+> **Warning — this is a false negative, and it is the most dangerous kind.** The command
 > succeeded. It printed a line beginning `Starting:`. If you were watching the phone screen you
 > would have seen the vault, still locked, and concluded the extra does not work and the hypothesis
 > is refuted. **A refutation caused by your own tooling is indistinguishable from a real one unless
@@ -511,7 +511,7 @@ Still nothing in the log. The receiver is guarded by a **`signature`**-level per
 package signed with the same certificate may deliver to it. No such package exists, and `shell` is
 not one.
 
-> **⚠️ Warning.** `Broadcast completed: result=0` is printed **whether or not any receiver ran.**
+> **Warning.** `Broadcast completed: result=0` is printed **whether or not any receiver ran.**
 > The result code is the ordered-broadcast result, not a delivery count. This is the single most
 > misread output in `am`, and it is why the decoy in this lab is a broadcast rather than anything
 > else.
@@ -568,7 +568,7 @@ adb shell "pm list packages -U com.pentest.ch73.chain"
 package:com.pentest.ch73.chain uid:10213
 ```
 
-> **🔬 Under the Hood.** Two things to take away. First, **`getCallingUid()` inside `onReceive` does
+> **Under the Hood.** Two things to take away. First, **`getCallingUid()` inside `onReceive` does
 > not identify the sender**, so an app that "checks the caller" this way checks nothing — that is a
 > real vulnerability class, not a lab artefact. Second, notice that the uid is `10213` and the log
 > said `10210`: the app uid **changed between installs**. If you record a uid in a report, record
@@ -596,7 +596,7 @@ Three of four predictions were wrong, and the one that was most confidently wron
 looked worst on paper. That ratio is not unusual and it is not a failure of your static analysis; it
 is what the dynamic stage is *for*.
 
-> **🧠 Mental Model.** Findings 2 and 4 are worth more together than apart, and nothing in either
+> **Mental Model.** Findings 2 and 4 are worth more together than apart, and nothing in either
 > chapter's methodology would have combined them. **Composition is the aggregator's job**, and it is
 > the reason a chain lab exists at all. A reader who does chapters 27 and 34 separately gets both
 > facts and never gets the sentence that puts them together.
@@ -700,7 +700,7 @@ adb shell "pm list packages | grep ch73"        # expect no output
 git status --short                               # expect no output
 ```
 
-> **⚠️ Warning.** If you find files under `/data/local/tmp` that are not yours, **leave them.** A
+> **Warning.** If you find files under `/data/local/tmp` that are not yours, **leave them.** A
 > live workspace and abandoned residue look identical from outside, and this repository has a
 > standing rule against sweeping another session's directory. Clean what you created; nothing else.
 

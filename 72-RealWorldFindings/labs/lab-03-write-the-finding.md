@@ -48,7 +48,7 @@ You will score every write-up against this. One point each, no partial credit.
 | 9 | **One finding per root cause** | Near-identical entries, or one entry covering two causes |
 | 10 | **Remediation is code, aimed at the mechanism** | "Implement proper security controls" |
 
-> **📖 The template.** The section headings themselves — Summary, Threat model, Technical detail,
+> **The template.** The section headings themselves — Summary, Threat model, Technical detail,
 > Steps to reproduce, Evidence, Impact, Remediation, References — belong to
 > [80-Appendix §6](../../80-Appendix/README.md#6-report-templates). Use it. This lab is about
 > filling it in, not about designing it.
@@ -376,7 +376,7 @@ Eight, at least:
    remediations. Criterion 9.
 7. **Repackaging claim is under-evidenced.** "Installed successfully on a test device" is not the
    finding — the finding would be that a repackaged build *functions* against production
-   infrastructure. And note that a `classes.dex` CRC check would not catch it: re-signing changes
+   infrastructure. And a `classes.dex` CRC check would not catch it: re-signing changes
    the signature digest while the DEX CRC stays identical, because nothing in the code changed
    ([38-TamperDetection](../../38-TamperDetection/README.md)).
 8. **Remediation recommends a purchase** before establishing that anything needs protecting. This is
@@ -391,7 +391,7 @@ Eight, at least:
 - It genuinely decompiles and hooks without resistance.
 - A repackaged build genuinely installed.
 
-The correct home for all three is an **Informational** note that records the observation, states
+The correct home for all three is an **Informational**records the observation, states
 plainly that no in-scope attacker benefits, and — the useful part — names the conditions under which
 the client should revisit it: if Meridian later enforces a subscription client-side, adds in-app
 purchases, or acquires an anti-fraud requirement, this moves into scope and should be re-assessed.

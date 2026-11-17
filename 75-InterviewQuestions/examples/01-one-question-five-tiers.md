@@ -232,7 +232,7 @@ property is attacker-controllable data; the attestation is not.
 
 I would push the decision up a layer, because "where do we store the token" is a question
 that only arises because we decided the client holds a long-lived bearer credential, and
-that decision is the one with leverage.
+that decision is the one that matters.
 
 The design I would advocate: short-lived access tokens, a refresh token bound to a
 non-exportable device key, proof-of-possession on refresh, and server-side revocation that

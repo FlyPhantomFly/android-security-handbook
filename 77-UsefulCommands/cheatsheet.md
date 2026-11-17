@@ -55,7 +55,7 @@ Printable. No prose. See [README.md](README.md) for what each command actually t
 | `dumpsys package <pkg>` | **Everything** — components, perms, signature, flags |
 | `pm list permissions -d -g` | Dangerous perms grouped |
 | `pm grant <pkg> <perm>` / `pm revoke` | Runtime perms |
-| `pm clear <pkg>` | ⚠️ Wipe data |
+| `pm clear <pkg>` | Wipe data |
 | `pm disable-user --user 0 <pkg>` / `pm enable <pkg>` | Toggle |
 | `pm compile -m speed -f <pkg>` | Force AOT |
 | `pm list users` | Users / work profiles |
@@ -90,12 +90,12 @@ Printable. No prose. See [README.md](README.md) for what each command actually t
 | | |
 |---|---|
 | `content query --uri content://<auth>/<path>` | Read |
-| `content query --uri <u> --projection <cols>` | ⚑ injection point |
-| `content query --uri <u> --where "1=1"` | ⚑ injection point |
-| `content query --uri <u> --sort "x"` | ⚑ often-missed injection point |
+| `content query --uri <u> --projection <cols>` | injection point |
+| `content query --uri <u> --where "1=1"` | injection point |
+| `content query --uri <u> --sort "x"` | often-missed injection point |
 | `content insert --uri <u> --bind k:s:v` | Write |
 | `content call --uri <u> --method <m> --arg <a>` | RPC entry point |
-| `content read --uri <u>` | ⚑ path traversal test |
+| `content read --uri <u>` | path traversal test |
 
 Bind types: `s` string · `i` int · `l` long · `f` float · `d` double · `b` bool · `n` null
 
@@ -227,7 +227,7 @@ adb shell "chmod 755 /data/local/tmp/frida-server"
 adb shell "su -c '/data/local/tmp/frida-server &'"
 frida-ps -U
 ```
-⚠️ Host `frida --version` **must** match the server release.
+Host `frida --version` **must** match the server release.
 
 ## Network
 
@@ -238,13 +238,13 @@ frida-ps -U
 | `tcpdump -i any -s 0 -w /sdcard/cap.pcap` | Full capture (root) |
 | `openssl x509 -inform PEM -subject_hash_old -in ca.pem` | CA filename hash → `<hash>.0` |
 
-## Fastboot ⚠️ destructive
+## Fastboot — destructive
 
 | | |
 |---|---|
 | `fastboot devices` | List |
 | `fastboot getvar all` | Variables + lock state |
-| `fastboot flashing unlock` | ⚠️ **Wipes device** |
+| `fastboot flashing unlock` | **Wipes device** |
 | `fastboot boot boot.img` | Boot **without** flashing — do this first |
 | `fastboot flash boot boot.img` | Flash |
 | `fastboot flash vbmeta --disable-verity --disable-verification vbmeta.img` | Disable AVB |
@@ -263,7 +263,7 @@ https?://[a-z0-9.-]*\.firebaseio\.com                   Firebase DB
 s3[.-][a-z0-9-]*\.amazonaws\.com                        S3 bucket
 http://                                                 Cleartext endpoint
 ```
-⚠️ Validate every hit. A public Firebase Web API key is not a finding by itself.
+Validate every hit. A public Firebase Web API key is not a finding by itself.
 
 ## Risky API grep list
 

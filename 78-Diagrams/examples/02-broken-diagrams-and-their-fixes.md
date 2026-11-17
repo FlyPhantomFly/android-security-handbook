@@ -18,7 +18,7 @@ repository that **every reader sees and no author does**, because Markdown previ
 disagree, and a broken block usually looks fine while you are typing it.
 
 Nothing about the seven patterns below is exotic. Every one of them is a reasonable thing to want to
-write. Mermaid's grammar simply says no.
+write. Mermaid's grammar says no.
 
 ---
 
@@ -60,7 +60,7 @@ sequenceDiagram
     ID->>FS: chown appUid:appUid<br/>chmod 0700
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > This one bites hardest when you are transcribing shell commands or C into a message. `setgroups(3003,
 > ...) ; setresgid ; setresuid(10231)` is a perfectly good description of what Zygote does and it is
 > not a diagram. Put the command in a fenced code block beside the diagram, and put the *meaning* in
@@ -183,7 +183,7 @@ sequenceDiagram
     S-->>M: android.telephony.SmsManager
 ```
 
-> **🧠 Mental Model**
+> **Mental Model**
 > A convention that cannot be expressed in a family is a signal, not an obstacle. If you find yourself
 > wanting to colour a participant in a sequence diagram, ask whether you actually wanted a flowchart —
 > "who is hostile" is a structural question, and structure is what flowcharts are for.
@@ -225,7 +225,7 @@ sequenceDiagram
     Enq->>O: the live program only
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The general habit worth forming: **participant ids should be short and meaningless; participant
 > labels should be long and meaningful.** `participant A as ActivityManagerService` never collides
 > with anything. The moment you make the id readable you are competing with the grammar for the same

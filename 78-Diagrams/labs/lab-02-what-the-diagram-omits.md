@@ -21,7 +21,7 @@ The premise is [section 7.1](../README.md#71-the-completeness-illusion): **every
 asserts that the arrows it does not draw do not exist.** Nobody writes that assertion down and nearly
 every reader accepts it. Your job here is to make the assertion explicit and then attack it.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Reading a diagram for correctness is not checking that the drawn arrows are right. It is asking:
 > *what edge would have to exist for this picture to be dangerously wrong, and has anyone checked?*
 
@@ -124,7 +124,7 @@ C4     2        5            Requires full path coverage — expensive, do last
 C2     5        1            Trivially true, skip
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `Consequence` is not the same as severity. A claim can be low-consequence and still be worth ten
 > minutes if it is free to test. What you are avoiding is the opposite: spending three hours on a
 > high-consequence claim you have no cheap way to falsify, while an adjacent claim collapses in one
@@ -251,7 +251,7 @@ Java.perform(function () {
 });
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > Observe before you modify. If you flip the return value immediately you learn only whether the app
 > behaves differently — you do not learn *why*, and you cannot tell a check that was bypassed from a
 > check that was never consulted. The stack trace is the whole point of the script above.

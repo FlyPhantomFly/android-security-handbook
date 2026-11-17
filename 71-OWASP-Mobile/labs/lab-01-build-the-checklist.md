@@ -31,15 +31,15 @@ report covering six categories in the order the document happens to list them. T
 with that report and neither is visible on the page:
 
 1. The days were allocated by **document order**, not by where the client's risk actually is.
-2. The categories that were never reached are simply absent, so the client cannot tell whether they
+2. The categories that were never reached are absent, so the client cannot tell whether they
    passed, were skipped deliberately, or were forgotten.
 
-> **📖 Definition**
+> **Definition**
 > A **scope** is not a list of what you will do. It is a pair of lists: what you will do, and what you
 > will not do — with the second list carrying reasons. A scope with only the first list is a *plan*,
 > and a plan makes no promises the client can hold you to.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Inclusions are cheap to justify: "it is in the standard" is almost always sufficient. **Exclusions
 > are where your judgement is actually visible**, because each one is a claim that a category of
 > failure does not matter for this app. That claim can be wrong, and the client is entitled to see it
@@ -133,7 +133,7 @@ justifying your answer. If you wrote "maybe", you have not finished.
 **Question 2.** Name one adversary the client did **not** mention in their stated worry, but who is
 real for this app.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > "Adversaries" must be people with starting access, not abstractions. "A hacker" is not an
 > adversary. "Another employee with a corporate device and a valid login" is. The difference decides
 > whether an exported component finding is Critical or noise, and you cannot make that call later if
@@ -177,7 +177,7 @@ Now open the checklist properly and go control by control. For each, one of four
 `BLOCKED` is the state people forget, and it is the most honest one in the set. It says "this is a gap
 in the assessment, and it is not a decision I made about risk". Blocked controls belong in the report
 under limitations, not under exclusions — conflating the two is how a client comes to believe a
-category was considered and dismissed when in fact it was simply unreachable.
+category was considered and dismissed when in fact it was unreachable.
 
 **Question 5.** In your scenario, name one control that is `BLOCKED` rather than `EXCLUDED`, and say
 what would have to change for it to become `FULL`.
@@ -210,7 +210,7 @@ Notice what those rows have in common: the reason is about **this app's situatio
 budget. "We ran out of days" is a legitimate thing to say — but it belongs in the limitations section,
 not in an exclusions table, because it is not a risk decision.
 
-> **⚠️ Warning**
+> **Warning**
 > The single most common bad exclusion is excluding MASVS-RESILIENCE for a consumer app because
 > "it's out of scope for a standard pentest". For Scenario B that is not a scoping decision, it is an
 > omission: the client has an active fraud ring using emulator farms, which is a named adversary
@@ -432,7 +432,7 @@ this at length and felt that given the environment it was probably not necessary
 
 **8.** Scenario B: establishing interception. If pinning cannot be bypassed on day 1, NETWORK, AUTH
 and half of PRIVACY are blocked simultaneously. Fallbacks, in order of preference: a client-provided
-debug build with pinning disabled, a patched APK (state clearly that you tested a modified artefact),
+debug build with pinning disabled, a patched APK (state explicitly that you tested a modified artefact),
 or Frida-based unpinning. Agree the fallback **before** the engagement, because discovering it on day
 1 costs you a day.
 

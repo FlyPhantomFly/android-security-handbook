@@ -52,7 +52,7 @@ about the second half of the job, which is worth more and is taught almost nowhe
 observations are **findings**, deciding what each one is **worth**, and writing them so somebody
 else can act.
 
-> **📖 Definition — observation, lead, finding.**
+> **Definition — observation, lead, finding.**
 > An **observation** is a fact about the app that you can demonstrate. "This Activity is declared
 > `android:exported="true"` with no `android:permission`." An observation is either true or false
 > and there is no judgement in it.
@@ -105,7 +105,7 @@ and turn the result into reporting practice.
 The single most-repeated result across every one of those sweeps is worth stating before anything
 else, because it is the thesis:
 
-> **🧠 Mental Model — a sweep produces leads, not findings.**
+> **Mental Model — a sweep produces leads, not findings.**
 > Four chapters measured this independently, on different targets, with different tools, and got the
 > same shape of answer every time:
 >
@@ -152,7 +152,7 @@ Everything in this chapter was measured against devices and applications the aut
 authorised to test. That is not a formality — it is the load-bearing precondition, and it changes
 what you are allowed to publish as much as what you are allowed to run.
 
-> **⚠️ Warning — never name a vendor as vulnerable.**
+> **Warning — never name a vendor as vulnerable.**
 > This chapter refers to its corpus as "243 packages on a stock Android 15 emulator image", "a 17 MB
 > commercial app", "a banking app in the corpus". That is not coyness. Naming a real application
 > alongside a security finding is, at best, a disclosure you were not authorised to make and, at
@@ -300,7 +300,7 @@ code produced 6,883 raw hits and 96 leads, of which 89 were displayed in three c
 and the chapter records the sentence that matters most: not one of the seventeen became a
 High-severity finding by itself.
 
-> **⚠️ Warning — do not splice two runs together.**
+> **Warning — do not splice two runs together.**
 > The paragraph above deliberately keeps the 16,836/168 figures and the 17-HIGH figures attached to
 > the runs that produced them, because they come from *different invocations* of the same tool over
 > the same app. Writing "16,836 hits produced 17 HIGH leads, 15 of which were wrong" would be a
@@ -317,7 +317,7 @@ its findings.
 
 ### 3.1 What a finding class is, and why the unit matters
 
-> **📖 Definition — finding class.**
+> **Definition — finding class.**
 > A **finding class** is a set of findings that share a *root cause*, a *detection method*, and a
 > *remediation*. "Exported Activity with no permission guard" is a class. "The `ShareActivity` in
 > version 4.2 is exported" is an instance.
@@ -358,7 +358,7 @@ adjudicated, which is a much less exciting and much more useful number.
 | F-11 | Build and release hygiene | Debuggable builds, test artefacts, backup configuration, logging | Info → Medium; occasionally Critical by accident | [08](../08-Build-System/README.md), [41](../41-ProGuard/README.md), [42](../42-R8/README.md) |
 | F-12 | Platform and device posture | Findings about the device or OS rather than the app | Usually **not a finding about the app at all** | [20](../20-Security-Architecture/README.md), [22](../22-SELinux/README.md), [61](../61-Fastboot/README.md) |
 
-> **🔍 Pentester's Note — F-12 is where junior reports go wrong most spectacularly.**
+> **Pentester's Note — F-12 is where junior reports go wrong most spectacularly.**
 > "The device can be rooted", "the bootloader can be unlocked", "the emulator has no hardware-backed
 > keystore" are facts about the *platform*. They belong in the test-environment record, not in the
 > findings table, unless the engagement's threat model names the device owner as the adversary. If
@@ -384,7 +384,7 @@ tool that suffers from it.
 | **Surface mistaken for configuration** — the code that *could* do a thing, present but unconfigured | **12 of 14 apps** carry a pinning surface; **4** carry a pin value | [36-CertificatePinning](../36-CertificatePinning/README.md) |
 | **Shape mistaken for content** — data that matches the pattern of a secret but is not one | **132 of 132** high-confidence secret hits on real browser data were component-updater signature manifests | [33-Storage](../33-Storage/README.md) |
 
-> **🧠 Mental Model — if a detector agrees with you about almost every sample, suspect the detector.**
+> **Mental Model — if a detector agrees with you about almost every sample, suspect the detector.**
 > This is the repository's most-independently-rediscovered rule, and it has now fired four times:
 > 38's 18-of-18, 52's 15-of-17-rejected top band, 64's 1,141-of-1,141, and 64's 16-of-16 `vxp` hits.
 > A real security property is not uniformly distributed across a corpus. **Uniformity is the
@@ -406,7 +406,7 @@ you most want to scan is the population your scanner is worst at.
 There is a sixth mechanism which deserves its own treatment because its true-positive rate is not
 merely low but provably **zero**:
 
-> **🔬 Under the Hood — the compiler can delete the thing you are grepping for.**
+> **Under the Hood — the compiler can delete the thing you are grepping for.**
 > [47-Authentication](../47-Authentication/README.md) compiled a class that calls
 > `setFlags(WindowManager.LayoutParams.FLAG_SECURE, …)` and then searched the output:
 >
@@ -479,7 +479,7 @@ found by [74-CaseStudies](../74-CaseStudies/README.md), which did the correct th
 chapter 39**. It reported its own numbers, printed the exact command that produced them, and filed
 the discrepancy as *unresolved*, leaving adjudication to the chapter that owned the claim.
 
-> **🧠 Mental Model — an irreproducible measurement is a discrepancy, not a correction.**
+> **Mental Model — an irreproducible measurement is a discrepancy, not a correction.**
 > When you cannot reproduce another team's number, you have two hypotheses — their measurement is
 > wrong, or yours is — and no basis yet for choosing. Publish your figure, publish your command,
 > name the disagreement, and route it to whoever owns the original. Silently overwriting their
@@ -509,7 +509,7 @@ chapters — four chapters hit it independently, from four different directions.
 | [48-Biometrics](../48-Biometrics/README.md) | `locksettings clear` as uid 2000 reports *"The device does not support lock screen"* — a **permission failure disguised as a capability failure** |
 | [63-LSPosed](../63-LSPosed/README.md) | `new File("/data/adb/lspd").exists()` returns `false` from an app whether or not LSPosed is installed, because the refusal happens at `/data/adb` (`0700 root:root`) and `File.exists()` maps `ENOENT` and `EACCES` alike to `false` |
 
-> **⚠️ Warning — a probe verified from `adb shell` has not been verified, and *root* is the gap that
+> **Warning — a probe verified from `adb shell` has not been verified, and *root* is the gap that
 > actually bites.**
 > The failure is silent in *both* directions. A signal that fires only for a privileged vantage reads
 > as a working check; a signal invisible to it reads as absent. Either run the probe as the app —
@@ -566,7 +566,7 @@ one where honest base rates are therefore worth most.
 | Parsing | [10-APK-Internals](../10-APK-Internals/README.md)'s `examples/parse_axml.py`, an independent binary-XML reader |
 | Cross-check | every permission's protection level resolved a second time from `dumpsys package permissions` on the live device |
 
-> **⚠️ Warning — read this denominator before reading any number below.**
+> **Warning — read this denominator before reading any number below.**
 > Of those 243 packages, **four are third-party**. This is a *platform* corpus: AOSP components,
 > Google system applications and vendor overlays. It therefore supports statements about how the
 > platform and its bundled applications are built, and supports **nothing whatsoever** about banking
@@ -621,7 +621,7 @@ survivors break down as 141 activities, 118 services, 83 providers, 63 activity-
 receivers. Five of the 410 are in the four third-party packages, and 12 of the 83 providers declare
 `grantUriPermissions`.
 
-> **⚠️ Warning — step 2 has a definition inside it, and I got it wrong the first time.**
+> **Warning — step 2 has a definition inside it, and I got it wrong the first time.**
 > A `<provider>` has **three** guards, not one: `android:readPermission` gates `query()`,
 > `android:writePermission` gates `insert`/`update`/`delete`, and `android:permission` sets both
 > unless overridden. My first version of the sweep folded all three into a single "guard" field with
@@ -643,7 +643,7 @@ a running device — they are arithmetic over the same manifest the scanner alre
 that reports 2,674 rows where 410 are defensible is not detecting more; it is detecting the same
 thing and adjudicating less.
 
-> **🔍 Pentester's Note — 410 is still not 410 findings.**
+> **Pentester's Note — 410 is still not 410 findings.**
 > Step 4 of that funnel is where the human work begins, not ends. Of the 410, the 83 providers are
 > the ones with a plausible path to data, which is why §7.3 probes exactly those. The remaining 327
 > need a per-component argument about what invoking them achieves — and in a platform corpus the
@@ -666,7 +666,7 @@ intent-filter without an explicit `android:exported`, and on a corpus where 237 
 target API 31 or later, the class has been engineered out of existence. The 313 components that omit
 the attribute all omit an intent-filter too, so they default to *not* exported and are correct.
 
-> **🧠 Mental Model — finding classes have lifecycles, and checklists do not.**
+> **Mental Model — finding classes have lifecycles, and checklists do not.**
 > A checklist item is written once and copied forever. The platform, meanwhile, keeps closing
 > classes by changing defaults. Implicit export is the cleanest example: a finding class that
 > dominated Android reports for six years and is now unreachable on a modern `targetSdk`. If your
@@ -699,7 +699,7 @@ belong to a family worth naming: **the absent-attribute finding**, which is only
 have first established what the platform does when the attribute is absent, *at the target's
 `targetSdkVersion`*.
 
-> **🔍 Pentester's Note — the one `debuggable` hit is the tester's own artefact.**
+> **Pentester's Note — the one `debuggable` hit is the tester's own artefact.**
 > Exactly one package on the image is debuggable, and it is a small locally built application
 > installed for testing. That is worth dwelling on, because it is a failure mode you will meet:
 > **your own instrumentation shows up in your own sweep.** If this had been an engagement, the one
@@ -739,7 +739,7 @@ The same structure recurs in every class:
 | F-04 | Cleartext to a host that serves only public, integrity-protected content |
 | F-06 | ECB mode over data that is already public |
 
-> **⚠️ Warning — "nothing behind it" is a claim you must support, not a default.**
+> **Warning — "nothing behind it" is a claim you must support, not a default.**
 > Gate 3 cuts both ways and it is where under-reporting lives. The 17 MB commercial app's most
 > interesting finding was ranked **MEDIUM 0.50** by the tool and was a `Domain` enum shipping
 > thirteen environments — production, pre-production, eight QA hosts and three staging hosts — in
@@ -764,7 +764,7 @@ guess:
 3. **What do they get** — specific data, specific state change, specific accounts?
 4. **How many users** does it affect, and is it repeatable at scale?
 
-> **🧠 Mental Model — severity flows from the threat model down, never from the control up.**
+> **Mental Model — severity flows from the threat model down, never from the control up.**
 > "This violates MASVS-STORAGE-1, therefore Medium" is a lookup and it is always wrong, even when
 > the number it produces happens to be right. Two apps can violate the same control and deserve
 > Low and High, and the control text is silent about why — which is precisely
@@ -808,7 +808,7 @@ distinct guard permissions referenced        245
 
 Eleven disagreements looks like eleven leads. **All eleven were defects in my own reader, and not one
 was a difference in effect.** They split two ways. Three were protection level **4**, `internal`,
-which was added in API 31 and which my level table simply did not contain — so my reader printed
+which was added in API 31 and which my level table did not contain — so my reader printed
 `0x4` where the device said `internal`. The other eight were permissions my reader named
 `signatureOrSystem`, protection level 3, which the device reports under its modern spelling
 `signature|privileged`. Same permission, same effect, two names.
@@ -830,7 +830,7 @@ findings and an excellent one in tool correctness, and it is the return you shou
 that remain are a *naming* difference the tool cannot resolve and should not try to — the honest
 handling is to compare base levels by effect, not by string.
 
-> **🔬 Under the Hood — when two readings disagree, the disagreement is a lead about your tool
+> **Under the Hood — when two readings disagree, the disagreement is a lead about your tool
 > before it is a lead about the app.**
 > This is [10-APK-Internals](../10-APK-Internals/README.md)'s thesis arriving from a different
 > direction. That chapter builds an independent AXML parser precisely so that a *fourth* opinion
@@ -904,7 +904,7 @@ attacker can persuade something to grant them a URI. This is the confused-deputy
 [27-ContentProviders](../27-ContentProviders/README.md) and [26-Intent](../26-Intent/README.md)
 develop, and it is why my sweep in §3.5 recorded `grantUriPermissions` separately.
 
-> **🔬 Under the Hood — the exception text is a finding-quality artefact.**
+> **Under the Hood — the exception text is a finding-quality artefact.**
 > `enforceReadPermissionInner` builds its `SecurityException` message with the calling pid, uid and
 > the permission name. That message is what my probe in §7.3 keys on to distinguish "the framework
 > refused me" from "the app's own code ran and threw". The distinction is not cosmetic — it is the
@@ -928,7 +928,7 @@ Two facts from that file explain both halves of my 11 disagreements:
 - `PROTECTION_INTERNAL` was added for API 31 and occupies base value 4. A level table written before
   that release has a hole exactly where my four remaining disagreements landed.
 
-> **📖 Definition — `signature|privileged`.** A permission granted only to a package signed with the
+> **Definition — `signature|privileged`.** A permission granted only to a package signed with the
 > same certificate as the declarer **or** installed in a privileged system location. For an
 > assessment this is effectively "unreachable by a third-party app", and it is why the 646
 > signature-guarded components in §3.5 leave the funnel at step 2.
@@ -990,7 +990,7 @@ None of these classes come from carelessness in the way reports imply. Each has 
 | F-08 | A resilience control is bought from a vendor and never adversarially tested |
 | F-11 | A debug flag is flipped for a build and merged |
 
-> **🔍 Pentester's Note — write the mechanism into the finding.**
+> **Pentester's Note — write the mechanism into the finding.**
 > A remediation aimed at the mechanism outperforms one aimed at the instance by a large margin. "Set
 > `exported=false` on these eleven components" gets eleven fixes and a twelfth regression next
 > quarter. "These eleven inherit an export default from the shared feature-module template; change
@@ -1049,7 +1049,7 @@ as row two is a silent assumption that the server is safe. **Writing it as row t
 untestable item into a scoping recommendation**, which is genuinely valuable to the client and is
 how the next engagement gets funded.
 
-> **⚠️ Warning — "out of scope" is not "secure".**
+> **Warning — "out of scope" is not "secure".**
 > Every report needs a section enumerating what was *not* tested and what the client should conclude
 > from that: nothing. [51-DynamicAnalysis](../51-DynamicAnalysis/README.md) makes the sharpest
 > version of this point — its most valuable result was a failure, where `am start` was absorbed by a
@@ -1104,7 +1104,7 @@ misallocate an engagement.
 | **Storage controls are prominent** | Data-at-rest findings should dominate | On modern devices with full-disk encryption and an intact sandbox, most data-at-rest findings collapse at Gate 2 to "an attacker with root can read it", and root was not in scope |
 | **The framework is version-agnostic** | A checklist is durable | Classes go extinct. Implicit export: **0 of 6,465 components** on a modern corpus |
 
-> **🧠 Mental Model — the framework is a completeness check, not a work plan.**
+> **Mental Model — the framework is a completeness check, not a work plan.**
 > Use MASVS to make sure you did not *forget* a category. Use base rates and the client's threat
 > model to decide where the hours go. A report structured strictly by MASVS category tends to give
 > equal prominence to the section with four Informational items and the section with the account
@@ -1143,7 +1143,7 @@ constructed a method that decompiles to clean, warning-free Java returning **100
 bytecode returns **105**, and ships a program that runs both readings and prints both numbers. It
 then failed to isolate the trigger across four variants and says so rather than inventing a cause.
 
-> **⚠️ Warning — never build a finding on decompiled Java alone.**
+> **Warning — never build a finding on decompiled Java alone.**
 > If the finding is load-bearing, confirm it in **Smali or at runtime**. The write-up should say
 > which reading produced the claim. "Decompiled with jadx 1.4.7; confirmed in Smali" is one clause
 > and it is the difference between a finding that survives developer review and one that does not.
@@ -1181,7 +1181,7 @@ Three tokens make this recognisable regardless of obfuscation: `getParcelableExt
 to `Landroid/content/Intent;`, and a `startActivity`/`startService` on the result. Names may be
 minified; **the framework method signatures cannot be**, because they resolve against the platform.
 
-> **🧠 Mental Model — obfuscation renames the app, never the platform.**
+> **Mental Model — obfuscation renames the app, never the platform.**
 > Every finding whose signature is a *framework* call survives R8 intact. Every finding whose
 > signature is an *application* identifier does not. That single fact tells you which of your
 > detectors will still work on a hardened target — and, per §3.3, which will start manufacturing
@@ -1240,7 +1240,7 @@ adb shell content query --uri content://com.example.target.provider
 adb shell dumpsys package com.example.target
 ```
 
-> **⚠️ Warning — `am start` succeeding is not the same as your Activity running.**
+> **Warning — `am start` succeeding is not the same as your Activity running.**
 > [51-DynamicAnalysis](../51-DynamicAnalysis/README.md) measured a session where `am start -W`
 > reported `Activity: com.android.permissioncontroller/.permission.ui.GrantPermissionsActivity` — a
 > permission dialog had absorbed the start — and the delta report said "no change" on all nine
@@ -1285,7 +1285,7 @@ assumption. [25-Binder](../25-Binder/README.md) demonstrated it: a probe wrote a
 nothing **all** produced the same `SecurityException` naming uid 2000. The kernel overwrites the
 field. **Caller identity is unforgeable, so a `getCallingUid()` in your evidence is evidence.**
 
-> **⚠️ Warning — `onBind` is the wrong place to read the caller.**
+> **Warning — `onBind` is the wrong place to read the caller.**
 > [28-Services](../28-Services/README.md) measured a victim at uid 10310 logging
 > `onBind … callingUid=10310` while the attacker was 10313, then the AIDL method one millisecond
 > later correctly logging `uid=10313`. `onBind` is dispatched by the system, so the identity there
@@ -1340,7 +1340,7 @@ application's own code**, which means the binder transaction landed, the framewo
 check passed, and the provider was entered. That is a *reachable* provider that merely does not
 implement `query` — and it may well implement `call`, `openFile` or `insert`.
 
-> **🔍 Pentester's Note — the exception tells you which layer refused you, and that is the whole
+> **Pentester's Note — the exception tells you which layer refused you, and that is the whole
 > adjudication.**
 > `SecurityException: Permission Denial: opening provider … requires …` comes from
 > `ContentProvider.enforceReadPermissionInner` **before** the app runs: you are outside.
@@ -1368,7 +1368,7 @@ does **not** support any claim about third-party apps — four of 243 packages w
 about an app vantage. And "reachable, empty" is a statement about a freshly-provisioned emulator
 with no user data, not about a real user's device, where several of those 36 would return rows.
 
-> **⚠️ Warning — an empty result on a clean device is the single easiest way to under-report.**
+> **Warning — an empty result on a clean device is the single easiest way to under-report.**
 > A provider that returns nothing on a fresh AVD may return a message history on a real phone. If
 > you cannot populate the data, the honest write-up says "reachable; returned no rows on a
 > freshly-provisioned device; the schema indicates it exposes X" — which is a Gate 2 pass and a Gate
@@ -1425,7 +1425,7 @@ python3 -B scripts/manifest-corpus-sweep.py --apk-dir ~/corpus --out ./sweep-out
 python3 -B scripts/manifest-corpus-sweep.py --from-device --funnel-only
 ```
 
-> **⚠️ Warning — `adb shell` inside a `while read` loop eats the loop's input.**
+> **Warning — `adb shell` inside a `while read` loop eats the loop's input.**
 > [64-Xposed](../64-Xposed/README.md)'s artefact probe printed **one row of a thirteen-row table**
 > and exited cleanly, reading exactly like a device with nothing on it. `adb shell` inherits stdin.
 > Put `< /dev/null` on every `adb` invocation inside a pipeline-fed loop. The Python script above
@@ -1452,7 +1452,7 @@ adb shell dumpsys package com.example.target | sed -n '/Activity Resolver Table/
 python3 -B ../10-APK-Internals/examples/parse_axml.py --extract app.apk --json
 ```
 
-> **🔍 Pentester's Note — an authority can be a resource reference, and your scanner will print a
+> **Pentester's Note — an authority can be a resource reference, and your scanner will print a
 > number.**
 > My §7.3 probe found one provider whose `android:authorities` resolved to `2131820637`. That is a
 > `TYPE_REFERENCE` — the manifest says `@string/…` and the real value lives in `resources.arsc`,
@@ -1582,7 +1582,7 @@ the logcat behaviour confirms the token format and lifetime. **The chain is a Hi
 write-up must be a *single* finding that presents the chain, because reporting the three separately
 guarantees that two get fixed and the risk survives.
 
-> **🧠 Mental Model — a chain finding is rated at the chain, and remediated at the cheapest link.**
+> **Mental Model — a chain finding is rated at the chain, and remediated at the cheapest link.**
 > Rate it High. Then say which single change breaks it — here, server-side revocation on logout —
 > because that is what turns a High into a scheduled ticket instead of an argument.
 
@@ -1646,7 +1646,7 @@ numbers is that **four of the 243 were third-party**. The counts describe how An
 build system applications. Presented without that sentence, the same table would look like a survey
 of the Android ecosystem, and it would be a fabrication.
 
-> **🔍 Pentester's Note — the negative result is the one worth publishing.**
+> **Pentester's Note — the negative result is the one worth publishing.**
 > Two of the strongest results in this chapter are zeros: implicit export at **0 of 6,465
 > components**, and `grep -i xposed` at **0 findings from 1,141 occurrences**. Both are more useful
 > than an impressive-sounding positive, because both let a reader delete a check from their

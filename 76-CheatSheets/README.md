@@ -34,7 +34,7 @@ single 29,000-line file is unnavigable, and worse, it is **stale the moment any 
 because a copy has no relationship to its source. Every reader who finds a wrong command in it will
 find the right one three directories away and have no way to know which is current.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > A per-chapter cheat sheet answers *"I am working on WebViews, what do I need?"*. It cannot answer
 > *"I have ninety minutes and an APK"*, because that question crosses eleven chapters and none of
 > them owns it. **The gap between those two questions is the entire justification for this chapter.**
@@ -56,7 +56,7 @@ a command in a fence gets pasted into a terminal. That makes a cheat sheet the s
 a repository for a command that does not work — and the single best place for the sentence *"the
 obvious command here lies, use this instead."*
 
-> **⚠️ Warning**
+> **Warning**
 > This repository has measured its own violation of that rule. **376 command lines across 146
 > markdown files** use `adb shell su -c '…'` <!-- lint:allow -->, a form that fails outright on every
 > AOSP `userdebug` build and silently eats its own flags where it does not fail. See §6 and
@@ -118,7 +118,7 @@ then lose an hour to.
 | `phys` | Needs a physical device — an AVD cannot answer this question at all |
 | `unrun` | **Shipped without being executed in this session.** Correct as far as it is understood, and labelled so you do not mistake it for a measurement |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `unrun` is not an apology, it is the honest half of a promise. Every other row in this chapter was
 > executed in the exact form it is printed, on the device recorded below. Where a row needs hardware
 > that was not attached — a locked bootloader, a StrongBox element, a production `user` build — it
@@ -207,7 +207,7 @@ Generated, three ways. Pick the one that matches how you are lost.
 
 Measured over this repository on 2026-08-16, with `--stats` and `--verify-links`:
 
-> **⚠️ Warning — this row is a snapshot, and it moved while this chapter was being written.**
+> **Warning — this row is a snapshot, and it moved while this chapter was being written.**
 > Another chapter landed mid-session and the sheet count went from 76 to 78, the line total from
 > 28,594 to 29,189, and the emitted-link count from 1,595 to 1,628. Nothing was wrong with the first
 > measurement; the repository changed underneath it.
@@ -232,7 +232,7 @@ The two chapters with a README and no sheet are [`79-Glossary`](../79-Glossary/R
 condenses it is duplication. The generator knows about that exemption, so `--check` reports zero
 problems rather than two false ones.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > The router is built by parsing each sheet's H2 headings, code fences and table rows. It records
 > where things are; it copies nothing. That is a deliberate constraint, not a limitation: the moment
 > an index contains content, it acquires a second, divergent copy of the truth. The one hand-written
@@ -284,7 +284,7 @@ does not.
 findings. Step 10 is where an hour disappears. If you are out of time, stop after 9 and say what you
 did not do.
 
-> **⚠️ Warning — step 6 differs by device.** On the AVD, `adb install` works. On the Redmi this
+> **Warning — step 6 differs by device.** On the AVD, `adb install` works. On the Redmi this
 > repository has used, it returns `INSTALL_FAILED_USER_RESTRICTED: Install canceled by user` when
 > nobody cancelled anything — an OEM "Install via USB" policy. Root bypasses it:
 > `adb push app.apk /data/local/tmp/ && adb shell "su 0 pm install -r /data/local/tmp/app.apk"`.
@@ -322,7 +322,7 @@ Two facts that decide most of this table:
   test APK. Measured in [`66-Instrumentation`](../66-Instrumentation/README.md) with APKs differing
   in one bit.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `adb shell` is **not** an app. `com.android.shell` requests 200 permissions, 183 granted at
 > install and 16 runtime permissions pre-granted `SYSTEM_FIXED`. A finding reproduced only from
 > `adb shell` is not yet a finding — reproduce it from an app uid. Section 5.2 is the tool for that.
@@ -338,7 +338,7 @@ not at all, which is the dangerous category.
 | Is this key hardware-backed? | Every key is `SOFTWARE`, `hardwareEnforced` is empty — **and the attestation chain still verifies perfectly**. A valid chain proves the chain, not the hardware | Assert on the attestation *contents*, not on chain validity |
 | Anything about fastboot | There is **no bootloader**. `adb reboot bootloader` returns 0, reboots, and comes back as `device` in ~40s. `fastboot devices` never sees it. No `misc`, `boot` or `recovery` partition exists | Use a physical device, or say the question is unanswerable |
 
-And three where the emulator is simply *different*, which is safe once you know:
+And three where the emulator is *different*, which is safe once you know:
 
 | | Measured on this AVD |
 |---|---|
@@ -383,7 +383,7 @@ Four measured reasons a "working" bypass changes nothing:
 | `objection android root disable` reports success, app still dies | It is **three hooks and thirteen hard-coded paths**. Measured coverage: 1 of 5 checks in a purpose-built app | [`54-Objection`](../54-Objection/README.md) |
 | `android sslpinning disable` reports three successful hooks | It hooked **platform classes**, not the app. It reported the same three against an app with **no network code at all** | [`54-Objection`](../54-Objection/README.md) |
 
-> **🧠 Mental Model**
+> **Mental Model**
 > A "bypass succeeded" message means a hook installed. It does not mean the app was doing the thing
 > you hooked. These are different claims and only the second one is a finding.
 
@@ -402,7 +402,7 @@ spent bypassing a pinning implementation that was never reached.
 | 5 | Library pinning — OkHttp `CertificatePinner`, Conscrypt, **BoringSSL inside Flutter** | `host` |
 | 6 | Not HTTP at all — raw sockets, gRPC, MQTT, WebSocket | `any` |
 
-> **⚠️ Warning — a trust-store trap this repository has already hit.** Before concluding "the app
+> **Warning — a trust-store trap this repository has already hit.** Before concluding "the app
 > trusts user CAs", check what the device's store actually is:
 > ```bash
 > # host — on one device used by this repository, this returned an APatch tmpfs
@@ -452,7 +452,7 @@ Debug the tool before you debug the app. In order of how often each is the answe
 | 7 | Is the screen locked? | `adb shell "dumpsys trust" \| grep -o "deviceLocked=[01]"` |
 | 8 | Is your pipeline lying about failure? | Drop `set -o pipefail`, or use `grep -c` |
 
-> **⚠️ Warning — number 6 is the one that produces a wrong report rather than no report.** A probe
+> **Warning — number 6 is the one that produces a wrong report rather than no report.** A probe
 > that waits for a flag raised at the *start* of the work reads the target's storage before the
 > target has written anything, gets four `ENOENT`s, and **exits successfully**. The obvious reading
 > is "this app persists nothing", which is a finding somebody would write down. Report the wait
@@ -576,7 +576,7 @@ in the report; `TEST_ONLY` is defeated by one character (`adb install -t`).
 | `adb shell "ls /data/user_de/0/<pkg>"` | `root` | `all` | Device-encrypted data — readable before first unlock |
 | `sqlite3 db.sqlite '.tables'` | `host` | `all` | And **read the `-wal` file too**; deleted rows survive there |
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > `readlink /data/user/0` returns nothing and exits 1, while `ls -di` gives `/data/data` and
 > `/data/user/0` the **same inode** — measured as `344065` on this AVD. It is a bind mount. This
 > matters to anyone reasoning about path canonicalisation or traversal, and a glossary entry in this
@@ -594,7 +594,7 @@ in the report; `TEST_ONLY` is defeated by one character (`adb install -t`).
 | `adb shell service list` | `any` | `all` | Registered system Binder services |
 | `adb shell dumpsys activity broadcasts` | `any` | `all` | Live broadcast registrations — most are invisible to APK analysis |
 
-> **⚠️ Warning**
+> **Warning**
 > `dumpsys` records broadcast extras **in cleartext**. A test broadcast carrying a token is
 > recoverable afterwards by anything that can read `dumpsys`. Do not send real credentials while
 > testing.
@@ -645,7 +645,7 @@ finishes before the consumer closes the pipe and the status is 0; with a large o
 same script passes on Monday and fails on Tuesday, and the error always looks like a problem with
 the *data*.
 
-> **🔬 Under the Hood — rule 5, measured while writing this chapter.**
+> **Under the Hood — rule 5, measured while writing this chapter.**
 > MSYS2's path-conversion layer rewrites a Unix-looking argument into a Windows path *before* `adb`
 > ever sees it, so `/sdcard/` arrives as `C:/Program Files/Git/sdcard/`. The error names a host
 > directory and reads as an adb or device fault. Every Android top-level path tested was rewritten:
@@ -670,20 +670,20 @@ this session, on the AVD in §2, rather than carried across from the chapter tha
 
 | # | The obvious move | What it actually does | Do this instead | Re-measured here |
 |---|---|---|---|:---:|
-| 1 | `adb shell su -c 'cmd'` | `su: invalid uid/gid '-c'` on every AOSP `su`. Reads as **not rooted** | `adb shell "su 0 cmd"` | ✔ <!-- lint:allow --> |
-| 2 | `adb shell "su -c 'magisk -v'"` | `-v` is consumed by **`su`**, so it prints *su's* version | `adb shell "su 0 /debug_ramdisk/magisk -v"` | ✔ <!-- lint:allow --> |
-| 3 | `adb shell "su 0 magisk -v"` | `failed to exec magisk` — `magisk` is not on root's `PATH` on the AVD | Use the absolute path | ✔ |
-| 4 | `adb shell sh -c 'a; b'` | Prints nothing for `a`, then `b`. Exit 0 | `adb shell "sh -c 'a; b'"` | ✔ <!-- lint:allow --> |
-| 5 | `set -o pipefail` with `\| head` or `\| grep -q` | Exit **141** on a *successful* match, via SIGPIPE | `grep -c`, or a `case` glob, or drop `pipefail` | ✔ <!-- lint:allow --> |
-| 6 | `adb shell` inside `while read` | Eats the loop's stdin; prints one row of N and exits 0 | Append `< /dev/null` | ✔ <!-- lint:allow --> |
-| 7 | `frida-ps -U` succeeds ⇒ Frida works | **It does not.** It enumerates over adb with **no `frida-server` running**. `frida -U -n zygote64` then fails: `unable to connect to remote frida-server: closed` | Prove instrumentation with an actual attach | ✔ |
-| 8 | `new File("/system/xbin/su").exists()` | **`false` from an app on a rooted device.** `/system/xbin` is `0750 root:shell`; `File.exists()` maps `EACCES` and `ENOENT` alike to `false` | Read `/proc/self/mountinfo`, which needs no privilege | ✔ |
-| 9 | `Build.FINGERPRINT.startsWith("generic")` | **`false`** on a stock current AVD: `google/sdk_gphone16k_x86_64/…` | Populations and structure, not values — see [`39`](../39-EmulatorDetection/README.md) | ✔ |
-| 10 | Check `/dev/qemu_pipe` for an emulator | `ENOENT`. The node is now `/dev/goldfish_pipe_dprctd` | Enumerate, do not assume a path | ✔ |
-| 11 | Test a detection probe from `adb shell` | shell sees **678** properties, an app **638**, root **1,062**. `ro.boottime.*`: 0 / 0 / **111** | Run it as the app — [`scripts/vantage.sh`](scripts/vantage.sh) | ✔ |
-| 12 | `!"orange".equals(verifiedbootstate)` | The property is the **empty string** on an AVD, so the check **passes** on the least trustworthy platform it can meet | Test for absent as well as bad | ✔ |
-| 13 | `readlink /data/user/0` to find the CE dir | Returns nothing. It is a **bind mount** — same inode as `/data/data` | `ls -di` both, compare inodes | ✔ |
-| 14 | `grep -rn FLAG_SECURE` in decompiled release code | Finds nothing. `FLAG_SECURE` is `public static final int = 8192`, so `javac` folds it and only the literal `0x2000` survives into DEX. Verified with `javap -constants` against `android-35` | Search the constant, or hook `Window.setFlags` at runtime | ✔ |
+| 1 | `adb shell su -c 'cmd'` | `su: invalid uid/gid '-c'` on every AOSP `su`. Reads as **not rooted** | `adb shell "su 0 cmd"` | Yes <!-- lint:allow --> |
+| 2 | `adb shell "su -c 'magisk -v'"` | `-v` is consumed by **`su`**, so it prints *su's* version | `adb shell "su 0 /debug_ramdisk/magisk -v"` | Yes <!-- lint:allow --> |
+| 3 | `adb shell "su 0 magisk -v"` | `failed to exec magisk` — `magisk` is not on root's `PATH` on the AVD | Use the absolute path | Yes |
+| 4 | `adb shell sh -c 'a; b'` | Prints nothing for `a`, then `b`. Exit 0 | `adb shell "sh -c 'a; b'"` | Yes <!-- lint:allow --> |
+| 5 | `set -o pipefail` with `\| head` or `\| grep -q` | Exit **141** on a *successful* match, via SIGPIPE | `grep -c`, or a `case` glob, or drop `pipefail` | Yes <!-- lint:allow --> |
+| 6 | `adb shell` inside `while read` | Eats the loop's stdin; prints one row of N and exits 0 | Append `< /dev/null` | Yes <!-- lint:allow --> |
+| 7 | `frida-ps -U` succeeds ⇒ Frida works | **It does not.** It enumerates over adb with **no `frida-server` running**. `frida -U -n zygote64` then fails: `unable to connect to remote frida-server: closed` | Prove instrumentation with an actual attach | Yes |
+| 8 | `new File("/system/xbin/su").exists()` | **`false` from an app on a rooted device.** `/system/xbin` is `0750 root:shell`; `File.exists()` maps `EACCES` and `ENOENT` alike to `false` | Read `/proc/self/mountinfo`, which needs no privilege | Yes |
+| 9 | `Build.FINGERPRINT.startsWith("generic")` | **`false`** on a stock current AVD: `google/sdk_gphone16k_x86_64/…` | Populations and structure, not values — see [`39`](../39-EmulatorDetection/README.md) | Yes |
+| 10 | Check `/dev/qemu_pipe` for an emulator | `ENOENT`. The node is now `/dev/goldfish_pipe_dprctd` | Enumerate, do not assume a path | Yes |
+| 11 | Test a detection probe from `adb shell` | shell sees **678** properties, an app **638**, root **1,062**. `ro.boottime.*`: 0 / 0 / **111** | Run it as the app — [`scripts/vantage.sh`](scripts/vantage.sh) | Yes |
+| 12 | `!"orange".equals(verifiedbootstate)` | The property is the **empty string** on an AVD, so the check **passes** on the least trustworthy platform it can meet | Test for absent as well as bad | Yes |
+| 13 | `readlink /data/user/0` to find the CE dir | Returns nothing. It is a **bind mount** — same inode as `/data/data` | `ls -di` both, compare inodes | Yes |
+| 14 | `grep -rn FLAG_SECURE` in decompiled release code | Finds nothing. `FLAG_SECURE` is `public static final int = 8192`, so `javac` folds it and only the literal `0x2000` survives into DEX. Verified with `javap -constants` against `android-35` | Search the constant, or hook `Window.setFlags` at runtime | Yes |
 | 15 | `grep -i xposed` over APKs | **1,141 hits, 1,141 explained by the word "exposed", 0 genuine.** Across 237 APKs | Never put a token under ~8 characters in a high-confidence tier | — |
 | 16 | `UiAutomation.executeShellCommand("a \| b")` | **Not a shell.** Whitespace split then exec: `echo "one two"` returns the quotes, pipelines return nothing with no error. Also runs as **uid 2000** | `executeShellCommand("sh -c '…'")`, and never for a vantage-sensitive probe | — <!-- lint:allow --> |
 | 17 | `am start -n <pkg>/<cls>` twice with different extras | `Intent.filterEquals()` **ignores extras**, so the second delivery goes to the running instance and prints a warning | Always `am start -S` | — |
@@ -702,7 +702,7 @@ this session, on the AVD in §2, rather than carried across from the chapter tha
 | 30 | `objection android root disable` handles root detection | Three hooks, thirteen hard-coded paths. **1 of 5** checks in a purpose-built app | Find the check first, then hook that check | — |
 | 31 | "`android sslpinning disable` succeeded" ⇒ the app pins | It reported three successful hooks against an app with **no network code at all** | A hook installing is not evidence the app pinned | — |
 | 32 | A `classes.dex` CRC check detects repackaging | Re-signing changed the signature digest while `classes.dex` CRC stayed **identical** — nothing in the code changed | Check the signing certificate, and handle `signingCertificateHistory` | — |
-| 33 | `adb shell ls /sdcard/` on Git Bash <!-- lint:allow --> | MSYS rewrites the path before adb sees it: `ls: C:/Program: No such file or directory`. Every Android top-level path tested was rewritten **except `/proc`** | Quote it: `adb shell 'ls /sdcard/'`, or `MSYS_NO_PATHCONV=1` | ✔ |
+| 33 | `adb shell ls /sdcard/` on Git Bash <!-- lint:allow --> | MSYS rewrites the path before adb sees it: `ls: C:/Program: No such file or directory`. Every Android top-level path tested was rewritten **except `/proc`** | Quote it: `adb shell 'ls /sdcard/'`, or `MSYS_NO_PATHCONV=1` | Yes |
 
 Rows marked `—` are carried from the chapter that measured them, with the device and method recorded
 there. They are cited, not re-derived; where the measurement needed a physical device, a locked
@@ -733,7 +733,7 @@ That pattern requires `su` to follow `shell` with nothing between, so it **canno
 double-quoted form** — which is 283 of the 376, about 75% of the defect. The true scale is roughly
 three times that first estimate.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > This is the same shape as the link-checker defect this repository records against itself, where a
 > `forward` exemption that never re-checked its own precondition hid **1,512 broken links** behind a
 > reported `broken=0`: a pattern that answers a *narrower* question than it appears to, while
@@ -778,7 +778,7 @@ canonical instances in this repository are both in sheets:
 
 - `adb shell su -c 'magisk -v'` <!-- lint:allow --> in a "Magisk version" row that prints
   *`su`'s* version, on the
-  devices where it does not simply fail.
+  devices where it does not fail.
 - `set -o pipefail` above a `| head` in a triage script, which printed **"not a JNI library"
   directly below a list of that library's JNI exports**.
 

@@ -24,7 +24,7 @@ of preparation is then calibrated against. That is why the instruction is to do 
 before reading the rest of chapter 75. Reading first destroys the measurement, and the
 measurement is the whole point.
 
-> **⚠️ Warning**
+> **Warning**
 > If you have already read [README §3.9](../README.md#39-time-budgets-and-the-scoping-failure-that-costs-more-than-ignorance),
 > you have been told the answer, and your baseline will be contaminated. That is not a
 > disaster — run it anyway, and treat the result as a *post*-instruction measurement rather
@@ -210,7 +210,7 @@ per axis, maximum 12.
 | **Honesty** | Asserted through a gap, or hedged everything equally | Hedged appropriately but named no method | Named the boundary **and** how you would find out |
 | **Severity** | No severity, reachability or false-positive reasoning where the question invited it | Mentioned severity without a precondition | Rated with reasoning, and named the false-positive case |
 
-> **📖 Definition — the Severity axis when the question is not about a finding**
+> **Definition — the Severity axis when the question is not about a finding**
 > Several phone-screen questions ("what is in an APK?") do not invite severity reasoning at
 > all. Score those **2 by default** and note it. Do not let a not-applicable axis drag a good
 > answer down; the axis exists to catch the answers where severity *was* invited and omitted.

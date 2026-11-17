@@ -35,14 +35,14 @@ known and (b) general enough to state in one sentence about any mobile app. Both
 So there is a permanent, structural gap between "the app satisfies every control" and "the app is
 safe". The gap is not a defect in MASVS. It is what a standard *is*.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Controls are written **per artefact and per component**: this file, this WebView, this key, this
 > endpoint's transport. Real systems fail **between** things — between two components that are each
 > correct, between the app and a server that each honour their half of a protocol differently,
 > between what the app promises the user and what the system actually enforces. The standard has no
 > vocabulary for "between", and that is where you should hunt.
 
-> **⚠️ Warning — the failure mode of this lab**
+> **Warning — the failure mode of this lab**
 > The lazy version of this exercise is to find an ordinary finding, notice that no control matches it
 > *exactly*, and declare a gap. That is not a gap; that is not having read the standard carefully.
 > Step 2 exists specifically to make that impossible, and you must complete it honestly. A tester who
@@ -113,7 +113,7 @@ mapping it there. Now rebut your own argument. If you cannot rebut it convincing
 gap — you have a finding with an imperfect but legitimate mapping, and you should map it and say the
 fit is imperfect.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > This step is the difference between "I could not find a control" and "there is no control". The
 > first is about you. The second is a claim about the document, and a claim about the document is
 > something a reviewer can check. Only ever make the second one, and only with the table above behind
@@ -255,7 +255,7 @@ statement about trust propagation between two components. Could a control have b
 would have prevented it? Try drafting one, in one sentence. Then say why that sentence would be hard
 to test mechanically, which is probably why it is not in the standard.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > This is not a contrived example. Intent-redirection chains of exactly this shape have been found
 > repeatedly in shipped Android apps, and the reason they survive review is precisely that each
 > component passes inspection on its own. The reviewer's eye is trained on components, because that
@@ -438,7 +438,7 @@ happens more often than finding a true gap.
 | 6 | **ARGUABLE, lean GAP** — state machine and time | Session lifecycle on credential change is a server obligation. AUTH-1 can be read to cover session management generally, so this is a legitimate disagreement. **What settles both 5 and 6:** ask whether the app could have prevented it. If the answer is no, the control cannot be the one violated, whatever its title suggests |
 | 7 | **MAPS** — PRIVACY-4 | The trap is the disclosure. Disclosing a practice satisfies PRIVACY-3 (transparency) and says nothing about PRIVACY-4 (the user actually being able to control their data). A delete button that does not delete is a control failure, not a gap |
 | 8 | **MAPS** — PLATFORM-1 | Included so the set is not all gaps. Guard the provider and the finding is gone |
-| 9 | **MAPS** — AUTH-1 | The trap is that it *feels* like a resilience or architecture issue. It is not: entitlement is authorization, and AUTH-1 is about authorization being enforced server-side. Note that perfect RESILIENCE would only raise the cost of defeating the client check, which is why RESILIENCE fails the counterfactual and AUTH-1 passes it |
+| 9 | **MAPS** — AUTH-1 | The trap is that it *feels* like a resilience or architecture issue. It is not: entitlement is authorization, and AUTH-1 is about authorization being enforced server-side.perfect RESILIENCE would only raise the cost of defeating the client check, which is why RESILIENCE fails the counterfactual and AUTH-1 passes it |
 | 10 | **MAPS** — CODE-3, at Informational severity | The trap is confusing *mapping* with *severity*. CODE-3 concerns the components the app ships, not their reachability. Unreachability is a severity argument, made in the finding text, not a reason to drop the mapping |
 
 Score: four gaps at most (2, 3, and arguably 5 and 6). If you marked 4, 7, 9 or 10 as gaps, the

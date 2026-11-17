@@ -31,7 +31,7 @@ python3 -B scripts/lint-commands.py --format md --summary-only \
     --no-fail --out references/lint-report.md
 ```
 
-> **⚠️ Relative-link depth.** A file in this directory is **two** levels below the repository root.
+> **Relative-link depth.** A file in this directory is **two** levels below the repository root.
 > A link to another chapter is `../../NN-Chapter/…`, never `../NN-Chapter/…`. Every emit site in the
 > generator uses one module constant for this, and `--verify-links` resolves every emitted path
 > against the filesystem rather than trusting it. It found 58 broken links on its first run.

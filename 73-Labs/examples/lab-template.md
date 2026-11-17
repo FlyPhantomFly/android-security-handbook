@@ -58,7 +58,7 @@ Two or three paragraphs, before the first command. What breaks without this know
 who skips it gets wrong. Write this section **last**, when you know what the lab turned out to be
 about, and then move it here.
 
-> **🧠 Mental Model.** An analogy that survives being pushed on. If the analogy breaks under the
+> **Mental Model.** An analogy that survives being pushed on. If the analogy breaks under the
 > first follow-up question, cut it — a broken analogy is worse than none, because the reader keeps
 > using it.
 
@@ -83,7 +83,7 @@ adb devices -l
 adb shell getprop ro.build.version.sdk
 ```
 
-> **⚠️ Warning.** If your lab installs anything, builds anything, or writes to the device, say so
+> **Warning.** If your lab installs anything, builds anything, or writes to the device, say so
 > here and give the cleanup in the last section. Build **out of tree**: everything your script
 > produces goes under `$OUTDIR`, outside the repository. The pattern to copy is
 > [`43-WebView/examples/build.sh`](../../43-WebView/examples/build.sh).
@@ -120,7 +120,7 @@ Then explain what the reader is looking at. Never leave output to speak for itse
 The best labs have a moment where the obvious expectation is wrong. Set the expectation explicitly
 first, so the reader can be wrong about it, then show the result.
 
-> **🔍 Pentester's Note.** Use this callout for the thing that transfers to real work.
+> **Pentester's Note.** Use this callout for the thing that transfers to real work.
 
 ---
 
@@ -202,7 +202,7 @@ adb shell "pm list packages | grep yourlab"   # expect no output
 git status --short                             # expect no output
 ```
 
-> **⚠️ Warning.** If you find files on the device that are not yours, **leave them**. A live
+> **Warning.** If you find files on the device that are not yours, **leave them**. A live
 > workspace and abandoned residue look identical from outside, and only the agent that created them
 > can tell the difference.
 

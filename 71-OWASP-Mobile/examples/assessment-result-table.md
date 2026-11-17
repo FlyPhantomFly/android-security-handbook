@@ -76,7 +76,7 @@ the strongest reading of whatever you wrote.
 | `BLOCKED` | Would have tested; could not | The obstacle, and what would remove it |
 | `N/A` | The control has no subject in this app | Why there is no subject |
 
-> **⚠️ The distinction that matters most.** `NOT-TESTED` is a decision you made about risk.
+> **The distinction that matters most.** `NOT-TESTED` is a decision you made about risk.
 > `BLOCKED` is a limitation imposed on you. A client who reads a `BLOCKED` row as `NOT-TESTED`
 > believes you considered and dismissed something you could not reach. Keep them apart, and never let
 > either become `PASS`.

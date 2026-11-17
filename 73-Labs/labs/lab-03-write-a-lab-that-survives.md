@@ -34,7 +34,7 @@ the useful response is a lab, not a note.
 success criterion. A lab that works on your machine and nowhere else is not a lab; it is a diary
 entry with commands in it.
 
-> **🧠 Mental Model.** A lab is a **promise made to a stranger about their machine.** Every sentence
+> **Mental Model.** A lab is a **promise made to a stranger about their machine.** Every sentence
 > is a claim about what will happen when someone you will never meet types something into a shell
 > you have never seen. Most of the craft is in noticing which of your claims are actually about
 > *your* shell.
@@ -92,7 +92,7 @@ accepted, but **write the first one** — it is what 222 of the labs use:
 The last line is the one people omit and it is the most valuable. A measured output with no device
 attached to it cannot be reproduced, cannot be diverged from, and cannot be corrected.
 
-> **📖 Definition — difficulty band, in this repository.** Four values, and the band is *the level
+> **Definition — difficulty band, in this repository.** Four values, and the band is *the level
 > you need to finish, not to start.* A lab written "Beginner to Intermediate" is an Intermediate
 > lab. `CTF` is a band, not a modifier: it means the lab withholds the method and gives you a goal.
 > By convention the CTF is the **last** lab in a chapter.
@@ -127,7 +127,7 @@ attached to it cannot be reproduced, cannot be diverged from, and cannot be corr
 - **Never invent a CVE identifier, an AOSP line number, or a bug-bounty URL.** File paths in AOSP
   are stable and fine to cite; line numbers are not.
 
-> **⚠️ Warning — the `su -c` trap, stated precisely because you will hit it.**
+> **Warning — the `su -c` trap, stated precisely because you will hit it.**
 > <!-- lint:allow SU-DASH-C SU-DASH-C-BARE -- the broken form, quoted as the counter-example this warning teaches -->
 > `adb shell su -c 'whoami'` is broken. The `adb shell` argument is re-parsed by the device's shell,
 > which strips your quotes, so `su` receives `-c` and `whoami` as separate words. Two forms work:
@@ -198,7 +198,7 @@ Write in this order. It is not the order the reader reads, and that is deliberat
 6. **"If it did not work"**, from the failures you personally hit while writing it. This section
    writes itself if you keep notes and is impossible to fabricate if you do not.
 
-> **🔍 Pentester's Note.** Step 2 is the one that separates a lab from an essay. Paste output you
+> **Pentester's Note.** Step 2 is the one that separates a lab from an essay. Paste output you
 > **observed**, not output you composed, and if you had to run the command three times to get it,
 > say so in the step. This chapter's Lab 02 §5.2 documents a command that printed a success message
 > and did nothing; writing that down took one paragraph and is worth more than the six steps around
@@ -258,7 +258,7 @@ links=395 broken=3
 All three were files promised before they were written. That is the normal state of a lab mid-write,
 and the check is how you find the ones you *forgot* to write rather than deferred.
 
-> **⚠️ Warning — relative depth, the defect this repository paid the most for.**
+> **Warning — relative depth, the defect this repository paid the most for.**
 > A file in `labs/` or `references/` is **two** levels below the repository root. A link from there
 > to another chapter is `../../NN-Chapter/README.md`. The one-level form, `../NN-Chapter/README.md`,
 > resolves *inside your own chapter directory* and is silently wrong.
@@ -309,7 +309,7 @@ find 27-ContentProviders -name '__pycache__' -o -name '*.pyc' -o -name '*.class'
      -o -name '*.apk' -o -name '*.dex' -o -name '*.so' -o -name '*.o'
 ```
 
-> **⚠️ Warning — two PowerShell traps that will cost you an afternoon.**
+> **Warning — two PowerShell traps that will cost you an afternoon.**
 > **Never** pair `Get-Content -Raw` with `Set-Content -Encoding UTF8`: `-Raw` reads a BOM-less UTF-8
 > file using the ANSI codepage, so every multi-byte character decodes wrongly and writing it back
 > makes the damage permanent. It corrupted 11 files in this repository. Use a `.NET`
@@ -361,7 +361,7 @@ heading. `apktool` is raised because §3.2 offers an `apktool` route alongside t
 The honest fix for both is **in the header**, and Lab 02's header now reads: *"Root is optional and
 used in §6.2 only... `apktool` and `jadx` are convenient and neither is required."*
 
-> **🧠 Mental Model.** A tag that over-reports a requirement turns readers away from a lab they
+> **Mental Model.** A tag that over-reports a requirement turns readers away from a lab they
 > could have done. A header that under-reports one strands them at step 40. Given a choice, make the
 > **header** more precise rather than the detector more permissive — the header is read by humans
 > who can understand "optional", and the detector is not.
@@ -466,7 +466,7 @@ The reference implementation is
 The short form for a single claim is
 [`../examples/divergence-report.md`](../examples/divergence-report.md).
 
-> **🔬 Under the Hood.** Why is `DIVERGED, cause not established` an acceptable end state? Because
+> **Under the Hood.** Why is `DIVERGED, cause not established` an acceptable end state? Because
 > the alternative is not knowledge, it is a guess wearing knowledge's clothes. A recorded divergence
 > is a question the next person can answer with one more device. A resolved-by-assertion divergence
 > is a claim nobody will re-examine, because it looks settled.

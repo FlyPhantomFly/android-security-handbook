@@ -37,7 +37,7 @@ career.
 
 This chapter is that set of motions. But it is deliberately **not** a bare list.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > A command-line tool is a *user interface to a system service*. When you type `pm list packages`,
 > you are not running a program that reads a file — you are opening a Binder connection to
 > `PackageManagerService` running inside `system_server` and asking it a question. Every command in
@@ -62,7 +62,7 @@ command. The gap between the common 80% and the useful 100% is where speed comes
 **The third is device damage.** Some commands in this chapter will brick a device or destroy
 evidence if run in the wrong order or on the wrong partition. Each of those carries a warning.
 
-> **⚠️ Warning**
+> **Warning**
 > Everything here assumes a device you own or are explicitly authorised to test. Several commands
 > (`fastboot flashing unlock`, `pm uninstall`, `adb backup`, `dd` on a partition) are destructive or
 > forensically significant. Read the warning attached to a command before you run it, not after.
@@ -205,14 +205,14 @@ you do not, and assuming root will fix a problem that is actually SELinux.
 | `adb forward tcp:27042 tcp:27042` | Forwards a host port to a device port | adb server, adbd | adb |
 | `adb reverse tcp:8080 tcp:8080` | Forwards a **device** port to a **host** port — how you point an app at a proxy on your laptop | adbd | adb |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `adb reverse` is underused and enormously useful. If a device cannot reach your laptop's Burp
 > instance over the network (corporate WiFi, no route, hotel captive portal), `adb reverse` makes
 > `127.0.0.1:8080` on the device resolve to your laptop. Combine with
 > `adb shell settings put global http_proxy 127.0.0.1:8080` and you have interception over nothing
 > but the USB cable.
 
-> **⚠️ Warning**
+> **Warning**
 > `adb tcpip 5555` leaves a completely unauthenticated root-adjacent shell listening on the network
 > until the next reboot. On a shared or untrusted network this is a genuine compromise of your test
 > device. Prefer `adb pair` on Android 11+, and turn it off with `adb usb` when you are done.
@@ -322,7 +322,7 @@ This is your primary tool for exercising an app's exported attack surface by han
 | `--grant-read-uri-permission` | Adds `FLAG_GRANT_READ_URI_PERMISSION` | |
 | `--activity-clear-top` | Adds `FLAG_ACTIVITY_CLEAR_TOP` | |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > An exported activity that takes a URL in an extra and loads it into a WebView is one of the most
 > common real-world Android findings. The entire proof of concept is one line:
 > ```bash
@@ -349,7 +349,7 @@ This is your primary tool for exercising an app's exported attack surface by han
 Bind types are `s` (string), `i` (int), `l` (long), `f` (float), `d` (double), `b` (boolean),
 `n` (null).
 
-> **⚠️ Warning**
+> **Warning**
 > `content delete` and `content update` change the target app's data. On a real engagement, take a
 > copy of the app's data directory first, and prefer read-only tests unless write access is
 > explicitly in scope.
@@ -381,7 +381,7 @@ Bind types are `s` (string), `i` (int), `l` (long), `f` (float), `d` (double), `
 | `cmd package ...` | Same as `pm` |
 | `cmd notification post ...` | Posts a notification |
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > `service call` sends a raw Binder transaction with a transaction code you supply. Transaction codes
 > are just sequential integers assigned in the order methods appear in the AIDL interface, starting
 > at `FIRST_CALL_TRANSACTION` (1). If you can read the AIDL — from AOSP, or reconstructed from a
@@ -436,7 +436,7 @@ done
 | `adb logcat -G 16M` | Enlarges the buffer so you do not lose events |
 | `adb logcat -f /sdcard/log.txt` | Writes to a file on the device |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Run this at the start of every dynamic session and leave it running in a second terminal:
 > ```bash
 > # host
@@ -444,7 +444,7 @@ done
 > ```
 > Sensitive data in logs remains one of the most reliably present findings in real applications,
 > because `Log.d` calls survive into release builds unless the developer strips them deliberately.
-> Note that since Android 4.1 an app can only read its **own** logs, so this finding's severity
+> Since Android 4.1 an app can only read its **own** logs, so this finding's severity
 > depends on context — but on a rooted or debuggable device, and for any app with `READ_LOGS`, it is
 > real. See [33-Storage](../33-Storage/README.md).
 
@@ -533,7 +533,7 @@ apksigner verify -v patched-signed.apk
 adb install -r patched-signed.apk
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > The order matters. `zipalign` must run **before** `apksigner`, because signing computes digests
 > over the final bytes and aligning afterwards would invalidate them. If you align after signing, the
 > APK will either fail verification or be rejected at install with a signature error, and you will
@@ -591,7 +591,7 @@ adb shell "su -c '/data/local/tmp/frida-server &'"
 frida-ps -U   # verify
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > A version mismatch between the `frida` Python package on your host and `frida-server` on the device
 > produces confusing failures that look like device or permission problems. Check with
 > `frida --version` and download the matching server release. This is the single most common Frida
@@ -630,7 +630,7 @@ chown root:root /system/etc/security/cacerts/9a5ba580.0
 mount -o ro,remount /system
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > On Android 14 and later the system CA store moved and is managed by the Conscrypt APEX module, so
 > a plain `/system` remount is no longer sufficient. Use a Magisk module designed for the Android
 > version you are on. Remounting `/system` also requires `adb disable-verity` and a reboot, and on a
@@ -638,7 +638,7 @@ mount -o ro,remount /system
 
 ### 3.12 Fastboot
 
-> **⚠️ Warning**
+> **Warning**
 > This entire section can permanently destroy a device. `fastboot flashing unlock` **erases all user
 > data**. Flashing a wrong or mismatched image can produce an unbootable device with no recovery
 > path. Never run these against a device that is not yours and that you cannot afford to lose.
@@ -657,7 +657,7 @@ mount -o ro,remount /system
 | `fastboot reboot` / `fastboot reboot bootloader` | Reboot |
 | `fastboot erase userdata` | Wipe user data |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Always use `fastboot boot patched_boot.img` before `fastboot flash boot patched_boot.img`. Booting
 > the image is non-persistent: if it fails, you power-cycle and you are back where you started. If you
 > flash first and the image is wrong, you may have a device stuck in a bootloop with no working
@@ -700,7 +700,7 @@ Take `am start -n com.example/.MainActivity`. The path is:
    mode rules, and eventually the target process's `ActivityThread` receives a Binder callback to
    instantiate and start the Activity.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > Step 5 is the one that matters to you. When `am start` fails with
 > `Permission Denial: starting Intent ... not exported from uid ...`, that message is produced inside
 > `ActivityStarter` after it consulted the `ActivityInfo` that `PackageManagerService` parsed from
@@ -976,7 +976,7 @@ A full version of this with better parsing lives in [`scripts/apk-triage.sh`](sc
 | `\b(?:\d{1,3}\.){3}\d{1,3}\b` | Hardcoded IP |
 | `(password\|passwd\|secret\|apikey\|api_key\|token)\s*[=:]` | Credential-shaped assignment |
 
-> **⚠️ Warning**
+> **Warning**
 > Every one of these produces false positives. A `AIza...` string may be a public Firebase Web API
 > key, which is *designed* to be public and is not a finding on its own — the finding would be the
 > Firebase security rules behind it. Reporting raw grep output as findings is the fastest way to lose
@@ -1107,7 +1107,7 @@ adb logcat -c
 echo "Recording. Exercise the app, then: kill \$(cat $EV/logcat.pid)"
 ```
 
-> **🧠 Mental Model**
+> **Mental Model**
 > The difference between a hobbyist and a professional is not the commands they know. It is that the
 > professional's session is reproducible: a colleague can re-run the script, get the same artefacts,
 > and verify the finding. Write the script.

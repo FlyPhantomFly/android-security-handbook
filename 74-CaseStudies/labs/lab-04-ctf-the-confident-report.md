@@ -17,7 +17,7 @@ measurement in it is *real* — nothing has been fabricated.
 
 Your job is to find which, say precisely why, and rewrite the report so that what ships is defensible.
 
-> **⚠️ Scoring is inverted, and that is the whole exercise.**
+> **Scoring is inverted, and that is the whole exercise.**
 > You gain points for **correct rejections** and lose them for **wrong ones**. There is a flag, and
 > it is possible to assemble the flag and still score zero. If your instinct is to hunt for the flag
 > first, notice that instinct — it is exactly the instinct that puts three bad findings in front of a
@@ -137,7 +137,7 @@ The obfuscation is defeated by the compiler: at `-O2`, clang evaluates the decod
 time and stores the plaintext in `.rodata`. The ciphertext array is absent from the shipped binary
 entirely. A build of identical source at `-O0` does not exhibit this.
 
-**Remediation.** The value must not be a compile-time constant. Note that
+**Remediation.** The value must not be a compile-time constant.
 `__attribute__((noinline))` on the decoder does **not** prevent this — it constrains the inliner,
 while the transformation here is interprocedural constant propagation and function specialisation.
 Derive the value at runtime, or accept that it ships in plaintext.
@@ -174,7 +174,7 @@ high-confidence band.** At confidence 0.50 the scan surfaced a `Domain` enum in 
 enumerating **thirteen environments** — production, pre-production, eight QA hosts and three staging
 hosts — in the shipped production build.
 
-**Remediation.** Strip non-production endpoints from release builds. Note that internal hostnames
+**Remediation.** Strip non-production endpoints from release builds.internal hostnames
 disclose infrastructure naming and reduce the cost of reconnaissance against the client's estate.
 
 ---
@@ -378,7 +378,7 @@ verified-correct patch do nothing:
 | Mechanism | Tell |
 |---|---|
 | The check is **short-circuited** by an earlier guard | The caller exists; reading it shows an earlier call and a conditional branch. Measured: a licence gate where an upstream root probe returned first, so the patched function was never reached — and where **the correct key alone also failed** |
-| The check was **inlined**, so the standalone copy is dead | The function has few or no callers, yet the logic clearly runs. Measured: a function patched to return 1, *observably* returning 1, while the dependent operation still refused |
+| The check was **inlined**, so the standalone copy is dead | The function has few or no callers, yet the logic demonstrably runs. Measured: a function patched to return 1, *observably* returning 1, while the dependent operation still refused |
 
 Either would produce exactly this report.
 
@@ -489,7 +489,7 @@ And three about the ones that survived, which are harder to internalise:
 - **Finding 6 is the best work in the report and sat at confidence 0.50.** A tester who sorts by
   confidence and writes up the top band misses it entirely.
 
-> **🧠 Mental Model — the question to ask of every finding you inherit or write.**
+> **Mental Model — the question to ask of every finding you inherit or write.**
 > *"What is the weakest rung this claim stands on?"* A claim inherits the strength of its weakest
 > evidence, not its strongest. Finding 5's strongest evidence is excellent — verified bytes,
 > correct encoding, clean disassembly — and its weakest rung is that **nothing was ever run.**

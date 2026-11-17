@@ -33,7 +33,7 @@ missing tools, its emulator instead of a phone, its Frida that half works — wh
 this repository can I do right now?* That question has no answer in any individual chapter, because
 no chapter knows what the others require. It is the aggregator's question, and it is this one.
 
-> **🧠 Mental Model.** An installation guide is a shopping list. A capability survey is an inventory.
+> **Mental Model.** An installation guide is a shopping list. A capability survey is an inventory.
 > The shopping list is written once and thrown away; the inventory is re-taken every time the
 > kitchen changes, and it is the only one of the two that can tell you what you are able to cook
 > tonight.
@@ -71,7 +71,7 @@ cd 73-Labs
 python3 -B scripts/lab-env-probe.py --help | head -20
 ```
 
-> **⚠️ Warning.** Run every Python command in this chapter with `-B`. Without it, CPython writes
+> **Warning.** Run every Python command in this chapter with `-B`. Without it, CPython writes
 > `__pycache__` directories into the repository, and `.pyc` files are on the repository's artefact
 > blocklist — the artefact sweep in [§8.2](../README.md#82-the-checks-this-repository-runs-on-itself)
 > fails on them. **`PYTHONDONTWRITEBYTECODE=1` is not a substitute**: a script that uses
@@ -111,7 +111,7 @@ x86_64
 userdebug
 ```
 
-> **🔍 Pentester's Note.** Record the serial, not just the model. This repository has had two
+> **Pentester's Note.** Record the serial, not just the model. This repository has had two
 > physical devices swapped mid-session without warning, and an emulator answer attached to a phone's
 > serial in a report is worse than no answer at all. If two devices are attached, every `adb`
 > command in every lab needs `-s <serial>` and the labs mostly do not say so.
@@ -137,7 +137,7 @@ The device is rooted. The second command failed because this AVD's `su` is AOSP'
 positional argument is a **uid**, so it parsed `-c` as a user name and rejected it. A Magisk `su` on
 a typical phone accepts `-c` and would answer the other way round.
 
-> **⚠️ Warning — the third form, which is broken everywhere.**
+> **Warning — the third form, which is broken everywhere.**
 > <!-- lint:allow SU-DASH-C SU-DASH-C-BARE -- the broken form, quoted as the counter-example this warning teaches -->
 > `adb shell su -c 'id'` is **not** a third option; it is a bug. The outer shell strips the quotes
 > before `su` ever sees them, so `su` receives `-c` and `id` as separate words and, depending on
@@ -163,7 +163,7 @@ Enforcing
 metadata  super  vbmeta  vda  vdd
 ```
 
-> **⚠️ Warning — this exact command, unquoted, is broken on Windows.** Under Git Bash/MSYS, an
+> **Warning — this exact command, unquoted, is broken on Windows.** Under Git Bash/MSYS, an
 > argument that looks like an absolute POSIX path is rewritten before `adb` ever sees it. Measured:
 >
 > ```
@@ -187,7 +187,7 @@ Each of these is load-bearing:
 | Page size | `16384` | **16 KiB pages.** A naively linked native binary segfaults here. Every native lab needs `-Wl,-z,max-page-size=16384` |
 | Partitions | no `boot`, no `recovery` | There is **no bootloader to talk to.** Every `fastboot flash` lab is unrunnable, at any privilege level |
 
-> **🔬 Under the Hood.** The page-size result is not cosmetic. The kernel maps a shared object at
+> **Under the Hood.** The page-size result is not cosmetic. The kernel maps a shared object at
 > page granularity; if a binary's program headers assume 4 KiB alignment and the kernel enforces
 > 16 KiB, the segments cannot be placed as the linker intended and the process dies with SIGSEGV
 > before `main`. This repository measured `int main(void){return 42;}` exiting **139** on this exact
@@ -215,7 +215,7 @@ CANNOT LINK EXECUTABLE "/data/local/tmp/frida-server": empty/missing DT_HASH/DT_
 The host tool is fine. The binary is present, executable, and the right architecture. It still does
 not run, because it was built with a toolchain newer than this image's dynamic linker understands.
 
-> **🔍 Pentester's Note — the trap inside the trap.** `frida-ps -U` **still lists processes** on this
+> **Pentester's Note — the trap inside the trap.** `frida-ps -U` **still lists processes** on this
 > device. The failure only appears when you try to attach. If you check Frida by running `frida-ps`,
 > you will conclude it works and then spend an hour debugging a script that was never going to run.
 > Check by executing the server.
@@ -303,13 +303,13 @@ LABS
     ida           4 labs
 ```
 
-> **⚠️ Warning — your totals will not match these, and that is correct.** The denominator counts a
+> **Warning — your totals will not match these, and that is correct.** The denominator counts a
 > repository that changes. Captured mid-write, this same block read `131 / 315`; two chapters landed
 > and it now reads `140 / 327`. **A generated number is a measurement with a timestamp, not a
 > constant.** If your run differs, compare the *shape* — which capability blocks the most — rather
 > than the digits.
 
-> **📖 Definition — capability tag.** A short identifier such as `root`, `frida` or `no-device`,
+> **Definition — capability tag.** A short identifier such as `root`, `frida` or `no-device`,
 > derived from a lab's own text by
 > [`build-lab-index.py`](../scripts/build-lab-index.py). A tag means *this lab issues a command
 > using this thing, or names it in its own prerequisites block.* It does not mean the word appears
@@ -323,7 +323,7 @@ sorts into three classes that behave completely differently:
 
 | Class | On this setup | What to do |
 |---|---|---|
-| **A download away** | `frida` (128), `apktool` (72), `radare2` (8), `mitmproxy` (6) | Do this before anything else. Measured below: it is by far the highest-leverage hour available |
+| **A download away** | `frida` (128), `apktool` (72), `radare2` (8), `mitmproxy` (6) | Do this before anything else. Measured below: it is by far the highest-value hour available |
 | **A licence or a large install away** | `ghidra` (14), `xposed` (14), `mobsf` (6), `ida` (4), `aosp` (4) | Ghidra is free; IDA is not. MobSF wants Docker, which is present here. LSPosed needs Zygisk, which is off on this AVD. An AOSP checkout is hundreds of gigabytes and days of build time |
 | **Not obtainable here at all** | `physical` (8), and everything needing a bootloader | Read the chapter, skip the lab, and **say so in your notes.** These are the ones people quietly fake |
 
@@ -362,7 +362,7 @@ the lab's own prerequisites line, which is the strongest kind of evidence there 
 justified by a sentence in the middle of a paragraph that merely happens to contain `adb root` — the
 tag is correct, and the evidence for it is nearly an accident.
 
-> **🔍 Pentester's Note.** That is what an auditable index buys you: not certainty, but the ability
+> **Pentester's Note.** That is what an auditable index buys you: not certainty, but the ability
 > to see *how* certain each claim is. A tag with a prerequisites line behind it and a tag with a
 > passing prose mention behind it look identical in a table and are not the same claim. If a tag
 > looks wrong, the evidence line tells you immediately whether the lab is ambiguous or the detector
@@ -418,7 +418,7 @@ diff <(python3 -m json.tool "$HOME/android-lab-manifest.json") \
      <(python3 -m json.tool "$HOME/android-lab-manifest.new.json") | head -40
 ```
 
-> **⚠️ Warning.** Write the manifest outside the repository, as above. It contains absolute paths
+> **Warning.** Write the manifest outside the repository, as above. It contains absolute paths
 > from your machine, and it is a build artefact of exactly the kind the repository's checks reject.
 
 ### 5.1 Plan a purchase before you make it
@@ -435,7 +435,7 @@ python3 -B scripts/lab-env-probe.py --match --assume frida,apktool,ghidra,radare
 
 Measured on the setup above: the first takes runnable from **140 to 210**; the second takes it to
 **288 of 327**. That is the argument for spending the afternoon, stated as a number rather than as a
-feeling — and note that a *working `frida-server`* alone is worth 70 labs, which is more than any
+feeling — and confirm that a *working `frida-server`* alone is worth 70 labs, which is more than any
 other single thing you could do to this machine.
 
 ---
@@ -458,7 +458,7 @@ invocation anywhere in the file**. That test is deliberately strict and it under
 have an optional device section and would still be useful without it — but it never over-promises,
 and for a filter that is the correct direction to be wrong in.
 
-> **🔬 Under the Hood — why `--no-device --match` reports fewer than 58.** Measured here it reports
+> **Under the Hood — why `--no-device --match` reports fewer than 58.** Measured here it reports
 > **36 / 327**, not 58. The two numbers answer different questions. `no-device` counts labs that
 > never touch a device; `--no-device --match` additionally requires every *other* tag to be
 > satisfied, so a lab needing no device but needing Ghidra is still blocked. **A tag count is not a
@@ -494,7 +494,7 @@ by **whether the process started**, and the output reads:
   [NO ] apktool                found on PATH but did not execute: no such executable
 ```
 
-> **🧠 Mental Model.** *Finding a file is not the same as running a program.* This is the same shape
+> **Mental Model.** *Finding a file is not the same as running a program.* This is the same shape
 > as the repository's own encoding defect, where "it decodes as valid UTF-8" was mistaken for "it
 > matches our convention". A check that answers a narrower question than the one it appears to
 > answer is worse than no check, because it is trusted.

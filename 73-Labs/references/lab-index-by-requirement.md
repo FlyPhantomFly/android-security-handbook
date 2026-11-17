@@ -145,7 +145,7 @@ rooted they will agree, an` |
 | 54 | [Lab 01 — Your first session, and the four ways it goes wrong](../../54-Objection/labs/lab-01-first-session.md) | Beginner | `unrooted path and step S3 will fail — that is expected, and Exercise 5 is written for you.` |
 | 54 | [Lab 04 — CTF: The Confident Tool](../../54-Objection/labs/lab-04-ctf-the-confident-tool.md) | CTF | `4. **Try it on an unrooted device** via 'objection patchapk', and note which of the four defences` |
 | 60 | [Lab 03 — Posture and exposure](../../60-ADB/labs/lab-03-posture-and-exposure.md) | Intermediate | `# adb shell — no root required` |
-| 61 | [Lab 01 — Device posture from the outside](../../61-Fastboot/labs/lab-01-device-posture.md) | Beginner | `> **⚠️ 'su' is not portable, and getting this wrong looks like "not rooted"**` |
+| 61 | [Lab 01 — Device posture from the outside](../../61-Fastboot/labs/lab-01-device-posture.md) | Beginner | `> **'su' is not portable, and getting this wrong looks like "not rooted"**` |
 | 62 | [Lab 03 — DenyList Investigation](../../62-Magisk/labs/lab-03-denylist-investigation.md) | Intermediate | `**Q7.** Now the question that matters for detection: a stock, unrooted device has a certain number` |
 | 62 | [Lab 05 — CTF: The Invisible Mount](../../62-Magisk/labs/lab-05-ctf-invisible-mount.md) | CTF | `- **No uninstalling Magisk.** "It works on a device without root" is not a solution to a lab about` |
 | 63 | [Lab 01 — Mapping the injection chain](../../63-LSPosed/labs/lab-01-mapping-the-injection-chain.md) | Intermediate | `an unrooted device produces if you are skimming.` |
@@ -178,7 +178,7 @@ root; one optional sec` |
 | 76 | [Lab 02 — The sheet lies: six commands that answer confidently and wrongly](../../76-CheatSheets/labs/lab-02-the-sheet-lies.md) | Intermediate | `and exits 1. Read as an answer, it says **"this device is not rooted."**` |
 | 76 | [Lab 03 — Build a sheet you would trust a year from now](../../76-CheatSheets/labs/lab-03-build-your-own-sheet.md) | Advanced | `\| 'adb shell "su -c id"' <!-- lint:allow --> \| — \| — \| **Broken here.** 'su: invalid uid/gid '-c'', exit 1 — reads a` |
 | 77 | [Lab 04 — Storage Diff](../../77-UsefulCommands/labs/lab-04-storage-diff.md) | Intermediate | `adb shell 'command -v su >/dev/null && echo root \|\| echo no-root'` |
-| 78 | [Lab 03 — Redraw an intended flow as the actual one](../../78-Diagrams/labs/lab-03-intended-versus-actual.md) | Intermediate | `If none of them exists, your device is not rooted, and the intended diagram simply does not apply. Use` |
+| 78 | [Lab 03 — Redraw an intended flow as the actual one](../../78-Diagrams/labs/lab-03-intended-versus-actual.md) | Intermediate | `If none of them exists, your device is not rooted, and the intended diagram does not apply. Use` |
 
 ## `root` — root on the device (82)
 
@@ -1113,7 +1113,7 @@ python3 ../scripts/lib-fingerprint.py app/build/.../libguarded.so` |
 | 20 | [Lab 04 — CTF: The Lying Phone](../../20-Security-Architecture/labs/lab-04-ctf-the-lying-phone.md) | CTF | `*     adb shell sha256sum /system/etc/security/otacerts.zip` |
 | 21 | [Lab 01 — Mapping the Sandbox on a Real Device](../../21-App-Sandbox/labs/lab-01-mapping-the-sandbox.md) | Beginner | `with 'adb'. Root is helpful for two optional steps and is called out where needed.` |
 | 21 | [Lab 02 — Isolated Versus Non-Isolated Processes](../../21-App-Sandbox/labs/lab-02-isolated-process.md) | Intermediate | `adb logcat -c` |
-| 21 | [Lab 03 — Write an Attacker App and Probe the Boundary](../../21-App-Sandbox/labs/lab-03-attacker-app.md) | Intermediate | `> **📖 Definition — 'adb shell'**` |
+| 21 | [Lab 03 — Write an Attacker App and Probe the Boundary](../../21-App-Sandbox/labs/lab-03-attacker-app.md) | Intermediate | `> **Definition — 'adb shell'**` |
 | 21 | [Lab 04 — Sandbox Escape by the Front Door: Exported Components](../../21-App-Sandbox/labs/lab-04-exported-components.md) | Intermediate | `adb install -r victim/build/outputs/apk/debug/victim-debug.apk` |
 | 21 | [Lab 05 — CTF: "Escape the Torch"](../../21-App-Sandbox/labs/lab-05-ctf-escape-the-torch.md) | CTF | `- **No 'adb shell' in the final answer.** You may use the shell to *explore*. The flag must arrive in` |
 | 22 | [Lab 01 — Reading Contexts on a Real Device](../../22-SELinux/labs/lab-01-reading-contexts.md) | Beginner | `**Prerequisites:** [Chapter 22 §1–§3.6] (../README.md#1-introduction), a device or emulator with 'adb'. **No root requir` |
@@ -1178,7 +1178,7 @@ python3 ../scripts/lib-fingerprint.py app/build/.../libguarded.so` |
 | 34 | [Lab 04 — CTF: The Padding Oracle](../../34-Cryptography/labs/lab-04-ctf-padding-oracle.md) | CTF | `Python 3, a device or emulator with 'adb'` |
 | 35 | [Lab 01 — End-to-end interception on a physical device](../../35-SSL/labs/lab-01-end-to-end-interception.md) | Intermediate | `without Google Play, Burp Suite (Community is enough), OpenSSL on the host, 'adb', Frida 16+ on host` |
 | 35 | [Lab 02 — The deliberate bad certificate](../../35-SSL/labs/lab-02-deliberate-bad-certificate.md) | Advanced | `# device root — route A: hosts file plus adb reverse` |
-| 35 | [Lab 03 — Dissecting Validation: Which Check Is This App Actually Doing?](../../35-SSL/labs/lab-03-dissecting-validation.md) | Advanced | `> **⚠️ Warning — two environment facts that cost an hour each.** 'adb install' on this device fails` |
+| 35 | [Lab 03 — Dissecting Validation: Which Check Is This App Actually Doing?](../../35-SSL/labs/lab-03-dissecting-validation.md) | Advanced | `> **Warning — two environment facts that cost an hour each.** 'adb install' on this device fails` |
 | 35 | [Lab 04 — CTF: The Trusted Impostor](../../35-SSL/labs/lab-04-ctf-the-trusted-impostor.md) | CTF | `own machine; 'adb', root on your own device, and the device's certificate stores; 'jadx', 'apktool',` |
 | 36 | [Lab 01 — Map the pinning surface before you touch anything](../../36-CertificatePinning/labs/lab-01-map-the-pinning-surface.md) | Beginner | `> [15-Native-Code] (../../15-Native-Code/README.md), a device or emulator with 'adb'` |
 | 36 | [Lab 02 — Defeat a two-layer pin you built yourself](../../36-CertificatePinning/labs/lab-02-defeat-a-two-layer-pin.md) | Advanced | `\| Device \| Redmi 'M2101K6P', Android 11 / API 30, rooted \| 'adb shell "su -c id"' \|` |

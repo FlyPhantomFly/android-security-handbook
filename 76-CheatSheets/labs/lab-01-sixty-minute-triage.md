@@ -26,7 +26,7 @@ by being hurt by them rather than by being told:
    output well enough to interpret it. This is the honest limit of reference material, and noticing
    it in yourself is worth more than any finding you will make today.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > This lab is not scored on findings. It is scored on your **timing log** and on how honestly you
 > classify what stopped you. A triage that produces two findings and an accurate account of what it
 > did not cover is worth more than one that produces six unadjudicated leads.
@@ -94,7 +94,7 @@ aapt2 dump badging app.apk | grep -E 'package|sdkVersion|targetSdkVersion'
 
 Record `package`, `versionName`, `versionCode`, `minSdk`, `targetSdk`.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `targetSdk` — not the device's OS version — decides most of this app's security defaults. If it is
 > low, you have found more than one issue: a low `targetSdk` re-enables implicitly exported
 > providers, trusted user CAs, permitted cleartext, legacy external storage, and implicitly mutable
@@ -168,7 +168,7 @@ adb shell "run-as <pkg> cat shared_prefs/*.xml" 2>/dev/null | head -40
 Exercise the app first — log in if it has a login, open its main screens — then run these again and
 diff. Data written at first launch and data written after authentication are different findings.
 
-> **⚠️ Warning**
+> **Warning**
 > If `run-as` refuses, read *which* refusal you got. `package not debuggable` and
 > `package not an application` are different conditions, and treating the second as the first loses a
 > genuine finding. The sheets say which is which.

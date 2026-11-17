@@ -178,7 +178,7 @@ Three other uses.
 
 **You will interview other people**, probably sooner than you expect, and
 [§3.14](README.md#314-red-flags-from-the-interviewers-side-of-the-table) and
-[§11.2](README.md#112-interviewer-mistakes) are written for that seat. The highest-leverage
+[§11.2](README.md#112-interviewer-mistakes) are written for that seat. The highest-value
 change most interviewers can make is to write down what a question is *for* before asking it.
 
 **The answer shape is a writing shape.** It is the same structure this repository's style guide
@@ -228,7 +228,7 @@ round. Twenty to forty in a design round.
 
 The number that matters more than any of those: **decide your last sentence before you start
 your first.** Knowing where you are landing is what converts an open-ended answer into a
-bounded one, and it is the single highest-leverage habit in this chapter.
+bounded one, and it is the single highest-value habit in this chapter.
 
 ---
 

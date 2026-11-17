@@ -37,9 +37,9 @@ can contain, because each of them is a property of the corpus rather than of any
 | **5** | **What to do when a lab does not reproduce** — ranked causes, and why `DIVERGED, cause not established` is a complete answer | [§11.4](#114-when-a-lab-does-not-reproduce), [`examples/divergence-report.md`](examples/divergence-report.md) |
 | **6** | **Labs that cross chapters**, which no single chapter can host: a capability survey over the whole corpus, a static→dynamic→report chain, a lab about writing labs, and a CTF spanning five chapters | [§12](#12-hands-on-labs) |
 
-> **⚠️ Warning — the aggregator's temptation.** The failure mode of a chapter like this one is
+> **Warning — the aggregator's temptation.** The failure mode of a chapter like this one is
 > *concatenation*: gathering the material rather than doing the thing only an aggregator can do.
-> Concatenation is easy to produce, looks comprehensive, and is worthless — it adds length without
+> Concatenation is easy to produce, looks thorough, and is worthless — it adds length without
 > adding a single fact. Every section below either generates something from the corpus, measures
 > something on real hardware, or teaches a handoff between chapters. If you find a paragraph here
 > that merely restates another chapter, it is a defect.
@@ -116,7 +116,7 @@ run; a permission attribute makes a component unreachable while every scanner in
 Reading teaches you the model. **A lab teaches you the gap between the model and the machine**, and
 that gap is where all the interesting security work lives.
 
-> **📖 Definition — lab.** In this repository, a *lab* is a document that puts you in front of a real
+> **Definition — lab.** In this repository, a *lab* is a document that puts you in front of a real
 > system, gives you a falsifiable goal, and lets you be wrong in a controlled way. It always has an
 > objective, a setup, steps with expected output, success criteria you can check, and a cleanup. It
 > is not a tutorial (which shows you a result) and not a cheatsheet (which reminds you of one).
@@ -322,7 +322,7 @@ And by requirement — this is the table that decides what your afternoon looks 
 | `docker` | 3 | 3 |
 | `drozer` | **0** | 0 |
 
-> **🔍 Pentester's Note.** `drozer` reads zero, and that is a finding rather than a gap in the
+> **Pentester's Note.** `drozer` reads zero, and that is a finding rather than a gap in the
 > detector: two labs mention drozer in prose and neither invokes it. A tool this repository does not
 > actually require is worth knowing about before you spend an evening installing it.
 
@@ -354,7 +354,7 @@ python3 -B scripts/build-lab-index.py --verify-links
 links=410 broken=0
 ```
 
-> **⚠️ Warning — relative depth, this repository's most expensive defect.**
+> **Warning — relative depth, this repository's most expensive defect.**
 > A file in `references/` or `labs/` is **two** levels below the repository root. A link from there
 > to another chapter is `../../NN-Chapter/README.md`. The one-level form resolves *inside the
 > chapter's own directory* and is silently wrong. `75-InterviewQuestions` emitted the one-level form
@@ -397,7 +397,7 @@ The derivation rules, in the order they are applied:
 | 5 | Prose is consulted only for `physical`, and only for explicit phrases | "on a real device" in passing is not a requirement |
 | 6 | A chapter's own tool is inherited by its labs | Three of 58-IDA's four labs drive IDA through its GUI and never type a command |
 
-> **🔬 Under the Hood — why rule 3 exists.** Lab 02 of this chapter was tagged `apktool` on the
+> **Under the Hood — why rule 3 exists.** Lab 02 of this chapter was tagged `apktool` on the
 > strength of the line *"if you have apktool, which decodes resources as well"*. Skipping the match
 > and continuing the search — rather than abandoning the tag — matters, because a lab may name a
 > tool optionally in one place and necessarily in another, and only the second is a requirement.
@@ -425,7 +425,7 @@ than assigning a guess.** One of them writes `**Level:** Core`, which is meaning
 not a band. Recording an honest absence is better than manufacturing a value that looks like a
 measurement.
 
-> **🧠 Mental Model.** *A detector that disagrees with one sample is probably wrong about that
+> **Mental Model.** *A detector that disagrees with one sample is probably wrong about that
 > sample. A detector that disagrees with a dozen is wrong about itself.* This is the repository's own
 > rule and it has now fired in both directions — once when a question-parser reported a chapter as
 > having no interview questions (the parser was wrong), and once here.
@@ -502,7 +502,7 @@ Four of those rows are the ones that change what you can do, and each has its ow
 [the bootloader's absence](#23-the-lab-environment-as-a-stack), and
 [16 KiB pages](#42-why-su-0-and-su--c-are-different-programs).
 
-> **🔬 Under the Hood — 16 KiB pages are not cosmetic.** The kernel maps segments at page
+> **Under the Hood — 16 KiB pages are not cosmetic.** The kernel maps segments at page
 > granularity. A native binary whose program headers assume 4 KiB alignment cannot be placed as its
 > linker intended when the kernel enforces 16 KiB, and the process dies with SIGSEGV before `main`.
 > This repository measured `int main(void){return 42;}` exiting **139** on this image. The fix is
@@ -525,7 +525,7 @@ The device is rooted. The second command failed because this AVD's `su` is AOSP'
 positional argument is a **uid** — so `-c` was parsed as a user name and rejected. A Magisk `su` on a
 typical handset accepts `-c` and answers the other way round.
 
-> **⚠️ Warning — and there is a third form, which is broken on every device.**
+> **Warning — and there is a third form, which is broken on every device.**
 > <!-- lint:allow SU-DASH-C SU-DASH-C-BARE -- the broken form, quoted as the counter-example this warning teaches -->
 > `adb shell su -c 'id'` mangles itself: the `adb shell` argument is re-parsed by the device's shell,
 > which strips the quotes, so `su` receives `-c` and `id` as separate words. Depending on your `su`
@@ -554,7 +554,7 @@ still does not run, because it was built with a toolchain newer than this image'
 understands. **This is a Frida-version problem, not a root problem** — `su 0 id` returns uid 0 on the
 same device seconds later.
 
-> **🔍 Pentester's Note — the trap inside the trap.** `frida-ps -U` **still enumerates processes** on
+> **Pentester's Note — the trap inside the trap.** `frida-ps -U` **still enumerates processes** on
 > this device. The failure appears only on attach. If you test Frida with `frida-ps`, you will
 > conclude it works and then debug a script that was never going to run. **Test a capability with the
 > operation you need it for.**
@@ -595,7 +595,7 @@ Success
     versionCode=0 minSdk=23 targetSdk=23
 ```
 
-> **⚠️ Warning.** The second refusal is the one that has cost this repository the most, because
+> **Warning.** The second refusal is the one that has cost this repository the most, because
 > "Install canceled by user" is untrue — nobody cancelled anything. On the MIUI handset the working
 > route was `adb push` followed by a root `pm install` from the device shell. On the API 35 AVD that
 > same command needs `su 0 pm install -r <path>`, because its `su` rejects `-c`. **The fix for an
@@ -632,7 +632,7 @@ python3 -B scripts/lab-env-probe.py --match --chapter NN      # can a reader run
 python3 -B ../76-CheatSheets/scripts/lint-commands.py --path . # command-shape defects
 ```
 
-> **🧠 Mental Model.** **You cannot proofread your own environment out of your own document**,
+> **Mental Model.** **You cannot proofread your own environment out of your own document**,
 > because your environment is the background against which you see everything else. The only cure is
 > a program that does not share it. Every check above is that program.
 
@@ -656,7 +656,7 @@ no-Gradle build here:
 | `zip: command not found` | `zip` is not part of Git for Windows | Fall back to Python's `zipfile`, then the JDK's `jar` |
 | `aapt2: failed to load XML file` on a file that exists | SDK tools are native Windows binaries and do not understand `/c/Users/...` | Every path through `cygpath -w` |
 
-> **⚠️ Warning.** Two more that bite silently. `adb push` mangles an absolute *remote* path under
+> **Warning.** Two more that bite silently. `adb push` mangles an absolute *remote* path under
 > MSYS — `/data/local/tmp` becomes `C:/Program Files/Git/data/local/tmp` — so set
 > `MSYS_NO_PATHCONV=1` or quote the remote command. And **an XML comment must not contain a double
 > hyphen**; `aapt2` rejects the file.
@@ -700,7 +700,7 @@ rooting stack. That is the whole explanation for [§3.7](#37-the-su-form-and-the
 - Magisk's `su` is a different program with a different argument parser, deliberately modelled on the
   traditional Unix `su`, and it does accept `-c`.
 
-> **🔬 Under the Hood.** Both binaries are called `su` and both sit on `PATH`. Nothing about the name
+> **Under the Hood.** Both binaries are called `su` and both sit on `PATH`. Nothing about the name
 > tells you which parser you have, and the failure of the wrong one is indistinguishable at a glance
 > from an absent `su`. **This is why the probe tests both forms rather than picking one**, and why
 > the repository's convention is to state the form beside the device it belongs to.
@@ -826,7 +826,7 @@ This is worth practising, because it is easy to do accidentally. The tells:
 - **Output that matches the prose too exactly**, including the prose's own wording.
 - **A path that does not match the stated OS.** `/home/user/...` in a lab verified on Windows.
 
-> **🔍 Pentester's Note.** This section exists because **it caught this chapter's own author.**
+> **Pentester's Note.** This section exists because **it caught this chapter's own author.**
 > Lab 01 first quoted a `--why` output block that had never been run: right format, plausible tags,
 > believable line count, entirely invented. Running the command produced different tags, a different
 > line count and weaker evidence. It was replaced. The lesson is not "be careful" — it is that
@@ -888,7 +888,7 @@ Capability tags satisfied: device, docker, jadx, jdk, ndk, no-device, no-root, o
 The probe changes nothing. Every device command it issues is a read; the most invasive is `su 0 id`,
 and it runs that because there is no honest way to establish root without asking.
 
-> **⚠️ Warning.** Write the manifest **outside** the repository. It contains absolute paths from your
+> **Warning.** Write the manifest **outside** the repository. It contains absolute paths from your
 > machine and is exactly the kind of artefact the repository's checks reject.
 
 ### 7.2 Triage when a lab fails
@@ -916,7 +916,7 @@ Measured on the AVD:
          CANNOT LINK EXECUTABLE "/data/local/tmp/frida-server": empty/missing DT_HASH/DT_GNU_HASH
 ```
 
-> **🔬 Under the Hood — why the script has no `set -e` and no `set -o pipefail`.** Every check in a
+> **Under the Hood — why the script has no `set -e` and no `set -o pipefail`.** Every check in a
 > diagnostic is *expected* to fail sometimes; `set -e` would abort on the first informative failure.
 > And `set -o pipefail` turns `… | head -1` into a spurious failure when `head` closes the pipe and
 > the writer takes SIGPIPE. **Every check tests content, never an exit status.**
@@ -1012,7 +1012,7 @@ find 73-Labs \( -name '__pycache__' -o -name '*.pyc' -o -name '*.class' -o -name
 python3 -B ../76-CheatSheets/scripts/lint-commands.py --path .
 ```
 
-> **⚠️ Warning — three traps in these checks themselves.**
+> **Warning — three traps in these checks themselves.**
 > **`-Include` is silently ignored when combined with `-LiteralPath`** in PowerShell; use
 > `Where-Object`. **A validity check is not a conformance check** — ten files in this repository
 > carried a BOM and passed every UTF-8 decode, because `EF BB BF` decodes cleanly to U+FEFF. And
@@ -1206,7 +1206,7 @@ had an exemption for "forward references to unwritten chapters" that never re-te
 chapter was still unwritten, and it hid 1,512 broken links. **Every exemption needs an expiry
 condition the tool evaluates, not a comment explaining when it applies.**
 
-**Q. What is the argument against simply collecting all the labs into one document?**
+**Q. What is the argument against collecting all the labs into one document?**
 It adds length without adding a fact, duplicates material better placed next to the mechanism it
 exercises, and is stale immediately. The value an aggregator can add is exactly what no member of the
 set has: navigation across it, capability matching against the reader's machine, routes through it,
@@ -1297,7 +1297,7 @@ The most common reader experience, and the least documented. The procedure:
 5. **Change nothing** until you know why. Use
    [`examples/divergence-report.md`](examples/divergence-report.md).
 
-> **⚠️ Warning.** A test blocked by your own tooling is `NOT TESTED`, not `REFUTED`. Establish that
+> **Warning.** A test blocked by your own tooling is `NOT TESTED`, not `REFUTED`. Establish that
 > your test *could* have succeeded before recording that it did not. This chapter's Lab 02 §5.2
 > contains a worked case where a command reported success and delivered nothing, which would have
 > been recorded as a refutation by anyone not watching the log.

@@ -35,12 +35,12 @@ passes when you looked and it was fine. A control has no finding when you did no
 briefly, could not look because you had no rooted device, or looked in the wrong place. Collapsing all
 of those into PASS is the most common lie in mobile reporting, and it is almost always accidental.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > A coverage table is a set of **claims about your own work**, not about the app. Each row says "here
 > is what I did and what it showed". If a row cannot name an artefact, the row is empty regardless of
 > what the state column says.
 
-> **📖 Definition**
+> **Definition**
 > **Evidence reference** — a pointer to a stored artefact that a second person could open and reach
 > your conclusion from: a filename, a log excerpt with a timestamp, a request/response pair, a script
 > output file. Not "observed during testing".
@@ -225,7 +225,7 @@ the entire content of MASVS-STORAGE-1.
 **Question 6.** Grep your logcat for credential-shaped strings. For each hit, decide whether it is a
 STORAGE-2 finding or a PRIVACY finding — or both — and say why.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Do the storage diff **twice**: once across login, and once across a full feature exercise. Apps
 > frequently write the interesting file on the third screen, not at authentication. A single diff
 > across login only is the most common way a real storage finding is missed.

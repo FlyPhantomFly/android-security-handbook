@@ -34,9 +34,10 @@ from how they were expected to.
    Finding the second route is worth more than finding the flag.
 4. **State your vantage on every claim.** Three of the five flags have a different answer from a
    different vantage, and two of those differences are the flag.
-5. **Authorised testing only.** Everything here runs against software you built, on a device you own.
+5. **Scope.** Everything here runs against software you built, on a device you own. See
+   [SECURITY.md](../../SECURITY.md) for authorised-testing scope.
 
-> **🧠 Mental Model.** A normal CTF asks *can you find the thing?* This one mostly asks *can you tell
+> **Mental Model.** A normal CTF asks *can you find the thing?* This one mostly asks *can you tell
 > when you have found the wrong thing?* Four of the five flags have a decoy answer that is
 > self-consistent, arrives first, and survives casual checking. The scoring that matters is how many
 > decoys you rejected before submitting.
@@ -68,7 +69,7 @@ adb logcat -c
 adb logcat -s ch73chain
 ```
 
-> **⚠️ Warning.** If you did Lab 02, you already know three of this target's four defects. That is
+> **Warning.** If you did Lab 02, you already know three of this target's four defects. That is
 > fine and intended — **none of the five flags is one of those defects.** They are all one layer
 > underneath, and knowing the defects is the starting position, not the answer.
 
@@ -107,7 +108,7 @@ that the obvious remediation — *"move the key out of the binary"* — does not
 adb shell "content query --uri content://com.pentest.ch73.chain.notes"
 ```
 
-> **🔍 Pentester's Note.** If your answer to the second half is "the key would still be recoverable
+> **Pentester's Note.** If your answer to the second half is "the key would still be recoverable
 > somehow", you have not answered it. The property is a property of the *algorithm*, holds without
 > any key material at all, and is the reason this construction is unusable no matter where the key
 > lives. It has a name.
@@ -138,7 +139,7 @@ The last clause is the flag. `am force-stop` is the sledgehammer Lab 02 used; th
 can pass to `am start` that solves it properly, and finding it teaches you something about Android's
 task model that the sledgehammer hides.
 
-> **⚠️ Warning.** Do not read the answer off the app's screen. Read it off `logcat`. The screen shows
+> **Warning.** Do not read the answer off the app's screen. Read it off `logcat`. The screen shows
 > you a **state**; the log shows you an **event**, and the entire trap in this flag is that the state
 > looks the same in both cases.
 
@@ -187,7 +188,7 @@ Three things make this harder than it sounds, and each has cost somebody real ti
 ls -l /tmp/ch73-chain-build/debug.keystore
 ```
 
-> **🔬 Under the Hood.** Before you fill the "root" row, look carefully at what the log line tells
+> **Under the Hood.** Before you fill the "root" row, look carefully at what the log line tells
 > you about *who called*. There is a second, smaller flag hiding in that line — see flag 5 — and the
 > two are connected: the reason the receiver cannot identify its caller is the reason a developer's
 > obvious defence against this would not work.
@@ -218,7 +219,7 @@ about who could have seen each one.
 adb shell "su 0 id"
 ```
 
-> **⚠️ Warning — two traps in one command here.**
+> **Warning — two traps in one command here.**
 > First, the `su` form: get it wrong and the output reads exactly like "not rooted". Second, the app
 > uid is **not stable across reinstalls** — Lab 02 §6.3 measured it moving from 10210 to 10213. If
 > you record a uid, record which install it belonged to, or your evidence cannot be reproduced.
@@ -249,7 +250,7 @@ correctly identify the caller, and say what is different about it.
 adb shell "pm list packages -U com.pentest.ch73.chain"
 ```
 
-> **🔍 Pentester's Note.** This is not a lab curiosity. "Check the caller's uid in `onReceive`" is a
+> **Pentester's Note.** This is not a lab curiosity. "Check the caller's uid in `onReceive`" is a
 > defence real applications ship, and it does not do what its author believes. When you have the
 > rule, you can recognise the bug class in any codebase in about four seconds.
 

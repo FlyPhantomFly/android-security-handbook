@@ -36,9 +36,9 @@ export OUT="$HOME/ch74-lab02" && mkdir -p "$OUT"
 "$NDK_BIN/llvm-objdump" --version
 ```
 
-> **⚠️ Build outside the repository.** `.so`, `.o` and executables are on this repository's artefact
-> blocklist. Everything below writes to `$OUT`. If you are on Git Bash under Windows, note that
-> native tools cannot open an MSYS path — use `cygpath -w` if a tool reports "No such file" for a
+> **Build outside the repository.** `.so`, `.o` and executables are on this repository's artefact
+> blocklist. Everything below writes to `$OUT`. If you are on Git Bash under Windows, remember
+> that native tools cannot open an MSYS path — use `cygpath -w` if a tool reports "No such file" for a
 > path that plainly exists.
 
 ---
@@ -97,7 +97,7 @@ int main(int argc, char **argv)
     -Wl,-z,max-page-size=16384 -o "$OUT/gate" "$OUT/gate.c"
 ```
 
-> **⚠️ The `max-page-size` flag is not optional** if you intend to run this on a 16 KiB-page
+> **The `max-page-size` flag is not optional** if you intend to run this on a 16 KiB-page
 > emulator. Without it a binary as trivial as `int main(void){return 42;}` exits **139** (SIGSEGV),
 > and no error message anywhere mentions page size. This repository has reproduced that twice
 > independently.
@@ -305,7 +305,7 @@ The full matrix, which is the artefact worth producing:
 | `probe_paths` -> return 0 | `gate=0` | **`gate=1`** |
 | Both patched | **`gate=1`** | `gate=1` |
 
-Row 3 is the correct attack, and note that it needs **both** the right patch and the right key.
+Row 3 is the correct attack, and confirm that it needs **both** the right patch and the right key.
 Real targets stack conditions like this routinely, and a bypass that fixes one of them looks exactly
 like a bypass that does not work.
 
@@ -347,7 +347,7 @@ llvm-objdump -d "$OUT/gate" | grep -oE 'bl[[:space:]]+0x[0-9a-f]+ <[^>]+>' | sor
 
 | Mechanism | Tell |
 |---|---|
-| **Inlined** | The function has few or no callers, yet the logic clearly runs |
+| **Inlined** | The function has few or no callers, yet the logic demonstrably runs |
 | **Short-circuited** | The caller exists; reading it shows an earlier call and a conditional branch |
 
 > **A trap in that command, recorded because it cost a published conclusion.** A call routed through

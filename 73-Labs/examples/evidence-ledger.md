@@ -28,7 +28,7 @@ Three columns do most of the work:
 | **Evidence type** | "I read the manifest" and "I ran the command and saw the output" are different claims. A report that does not distinguish them cannot be reviewed |
 | **Verdict** | Includes `NOT TESTED` and `DIVERGED`. A ledger with only `CONFIRMED` and `REFUTED` is a ledger that hides its gaps |
 
-> **📖 Definition — vantage.** The security identity a command ran as. On Android, the four that
+> **Definition — vantage.** The security identity a command ran as. On Android, the four that
 > matter are: an **unprivileged third-party app** (its own uid, e.g. 10213), the **`shell`** user
 > (uid 2000, over `adb`), **root**, and **the target app itself** (via instrumentation or a hook).
 > They have different permissions, different SELinux domains, and different answers to the same
@@ -48,7 +48,7 @@ Use exactly these. Inventing a sixth is how a report becomes unreviewable.
 | `NOT TESTED` | You did not test it, and you are saying so | Always better than silence. Pair with the reason |
 | `DIVERGED` | You reproduced someone else's claim and got a different result | **Not a synonym for "they were wrong."** See §5 |
 
-> **⚠️ Warning.** `REFUTED` requires that you know your test could have succeeded. A test blocked by
+> **Warning.** `REFUTED` requires that you know your test could have succeeded. A test blocked by
 > your own tooling — a command that printed success and did nothing, a hook that never attached — is
 > `NOT TESTED`, not `REFUTED`. Lab 02 §5.2 contains a worked example of exactly this
 > misclassification, where `am start` reported `Starting:` and delivered nothing.

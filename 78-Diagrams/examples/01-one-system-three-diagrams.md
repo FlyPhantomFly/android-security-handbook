@@ -258,7 +258,7 @@ Components are what you notice first and what matters least. Anyone can list fiv
 question a diagram exists to answer is which of them constrain each other — and version A, which is
 the version almost everybody draws by default, answers it wrongly by saying nothing.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > When you inherit a diagram from a client's documentation, it is almost always a version A. Do not
 > annotate it. Redraw it as a version B, and the act of deciding where the `subgraph` blocks go will
 > generate your test plan for you: every boundary you draw is a claim you now have to verify, and

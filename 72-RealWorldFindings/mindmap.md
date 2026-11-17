@@ -184,7 +184,7 @@ mindmap
       Describe class
       Quantify population
       Anonymise instance
-      Authorised testing throughout
+      In scope throughout
 ```
 
 ---
