@@ -245,6 +245,9 @@ frida-server*
 # you re-introduce a reference to it, inline the fact instead.
 BUILD-STATUS.md
 
+# planning-guide.md — editorial-pass working notes, kept unpublished for the same reason
+planning-guide.md
+
 # ---------------------------------------------------------------------------
 # 9. Guard: .gitkeep is content
 # ---------------------------------------------------------------------------
