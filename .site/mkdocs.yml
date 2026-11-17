@@ -21,7 +21,7 @@ site_url: https://flyphantomfly.github.io/android-security-handbook/
 repo_url: https://github.com/FlyPhantomFly/android-security-handbook
 repo_name: FlyPhantomFly/android-security-handbook
 edit_uri: edit/main/
-copyright: Content CC BY 4.0 · Code MIT
+copyright: Copyright © 2025–2026 FlyPhantomFly · Content CC BY 4.0 · Code MIT
 
 # The site builds out of the tree (a site_dir inside docs_dir is not allowed).
 site_dir: /tmp/site
@@ -60,6 +60,9 @@ theme:
       toggle:
         icon: material/weather-sunny
         name: Switch to light mode
+
+extra_css:
+  - stylesheets/site.css
 
 plugins:
   - search

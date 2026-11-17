@@ -1,7 +1,7 @@
 Android Pentesting Notes — Licensing
 ====================================
 
-Copyright (c) 2025-2026 Harsh Dhamaniya and contributors.
+Copyright (c) 2025-2026 FlyPhantomFly and contributors.
 
 This repository is a documentation-plus-code work, and it is licensed as two
 things, because it is two things:
@@ -84,7 +84,7 @@ others from doing anything the licence permits.
 
 A specimen attribution that satisfies the condition:
 
-    "Android Pentesting Notes" by Harsh Dhamaniya, used under CC BY 4.0.
+    "Android Security Handbook" by FlyPhantomFly, used under CC BY 4.0.
     Source: <repository URL>. Changes were made.
 
 (Drop the final sentence if you made none.)
@@ -110,7 +110,7 @@ USUAL:
 
 SPDX-License-Identifier: MIT
 
-Copyright (c) 2025-2026 Harsh Dhamaniya and contributors.
+Copyright (c) 2025-2026 FlyPhantomFly and contributors.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

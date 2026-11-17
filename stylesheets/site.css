@@ -1,0 +1,45 @@
+/*
+ * stylesheets/site.css — site-wide overrides for the handbook.
+ *
+ * WHY: Material sizes table wrappers with `display: inline-block`, so a wide
+ * table keeps its natural (unwrapped) width and the right-hand column is
+ * clipped mid-word at the screen edge on phones; the table scrolls, but the
+ * clipped first view reads as text running past the boundary. Two fixes:
+ *
+ * 1. The wrapper becomes a block, so a fitting table always spans the
+ *    article's full width.
+ * 2. On phone-width screens the table font drops from .64rem to .6rem and
+ *    cell padding tightens, which brings the three-column chapter index
+ *    (and every other bare table) under the article width so its cells wrap
+ *    instead of clipping. Verified in a 360px-wide mobile viewport: all
+ *    tables on the opening page then fit (scrollWidth <= clientWidth).
+ *
+ * Tables whose content genuinely cannot wrap (long command tokens) still
+ * scroll horizontally via Material's `.md-typeset__scrollwrap`.
+ */
+
+.md-typeset__table {
+  display: block;
+  max-width: 100%;
+}
+
+.md-typeset__table table {
+  max-width: 100%;
+}
+
+/* Mermaid diagrams: never let a rendered SVG exceed the article width. */
+.md-typeset div.mermaid svg {
+  max-width: 100%;
+  height: auto;
+}
+
+@media screen and (max-width: 600px) {
+  .md-typeset table:not([class]) {
+    font-size: .6rem;
+  }
+
+  .md-typeset table:not([class]) th,
+  .md-typeset table:not([class]) td {
+    padding: .5em .6em;
+  }
+}
