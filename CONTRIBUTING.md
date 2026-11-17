@@ -10,8 +10,8 @@ commands that prove it does.
 
 Two documents govern the rest:
 
-- [`SECURITY.md`](SECURITY.md) — authorised testing, the anonymisation policy, and how to report a
-  problem in this material.
+- [`SECURITY.md`](SECURITY.md) — authorised-testing scope, the anonymisation policy, and how to
+  report a problem in this material.
 - [`LICENSE`](LICENSE) — CC BY 4.0 for content, MIT for code. By contributing you agree your
   contribution is licensed the same way.
 
