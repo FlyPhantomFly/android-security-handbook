@@ -343,7 +343,7 @@ entry.
 <summary>Answer</summary>
 
 Yes. `move-exception` is how you *collect* the exception object; a handler that does not want it
-simply omits the instruction. What is illegal is having it anywhere other than first.
+omits the instruction. What is illegal is having it anywhere other than first.
 
 </details>
 

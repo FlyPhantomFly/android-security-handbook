@@ -42,7 +42,7 @@ happens, and knowing the difference changes what you write in a report.
 
 ---
 
-## ⚠ Before you start
+## Before you start
 
 You are about to install apps that claim a permission namespace belonging to a fictional company.
 That is harmless on a device you own and would be rude on anyone else's.
@@ -607,7 +607,7 @@ Include:
 - The platform version you measured on, and a statement that older platforms may behave
   differently.
 
-> **✅ Success criterion for the lab**
+> **Success criterion for the lab**
 > Two findings, with different severities and different impact classes, each supported by output
 > you produced. Neither of them says "permission squatting allows an attacker to downgrade the
 > victim's protection level", because you have measured that it does not.

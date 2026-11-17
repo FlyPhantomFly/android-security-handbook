@@ -148,7 +148,7 @@ cd /data/local/tmp/ch19
 LD_LIBRARY_PATH=. ./heap-bugs-hwasan uaf
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > `LD_LIBRARY_PATH=.` is not optional. The instrumented binary has
 > `libclang_rt.hwasan-aarch64-android.so` as a `DT_NEEDED` entry. Without it you get
 > `library ... not found`, which reads like a packaging problem and is really a missing push.
@@ -415,7 +415,7 @@ MEMTAG_OPTIONS=sync ./some-native-binary
 
 There is also a Developer Options toggle: *Settings → Developer options → Memory Tagging Extension*.
 
-> **⚠️ Warning — a verified toolchain limitation**
+> **Warning — a verified toolchain limitation**
 > Heap tagging needs no rebuild. **Stack** tagging does, and the flags are newer than they look.
 > On NDK r25c (clang 14.0.7), verified by running the compiler:
 >
@@ -496,10 +496,10 @@ The options, with their documented defaults:
 | `abort_on_error` | — | abort on detection rather than logging |
 | `record_allocs[=N]` | 8,000,000 | record every allocation to a file for offline analysis |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `fill_on_free` is the one to reach for when you are chasing a use-after-free by hand. It makes the
 > residue in a freed block a recognisable pattern instead of the old contents, so a UAF read
-> produces obviously wrong data instead of plausibly correct data. Combined with `free_track`, you
+> produces visibly wrong data instead of plausibly correct data. Combined with `free_track`, you
 > get "this freed block was written to after it was freed, and here is the allocation stack".
 
 **Question 5.** Rank HWASan, MTE (sync), GWP-ASan and malloc_debug by *what you would ask for*, for

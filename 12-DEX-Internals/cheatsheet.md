@@ -33,7 +33,7 @@ xxd -l 8 classes.dex
 | `endian_tag` | `0x28` | **`0x12345678`** |
 | `map_off` | `0x34` | near the end of the file |
 
-⚠️ checksum and signature are **unkeyed**. `apktool` recomputes them. They detect corruption, not
+checksum and signature are **unkeyed**. `apktool` recomputes them. They detect corruption, not
 tampering. Real integrity = APK signing ([10](../10-APK-Internals/cheatsheet.md)).
 
 ---
@@ -157,7 +157,7 @@ first parameter register = registers_size − ins_size
 | Hex | Mnemonic | Note |
 |---:|---|---|
 | `00` | `nop` | also starts the payloads |
-| `0A`–`0C` | `move-result`, `-wide`, `-object` | ⚠️ **must immediately follow the invoke** |
+| `0A`–`0C` | `move-result`, `-wide`, `-object` | **must immediately follow the invoke** |
 | `0D` | `move-exception` | only as the first instruction of a catch handler |
 | `0E`–`11` | `return-void/-/-wide/-object` | |
 | `12` | `const/4 vA, #+B` | the patch instruction |
@@ -183,7 +183,7 @@ first parameter register = registers_size − ins_size
 
 Binary op shapes: `<op>-<type>` (`23x`) · `/2addr` (`12x`) · `/lit16` (`22s`) · `/lit8` (`22b`)
 
-⚠️ `E3`–`F9` = **quickened** opcodes (Android 8–10). Not valid standalone DEX — `baksmali` fails.
+`E3`–`F9` = **quickened** opcodes (Android 8–10). Not valid standalone DEX — `baksmali` fails.
 Needs unquickening. Gone from Android 11+.
 
 ---
@@ -210,7 +210,7 @@ python3 examples/find_array_literals.py classes.dex --keys-only
 `try_item` (8 bytes): `start_addr` (code units) · `insn_count` (code units) · `handler_off` (**bytes**,
 relative to the handler list)
 
-⚠️ Unit change in the third field. Common parser bug.
+Unit change in the third field. Common parser bug.
 
 `encoded_catch_handler.size` is **signed**:
 

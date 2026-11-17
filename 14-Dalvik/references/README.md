@@ -57,7 +57,7 @@ Read on [cs.android.com](https://cs.android.com/) for search, or
 
 **These paths only exist on branches up to and including `kitkat-release`.** Browse
 [android.googlesource.com/platform/dalvik](https://android.googlesource.com/platform/dalvik/) and
-change the branch selector; on `android10-release` and later the `vm/` directory is simply gone.
+change the branch selector; on `android10-release` and later the `vm/` directory is gone.
 
 ### The interpreter
 

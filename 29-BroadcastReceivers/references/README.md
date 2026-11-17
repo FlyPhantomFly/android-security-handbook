@@ -46,7 +46,7 @@ chapter** — search for the method name instead.
 | **`BroadcastReceiver` reference** | The `goAsync()` / `PendingResult` contract, including the requirement to call `finish()`. |
 | **`ContextCompat.registerReceiver` (AndroidX)** | The backport. Explains the `DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION` mechanism this chapter measured in the wild. |
 | **`LocalBroadcastManager` (AndroidX, deprecated)** | Deprecated for architectural reasons. Its deprecation notice recommends `LiveData` / observables — all equally invisible to other apps. |
-| **App Manifest: `<receiver>` and `<protected-broadcast>`** | The attribute reference. Note that `<protected-broadcast>` is documented as usable only by system apps. |
+| **App Manifest: `<receiver>` and `<protected-broadcast>`** | The attribute reference.`<protected-broadcast>` is documented as usable only by system apps. |
 | **Android Security Bulletins** | Where you go to find a real, verifiable CVE for a broadcast issue when a report needs one. Search there and cite what you actually read. |
 
 ---

@@ -3,10 +3,10 @@
 Two complete, buildable Android applications and two standalone teaching files. Everything here is
 **source**; the repository never ships built APKs, and `build.sh` writes its output out of tree.
 
-> **⚠️ Authorised testing only**
 > `victim-app` is deliberately vulnerable and `hijacker-app` deliberately squats a task affinity and
 > draws an overlay over other applications. Install them on a device you own, and uninstall them when
-> you are done. Never point a `taskAffinity` at an application you do not own.
+> you are done. Never point a `taskAffinity` at an application you do not own. See
+> [SECURITY.md](../../SECURITY.md) for the handling rules.
 
 ---
 

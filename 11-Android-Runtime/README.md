@@ -39,7 +39,7 @@ you do not need it to finish this chapter.
 - [1. Introduction](#1-introduction)
   - [1.1 The problem a runtime solves](#11-the-problem-a-runtime-solves)
   - [1.2 What "runtime" means, precisely](#12-what-runtime-means-precisely)
-  - [1.3 Why Android could not simply ship a Java SE JVM](#13-why-android-could-not-simply-ship-a-java-se-jvm)
+  - [1.3 Why Android could not ship a Java SE JVM](#13-why-android-could-not-ship-a-java-se-jvm)
   - [1.4 The 2008 hardware envelope](#14-the-2008-hardware-envelope)
   - [1.5 Register machines versus stack machines, from first principles](#15-register-machines-versus-stack-machines-from-first-principles)
   - [1.6 What "managed code" actually means](#16-what-managed-code-actually-means)
@@ -99,7 +99,7 @@ processor actually understands. The program does not need to know whether it is 
 Cortex-A53 from 2014, an ARM Cortex-X4 from 2024, or an x86-64 emulator on your laptop. The runtime
 knows, and the runtime absorbs the difference.
 
-> **📖 Definition** — **Runtime** (also called a *managed runtime* or *virtual machine*). A piece of
+> **Definition** — **Runtime** (also called a *managed runtime* or *virtual machine*). A piece of
 > software that loads a program written in an abstract instruction set, and executes it — either by
 > reading the abstract instructions one at a time and performing their effects (*interpretation*), or
 > by translating them into the processor's real instruction set and letting the processor run them
@@ -107,7 +107,7 @@ knows, and the runtime absorbs the difference.
 > memory allocation, automatic memory reclamation, type checking, exception handling, thread
 > scheduling hooks, and reflection.
 
-> **📖 Definition** — **Android Runtime (ART)**. The specific runtime Android has shipped since
+> **Definition** — **Android Runtime (ART)**. The specific runtime Android has shipped since
 > Android 5.0 Lollipop. It loads DEX bytecode, verifies it, executes it by a mixture of
 > interpretation, just-in-time compilation, and ahead-of-time compilation, and manages the app's heap.
 > Since Android 12 it is delivered as an updatable system module rather than being baked into the OS
@@ -122,7 +122,7 @@ be doing its own memory management in raw machine code, which means every applic
 capable of the entire catalogue of memory-corruption bugs — buffer overflows, use-after-free, double
 free, type confusion — and the operating system would have no way to constrain that.
 
-> **🧠 Mental Model** — Think of the runtime as a **shipping container standard**. Before containers,
+> **Mental Model** — Think of the runtime as a **shipping container standard**. Before containers,
 > every port needed different equipment for every kind of cargo. After containers, the cargo is
 > abstract: a box of a known shape. Ports specialise in moving boxes, not in moving bananas and cars
 > and steel. DEX bytecode is Android's shipping container. The runtime is the crane at every port.
@@ -147,12 +147,12 @@ adding shutdown hooks, loading native libraries, and — the one that matters to
 operating-system processes through `Runtime.getRuntime().exec()`. Section 3.11 covers it in full,
 because it is one of the most consequential single methods in Android application security.
 
-> **⚠️ Warning** — Do not confuse "the runtime" (ART, the execution engine) with `java.lang.Runtime`
+> **Warning** — Do not confuse "the runtime" (ART, the execution engine) with `java.lang.Runtime`
 > (a class with a `exec()` method). A junior report that says "the app uses the Runtime, which is
 > dangerous" will be sent back. Say "the app calls `java.lang.Runtime.exec()` with a
 > string it builds from attacker-controlled input", and the finding is actionable.
 
-### 1.3 Why Android could not simply ship a Java SE JVM
+### 1.3 Why Android could not ship a Java SE JVM
 
 This is the single most misunderstood piece of Android history, and the honest answer has three
 independent strands: legal, technical, and strategic. All three pointed the same direction.
@@ -164,7 +164,7 @@ J2ME) for phones and embedded devices. Java ME was the licensed, blessed path fo
 it came with a per-device royalty model and a certification process controlled by Sun and the mobile
 carriers.
 
-> **📖 Definition** — **Java ME / J2ME**. Sun's cut-down Java platform for constrained devices,
+> **Definition** — **Java ME / J2ME**. Sun's cut-down Java platform for constrained devices,
 > layered as a *configuration* (CLDC — Connected Limited Device Configuration, defining the VM and
 > core libraries) plus a *profile* (MIDP — Mobile Information Device Profile, defining the UI and
 > application model). Applications were called MIDlets. It dominated feature-phone software from
@@ -191,7 +191,7 @@ different format, DEX, which is executed by a completely different VM that Googl
 The Java language specification is not owned in a way that stops you writing a compiler for it; the
 JVM specification is a document you are free to not implement.
 
-> **🔬 Under the Hood** — This design decision is why an Android app's build has that odd two-stage
+> **Under the Hood** — This design decision is why an Android app's build has that odd two-stage
 > shape. You compile to JVM `.class` files that no Android device will ever execute, purely as an
 > intermediate representation, and then a second tool (`dx` historically, `d8` and `r8` today)
 > translates JVM stack-based bytecode into DEX register-based bytecode. It looks wasteful, and it is,
@@ -204,7 +204,7 @@ Google needed an implementation of those classes it could ship freely. It took *
 clean-room open-source reimplementation of the Java SE class library developed under the Apache
 Software Foundation and licensed under the permissive Apache License 2.0.
 
-> **📖 Definition** — **Apache Harmony**. An open-source, clean-room implementation of the Java SE
+> **Definition** — **Apache Harmony**. An open-source, clean-room implementation of the Java SE
 > class library and VM, started by the Apache Software Foundation in 2005. Sun declined to grant
 > Harmony a TCK license on acceptable terms, so Harmony could never be certified as "Java", and the
 > project was retired in 2011. Android had already forked the class library by then and continued
@@ -274,7 +274,7 @@ executes three times as many instructions to do the same work drains the battery
 proportionally. In 2008 this was not a nice-to-have; a phone that lasted six hours was a phone
 nobody bought.
 
-> **🧠 Mental Model** — Do not think of the 2008 constraints as "they had a slow computer". Think of
+> **Mental Model** — Do not think of the 2008 constraints as "they had a slow computer". Think of
 > it as **designing a language runtime for a device that has less memory than a single modern browser
 > tab, cannot page to disk, and must survive a day on a battery smaller than a deck of cards**. Under
 > those constraints, "just ship a JVM" is not a conservative choice, it is a fantasy.
@@ -283,20 +283,20 @@ nobody bought.
 
 This is the design decision people quote most often and understand least. Here is the first-principles
 version. The detailed opcode-by-opcode comparison belongs to
-[14 — Dalvik](../14-Dalvik/README.md); what follows is the conceptual core you need in order to
+[14 — Dalvik](../14-Dalvik/README.md); what follows is the conceptual core you need to
 reason about it.
 
 A **virtual machine** executes an abstract instruction set. Somewhere it has to keep the values it is
 working on — the operands. There are two classic ways to organise that storage.
 
-> **📖 Definition** — **Stack machine**. A virtual machine in which instructions take their operands
+> **Definition** — **Stack machine**. A virtual machine in which instructions take their operands
 > from, and return their results to, an implicit last-in-first-out stack. Instructions do not name
-> their operands; the operands are simply "whatever is on top of the stack". The JVM is a stack
+> their operands; the operands are "whatever is on top of the stack". The JVM is a stack
 > machine.
 
-> **📖 Definition** — **Register machine**. A virtual machine in which instructions explicitly name
+> **Definition** — **Register machine**. A virtual machine in which instructions explicitly name
 > the storage locations they read from and write to. Those locations are called *virtual registers*,
-> and each method frame has a fixed number of them. Dalvik and DEX are register machines. Note that
+> and each method frame has a fixed number of them. Dalvik and DEX are register machines.
 > "virtual register" means a numbered slot in the method's frame, not a physical CPU register; the
 > compiler decides later which virtual registers get real hardware registers.
 
@@ -324,7 +324,7 @@ add  c, a, b   # slot c receives slot a plus slot b
 
 Now the key insight, and it is not "fewer instructions is faster" — that is the shallow version.
 
-> **📖 Definition** — **Dispatch**. The interpreter's inner loop: fetch the next instruction, decode
+> **Definition** — **Dispatch**. The interpreter's inner loop: fetch the next instruction, decode
 > its opcode, and branch to the block of native code that implements it. On a real CPU that branch is
 > an *indirect* branch (the target address is computed from the opcode, usually via a jump table), and
 > indirect branches are the hardest kind for a branch predictor to get right.
@@ -340,7 +340,7 @@ contains substantially fewer instructions (each instruction is individually larg
 encode its operand slot numbers), and the reduction in dispatch count translates into a real
 reduction in interpreted execution time. The bytecode gets bigger in bytes; the number of trips
 around the interpreter loop gets smaller. On a device where the interpreter is doing most of the work
-because there is no JIT yet, that trade is obviously correct.
+because there is no JIT yet, that trade is correct.
 
 ```mermaid
 flowchart LR
@@ -369,7 +369,7 @@ bytecode you have to simulate the stack in your head to know what `iadd` is addi
 spend reading Smali in chapter [68 — Reverse Engineering](../68-ReverseEngineering/README.md) is an
 hour made cheaper by a decision made in 2007.
 
-> **⚠️ Warning** — Do not repeat the folk claim that "register-based is always faster". It is not a
+> **Warning** — Do not repeat the folk claim that "register-based is always faster". It is not a
 > universal truth. Register bytecode is larger, which costs instruction-cache pressure and download
 > size, and once a good JIT compiler exists the difference in the *interpreter* matters far less
 > because hot code is not being interpreted at all. The design was correct **for a 2008 phone with no
@@ -381,7 +381,7 @@ You will read "Android apps run managed code" everywhere. Almost nobody defines 
 precise version, decomposed into four independent properties. They are independent: a runtime can
 have any subset of them.
 
-> **📖 Definition** — **Managed code**. Code that executes under the supervision of a runtime which
+> **Definition** — **Managed code**. Code that executes under the supervision of a runtime which
 > takes responsibility for memory allocation and reclamation, enforces the type system at load and
 > execution time, and mediates access to the underlying machine. The contrast is *unmanaged* or
 > *native* code, which executes directly on the CPU with no supervisor between it and memory.
@@ -390,7 +390,7 @@ have any subset of them.
 constructing objects and never explicitly frees them. A **garbage collector** periodically determines
 which objects are still reachable from live references and reclaims the rest.
 
-> **📖 Definition** — **Garbage collection (GC)**. The automatic reclamation of heap memory that the
+> **Definition** — **Garbage collection (GC)**. The automatic reclamation of heap memory that the
 > program can no longer reach. "Reachable" means there exists a chain of references starting from a
 > *root* — a local variable on a thread's stack, a static field, a JNI global reference — that leads
 > to the object. Unreachable objects are, by definition, objects the program can never use again, so
@@ -417,11 +417,11 @@ for structural well-formedness: the operand types flowing into each instruction 
 every path, branches land on real instruction boundaries, register slots are initialised before use,
 and the stack (in DEX's case, the register file) is consistent at every merge point. Section 3.12
 covers this in detail. Verification is what makes properties 2 and 3 enforceable at all — without it,
-hand-crafted bytecode could simply lie about types.
+hand-crafted bytecode could lie about types.
 
 Now the part everybody skips.
 
-> **⚠️ Warning** — **Managed does not mean safe.** Managed means "this specific family of
+> **Warning** — **Managed does not mean safe.** Managed means "this specific family of
 > memory-corruption bugs is unreachable from pure managed code". It says nothing whatsoever about
 > logic flaws, hardcoded secrets, broken cryptography, insecure IPC, path traversal, SQL injection,
 > SSRF, insecure deserialization, command injection, or a `WebView` with `addJavascriptInterface`
@@ -437,7 +437,7 @@ There are four specific holes even in the memory-safety claim, and you must know
 | **Reflection and `setAccessible`** | Reflection lets managed code reach private fields and methods, defeating encapsulation. Encapsulation was never a security boundary, but developers routinely assume it is. | Section 3.13, [04 — Java](../04-Java/README.md) |
 | **`sun.misc.Unsafe` and equivalents** | Deliberate escape hatches exist for library authors and can be reached by app code. They perform unchecked memory access. | Section 5 |
 
-> **🔍 Pentester's Note** — When a client tells you "our app is written in Kotlin so it is memory
+> **Pentester's Note** — When a client tells you "our app is written in Kotlin so it is memory
 > safe", the correct response is to ask what is in `lib/arm64-v8a/`. Ninety percent of the time there
 > is a payments SDK, an analytics SDK, an anti-fraud SDK, and a media codec — all native, all outside
 > the managed guarantees, and usually all built from an old vendored copy of something with known
@@ -637,14 +637,14 @@ for the affected methods and forces them back through the interpreter, where eve
 intercepted. Section 3.15. This arrow is the single most important one in the diagram for a
 practitioner, because it is why your hooks work.
 
-> **🧠 Mental Model** — The lifecycle is a **factory with a feedback loop**. Source goes in one end,
+> **Mental Model** — The lifecycle is a **factory with a feedback loop**. Source goes in one end,
 > machine code comes out the other, and telemetry from the shop floor (the profile) is fed back to
 > the machine tool (`dex2oat`) so that next week's run is tuned to what the factory actually builds.
 > Nothing about the pipeline is one-shot.
 
 ### 2.3 The per-app process model
 
-> **📖 Definition** — **Process**. The kernel's unit of isolation. A process has its own virtual
+> **Definition** — **Process**. The kernel's unit of isolation. A process has its own virtual
 > address space (its own mapping from the addresses the program uses to physical memory), its own
 > file descriptor table, and a set of credentials — a user ID (UID), group IDs, and on Android an
 > SELinux security context. One process cannot read another's memory without going through a
@@ -693,7 +693,7 @@ Four consequences follow, and each is load-bearing for the rest of this reposito
 | Crashes are contained | An uncaught exception or a native segfault kills one app, not the phone. Compare the historical single-VM model where one bad tenant took down the server. |
 | Shared UIDs break the model | The legacy `android:sharedUserId` manifest attribute let two co-signed apps share a UID and, optionally, a process. That collapses the boundary between them. It has been deprecated since API 29 and you should flag it whenever you see it. See [32 — Manifest](../32-Manifest/README.md). |
 
-> **🔍 Pentester's Note** — `adb shell ps -A -o PID,USER,NAME | grep <package>` and
+> **Pentester's Note** — `adb shell ps -A -o PID,USER,NAME | grep <package>` and
 > `adb shell cat /proc/<pid>/status | grep -i uid` are the two commands that make this concrete. Two
 > apps sharing a UID will show the same numeric UID; that is a finding worth writing up, because it
 > means a compromise of the weaker app is a compromise of the stronger one.
@@ -709,13 +709,13 @@ device that had 192 megabytes in total.
 
 The solution is to do the expensive work **once**, before any app exists, and then hand out copies.
 
-> **📖 Definition** — **Zygote**. A process started at boot by `init` which initialises an ART
+> **Definition** — **Zygote**. A process started at boot by `init` which initialises an ART
 > instance, preloads the framework classes and common resources into its heap, and then blocks
 > listening on a Unix domain socket. When a new app process is needed, Zygote `fork()`s. The child
 > inherits the fully-initialised runtime and the preloaded heap without doing any of the work. The
 > name is biological: a zygote is the single cell every other cell descends from.
 
-> **📖 Definition** — **`fork()`**. The POSIX system call that creates a new process by duplicating
+> **Definition** — **`fork()`**. The POSIX system call that creates a new process by duplicating
 > the calling one. The child gets a copy of the parent's entire address space. Crucially, the copy is
 > *lazy*: the kernel marks every page in both processes read-only and shared, and only makes a real
 > private copy when one of them writes to a page. That mechanism is **copy-on-write**.
@@ -770,7 +770,7 @@ transitions its SELinux context to `untrusted_app` (or `platform_app`, `priv_app
 depending on `seinfo`); and drops Linux capabilities. Only after all of that does it call
 `ActivityThread.main()` and eventually your `Application.onCreate()`.
 
-> **⚠️ Warning** — The ordering above is a genuine attack surface and has been the subject of real
+> **Warning** — The ordering above is a genuine attack surface and has been the subject of real
 > platform vulnerabilities in the past. Between `fork()` and the completion of the privilege drop, the
 > child is still running with Zygote's credentials (root, in the classic design). Any bug that lets an
 > attacker influence execution in that window is a privilege escalation. This is why the fork path is
@@ -778,7 +778,7 @@ depending on `seinfo`); and drops Linux capabilities. Only after all of that doe
 > code aborts the whole process rather than continuing if any step fails. Describe this as a *class*
 > of issue; do not attach a CVE number to it unless you have verified one.
 
-> **🔬 Under the Hood** — Zygote deliberately does **not** call `exec()` after `fork()`. A normal
+> **Under the Hood** — Zygote deliberately does **not** call `exec()` after `fork()`. A normal
 > Unix process creation is fork-then-exec, which replaces the address space. Zygote forks *without*
 > exec precisely so the child keeps the preloaded heap. A side effect is that ASLR (address space
 > layout randomisation) is inherited: every Zygote child has the same library and heap layout as
@@ -789,7 +789,7 @@ depending on `seinfo`); and drops Linux capabilities. Only after all of that doe
 
 ### 2.5 Copy-on-write and what it costs you as an attacker
 
-> **📖 Definition** — **Copy-on-write (COW)**. A memory optimisation in which two processes share the
+> **Definition** — **Copy-on-write (COW)**. A memory optimisation in which two processes share the
 > same physical page frames, marked read-only in both page tables. A read from either process is
 > served from the shared frame. A write triggers a page fault; the kernel allocates a fresh frame,
 > copies the contents, remaps it private and writable in the writing process, and lets the write
@@ -843,7 +843,7 @@ itself, the shared region is interesting precisely because a write primitive tha
 every process — although in practice COW makes that write private, which is one of the incidental
 security benefits of the mechanism.
 
-> **🔍 Pentester's Note** — Practical command to see the split, run as root on the device:
+> **Pentester's Note** — Practical command to see the split, run as root on the device:
 > `adb shell "su -c 'cat /proc/<pid>/smaps_rollup'"` — note the **outer** quotes, without which
 > `adb shell` hands the device `su -c cat /proc/<pid>/smaps_rollup` and `cat` reads stdin instead.
 > Compare `Private_Dirty` against `Shared_Clean`.
@@ -895,7 +895,7 @@ execution in that process, which the app author trivially has. Hidden API enforc
 are speed bumps whose value is raising the cost of mass automated attacks, not stopping a determined
 analyst with the device in hand.
 
-> **🧠 Mental Model** — The runtime is the **rules of chess**, not the **referee's authority**. It
+> **Mental Model** — The runtime is the **rules of chess**, not the **referee's authority**. It
 > makes sure a bishop only moves diagonally, which keeps the game coherent. It does not stop the
 > player from tipping the board over, because the player owns the board.
 
@@ -914,7 +914,7 @@ three at once, on different methods, at the same moment.
 
 #### Mode 1 — Interpretation
 
-> **📖 Definition** — **Interpretation**. Executing bytecode by reading one instruction at a time and
+> **Definition** — **Interpretation**. Executing bytecode by reading one instruction at a time and
 > performing its effect in the runtime's own native code, without producing machine code for the
 > program. The interpreter is a loop: fetch the next opcode, decode it, branch to a handler, execute
 > the handler, advance the program counter, repeat.
@@ -953,12 +953,12 @@ loop is universal.
 
 #### Mode 2 — Just-In-Time compilation
 
-> **📖 Definition** — **JIT (just-in-time) compilation**. Compiling bytecode into native machine code
+> **Definition** — **JIT (just-in-time) compilation**. Compiling bytecode into native machine code
 > *while the program is running*, triggered by evidence that the code is hot enough to be worth
 > compiling. The output is written into an executable memory region owned by the process (the **JIT
 > code cache**) and subsequent calls jump into it directly.
 
-> **📖 Definition** — **Hotness counter**. A per-method counter the runtime increments on each
+> **Definition** — **Hotness counter**. A per-method counter the runtime increments on each
 > invocation and on each backward branch (a loop iteration). Crossing a configurable threshold marks
 > the method as a JIT candidate. Backward branches are counted because a method called once but
 > looping a million times is just as hot as a method called a million times.
@@ -981,7 +981,7 @@ real-world object-oriented code.
 
 #### Mode 3 — Ahead-Of-Time compilation
 
-> **📖 Definition** — **AOT (ahead-of-time) compilation**. Compiling bytecode into native machine code
+> **Definition** — **AOT (ahead-of-time) compilation**. Compiling bytecode into native machine code
 > *before* the program runs, storing the result in a file, and loading that file at process start. On
 > Android the compiler is `dex2oat` and the output is an OAT file — an ELF shared object carrying
 > generated code plus runtime metadata.
@@ -1034,7 +1034,7 @@ that the three modes are not alternatives chosen once for the whole app; they ar
 method**, and a single method can move between them during one run. The bottom of the chart is the
 deoptimization edge, which is the mechanism every Java hooking framework depends on (section 3.15).
 
-> **🧠 Mental Model** — Interpretation is **reading a recipe aloud while cooking**. JIT is
+> **Mental Model** — Interpretation is **reading a recipe aloud while cooking**. JIT is
 > **memorising the steps you keep repeating, halfway through the meal**. AOT is **the meal-kit company
 > pre-chopping everything before it ships**. A modern kitchen does all three.
 
@@ -1056,7 +1056,7 @@ apps link but barely touch.
 
 Android 7.0 Nougat replaced this with a hybrid, and the mechanism at its centre is the profile.
 
-> **📖 Definition** — **ART profile**. A binary file recording which methods of an app were executed
+> **Definition** — **ART profile**. A binary file recording which methods of an app were executed
 > frequently and which classes were loaded during startup, gathered by the runtime while the app runs.
 > It lives under `/data/misc/profiles/cur/<userId>/<package>/primary.prof` while being collected, and
 > is merged into a reference profile under `/data/misc/profiles/ref/<package>/`. It is the input that
@@ -1088,7 +1088,7 @@ days of ordinary use. The compilation itself is deliberately scheduled for a mom
 user nothing — device idle and on a charger — which is why a freshly-flashed test device behaves
 differently from a phone that has been in someone's pocket for a month.
 
-> **🔍 Pentester's Note** — This is a genuine source of "it worked yesterday" confusion. Your target
+> **Pentester's Note** — This is a genuine source of "it worked yesterday" confusion. Your target
 > app's compilation state changes over the life of your test device. If you need determinism, pin it
 > explicitly with `cmd package compile` (section 7) at the start of every test session, and record
 > what you pinned it to in your notes.
@@ -1111,7 +1111,7 @@ The security-relevant observations:
 | A shipped Baseline Profile is an APK artefact | It is a list of method signatures the developer thought were hot. During static triage, reading it tells you what the developer considers the app's main paths, which is a fast orientation aid. |
 | Compilation state affects instrumentation | A method that is AOT-compiled because a profile said it was hot will not be interpreted, so it behaves differently under a naive hook. |
 
-> **🔬 Under the Hood** — The profile format is versioned and internal, and it is not a stable public
+> **Under the Hood** — The profile format is versioned and internal, and it is not a stable public
 > API. Tools exist to dump it (`profman --dump-only --profile-file=…`, where `profman` is available on
 > the device or in an AOSP build), but do not build critical tooling on the byte format; it changes
 > between releases, and since ART became a Mainline module it can change *within* a release.
@@ -1142,7 +1142,7 @@ Runtime knobs that matter to you:
 | `dalvik.vm.image-dex2oat-filter` | The filter used for the boot image itself. |
 | `debug.generate-debug-info` | Makes `dex2oat` emit debug information so native profilers and debuggers can attribute frames to Java methods. Extremely useful during analysis. |
 
-> **🔍 Pentester's Note** — The two commands you will use constantly:
+> **Pentester's Note** — The two commands you will use constantly:
 >
 > ```bash
 > # adb shell — force a package to fully AOT compile, so it behaves like a "warm" install
@@ -1180,18 +1180,18 @@ runtime you are standing on tells you which techniques apply.
 | 14 | 34 | ART Mainline | Hybrid | Further runtime improvements delivered out-of-band. |
 | 15 – 16 | 35–36 | ART Mainline | Hybrid | 16 KB memory page size support work; continued out-of-band delivery. |
 
-> **⚠️ Warning** — Do not write "Android uses AOT" or "Android uses JIT" in a report. Since Nougat,
+> **Warning** — Do not write "Android uses AOT" or "Android uses JIT" in a report. Since Nougat,
 > both statements are wrong on their own. The accurate sentence is: *"Android uses an interpreter for
 > cold code, a JIT for code that becomes hot within a session, and profile-guided AOT compilation
 > performed by a background job for code that is hot across sessions."*
 
 ### 3.5 The ART Mainline module
 
-> **📖 Definition** — **Project Mainline**. Google's programme, starting with Android 10, of packaging
+> **Definition** — **Project Mainline**. Google's programme, starting with Android 10, of packaging
 > selected OS components as **APEX** modules — signed, versioned containers that can be updated
 > through Google Play system updates without a full OS image update from the device manufacturer.
 
-> **📖 Definition** — **APEX (Android Pony EXpress)**. The container format for Mainline modules. An
+> **Definition** — **APEX (Android Pony EXpress)**. The container format for Mainline modules. An
 > APEX is a signed file containing a filesystem image that is mounted at a fixed path early in boot.
 > The ART module mounts at `/apex/com.android.art/` and contains `libart.so`, `dex2oat`, the core boot
 > classpath jars, and the runtime's supporting binaries.
@@ -1210,7 +1210,7 @@ updates at all and retain the long tail.
 
 **For your test environment.** This is the practical one, and it bites people constantly.
 
-> **⚠️ Warning** — **Two devices reporting the same `ro.build.version.release` can be running
+> **Warning** — **Two devices reporting the same `ro.build.version.release` can be running
 > different ART versions.** Since the ART module updates independently, `Build.VERSION.SDK_INT` no
 > longer determines runtime behaviour. When you record a finding that depends on runtime internals —
 > structure offsets, a hooking technique, a deoptimization behaviour — record the ART module version
@@ -1239,7 +1239,7 @@ nothing else changed, this is your first hypothesis.
 | Are ART internals stable within one Android release? | Broadly yes. | No — treat them as a moving target. |
 | Do AOSP-derived custom ROMs get this? | Not applicable. | Usually not; they ship the AOSP module version and update only when the ROM does. |
 
-> **🔬 Under the Hood** — Because the boot classpath jars themselves live inside the APEX, a Mainline
+> **Under the Hood** — Because the boot classpath jars themselves live inside the APEX, a Mainline
 > ART update can also change core library behaviour. That is why the boot image (`boot.art`, `boot.oat`
 > and their companions) is regenerated after an ART module update: the pre-compiled boot image must
 > match the classes it was compiled from. If it does not, the runtime falls back to compiling or
@@ -1257,7 +1257,7 @@ and find it" is a policy question. Find it *where*? In the APK? In a downloaded 
 that was just decrypted? Over the network? The runtime deliberately does not hardcode an answer.
 Instead it delegates that policy to an object.
 
-> **📖 Definition** — **ClassLoader**. An object responsible for producing a `Class` object when given
+> **Definition** — **ClassLoader**. An object responsible for producing a `Class` object when given
 > a class's name. It encapsulates *where the bytes come from* and *how they are found*. `ClassLoader`
 > is an abstract class in `java.lang`; concrete subclasses implement particular sourcing strategies.
 > Every loaded class permanently remembers which ClassLoader defined it, and that pairing —
@@ -1266,7 +1266,7 @@ Instead it delegates that policy to an object.
 That last sentence is the one that trips people up, so here it is again as a rule, because it is the
 root of both a common bug and a useful attack.
 
-> **⚠️ Warning** — **A class's identity is `(defining ClassLoader, name)`, not just the name.** Two
+> **Warning** — **A class's identity is `(defining ClassLoader, name)`, not just the name.** Two
 > `Class` objects both named `com.example.Session`, loaded by two different ClassLoaders, are
 > *different types*. Assigning one to a variable of the other's type throws `ClassCastException`, and
 > the error message is maddening because it appears to say the class cannot be cast to itself.
@@ -1282,7 +1282,7 @@ Three responsibilities live in a ClassLoader:
 | **Definition** | Handing those bytes to the runtime so it can create the internal class structure, verify the bytecode, and link it. |
 | **Namespace** | Creating a scope. Classes loaded by the same loader can see each other's package-private members and share statics; classes in different loaders are distinct types. |
 
-> **🧠 Mental Model** — A ClassLoader is a **librarian with one specific shelf**. You ask for a book by
+> **Mental Model** — A ClassLoader is a **librarian with one specific shelf**. You ask for a book by
 > title. The librarian first asks their supervisor whether the supervisor has it (parent delegation);
 > only if the supervisor does not, does the librarian search their own shelf. Two librarians with two
 > shelves may each hold a book with the same title — and those are two different physical books, which
@@ -1371,7 +1371,7 @@ Now the loaders themselves, in the order you will meet them.
 | `InMemoryDexClassLoader` | `dalvik.system` | API 26 | DEX bytes from one or more `ByteBuffer`s. **No file is ever created.** | Modern packers and modern malware. The bytes exist only in the heap. |
 | `DelegateLastClassLoader` | `dalvik.system` | API 27 | Same sources as `PathClassLoader`, but with the delegation order inverted. | Apps shipping their own version of a library that also exists on the boot classpath — and, as a side effect, a shadowing technique. |
 
-> **📖 Definition** — **Boot classpath**. The set of JARs containing the core library and framework
+> **Definition** — **Boot classpath**. The set of JARs containing the core library and framework
 > classes, loaded by `BootClassLoader` and normally pre-compiled into a shared **boot image** so that
 > every process maps the same already-linked class objects. On Android 12 and later many of these live
 > inside the ART APEX.
@@ -1391,7 +1391,7 @@ dynamically and you should find out what.
 
 ### 3.8 Parent delegation and what it protects
 
-> **📖 Definition** — **Parent delegation model**. The convention, implemented in
+> **Definition** — **Parent delegation model**. The convention, implemented in
 > `ClassLoader.loadClass`, that a loader asked for a class first checks whether it has already defined
 > it, then asks its **parent** to load it, and only searches its own sources if the parent could not.
 > The request therefore travels up to the boot loader first, and the class is defined by the *highest*
@@ -1451,7 +1451,7 @@ core packages from an app's DEX outright, so this is belt and braces.
 | Shadowing an *app's own* class | **Nothing.** Delegation says nothing about classes only the app defines. | High — this is the hot-patch and repackaging surface |
 | Shadowing a *bundled third-party library* class | Nothing, and `DelegateLastClassLoader` makes it easier | High |
 
-> **⚠️ Warning** — Parent delegation is a **correctness and compatibility** mechanism that has a
+> **Warning** — Parent delegation is a **correctness and compatibility** mechanism that has a
 > useful security side effect. It is not, and was never designed as, a defence against an attacker who
 > controls the app's own code. An attacker with code execution in the process can construct any
 > ClassLoader they want, in any order they want.
@@ -1464,7 +1464,7 @@ and in a delegate-last loader now resolves to the delegate-last loader's version
 shadowing an app's own classes, or for confusing an analyst reading a call graph, it is effective and
 it looks entirely legitimate.
 
-> **🔍 Pentester's Note** — When you find `DelegateLastClassLoader` in a target, ask two questions.
+> **Pentester's Note** — When you find `DelegateLastClassLoader` in a target, ask two questions.
 > Which classes does it define that also exist elsewhere in the app? And is the path it loads from
 > writable by anything other than the app? A delegate-last loader pointed at a world-writable or
 > externally-writable directory is a code-execution primitive: an attacker who can drop a DEX there
@@ -1518,7 +1518,7 @@ array after it, and assign it back to `pathList.dexElements` reflectively. Your 
 lookup. This is the mechanism behind essentially every Android hot-patch framework, and behind a
 family of malicious loaders.
 
-> **🔬 Under the Hood** — `mCookie` is really a native pointer (historically a `long`, later an object
+> **Under the Hood** — `mCookie` is really a native pointer (historically a `long`, later an object
 > wrapping an array of them) to the runtime's open-DEX bookkeeping. Overwriting it from Java is a
 > straightforward way to make the runtime dereference a value you chose. It is not a vulnerability —
 > you already control the process — but it is a useful primitive when writing instrumentation, and it
@@ -1568,11 +1568,11 @@ in a real ClassLoader in this process, and at that instant it is fully visible t
 need to break the packer's cryptography. You need to be present at the moment the runtime is handed
 the plaintext. That is a hooking problem, and section 7 solves it.
 
-> **🧠 Mental Model** — Unpacking is not code-breaking, it is **stakeout work**. The courier will
+> **Mental Model** — Unpacking is not code-breaking, it is **stakeout work**. The courier will
 > eventually open the briefcase in front of the runtime, because the runtime is the only thing that
 > can execute the contents. Your job is to be standing there when it does.
 
-> **🔍 Pentester's Note** — Dynamic code loading from any source outside the signed APK is a finding
+> **Pentester's Note** — Dynamic code loading from any source outside the signed APK is a finding
 > in its own right, independent of what the loaded code does, because it means the shipped, reviewed,
 > signed artefact is not the code that runs. Check the loaded artefact's integrity controls: is it
 > fetched over TLS with pinning, is it signature-verified before loading, is it stored where only the
@@ -1612,7 +1612,7 @@ argument list — that is already argument injection. Worse, when the pattern is
 arbitrary command execution as the app's UID, with the app's permissions, its private data directory,
 and its network access.
 
-> **⚠️ Warning** — There is a persistent myth that "`Runtime.exec` does not use a shell, so injection
+> **Warning** — There is a persistent myth that "`Runtime.exec` does not use a shell, so injection
 > is impossible on Android". That is half true and dangerously misleading. `exec(String)` does not
 > invoke a shell *by itself*, but it **does** split on whitespace, which is already argument
 > injection; and the overwhelming majority of real-world uses explicitly invoke `sh -c` or `su -c`,
@@ -1644,13 +1644,13 @@ at all and to use a library API instead.
 | Malware | `exec("sh")` with a pipe, or `exec("chmod 755 /data/data/…/payload")` before executing a dropped ELF | Chapter [69 — Malware Analysis](../69-MalwareAnalysis/README.md). |
 | Command injection | User-controlled data concatenated into any of the above | The real vulnerability. |
 
-> **🔍 Pentester's Note** — `Runtime.exec` and `ProcessBuilder.start` belong on your standing hook
+> **Pentester's Note** — `Runtime.exec` and `ProcessBuilder.start` belong on your standing hook
 > list for *every* Android engagement, not just the ones where you suspect injection. Logging every
 > command a target spawns, with its full argument vector and a Java stack trace, routinely reveals root
 > detection you had not found statically, telemetry you did not know about, and dropped binaries you
 > would otherwise have missed. The script `scripts/runtime-recon.js` in this chapter does exactly this.
 
-> **🔬 Under the Hood** — On Android, `ProcessBuilder.start` reaches `java.lang.ProcessImpl` and then
+> **Under the Hood** — On Android, `ProcessBuilder.start` reaches `java.lang.ProcessImpl` and then
 > native code performing the classic `fork` and `execve` pair through Bionic. Because the app process
 > was itself forked from Zygote and has already dropped privileges, the child inherits the app's UID,
 > its SELinux domain, and its seccomp filter. That is why `exec("su")` in a normal app on a non-rooted
@@ -1659,7 +1659,7 @@ at all and to use a library API instead.
 
 ### 3.12 Bytecode verification
 
-> **📖 Definition** — **Bytecode verification**. A static analysis the runtime performs on a method's
+> **Definition** — **Bytecode verification**. A static analysis the runtime performs on a method's
 > bytecode before allowing it to execute, proving properties that the interpreter and the compiler are
 > then allowed to assume. The verifier performs an abstract interpretation over the method's control
 > flow graph, tracking the type held in each virtual register at each program point and merging those
@@ -1682,10 +1682,10 @@ the same DEX can skip the work. The file format belongs to [13 — ART](../13-AR
 
 **This is where the runtime genuinely is a security boundary.** The verifier protects the *runtime*
 from *hostile bytecode*. Without it, a maliciously crafted DEX could produce native memory corruption
-inside `libart.so` simply by being executed, and that is a sandbox-escape primitive. With it, the
+inside `libart.so` by being executed, and that is a sandbox-escape primitive. With it, the
 bytecode is proven well-typed before a single instruction runs.
 
-> **⚠️ Warning** — Verification says nothing about whether the program's *logic* is safe. A verified
+> **Warning** — Verification says nothing about whether the program's *logic* is safe. A verified
 > method can still delete your files, leak your token, and call `Runtime.exec` on attacker input. The
 > verifier proves the program is a well-formed program, not a well-behaved one.
 
@@ -1698,7 +1698,7 @@ before citing one. The structurally important insight for
 `dex2oat` are reachable **at install time**, before the app has ever run, by any app the user
 installs — and in some flows by a file a browser merely downloaded.
 
-> **🔬 Under the Hood** — There are historically two verification depths. Some classes can be verified
+> **Under the Hood** — There are historically two verification depths. Some classes can be verified
 > fully at compile time and are marked as such; others depend on classes not available at compile time
 > and must be re-verified at run time. The runtime tracks this as a per-class status, moving a class
 > through states such as *not resolved*, *resolved*, *verified*, and *initialised*. This matters
@@ -1714,7 +1714,7 @@ internal framework implementation details without breaking large numbers of popu
 those apps had reached into internals through reflection. Android 9 Pie introduced a mechanism to stop
 that.
 
-> **📖 Definition** — **Hidden API enforcement**. A runtime mechanism that restricts an app's access,
+> **Definition** — **Hidden API enforcement**. A runtime mechanism that restricts an app's access,
 > via reflection or JNI, to framework members that are not part of the public SDK. Members are
 > annotated at build time and sorted into lists; at run time an access attempt is checked against the
 > lists and is allowed, allowed-with-a-warning, or denied with an exception.
@@ -1752,7 +1752,7 @@ settings delete global hidden_api_policy
 | `2` | Enforce the dark greylist / max-target lists. |
 | `3` | Enforce both the greylists and the blocklist (strictest). |
 
-> **⚠️ Warning** — Changing `hidden_api_policy` changes the behaviour of *every app on the device*. If
+> **Warning** — Changing `hidden_api_policy` changes the behaviour of *every app on the device*. If
 > your target detects the setting, or if you are measuring behaviour that depends on it, you have
 > changed the thing you are measuring. Note it in your methodology. Never do this on a device that
 > holds real user data.
@@ -1786,16 +1786,16 @@ setExemptions.invoke(vmRuntime, (Object) new String[]{"L"});
 *Bypass 3 — get your code onto the exempt side.* Since the check is caller-based, code loaded by the
 boot ClassLoader is exempt. A hooking framework that injects its classes so that they appear to come
 from the boot classpath sidesteps the check entirely. Frida operates from native code and can also
-simply flip the runtime's enforcement state in memory.
+flip the runtime's enforcement state in memory.
 
-> **⚠️ Warning** — **Hidden API enforcement is not a security boundary, and Google has never claimed
+> **Warning** — **Hidden API enforcement is not a security boundary, and Google has never claimed
 > it is.** It exists to keep apps from depending on internals so that the platform can evolve. Writing
 > "the application bypasses hidden API restrictions" as a vulnerability in a client report is wrong.
-> Writing "the application bypasses hidden API restrictions in order to access *this specific internal
+> Writing "the application bypasses hidden API restrictions to access *this specific internal
 > API*, which allows it to *this specific security-relevant effect*" may well be a finding — but the
 > finding is the effect, not the bypass.
 
-> **🔍 Pentester's Note** — Practically, hidden API enforcement is something that gets in *your* way
+> **Pentester's Note** — Practically, hidden API enforcement is something that gets in *your* way
 > more than the attacker's. When your injected Java agent throws `NoSuchMethodException` for a
 > framework method you can plainly see in AOSP, this is why. Reach for the exemption call, or set the
 > global policy on your test device, and move on.
@@ -1805,7 +1805,7 @@ simply flip the runtime's enforcement state in memory.
 The JIT compiler writes machine code into memory and then executes it. That is, in the abstract,
 exactly the thing every exploit mitigation of the last twenty-five years has tried to prevent.
 
-> **📖 Definition** — **W^X (write xor execute)**, also called DEP or NX. The policy that a memory page
+> **Definition** — **W^X (write xor execute)**, also called DEP or NX. The policy that a memory page
 > may be writable or executable but never both simultaneously. It exists because the classic
 > exploitation technique is to write shellcode into a writable page and jump to it; if writable pages
 > are never executable, that fails.
@@ -1835,17 +1835,17 @@ with different protections. The compiler writes through the left window; the CPU
 right one. Neither window alone grants both capabilities, so an attacker who controls a write through
 one of them still cannot execute what they wrote through that same address.
 
-> **🔍 Pentester's Note** — This is directly observable. Dump `/proc/<pid>/maps` for a running app and
+> **Pentester's Note** — This is directly observable. Dump `/proc/<pid>/maps` for a running app and
 > look for anonymous mappings with `rw-p` and `r-xp` permissions and suspiciously similar sizes,
 > sometimes carrying a name mentioning the JIT code cache depending on the release. Their presence
 > tells you the JIT has been active in this process, which in turn tells you the app has been running
 > long enough for methods to become hot. If you have forced `compile --reset` and you still see a
 > populated code cache, the app has warmed up since.
 
-> **📖 Definition** — **Control Flow Integrity (CFI)**. A compiler-and-runtime mitigation that
+> **Definition** — **Control Flow Integrity (CFI)**. A compiler-and-runtime mitigation that
 > constrains indirect control transfers — indirect calls and returns — so that they can only target
 > addresses valid for that call site. It defeats exploitation techniques that corrupt a function
-> pointer or a vtable entry in order to redirect execution to an attacker-chosen address.
+> pointer or a vtable entry to redirect execution to an attacker-chosen address.
 
 Android builds substantial parts of the native platform, including runtime components, with LLVM's CFI
 schemes and with integer-overflow sanitisation on selected components. The practical effect for a
@@ -1855,7 +1855,7 @@ for data-only attacks, or for a module built without the mitigation. Chapter
 [15 — Native Code](../15-Native-Code/README.md) covers the mitigation set in full, and
 [70 — Vulnerability Research](../70-VulnerabilityResearch/README.md) covers working around them.
 
-> **🔬 Under the Hood** — A CFI abort has a recognisable signature in `logcat` and in tombstones: the
+> **Under the Hood** — A CFI abort has a recognisable signature in `logcat` and in tombstones: the
 > process aborts with a diagnostic naming a control-flow check failure, rather than segfaulting at a
 > wild address. When you are fuzzing and you see that, you have found a control-flow corruption that
 > the mitigation caught — which is still a bug worth reporting, and often still a denial of service.
@@ -1870,7 +1870,7 @@ entry for you to hook — the caller jumps straight to compiled machine code, an
 consulted at all. Worse, if the JIT or AOT compiler **inlined** the method into three different
 callers, there is no single entry point in existence to hook.
 
-> **📖 Definition** — **Deoptimization**. Forcing the runtime to abandon compiled code for a method and
+> **Definition** — **Deoptimization**. Forcing the runtime to abandon compiled code for a method and
 > execute it in the interpreter instead. The runtime resets the method's entry point to the generic
 > interpreter bridge, discards or bypasses compiled versions, and, where a frame is currently executing
 > compiled code, reconstructs an equivalent interpreter frame so execution can continue correctly from
@@ -1913,7 +1913,7 @@ reliable than hooking a larger one. It is also why forcing the app into interpre
 attaching is such an effective troubleshooting step: an interpreted app has nothing inlined and
 nothing compiled.
 
-> **🔍 Pentester's Note** — Your standing checklist when a Java hook does not fire:
+> **Pentester's Note** — Your standing checklist when a Java hook does not fire:
 >
 > 1. Is the method actually being called at all? Hook its caller and confirm.
 > 2. Is the class loaded by a ClassLoader your tool is searching? Use `Java.enumerateClassLoaders` and
@@ -1924,7 +1924,7 @@ nothing compiled.
 > 5. Is the implementation actually in native code, with the Java method a thin `native` stub? Then you
 >    need a native hook, not a Java one. See [16 — JNI](../16-JNI/README.md).
 
-> **🔬 Under the Hood** — There are two flavours. *Full deoptimization* switches the entire runtime
+> **Under the Hood** — There are two flavours. *Full deoptimization* switches the entire runtime
 > into an interpret-everything mode, which is correct but slow and very obvious to timing-based
 > anti-analysis. *Selective deoptimization* affects only named methods, which is faster and stealthier.
 > Which one a framework uses depends on the operation; class redefinition tends to force the heavier
@@ -1958,7 +1958,7 @@ Close the loop on the boundary question, because this is where junior analysts w
 The single sentence to remember, and to put in reports when a client asks why obfuscation did not stop
 you:
 
-> **🧠 Mental Model** — **The runtime executes the app's intentions; the kernel constrains the app's
+> **Mental Model** — **The runtime executes the app's intentions; the kernel constrains the app's
 > reach.** Any control implemented purely inside the app's own process is a control the app's own
 > process can remove. That is not a flaw in the runtime; it is a consequence of the process being the
 > app's. Real boundaries need a different UID on the other side of them.
@@ -2032,7 +2032,7 @@ holds one `Element` per DEX file across the base APK and every split.
 **Step 5.** `makeApplication()` uses that loader to instantiate the `Application` subclass named in
 the manifest, then calls `attachBaseContext()` and `onCreate()`.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Step 5 is the earliest app-controlled code in the process, which is exactly why packers put their
 > decryption stub in `Application.attachBaseContext()`. It runs before any Activity and long before
 > you could realistically attach with `frida -n`. This is the concrete reason you must spawn with
@@ -2072,7 +2072,7 @@ protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundE
 `java.lang.String` and have it used — the `BootClassLoader` wins. That shields platform classes from
 shadowing. It protects nothing about the app's own classes, because the app is the one loading them.
 
-> **⚠️ Warning**
+> **Warning**
 > `DelegateLastClassLoader` deliberately **inverts** this order, searching itself before the parent.
 > It exists to resolve library version conflicts, but when you meet it in a target, note it: a class
 > that looks like it comes from the framework may be coming from the app.
@@ -2094,7 +2094,7 @@ directly from the buffer and registered with the runtime.
 The critical property: **no file is ever written**. A scanner enumerating APK entries, or watching the
 filesystem, sees nothing. The payload exists only in process memory.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > That is precisely why the counter-technique is a runtime hook on the constructor rather than a
 > static scan. [`examples/hook-classloaders.js`](examples/hook-classloaders.js) does exactly that, and
 > [`../13-ART/scripts/dump-loaded-dex.js`](../13-ART/scripts/dump-loaded-dex.js) is a hardened version
@@ -2143,7 +2143,7 @@ control lives in.
 | File access between apps | **Kernel** (DAC) + **SELinux** (MAC) | **Yes** |
 | Permission enforcement | `system_server`, against the calling UID | **Yes** |
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Everything in the "No" rows is a *language or runtime* feature that helps developers write correct
 > code. Everything in the "Yes" rows is enforced by something the app cannot reach. When a client asks
 > why obfuscation, hidden-API restrictions or verification did not stop the tester, this table is the
@@ -2375,7 +2375,7 @@ Java.perform(function () {
 });
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > This is the most common fix for `ClassNotFoundException` in a Frida script, and it is routinely
 > misdiagnosed as anti-hooking. If a class is visible in JADX but not to `Java.use`, it is almost
 > certainly a ClassLoader problem, not a protection.
@@ -2489,7 +2489,7 @@ find /tmp/apk/assets -type f -size +100k -exec sh -c \
 | `android:largeHeap="true"` | Raises the heap cap |
 | `android:extractNativeLibs="false"` | `.so` mapped from the APK rather than extracted |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Read `android:name` on `<application>` **first**. If it is a single obscurely-named class rather than
 > something like `com.example.MyApplication`, you are very likely looking at a packer stub, and your
 > entire approach changes.
@@ -2532,7 +2532,7 @@ memory, with the insecure and secure variants side by side so the §5.4 differen
 [`examples/HiddenApiBypass.java`](examples/HiddenApiBypass.java) reaches a non-SDK interface and
 explains why it works: enforcement is in-process, driven by flags in the member's `access_flags_`.
 
-> **⚠️ Warning**
+> **Warning**
 > Bypassing hidden-API restrictions is legitimate for research and testing, and Google actively works
 > to prevent it — so any specific mechanism has a limited shelf life. Use it to understand a target,
 > not as the foundation of a tool you expect to keep working.
@@ -2643,7 +2643,7 @@ largely repaid. It also placed the security boundary at the *process* rather tha
 is architecturally cleaner than a language-level sandbox and has aged far better than approaches that
 tried to sandbox within a shared runtime. The remaining weaknesses are consequences of the same
 decisions — shared address-space layout from forking, and an in-process runtime the app can fully
-subvert. Note that the industry converged on this shape, and that the genuinely hard remaining problem,
+subvert.the industry converged on this shape, and that the genuinely hard remaining problem,
 trusting a client you do not control, is not one any runtime design can solve.
 
 ---

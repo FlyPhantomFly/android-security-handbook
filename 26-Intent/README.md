@@ -63,7 +63,7 @@ Every operating system that solved this solved it the same way: **by passing mes
 calling functions**, and by letting a trusted middleman decide who receives the message. On Android
 that message is called an **Intent**, and the middleman is `system_server`.
 
-> **📖 Definition**
+> **Definition**
 > An **Intent** is a passive data object describing an operation to be performed. It is a *message*,
 > not a *call*. It carries — at most — an action string, a data URI, a MIME type, a set of category
 > strings, an explicit target component, a package restriction, a bitmask of flags, and an arbitrary
@@ -92,7 +92,7 @@ Android component.
 This is the single most important asymmetry on the platform, and it is worth stating twice, because
 almost every Intent vulnerability is a restatement of it:
 
-> **🧠 Mental Model**
+> **Mental Model**
 > **Binder stamps caller identity into the kernel; Intents largely do not.** When a Binder
 > transaction arrives, the kernel driver itself writes the sender's real UID and PID into the
 > receiving thread's state, and `Binder.getCallingUid()` reads a value no caller can forge. When an
@@ -239,7 +239,7 @@ target's `onCreate` runs, the caller's UID is not in the Intent, not in the `Bun
 retrievable from any parameter of `onCreate`. The target sees a message and nothing else. Everything
 the target believes about *who* sent it, it believes because the message said so.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > `prepareToLeaveProcess()` runs in the **sender's** process, not the system's. That is why
 > `FileUriExposedException` (thrown when a `file://` URI would cross an app boundary on
 > `targetSdk >= 24`) is thrown by *your* app, with *your* stack trace, before any IPC happens. It is
@@ -367,7 +367,7 @@ and is worth a specific question during an assessment.
 | **clipData** | `setClipData(ClipData)` (API 16) | `ClipData` | Additional URIs that participate in URI grants. | A grant can travel on `clipData` when the data URI looks harmless. Auditors miss this. |
 | **sourceBounds** | `setSourceBounds(Rect)` | `Rect` | Screen coordinates of the launching UI element. | Not security-relevant; mentioned so you can dismiss it when you see it in a dump. |
 
-> **📖 Definition**
+> **Definition**
 > A **`Bundle`** is Android's typed key/value map, designed to be flattened into a `Parcel` — the
 > byte buffer a Binder transaction carries. Its most consequential property is **lazy unparcelling**:
 > when a `Bundle` arrives over IPC it holds only the raw bytes, and it is not deserialised until the
@@ -400,7 +400,7 @@ can never be matched by an Intent built with `setData` followed by `setType`.
 
 ### 3.2 Explicit versus implicit — the distinction everything hangs on
 
-> **📖 Definition**
+> **Definition**
 > An Intent is **explicit** when `mComponent` is non-null: it names one package and one class, and
 > the system delivers it there or fails. An Intent is **implicit** when `mComponent` is null: the
 > system must *resolve* it against every installed app's declared filters and pick a target.
@@ -429,7 +429,7 @@ The security consequences run entirely one way:
   happen at all. This is the strongest fix and the correct one whenever the sender genuinely knows
   the target.
 
-> **⚠️ Warning**
+> **Warning**
 > From `targetSdk` 34 (Android 14), the platform **refuses to deliver an implicit Intent to a
 > non-exported component of the same app**. Apps that relied on "implicit, but it can only be me
 > because only I declare that action" now break. This is a genuine hardening step, and it also tells
@@ -446,7 +446,7 @@ The security consequences run entirely one way:
 | `bindService` | Exactly one Service | Illegal from API 21 | `IBinder` | The attacker gets an RPC handle, not a one-shot message. Enumerate its transactions. |
 | `sendBroadcast` / `sendOrderedBroadcast` | **All** matching receivers | Yes | none / result extras | The fan-out is the risk: one implicit broadcast reaches every app that asked for it. |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > "Service Intent must be explicit" (`IllegalArgumentException`, API 21+) is a **client-side** check
 > in `ContextImpl.validateServiceIntent`. It stops honest developers from writing implicit service
 > Intents. It does not stop an attacker, who is always explicit anyway — an attacker knows exactly
@@ -510,7 +510,7 @@ only an action-less Intent, which in practice means it matches nothing, which is
 does not name are ignored.** The direction catches people out constantly; it is the exact opposite of
 the intuition that a filter is a "requirement list".
 
-> **⚠️ Warning — `CATEGORY_DEFAULT`, the one that breaks everybody's test**
+> **Warning — `CATEGORY_DEFAULT`, the one that breaks everybody's test**
 > `Context.startActivity()` and `startActivityForResult()` **add `android.intent.category.DEFAULT` to
 > the Intent** when it is implicit. That is not a filter rule, it is a caller-side rule, and it means
 > an Activity filter that does not declare `<category android:name="android.intent.category.DEFAULT"/>`
@@ -566,7 +566,7 @@ The rules, stated as prose because the diagram cannot carry the exceptions:
    "implied scheme" rule and it is genuinely surprising).
 4. **Both.** Both tests must pass independently.
 
-> **🔬 Under the Hood — the implied `content:`/`file:` scheme**
+> **Under the Hood — the implied `content:`/`file:` scheme**
 > `IntentFilter.matchData` contains a special case: when the filter declares MIME types but no
 > schemes at all, `content` and `file` are matched anyway. The reasoning is that a MIME type is only
 > meaningful for something you can read, and on Android that means a `content://` or `file://` URI.
@@ -633,9 +633,9 @@ filter with four schemes and three MIME types, contributed by separate `<data>` 
 **one** filter object. That is the platform's own data structure telling you the answer: twelve
 combinations are accepted, not four pairs, not three.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > This is a finding generator. When you see a deep-link handler with several `<data>` elements, list
-> the cross product and test the combinations the developer clearly did not intend. A handler meant
+> the cross product and test the combinations the developer never intended. A handler meant
 > for `https://checkout.example.com` and `myapp://legacy` will happily accept
 > `myapp://checkout.example.com` — and the code behind it frequently branches on scheme *or* host but
 > not both.
@@ -689,7 +689,7 @@ Read those five numbers carefully; four separate rules fall out of them.
   anything you send them. On a deployed device, eleven components stand ready to receive an arbitrary
   file of an arbitrary claimed type from any app.
 
-> **⚠️ Warning — the quoting trap that will waste an hour of your life**
+> **Warning — the quoting trap that will waste an hour of your life**
 > `adb shell cmd package query-activities -t "*/*"` does **not** do what you want. Your host shell
 > strips the quotes, `adb shell` concatenates the arguments into one string and hands it to the
 > *device's* `sh`, which glob-expands `*/*` against the device's root directory. The command silently
@@ -699,7 +699,7 @@ Read those five numbers carefully; four separate rules fall out of them.
 
 ### 3.5 `CATEGORY_BROWSABLE`, and what makes a filter reachable from the web
 
-> **📖 Definition**
+> **Definition**
 > **`android.intent.category.BROWSABLE`** declares that the component may be started by a link in a
 > web browser. A browser follows a non-`http(s)` URI, or an `http(s)` URI it decides to hand off, by
 > constructing `ACTION_VIEW` with `CATEGORY_BROWSABLE` and calling `startActivity`. A filter without
@@ -769,7 +769,7 @@ YouTube won on a **path** match. Four more, measured on the same device in the s
 | `ACTION_VIEW -d https://www.youtube.com/watch` | `0x508000` | `MATCH_CATEGORY_PATH` |
 | `ACTION_SEND -t text/plain` | `0x608000` | `MATCH_CATEGORY_TYPE` |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `preferredOrder` and `priority` appear on the same line. `priority` is the filter's declared
 > `android:priority`; `preferredOrder` is the user's or the system's *preference* weighting, and on
 > the measured YouTube row it is `1` — a set preference, not a filter property. When you are arguing
@@ -792,7 +792,7 @@ the ones that decide security outcomes.
 | `FLAG_GRANT_PERSISTABLE_URI_PERMISSION` | `0x00000040` | The recipient may call `takePersistableUriPermission` and keep it across reboots |
 | `FLAG_GRANT_PREFIX_URI_PERMISSION` | `0x00000080` | The grant applies to every URI **beneath** the given path |
 
-> **⚠️ Warning**
+> **Warning**
 > `FLAG_GRANT_*` only takes effect for `content://` URIs and only where the target provider declares
 > `android:grantUriPermissions`. What the grant *steals* — and the provider-side rules — is
 > [27-ContentProviders](../27-ContentProviders/README.md)'s subject. What matters here is that these
@@ -817,7 +817,7 @@ the ones that decide security outcomes.
 | `FLAG_FROM_BACKGROUND` | `0x00000004` | Marks the Intent as not user-initiated | Rarely useful |
 | `FLAG_DEBUG_LOG_RESOLUTION` | `0x00000008` | **Ask the system to log its resolution decision** | Your best debugging tool; §7.3 |
 
-> **🔬 Under the Hood — `FLAG_ACTIVITY_FORWARD_RESULT`**
+> **Under the Hood — `FLAG_ACTIVITY_FORWARD_RESULT`**
 > Normally `startActivityForResult` establishes a result channel from the started Activity back to
 > the starter. `FLAG_ACTIVITY_FORWARD_RESULT` re-points that channel one level further out: the newly
 > started Activity's result is delivered to *the Activity that started the starter*. It exists so a
@@ -846,7 +846,7 @@ Intent?"*
 | `ActivityManager.getRunningTasks()` etc. | any | **No** | Restricted since API 21 and unreliable. |
 | `Activity.getLaunchedFromPackage()` | Activity (API 34) | Yes, system-set | New; not available on the measured API 30 device. Useful going forward. |
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Three tiers, and you should be able to place any identity claim into one instantly:
 >
 > 1. **Kernel-stamped** — `Binder.getCallingUid()` on a live Binder transaction. Unforgeable. This is
@@ -917,17 +917,17 @@ private final IMyApi.Stub mBinder = new IMyApi.Stub() {
 // Nothing to write in Java. system_server enforces it before you are started.
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > `getCallingPackage()` returning a package name is **not** the same as knowing the caller is that
 > app. Package names are attacker-choosable on a device where the attacker controls installation
-> (sideloading, a rooted device, or simply an unclaimed name). Always resolve the package to its
+> (sideloading, a rooted device, or an unclaimed name). Always resolve the package to its
 > signing certificate via `PackageManager.getPackageInfo(pkg, GET_SIGNING_CERTIFICATES)` and compare
 > the certificate digest, not the name. A signature-level permission (Pattern C) does this for you
 > and is what you should recommend in a report.
 
 ### 3.9 `PendingIntent` — a capability you hand to someone else
 
-> **📖 Definition**
+> **Definition**
 > A **`PendingIntent`** is a token that wraps an `Intent` **together with your app's identity and
 > permissions**. When another process fires it, the Intent is sent **as if your app had sent it** —
 > from your UID, with your permissions, able to reach your non-exported components. The other
@@ -997,7 +997,7 @@ And given a mutable `PendingIntent` wrapping an Intent that *does* have a compon
 - The attacker cannot change the target, but **can add extras and can set the data URI** — including
   a `content://` URI plus `FLAG_GRANT_READ_URI_PERMISSION`, which the creator's identity then grants.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > A mutable `PendingIntent` with an empty component is a **blank signed cheque**: the payee line is
 > empty, and the signature is your app's UID. `FLAG_IMMUTABLE` is writing the payee in indelible ink
 > before you hand it over.
@@ -1011,7 +1011,7 @@ And given a mutable `PendingIntent` wrapping an Intent that *does* have a compon
 | **31+** | **`FLAG_IMMUTABLE` or `FLAG_MUTABLE` must be specified explicitly, or `IllegalArgumentException` at creation** | Nobody can be accidentally mutable any more — but plenty of code "fixed" this by pasting `FLAG_MUTABLE` |
 | 34+ | A mutable `PendingIntent` wrapping an **implicit** Intent cannot be delivered to a non-exported component of the creator, unless `FLAG_ALLOW_UNSAFE_IMPLICIT_INTENT` is set | The platform closed the most-exploited shape specifically |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The API 31 mandate is why "is this app's `PendingIntent` usage safe?" is a *different question* on
 > a modern app than it was in 2020. On `targetSdk >= 31` the code compiles only with an explicit
 > choice, so grep for `FLAG_MUTABLE` and examine **every** occurrence: each one is a developer who
@@ -1079,7 +1079,7 @@ Error: Activity not started, unable to resolve Intent { act=android.intent.actio
 The command did not fail loudly enough to notice — the first line looks like a resolution failure,
 not a quoting failure, and a tester in a hurry concludes the target does not accept the Intent.
 
-> **⚠️ Warning — what `intent:` URIs can and cannot express**
+> **Warning — what `intent:` URIs can and cannot express**
 > `Intent.parseUri` supports **primitive** extras only. There is no syntax for a `Parcelable` extra,
 > and therefore **no way to nest an `Intent` inside an `intent:` URI**. This has a direct consequence
 > for testing: the Parcelable flavour of intent redirection (a component reading
@@ -1147,7 +1147,7 @@ each is a real finding with a different remediation:
 | Fingerprint is the **debug** certificate | The developer generated it from a debug build and never updated it for the Play-signed release | Same. Extremely common, because Play App Signing re-signs the APK and the digest changes |
 | `package_name` mismatch (flavour suffix such as `.prod`) | Build variants | Same |
 
-> **🔍 Pentester's Note — `autoVerify="true"` is a *request*, not a state**
+> **Pentester's Note — `autoVerify="true"` is a *request*, not a state**
 > Reading `android:autoVerify="true"` out of a manifest tells you what the developer **asked for**.
 > It tells you nothing about what happened. An app whose `assetlinks.json` is missing has an
 > `autoVerify` filter that behaves *exactly* like an ordinary deep link — any app can compete for it,
@@ -1224,7 +1224,7 @@ one command rather than by reading a manifest:
    `assetlinks.json` from), so an entry like this can only ever be an ordinary deep link — and it
    means the component behind it receives `ACTION_VIEW` for arbitrary hosts.
 
-> **🔍 Pentester's Note — the two readers can disagree, and you must say so**
+> **Pentester's Note — the two readers can disagree, and you must say so**
 > On the same device, in the same session, the two API-30 readers gave different answers for the same
 > package:
 >
@@ -1247,7 +1247,7 @@ one command rather than by reading a manifest:
 > When the platform's own readers disagree, **quote all of them** and say that they disagree. Picking
 > the one that supports your conclusion is how a finding gets withdrawn in front of a client.
 
-> **⚠️ Warning**
+> **Warning**
 > Do not carry `pm get-app-links` into an Android 11 engagement and report "verification could not be
 > determined". Use `dumpsys package domain-preferred-apps` and `pm get-app-link`. Conversely, do not
 > carry `dumpsys package domain-preferred-apps` into an Android 12+ engagement and expect it to be
@@ -1460,7 +1460,7 @@ Permission Denial: starting Intent { cmp=com.victim/.Admin } from ProcessRecord{
     (pid=12345, uid=10234) requires com.victim.permission.ADMIN
 ```
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > `callingUid != aInfo.applicationInfo.uid` is the whole of the export check. It is a **UID**
 > comparison, not a package comparison — which is why two apps sharing a `sharedUserId` can start
 > each other's non-exported components freely, and why an intent-redirection deputy works: by the
@@ -1500,7 +1500,7 @@ Firing one runs, in `PendingIntentRecord.sendInner`, roughly this sequence:
 4. The start proceeds through the normal `ActivityStarter` path, so the creator's export and
    permission position applies.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Steps 2 and 3 in that order are the vulnerability. The attacker's data is merged **first**, and the
 > privileged identity is assumed **second**. `FLAG_IMMUTABLE` is the switch that skips step 2.
 
@@ -1559,9 +1559,9 @@ it from the platform's own tables instead of from the APK.
 | Query | `pm get-app-links` (31+), `pm get-app-link` + `dumpsys package domain-preferred-apps` (≤30) | What you measure |
 | Enforce | `ComputerEngine.queryIntentActivitiesInternal` / `filterIfNotSystemUser` and the domain-verification filtering | A verified host's links go to the app with no chooser |
 
-Note that the **enforcement** is a filtering step inside resolution, not a separate mechanism. That
+the **enforcement** is a filtering step inside resolution, not a separate mechanism. That
 is why an unverified App Link degrades gracefully into an ordinary deep link rather than failing
-loudly: nothing is broken, the exclusivity is simply not applied.
+loudly: nothing is broken, the exclusivity is not applied.
 
 ---
 
@@ -1609,7 +1609,7 @@ mindmap
 
 ### 5.2 Intent redirection — the primitive, in full
 
-> **📖 Definition**
+> **Definition**
 > **Intent redirection** (also "Intent forwarding", and in Google's Play Console warnings "Intent
 > Redirection vulnerability") occurs when a component obtains an `Intent` — or the data to build one
 > — **from an untrusted source**, and then sends it with `startActivity`, `startService`,
@@ -1795,7 +1795,7 @@ public class RedirectorActivityFixed extends Activity {
 | Checking, then forwarding **the original object** | If you validated `next` but forward `getIntent().getParcelableExtra("next")` a second time, you re-read attacker data. Read once, validate that object, forward that object. |
 | `startActivity(next)` after `next.setPackage(getPackageName())` alone | Better than nothing — it does confine the target to your app — but it still permits *any* component of your app, including every non-exported one. That is the bug in a smaller box. |
 
-> **⚠️ Warning — the honest-severity rule**
+> **Warning — the honest-severity rule**
 > **An exported activity that accepts an implicit Intent is not automatically a finding.** Two
 > questions decide it, and a report that does not answer both is a scanner's output with your name
 > on it:
@@ -1827,7 +1827,7 @@ you would then have to verify.
 | **WebView bridge redirection** | A JavaScript interface hands a URL to `Intent.parseUri` and starts it, converting a web-page-controlled string into an app-privileged Intent | Chapter 43 — WebView; the `intent:` scheme is the vector |
 | **Browser `intent:` handling** | The browser itself is the deputy: a page navigates to `intent:#Intent;component=...;end` | Mitigated by browsers stripping component and grant flags, but non-default browsers get this wrong regularly |
 
-> **🔍 Pentester's Note — bug bounty patterns**
+> **Pentester's Note — bug bounty patterns**
 > Redirection is one of the highest-yield classes on mobile bounty programmes precisely because it is
 > mechanical to find and hard to auto-triage. The reliable workflow: pull every APK on the device,
 > grep the decompiled sources for `getParcelableExtra` within a few lines of `startActivity`, filter
@@ -1928,7 +1928,7 @@ The mirror image of everything above: not what you receive, but what you send.
 | An implicit Intent whose **extras** carry PII, used only for a UI hand-off | PII to a chooser candidate | `setPackage` |
 | An `ACTION_VIEW` on a `content://` URI with `FLAG_GRANT_READ_URI_PERMISSION` and no target | A grant on your data to an app the user picks | Use `Intent.createChooser` deliberately, or set the component |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The detection is a Frida hook on `ContextImpl.sendBroadcast` and `Activity.startActivity` that
 > prints every Intent whose component **and** package are both null, together with its extra keys.
 > `scripts/intent-monitor.js` in this chapter does exactly that, and additionally flags any extra
@@ -2035,7 +2035,7 @@ is **not** in it. Keep this conversion table to hand, because you will do it con
 | `1073741824` | `0x40000000` | `Intent.FLAG_ACTIVITY_NO_HISTORY` (and `PendingIntent.FLAG_ONE_SHOT`) |
 | `-2147483648` | `0x80000000` | `FLAG_ACTIVITY_BROUGHT_TO_FRONT` |
 
-> **⚠️ Warning**
+> **Warning**
 > `Intent` flags and `PendingIntent` flags share numeric values and are **different namespaces**.
 > `67108864` in a `PendingIntent.getActivity` call is `FLAG_IMMUTABLE`; the same number in
 > `intent.addFlags(...)` is `FLAG_ACTIVITY_CLEAR_TOP`. Decide which namespace you are in *before*
@@ -2145,7 +2145,7 @@ strong positive signal: an Intent built that way is explicit from birth.
 | Your own router class's name | No | Renamed to `a.b.c` |
 | The control flow around the redirect | Partially | Commercial obfuscators flatten it; the `check-cast` pair survives flattening because it is a type operation |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Intent code is close to the most obfuscation-resistant code in an Android app, because both ends of
 > it are pinned: the framework API cannot be renamed, and the manifest must name real classes. This
 > is why manifest-plus-`check-cast` grepping works on heavily obfuscated apps where nothing else
@@ -2239,7 +2239,7 @@ adb shell "am startservice -n com.example.target/.SyncService --es cmd wipe"
 adb shell "am start-foreground-service -n com.example.target/.SyncService"
 ```
 
-> **⚠️ Warning — three `am` traps, all measured**
+> **Warning — three `am` traps, all measured**
 > 1. **Quote for two shells.** `adb shell` hands your string to the device's `sh`. `*`, `;`, `&`,
 >    `|`, `$` and `?` are all metacharacters *there*. Wrap the entire command in one set of quotes on
 >    the host and use a second set inside for arguments. §3.4 and §3.10 show both failures.
@@ -2302,7 +2302,7 @@ function dumpExtras(intent, depth) {
 }
 ```
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > `b.get(k)` forces the `Bundle` to unparcel. If the sender embedded a `Parcelable` whose class does
 > not exist in the target, this throws `BadParcelableException` — inside your hook, in the app's
 > process. The shipped script wraps each `get` in a `try`/`catch` and reports the key that failed,
@@ -2352,7 +2352,7 @@ The procedure that survives a developer's push-back:
 
 `labs/lab-01-intent-redirection.md` ships exactly this harness, including the negative control.
 
-> **⚠️ Warning — measured environment limitation**
+> **Warning — measured environment limitation**
 > The device used for this chapter (Redmi, MIUI 12.5, Android 11) **refuses `adb install`**:
 >
 > ```text
@@ -3113,7 +3113,7 @@ standalone markdown file under [`labs/`](labs/).
 | 03 | [App Links verification state on a real device](labs/lab-03-applink-verification.md) | Intermediate | That you can determine, on any Android version, whether a declared App Link is actually exclusive — and produce the evidence a developer will accept |
 | 04 | [CTF — The Courier](labs/lab-04-ctf-the-courier.md) | Advanced | Four flags across resolution, redirection, `PendingIntent` mutability and a deep-link cross product |
 
-> **⚠️ Warning — read this before starting**
+> **Warning — read this before starting**
 > The labs ship **source only**. There is no APK in this repository and there never will be. Each lab
 > that needs an app includes a `build.sh` that produces it from `aapt2`, `javac`, `d8`, `zipalign`
 > and `apksigner` — no Gradle, no network access, no wrapper download. Run these only against

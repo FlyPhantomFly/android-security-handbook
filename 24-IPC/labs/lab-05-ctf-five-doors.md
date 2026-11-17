@@ -53,7 +53,7 @@ finding out which two is more educational than the flag.
    also an ordinary app.
 3. **No decompiling your way to the literal.** The fragments are assembled at runtime and are not
    contiguous string constants. If you find one whole in `strings`, you have found a decoy.
-4. **No patching the target.** No repackaging, no Frida hooks that simply read the fields. You may
+4. **No patching the target.** No repackaging, no Frida hooks that read the fields. You may
    use Frida to *observe* (that is legitimate reconnaissance) but not to short-circuit a door.
 5. For each door you must be able to state: the mechanism, what protects it (or what does not), the
    identity you used, and the one-line fix.
@@ -820,7 +820,7 @@ The pedagogical goal is **not** the flag. It is the constraint in rule 2.
 
 Participants reliably solve doors 1 and 5 from `adb shell` first, then discover that doors 2, 3 and 4
 force them into an APK — and door 2 forces it absolutely, because no shell command performs a
-`bindService` to an app service. That moment, where the shell simply cannot do the thing, is worth
+`bindService` to an app service. That moment, where the shell cannot do the thing, is worth
 more than the other five hours combined.
 
 If you are running this as a group exercise:

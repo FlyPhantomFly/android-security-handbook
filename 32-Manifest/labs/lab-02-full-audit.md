@@ -29,7 +29,7 @@ There is a second, less obvious reason. A findings table is not a list of attrib
 **claims about a system**, each with evidence and a severity you can defend. This lab is the first
 time you write one.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Think of the manifest as an **inventory of doors**, not an inventory of defects. Each entry tells
 > you whether a door exists and whether it is locked. It tells you nothing about what is behind the
 > door. The audit produces leads; the labs that follow turn leads into findings.

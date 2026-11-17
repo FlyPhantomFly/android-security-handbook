@@ -88,7 +88,7 @@ saves you from a browser.
 | [POM reference](https://maven.apache.org/pom.html) | A dependency's own POM lists *its* dependencies. When you cannot run Gradle, the POM chain is how you walk the tree by hand |
 | [Gradle Module Metadata](https://docs.gradle.org/current/userguide/publishing_gradle_module_metadata.html) | Why the `.module` file sometimes disagrees with the POM, and which one Gradle used |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The class-name search on Maven Central is underused. Paste an unusual class name from an obfuscated
 > APK and you often get the artifact back immediately — no fingerprinting required. It fails on
 > renamed and shaded code, which is precisely when you fall back to the class-set comparison in
@@ -190,7 +190,7 @@ paraphrase.
 | Academic work on third-party library detection in Android (search for "third-party library detection Android" in any academic index) | The literature has repeatedly measured what package-prefix detection misses. Useful when a client asks why you did the work by hand |
 | Vendor transparency and security pages for the SDKs you actually find | Boring and high-yield. Many SDK vendors publish a data-collection page that answers half of lab 03 before you start |
 
-> **⚠️ Warning**
+> **Warning**
 > When citing research in a report, cite what you can verify. Describe the *class* of issue rather
 > than inventing an identifier, and never assert that a named vendor was compromised unless you can
 > cite the vendor's own advisory. [Chapter §3.6](../README.md#3-deep-internal-working) makes the same

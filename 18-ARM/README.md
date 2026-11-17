@@ -37,7 +37,7 @@ APKs. API levels are called out where behaviour differs.
 
 ---
 
-> **📖 Every listing in this chapter is real output.**
+> **Every listing in this chapter is real output.**
 > Nothing below was written from memory. Each disassembly block was produced by compiling
 > [`examples/patterns.c`](examples/patterns.c) or [`examples/licence-check.c`](examples/licence-check.c)
 > with the **Android NDK 25.2.9519653** (clang 14.0.7, LLVM 14.0.7git), targeting API 21, and
@@ -62,7 +62,7 @@ whoever called me". Somebody had to *decide* that it does, write the decision do
 that honours it. That written-down decision is an **instruction set architecture**, and the one in
 every Android phone is Arm's.
 
-> **📖 Definition — instruction set architecture (ISA)**
+> **Definition — instruction set architecture (ISA)**
 > The contract between software and silicon. It defines what registers exist, what each instruction
 > word means, how memory is addressed, and what the processor does when something goes wrong. It is
 > a *specification*, not a chip: Qualcomm, Samsung, MediaTek and Google all build different chips
@@ -109,7 +109,7 @@ instructions; **fixed-width instructions**, so the decoder does not have to work
 instruction is before it can find the next one; a **large register file**, so the common case does
 not touch memory at all — all reduce the work the chip does per useful operation.
 
-> **📖 Definition — load/store architecture**
+> **Definition — load/store architecture**
 > An ISA where no arithmetic instruction may name a memory location. To add a number in memory to a
 > number in a register you must first `ldr` (load register) the memory value into a register, then
 > `add`, then `str` (store register) the result back. The x86 family lets you write
@@ -132,7 +132,7 @@ habits do not transfer will save you from several confident mistakes.
 | Thread-local storage base | `%fs` segment register | **`TPIDR_EL0` system register** | This is where the stack canary lives. §3.11 |
 | Stack alignment | 16 bytes at a `call` | **16 bytes always**, and `sp` must be 16-byte aligned whenever it is used as a base address | Frame sizes are always multiples of 16, which is a useful sanity check when you are reading a prologue |
 
-> **🧠 Mental Model**
+> **Mental Model**
 > AArch64 is *boring*, and boring is exactly what you want when you are reading it. Fixed-width
 > instructions, a regular encoding, a huge register file and a strict load/store discipline mean that
 > almost every listing you will ever meet is assembled from a small vocabulary of recognisable
@@ -357,7 +357,7 @@ walking `PT_LOAD` segments and finding the one that contains the address; that i
 `vaddr_to_offset` method does, and it exists because doing this arithmetic by hand is where patches
 go wrong. §6.6 covers the failure modes in detail.
 
-> **⚠️ Warning**
+> **Warning**
 > The delta is **not constant across a file**. A library has several `PT_LOAD` segments with
 > different `p_vaddr - p_offset` deltas — in `liblicence.so`, `.rodata` at virtual address `0x660`
 > sits at file offset `0x660` (delta 0), while `.text` at `0x4874` sits at `0x874` (delta `0x4000`).
@@ -396,7 +396,7 @@ the thirty-second slot was worth more as a special case than as another register
 | `pc` | — | Program counter. Not a general register on AArch64 | You cannot `mov pc, x0`. On ARM32 you can, and that difference matters — §3.13 |
 | `v0`–`v31` | `q`/`d`/`s`/`h`/`b` views | FP and SIMD; `v0`–`v7` pass FP arguments | `ldp q1, q0, [x1]` in the middle of integer code is an inlined bulk copy, not floating-point maths |
 
-> **⚠️ Warning — the `w`-register zero-extension rule**
+> **Warning — the `w`-register zero-extension rule**
 > Writing to a `w` register **zeroes the upper 32 bits of the `x` register**. It does not leave them
 > alone. `mov w0, #1` sets `x0` to exactly `0x0000000000000001`. This is why `mov w0, wzr` is a
 > perfectly good way to zero the whole 64-bit register, and it is why you cannot use a `w` write to
@@ -405,7 +405,7 @@ the thirty-second slot was worth more as a special case than as another register
 There is one more register-shaped thing worth naming now, because it appears in every listing in this
 chapter and is not in the numbered file:
 
-> **📖 Definition — `xzr` / `wzr`, the zero register**
+> **Definition — `xzr` / `wzr`, the zero register**
 > Register number 31 read as a *value* is hard-wired to zero, and written as a destination discards
 > the write. This is not a trick; it removes the need for a separate "clear register" instruction, a
 > separate "compare" instruction (`cmp x0, #1` is really `subs xzr, x0, #1`), and a separate "discard"
@@ -447,7 +447,7 @@ schedule other work between a `cmp` and its `b.cond` without breaking it.
 | `gt` / `le` | signed > / signed ≤ | `Z==0 && N==V` / else | `int` comparisons |
 | `al` / `nv` | always / (also always) | — | `al` is the default and is not printed |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > **The signed/unsigned pair is where misreadings happen.** `b.lt` is signed; `b.lo` is unsigned. If
 > a length check compiles to `cmp x0, #17` followed by `b.lo`, then a length that appears negative as
 > a signed value is a *huge* unsigned value and passes. That is an entire class of bug. When you see
@@ -535,7 +535,7 @@ Verified AArch64 encodings
   bti c  (= hint #34)        0xd503245f   5f 24 03 d5
 ```
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > Notice that the byte order in a hex editor is **reversed** relative to how the word is written.
 > `ret` is the word `0xD65F03C0` and the bytes `c0 03 5f d6`. AArch64 on Android is always
 > little-endian (Arm supports big-endian; no Android ABI uses it, and `arm64-patch.py` refuses to
@@ -548,7 +548,7 @@ This is the part [15-Native-Code](../15-Native-Code/README.md) explicitly hands 
 it is the single most valuable thing here. Everything you do with a native function — hooking it,
 tracing it, patching it, calling it from Frida — depends on knowing where its arguments are.
 
-> **📖 Definition — AAPCS64**
+> **Definition — AAPCS64**
 > The *Procedure Call Standard for the Arm 64-bit Architecture*. A document published by Arm that
 > specifies which registers hold arguments, which hold results, which a function must preserve, and
 > how the stack is arranged at a call boundary. It is the treaty that lets code compiled by different
@@ -599,7 +599,7 @@ call. Here is that fact, compiled:
 ```
 
 That is the whole rule, visible in ten lines: eight arguments arrive in `w0`–`w7`, the caller writes
-the ninth to `[sp]` before the `bl`, and the callee reads it from `[sp]` after. Note that the caller
+the ninth to `[sp]` before the `bl`, and the callee reads it from `[sp]` after.the caller
 reserved 32 bytes of stack (`sub sp, sp, #32`) even though it only needed 4 for the argument — because
 `sp` must stay 16-byte aligned, and 16 of those bytes hold the saved `x29`/`x30`.
 
@@ -646,7 +646,7 @@ callee writes through it. Both halves of that rule, compiled:
 `pat_big_return` never touches `x0` as a result: `x0` is still the `seed` argument, and the answer
 goes to `[x8]`. `pat_small_return` returns both fields in registers and never touches memory at all.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > **`x8` on entry is the tell for a large struct return.** If you hook a function and `x0` looks like
 > a plausible first argument but the return value seems to be nowhere, check whether `x8` held a
 > writable pointer on entry — the result was written there. Frida's `Interceptor` gives you
@@ -707,7 +707,7 @@ saved and restored those three. Every part of that prologue is the calling conve
 | Destroyed by a call | `x0`–`x18`, `v0`–`v7`, `v16`–`v31`, condition flags |
 | Stack alignment | `sp` is 16-byte aligned whenever used as a base address |
 
-> **⚠️ Warning — variadic functions are different**
+> **Warning — variadic functions are different**
 > AAPCS64 has a separate rule for arguments in the variadic part of a `printf`-style call, and it
 > differs between platforms. Apple's ARM64 ABI puts *all* variadic arguments on the stack; the
 > standard AAPCS64 that Android follows continues to use registers. This is why hooking `__android_log_print`
@@ -741,7 +741,7 @@ Same three instructions, one register different, and that one register is the en
 Note also that the compiler **inlined** `lc_is_licensed` into the JNI wrapper rather than calling it —
 a fact that will matter enormously in §5.4.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > When you land on a `Java_*` function in a disassembler, mentally cross out `x0` and `x1` before you
 > read anything. The Java-visible arguments start at `x2`. For a `static` native method the second
 > slot is a `jclass` rather than a `jobject`, but the shift is identical.
@@ -793,7 +793,7 @@ so it never needs saving, and if it needs no stack space it never touches `sp`:
 
 Two instructions. `int pat_leaf_add(int a, int b) { return a + b; }` compiled at `-O2`.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > **A leaf function's return address is not on the stack.** On x86, `call` pushes it and a linear
 > stack overflow will reach it. On AArch64 a leaf function keeps it in `x30` for the whole of its
 > life, so overflowing a buffer in a leaf function corrupts locals and whatever is above the frame,
@@ -862,7 +862,7 @@ multiplies it by 4096, adds it to the current PC with the low 12 bits cleared, a
 a register. That gives a ±4 GiB range in one instruction, at 4 KiB granularity. A second instruction
 then supplies the low 12 bits.
 
-> **📖 Definition — `adrp Xd, label`**
+> **Definition — `adrp Xd, label`**
 > Sets `Xd` to `(PC & ~0xFFF) + (imm21 << 12)`. It computes the base of the 4 KiB **page** containing
 > the target, never the target itself. The low 12 bits are always zero. This is why `adrp` never
 > appears alone.
@@ -901,7 +901,7 @@ Contents of section .rodata:
 | `adrp Xd, page` + `ldr Xd, [Xd, #off]` | Load a pointer **from the GOT** | The result is whatever the linker resolved. Common for globals and for imported data |
 | `adrp Xd, page` + `ldr Wd, [Xd, #off]` | Load a 32-bit **value** directly | Reading a constant or a non-exported global |
 
-> **⚠️ Warning — `llvm-objdump` prints a misleading symbol next to `adrp`**
+> **Warning — `llvm-objdump` prints a misleading symbol next to `adrp`**
 > Look at the raw output above: `adrp x0, 0x0 <pat_tbz>` in the full listing. The `<pat_tbz>`
 > annotation is objdump naming the nearest preceding symbol to the *page base*, which is meaningless.
 > The page base of a `.rodata` string is not a function. **Ignore the `< >` annotation on an `adrp`
@@ -944,7 +944,7 @@ All four common widths, in one function:
     5304:       ret
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > **`ldrb` versus `ldrsb` decides whether `0xFF` is 255 or −1.** If a length or index is loaded with
 > `ldrsb` and then compared with `b.lt`, a byte of `0xFF` becomes −1 and passes a "less than the
 > maximum" test — and then gets used as an unsigned index. This is a real and recurring bug class in
@@ -1002,7 +1002,7 @@ caller:
     5298:       b       0x5540 <puts@plt>
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > **A tail-called function has no return of its own, and hooking it with `Interceptor.attach` will
 > not fire `onLeave` where you expect.** More practically for reading: a "function" that is a single
 > `b` is not a stub or a bug. It is a complete, correct, optimised function.
@@ -1096,7 +1096,7 @@ Note `pat_tbz`: the source has an `if` with two returns, and the compiler produc
 all**. Both constants are materialised and one is selected. If you are looking for "the branch that
 decides whether this is licensed", and there is no branch, this is why.
 
-> **🧠 Mental Model — the three-instruction check**
+> **Mental Model — the three-instruction check**
 > ```
 > cmp   w0, #<something>
 > cset  w0, <cond>
@@ -1143,7 +1143,7 @@ llvm-objdump -d --no-show-raw-insn /tmp/ch18/libpatterns64.so | less
 Everything below is from `libpatterns64.so`, built `-O2 -fPIC -fstack-protector-strong` with NDK
 25.2.9519653 targeting API 21, unless a listing says otherwise.
 
-> **⚠️ Addresses will differ on your build.** The *shapes* are stable across clang versions; the
+> **Addresses will differ on your build.** The *shapes* are stable across clang versions; the
 > exact addresses, register allocation and instruction scheduling are not. Compare shapes, not
 > numbers.
 
@@ -1234,7 +1234,7 @@ int pat_tbz(uint32_t flags) { if (flags & 0x40u) return 100; return 200; }
 bits but cannot express `0x41`. That is why some constants appear as `tst w0, #0x40` and others force
 a `mov` plus an `ands`.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > The logical-immediate encoding is genuinely strange and worth knowing about, because it explains
 > otherwise baffling instruction choices. Thirteen bits (`N:immr:imms`) encode a bit pattern that
 > repeats at a power-of-two period. Every constant of the form "a run of *k* set bits, rotated" is
@@ -1303,7 +1303,7 @@ uint32_t pat_medium_constant(void) { return 0xDEADBEEFu; }
 Sixteen bits at a time, because that is all a 32-bit instruction has room for. `movz` zeroes the rest
 of the register and writes one 16-bit field; each `movk` *keeps* the rest and overwrites one field.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > **A `movz`/`movk` chain is how a hard-coded key, magic number or hash constant appears in a
 > binary.** It will not show up in `strings`, and it will not appear as a contiguous byte sequence in
 > `.rodata` either — the constant is scattered across four instructions in `.text`. Searching for the
@@ -1390,7 +1390,7 @@ __asm__ volatile("svc #0" : "=r"(x0) : "r"(x8) : "memory");
 ```
 Three instructions and the kernel has been called, with no libc involvement whatsoever.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > **This is why hooking libc is not the same as blocking a behaviour.** An app that wants to check
 > for root without your `access()` hook noticing can issue the syscall directly. The recognition rule
 > is trivial and worth grepping for: **`svc #0` is the bytes `01 00 00 d4`, and the immediately
@@ -1538,7 +1538,7 @@ Concatenated: **`ARM64-IS-NOT-HARD`**. That is the licence token, extracted from
 instructions and one `mov`, in a binary where `strings` shows the constant only because the source
 also stored it in `.rodata` for the `strcmp` call the compiler then optimised away.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > A comparison against a constant does not have to look like a comparison. `eor` followed by `orr`
 > followed by `cmp #0` is "are these equal", spelled so that it runs in constant time and without a
 > branch. Whenever you see a chain of `eor`s ORed together and compared against zero, you are looking
@@ -1586,7 +1586,7 @@ the saved registers. Before returning, it re-reads the value and compares. A lin
 reached the return address must have crossed the canary, so a mismatch means an overflow happened,
 and the program aborts.
 
-> **📖 Definition — stack canary (stack protector, `__stack_chk_guard`)**
+> **Definition — stack canary (stack protector, `__stack_chk_guard`)**
 > A per-process random 8-byte value stored in thread-local storage, copied onto the stack in the
 > prologue of a protected function and verified in its epilogue. On mismatch, Bionic calls
 > `__stack_chk_fail`, which raises `SIGABRT`. The canary detects *linear* stack overflows only.
@@ -1622,7 +1622,7 @@ Here is the whole mechanism, real:
     49ac: 8d 00 00 94   bl      0x4be0 <__stack_chk_fail@plt>
 ```
 
-Seven steps, and every one is visible. Note that `x20` — a callee-saved register — is dedicated to
+Seven steps, and every one is visible.`x20` — a callee-saved register — is dedicated to
 holding the thread pointer for the whole function, so the guard can be re-read at the end without a
 second `mrs`.
 
@@ -1696,7 +1696,7 @@ easy to miss.
 | Epilogue check | `sub rax, fs:0x28` / `jne __stack_chk_fail` | `ldr`/`ldur`/`cmp`/`b.ne` |
 | Visible in a listing? | Yes, but easy to skim past | **Very** — `mrs` is otherwise rare |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > **`mrs Xn, TPIDR_EL0` is the fastest way to find every canary-protected function in a library**, and
 > it is a fixed 4-byte pattern per destination register. `mrs x8, TPIDR_EL0` is `48 d0 3b d5`; the
 > low five bits change with the destination register, so `mrs x19, TPIDR_EL0` is `53 d0 3b d5` and
@@ -1704,7 +1704,7 @@ easy to miss.
 > them all. The complementary check — is `__stack_chk_fail` in `.dynsym` at all — is
 > [15-Native-Code's](../15-Native-Code/README.md) `elf-harden-check.py`.
 
-> **⚠️ Warning — a canary is not a finding**
+> **Warning — a canary is not a finding**
 > [15-Native-Code §5.7](../15-Native-Code/README.md) makes this argument in full and it is worth
 > repeating here: the *absence* of a canary is a missing mitigation, not a vulnerability. A canary
 > only ever matters when a linear stack overflow already exists and reaches the saved return address.
@@ -1746,14 +1746,14 @@ Two of those hints are all over modern Android binaries, and you have already se
 
 `hint #34` **is `bti c`** — a Branch Target Identification landing pad.
 
-> **📖 Definition — BTI (Branch Target Identification, Armv8.5-A)**
+> **Definition — BTI (Branch Target Identification, Armv8.5-A)**
 > A `bti` instruction marks an address as a legal target for an indirect branch. On a CPU with BTI
 > enabled, a `br` or `blr` that lands on anything *other* than a `bti` raises an exception. The
 > purpose is to shrink the gadget space available to jump-oriented programming: a gadget in the
 > middle of a function is no longer reachable indirectly. On a CPU without BTI, `hint #34` is a
 > 4-byte no-op, which is why the NDK can emit it unconditionally.
 
-> **📖 Definition — PAC (Pointer Authentication, Armv8.3-A)**
+> **Definition — PAC (Pointer Authentication, Armv8.3-A)**
 > The processor signs a pointer with a secret key, storing the signature in the unused high bits of
 > the 64-bit address, and verifies the signature before using it. `paciasp` signs `x30` against `sp`
 > at function entry; `autiasp` authenticates it before `ret`. A corrupted return address fails
@@ -1773,7 +1773,7 @@ Two of those hints are all over modern Android binaries, and you have already se
 | `paciasp` | `0xD503233F` | Sign `x30` using key A and `sp` | 8.3 (PAC) |
 | `autiasp` | `0xD50323BF` | Authenticate `x30` | 8.3 |
 
-> **⚠️ Warning**
+> **Warning**
 > **Do not patch over a `bti` or a `paciasp`.** Replacing the first instruction of a function with
 > `mov w0, #1` on a BTI-enforcing configuration removes the landing pad, and any indirect call to
 > that function now faults. If the first instruction is `hint #34`, patch at `+4` instead — which is
@@ -1907,7 +1907,7 @@ if self.arch == "arm" and (st_info & 0xF) == 2 and (st_value & 1):
     thumb = True
 ```
 
-> **⚠️ Warning — do not patch Thumb with a fixed-width tool**
+> **Warning — do not patch Thumb with a fixed-width tool**
 > `arm64-patch.py` deliberately **refuses** to assemble patches for 32-bit ELF files. Thumb is a
 > variable-length encoding, so writing a 4-byte instruction over what you assumed was one 4-byte
 > instruction may actually clobber two 2-byte instructions plus half of a third, producing code that
@@ -1974,7 +1974,7 @@ and the round keys are in the registers those instructions read.
 | 16 KiB page size support | — | 15+ (API 35) | `-Wl,-z,max-page-size=16384` at link time. [15-Native-Code](../15-Native-Code/README.md) §3.11 owns this |
 | Shadow call stack (`x18`) | 8.0 (software) | 29+ for platform code | `x18` is reserved; a separate stack holds return addresses |
 
-> **⚠️ Warning**
+> **Warning**
 > **Play Store has required a 64-bit version of every app since 1 August 2019.** An APK today
 > normally carries `arm64-v8a`, and may or may not also carry `armeabi-v7a`. Which one *runs* depends
 > on the device and on whether the app process was started 32- or 64-bit. Do not assume you have the
@@ -2019,7 +2019,7 @@ defeats it in all of them. The compiler's prologue reads slot 5 through `TPIDR_E
 re-reads it and compares; on mismatch, `__stack_chk_fail()` calls `async_safe_fatal()` and the process
 dies with `SIGABRT` and a tombstone that names the function.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > The guard's low byte is deliberately zero on many platforms so that a string-copy overflow which
 > stops at a NUL cannot leak the whole value byte by byte. Whether Bionic does this on any given
 > release is worth checking in the source rather than assuming; the mechanism is what matters here,
@@ -2392,7 +2392,7 @@ nothing calls:
 
 There is no `bl lc_verify_signature` anywhere in `lc_decrypt_flag`. The check was copied, not called.
 
-> **🧠 Mental Model — the inlining trap**
+> **Mental Model — the inlining trap**
 > **Patching an exported function only changes the behaviour of code that calls it.** At `-O2`,
 > small functions are routinely inlined into every caller, and the standalone copy survives only
 > because it is exported and the linker cannot prove nothing needs it. You can patch it, watch it
@@ -2440,7 +2440,7 @@ garbage**, because the flag is derived from the token:
 out[i] = (char)(ct[i] ^ (unsigned char)token[i % 17]);
 ```
 
-> **⚠️ Warning — bypassing an authorisation decision is not the same as obtaining the protected
+> **Warning — bypassing an authorisation decision is not the same as obtaining the protected
 > value.**
 > Three patches, all successful, all verified at runtime:
 > 1. `lc_is_licensed` — **complete win.** The check was the whole protection.
@@ -2697,7 +2697,7 @@ survives and what does not.
 | Native packing | Nothing on disk is real | **No, statically.** Dump from memory (§7) |
 | VM obfuscation | The logic is bytecode for a custom interpreter | The hardest case. Reverse the VM first |
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Obfuscation attacks *names, strings and structure*. It rarely attacks *data flow*, because the code
 > still has to compute the right answer. The `cset` that produces a boolean has to exist somewhere,
 > the constant it compares against has to reach a register somehow, and the caller has to receive the
@@ -2827,7 +2827,7 @@ Interceptor.attach(Module.findExportByName('liblicence.so', 'lc_verify_signature
 });
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > **The in-memory patch is often better than the on-disk patch**, and it is entirely this chapter's
 > material — the encodings are the same, the address arithmetic is simpler (no file offset), and the
 > `.so` on disk is untouched so any integrity check over the file still passes. What it does not
@@ -2909,7 +2909,7 @@ adb shell /data/local/tmp/licence-runner /data/local/tmp/liblicence.so
 adb shell /data/local/tmp/licence-runner /data/local/tmp/liblicence.so ARM64-IS-NOT-HARD
 ```
 
-> **⚠️ Warning — some devices refuse to execute from `/data/local/tmp`**
+> **Warning — some devices refuse to execute from `/data/local/tmp`**
 > On the device used to verify this chapter (a vendor Android 13 build), a correctly built,
 > `chmod 755`, correctly labelled `arm64-v8a` PIE executable failed with:
 > ```text
@@ -3043,7 +3043,7 @@ The scoring rules, and what each one is really detecting:
 | Three or more conditional branches | +1 | Several checks feeding one answer |
 | Name contains `check`, `verify`, `licen`, `root`, `auth`, `tamper`… | +2 | Weakest signal, and absent entirely on a stripped library |
 
-> **⚠️ Warning — a score is not a finding**
+> **Warning — a score is not a finding**
 > The script says so itself, in its own output. A high score on `isEmpty()` is not a bug in the
 > script; a boolean-returning function *is* the shape it looks for. And the biggest blind spot is the
 > one §5.4 is about: **an inlined check has no function to find.** If the sweep comes back empty on a
@@ -3123,7 +3123,7 @@ and the instruction that reaches it:
     4b3c: 4a 4d 1b 91   add     x10, x10, #1747      ; 1747 == 0x6d3
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > **The ciphertext is in the file.** That is the lesson of `lc_decrypt_flag`, and it generalises: an
 > app that decrypts something at runtime must carry both the ciphertext and the means to decrypt it.
 > Finding the ciphertext is easy; the work is finding the key, and §5.4 shows the case where the key
@@ -3288,7 +3288,7 @@ ways. Here is how to work through one, and what each observation is worth.
 | A loop reading the library's own `.text` and hashing it | Self-integrity check | Your `.text` patch will be detected. Patch in memory after the check, or patch the check. 38-TamperDetection's subject |
 | The decision is sent to a server and the response gates the feature | The client-side check is decoration | **Say so.** Patching it proves nothing and fixes nothing |
 
-> **⚠️ Warning — the honest conclusion is sometimes "this cannot be usefully patched"**
+> **Warning — the honest conclusion is sometimes "this cannot be usefully patched"**
 > A senior report says which of the eight rows above applied, what was tried, and why the outcome is
 > what it is. "Bypassed the licence check" is a claim; "patched the client-side tier comparison at
 > `+0x48c8`, confirmed at runtime, but the entitlement is re-validated server-side at every launch,
@@ -3430,7 +3430,7 @@ somewhere the attacker does not control (server-side); derive real work from the
 gating it with a boolean; avoid a single decision point by making the check's result feed many
 computations; check integrity of the code region *and* of the checker; use `RegisterNatives` with
 non-exported implementations so there is no symbol to find; and build with optimisation on so checks
-inline into many callers. Note that the last item is a *side effect* of good practice, not a security
+inline into many callers.the last item is a *side effect* of good practice, not a security
 feature, and that all of it is defeated by an attacker with enough time.
 
 **Q. Two libraries in the same APK disagree about a value. How do you determine which one runs?**

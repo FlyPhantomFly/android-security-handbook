@@ -96,21 +96,21 @@ book at the page they need instead of carrying the whole thing to the table.
 That is the entire idea behind the Dalvik Executable format. Everything else in this chapter is
 detail.
 
-> **📖 Definition — DEX**
+> **Definition — DEX**
 > **DEX** stands for **Dalvik Executable**. A DEX file is a single binary file, conventionally named
 > `classes.dex`, that contains *all* the compiled code and *all* the constant data for many Java or
 > Kotlin classes at once. It is the format Android's runtime actually executes. It is not a ZIP, not
 > an archive, and not a container of other files — it is one flat, self-describing binary blob with
 > an index at the front.
 
-> **📖 Definition — bytecode**
+> **Definition — bytecode**
 > **Bytecode** is a compact, machine-like instruction set that is *not* the instruction set of any
 > real CPU. It is designed to be read and executed by a program called a virtual machine, or to be
 > translated ahead of time into real CPU instructions. When you write `int x = a + b;` in Java, the
 > compiler does not emit ARM instructions; it emits bytecode, and something on the device turns that
 > bytecode into ARM instructions later.
 
-> **📖 Definition — virtual machine (in this context)**
+> **Definition — virtual machine (in this context)**
 > A **virtual machine** here is not a whole simulated computer like VirtualBox. It is a program that
 > reads bytecode and performs the operations the bytecode describes, maintaining its own notion of
 > registers, a stack of method calls, and a heap of objects. On Android that program is ART, the
@@ -124,16 +124,16 @@ what the Java format looks like and what it costs.
 
 When `javac` compiles Java source code, it produces **one `.class` file per class**. A program with
 four thousand classes is four thousand files. Those files are then normally bundled into a **JAR**
-(Java Archive), which is simply a ZIP file containing all those `.class` files, each one individually
+(Java Archive), which is a ZIP file containing all those `.class` files, each one individually
 compressed with DEFLATE.
 
-> **📖 Definition — `.class` file**
+> **Definition — `.class` file**
 > A **`.class` file** is the Java Virtual Machine's compiled unit. It begins with the magic bytes
 > `CA FE BA BE`, contains a **constant pool** listing every string, class name, field name, method
 > name and type descriptor the class refers to, followed by field definitions, method definitions,
 > and the JVM bytecode for each method.
 
-> **📖 Definition — constant pool**
+> **Definition — constant pool**
 > A **constant pool** is a table of every literal and every symbolic name a compiled unit needs.
 > Instead of embedding the text `"java/lang/String"` at every place it is used, the compiled code
 > stores that text once in the pool and refers to it by an index number. Indexes are small; strings
@@ -162,15 +162,15 @@ handsets had — that is a bad trade, repeated thousands of times per launch.
 thousands of separate files in essentially random order. Every one of them is a separate seek, a
 separate inflate, a separate allocation.
 
-> **📖 Definition — mmap (memory mapping)**
+> **Definition — mmap (memory mapping)**
 > **`mmap`** is a Linux system call that tells the kernel: "make the contents of this file appear at
 > this range of addresses in my process's memory." No data is copied at the time of the call. The
-> kernel simply notes the mapping. When the program later touches an address in that range, the
+> kernel notes the mapping. When the program later touches an address in that range, the
 > kernel faults the corresponding 4 KB page in from storage on demand. If two processes map the same
 > file, they share the *same* physical memory pages. Reading a memory-mapped file therefore costs no
 > up-front RAM, no copy, and — crucially — is shared between every process that maps it.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > A JAR is a filing cabinet full of individually shrink-wrapped documents. To read one, you must
 > unwrap it onto your desk, and every reader needs their own copy on their own desk. A DEX file is a
 > single large printed reference book laid open on a shared table: everyone reads the same physical
@@ -187,7 +187,7 @@ framework's code and constants. With JARs, the framework classes would have to b
 process's private heap — fifty private copies of the same tens of megabytes. On a 2 GB device that
 alone would halve the number of apps you could keep alive.
 
-> **📖 Definition — Zygote**
+> **Definition — Zygote**
 > **Zygote** is a process started at boot that pre-loads the Android framework and then sits waiting.
 > Every app process is created by `fork()`-ing Zygote, so it inherits Zygote's already-loaded,
 > already-mapped framework for free. It is covered in
@@ -230,7 +230,7 @@ an impossible one if you do not.
 one of their tricks — bogus `header_size`, data outside the `map_list`, string pools that only one
 parser can read — is a statement about the format. Unpacking them is format work.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > On a real engagement, the single most common blocker is not a clever protection: it is that JADX
 > shows you an empty class body and you assume there is nothing there. Nine times out of ten the code
 > is present in the DEX and only the decompiler's control-flow reconstruction gave up. `baksmali`
@@ -382,7 +382,7 @@ the string table alone gets you most of the way there in milliseconds, before an
 That is why `strings`-style triage on a DEX is so effective, and it is the first thing you should do
 to an unknown sample.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > The string table is required by the specification to be **sorted by string content**, comparing by
 > UTF-16 code point value. `type_ids` must be sorted by `descriptor_idx`. `proto_ids` sort by return
 > type then parameters. `field_ids` sort by defining class, then name, then type. `method_ids` sort
@@ -414,7 +414,7 @@ desugars language features, and emits *stack-based* JVM bytecode into one `.clas
 pools into one deduplicated set of tables, and re-expresses each method's stack-based bytecode as
 *register-based* DEX bytecode.
 
-> **📖 Definition — `d8` and `dx`**
+> **Definition — `d8` and `dx`**
 > **`dx`** was the original Android tool that converted `.class` files to DEX. It was replaced by
 > **`d8`**, which is faster, produces smaller output, and performs *desugaring* (rewriting newer Java
 > language features such as lambdas and default interface methods into constructs older runtimes
@@ -464,7 +464,7 @@ uses more RAM. Second, the APK's signature covers the DEX bytes, so any byte you
 invalidates the APK signature and the APK must be re-signed. The signing schemes are covered in
 [Chapter 10 — APK Internals](../10-APK-Internals/README.md).
 
-> **⚠️ Warning**
+> **Warning**
 > Re-signing an APK with your own key changes its signing certificate, which changes the app's
 > identity as far as the platform is concerned. Any signature-check the app performs on itself will
 > notice, `signature`-protection-level permissions shared with other apps of the same developer will
@@ -497,24 +497,24 @@ from these, and you must know them cold before any table below makes sense.
 | `uleb128` | 1–5 bytes | unsigned | unsigned variable-length integer (see §3.5) |
 | `uleb128p1` | 1–5 bytes | signed | `uleb128` whose decoded value is interpreted as *value − 1*, so it can represent −1 (see §3.5) |
 
-> **📖 Definition — little-endian**
+> **Definition — little-endian**
 > **Endianness** is the order in which the bytes of a multi-byte number are stored. In
 > **little-endian** order, the *least* significant byte comes first. The 32-bit number `0x12345678`
 > is stored as the four bytes `78 56 34 12`. Android runs on ARM and x86, both of which are
 > little-endian in practice, and every DEX file you will ever encounter is little-endian.
 
-> **⚠️ Warning**
+> **Warning**
 > This trips up every beginner exactly once. When you read a hexdump and see `70 00 00 00`, the value
 > is `0x00000070` = 112, not `0x70000000`. Read multi-byte fields **right to left**.
 
-> **📖 Definition — offset**
+> **Definition — offset**
 > An **offset** in DEX is always a byte count from the **very beginning of the file**, offset zero,
 > unless the specification explicitly says otherwise. It is not relative to the containing structure
 > and not relative to the data section. The one important exception is inside a `code_item`, where
 > branch targets and `try` block addresses are counted in **16-bit code units from the start of that
 > method's `insns[]` array**, not in bytes from the start of the file.
 
-> **📖 Definition — index (`_idx`)**
+> **Definition — index (`_idx`)**
 > An **index** is a zero-based position into one of the fixed-stride tables. `name_idx` = 42 means
 > "entry 42 of `string_ids`", which you find at `string_ids_off + 42 * 4`. The reserved value
 > `NO_INDEX` = `0xFFFFFFFF` means "absent".
@@ -601,7 +601,7 @@ they are also the fields an attacker's tooling manipulates: a packer that stores
 elsewhere often leaves a deliberately wrong checksum in the decoy DEX, on the theory that the
 runtime path it uses does not check while your analysis tool does.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `dex\n` — with a real newline as the fourth byte — is your grep signature for finding embedded DEX
 > blobs. Packers routinely store an encrypted payload in `assets/` that decrypts to a DEX; if it is
 > only XOR-obfuscated you can often find the magic by searching for `dex` followed by any byte, or by
@@ -623,14 +623,14 @@ and each bump corresponds to real new structures in the file.
 | `039` | `64 65 78 0A 30 33 39 00` | Android 9.0 (API 28) | `const-method-handle` and `const-method-type` opcodes, and the `hiddenapi_class_data_item` used to mark restricted platform APIs. |
 | `040` | `64 65 78 0A 30 34 30 00` | Android 10 (API 29) | Relaxed the rules for `SimpleName`, permitting a much wider set of Unicode code points — including spaces and many symbols — in identifiers. |
 
-> **⚠️ Warning**
+> **Warning**
 > A DEX declaring a version newer than the device supports is rejected at load time — the app will
 > not install, or will fail on class loading with an error naming the bad version. If you hand-edit
 > the magic to a *lower* version while leaving `038`-only structures in place, you get a file that
 > some tools accept and the runtime rejects, which is precisely the kind of parser differential a
 > packer wants.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The version digits are a dating tool. A DEX in the wild declaring `035` was produced by, or
 > targeted at, older tooling; a `039` file cannot run below Android 9. When triaging malware, a
 > mismatch between the DEX version and the manifest's `minSdkVersion` is worth a note: a `035` DEX in
@@ -659,7 +659,7 @@ signature starts at offset 12 and the checksum's coverage begins at offset 12. T
 does not cover the checksum field**, because SHA-1's coverage begins at offset 32, after the
 signature itself ends.
 
-> **⚠️ Warning — the repair order**
+> **Warning — the repair order**
 > Because the checksum covers the signature but not the reverse, after patching any byte you must
 > repair in this order:
 >
@@ -669,7 +669,7 @@ signature itself ends.
 > Do it the other way round and your freshly written checksum immediately becomes stale, because
 > writing the signature afterwards changes bytes that the checksum covers. The file will be rejected.
 
-> **📖 Definition — Adler-32**
+> **Definition — Adler-32**
 > **Adler-32** is a checksum algorithm designed by Mark Adler for zlib. It maintains two running
 > 16-bit sums: `A`, the sum of all bytes plus one, and `B`, the running sum of all intermediate
 > values of `A`. Both are taken modulo 65521, the largest prime below 2^16. The result is
@@ -677,7 +677,7 @@ signature itself ends.
 > constructing a collision is trivial arithmetic. It exists to catch a bad flash write, not an
 > attacker.
 
-> **📖 Definition — SHA-1**
+> **Definition — SHA-1**
 > **SHA-1** is a cryptographic hash producing a 160-bit (20-byte) digest. It has been considered
 > broken for collision resistance since 2017, so its presence here should not be read as an
 > anti-tamper control. ART uses it primarily as a **stable identity** for the DEX file: the same 20
@@ -710,7 +710,7 @@ version regardless of whether `zlib.adler32` returns a signed value. Note also `
 `to_bytes` call — the checksum is a `uint` and therefore little-endian like everything else in the
 file.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > ART does verify these fields, but *when* it does so depends on the load path. `dex2oat` checks them
 > when it compiles the file at install time. The runtime's `DexFile` open path, in
 > `art/libdexfile/dex/dex_file_loader.cc` and `art/libdexfile/dex/dex_file_verifier.cc`, checks the
@@ -728,7 +728,7 @@ Fixed-width integers waste space when most values are small. The data section of
 small numbers: field counts, register counts, index deltas, string lengths. The format therefore
 encodes them variable-width.
 
-> **📖 Definition — LEB128**
+> **Definition — LEB128**
 > **LEB128** stands for **Little-Endian Base 128**. It encodes an integer as a sequence of bytes in
 > which the low 7 bits of each byte carry data and the high bit (`0x80`) is a **continuation flag**:
 > set means "another byte follows", clear means "this is the last byte". The 7-bit groups are
@@ -872,7 +872,7 @@ decoded value = -123,456
 
 #### ULEB128p1
 
-> **📖 Definition — ULEB128p1**
+> **Definition — ULEB128p1**
 > **`uleb128p1`** is not a different encoding — the bytes are decoded exactly as ULEB128 — but the
 > *interpretation* subtracts one: the represented value is `decoded_uleb128 − 1`. Its entire purpose
 > is to let a field express **−1** (meaning "none" or "absent") in a single byte, `0x00`, while still
@@ -909,7 +909,7 @@ therefore emit an extra byte, `C0 00`, to keep the sign bit clear. This asymmetr
 source of off-by-one bugs in hand-written parsers, and it is the reason a naive "just re-encode the
 number" patch can change a structure's length and shift everything after it.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > AOSP's implementation lives in `art/libdexfile/dex/leb128.h`. It provides
 > `DecodeUnsignedLeb128`, `DecodeSignedLeb128`, `DecodeUnsignedLeb128P1` and the corresponding
 > encoders, plus "checked" variants that take an end pointer and refuse to run past the end of the
@@ -917,7 +917,7 @@ number" patch can change a structure's length and shift everything after it.
 > is a classic out-of-bounds read: a run of bytes that all have the continuation bit set walks the
 > reader off the end of the mapping.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > A deliberately over-long LEB128 encoding — for example `80 80 80 80 80 00`, six bytes encoding
 > zero — is a well-known parser-differential trick. A strict parser rejects it because DEX caps the
 > encoding at five bytes; a permissive parser keeps reading and silently produces zero, having
@@ -931,24 +931,24 @@ Every string in a DEX file is stored in **MUTF-8**, which is *almost* UTF-8 but 
 specific, security-relevant ways. If you assume it is UTF-8 your parser will be subtly wrong, and
 "subtly wrong" is exactly the property an attacker needs.
 
-> **📖 Definition — code point**
+> **Definition — code point**
 > A **code point** is a single number assigned by the Unicode standard to a character. `A` is
 > U+0041. The euro sign is U+20AC. The grinning face emoji is U+1F600. Code points above U+FFFF are
 > called **supplementary** characters and live in the *astral planes*.
 
-> **📖 Definition — UTF-8**
+> **Definition — UTF-8**
 > **UTF-8** is a variable-length encoding of Unicode code points into bytes. Code points U+0000–
 > U+007F take one byte, U+0080–U+07FF take two, U+0800–U+FFFF take three, and U+10000–U+10FFFF take
 > **four**. The leading byte announces the length: `0xxxxxxx` for one byte, `110xxxxx` for two,
 > `1110xxxx` for three, `11110xxx` for four; continuation bytes are `10xxxxxx`.
 
-> **📖 Definition — UTF-16 and surrogate pairs**
+> **Definition — UTF-16 and surrogate pairs**
 > **UTF-16** encodes each code point into one or two 16-bit units. Code points up to U+FFFF are one
 > unit. Supplementary code points are encoded as a **surrogate pair**: a *high surrogate* in the
 > range U+D800–U+DBFF followed by a *low surrogate* in U+DC00–U+DFFF. Java's `String` and `char` are
-> UTF-16, which is why `"😀".length()` returns 2 in Java.
+> UTF-16, which is why `"𝐀".length()` returns 2 in Java.
 
-> **📖 Definition — MUTF-8**
+> **Definition — MUTF-8**
 > **MUTF-8 (Modified UTF-8)** is the encoding used by the JVM class file format, by Java's
 > `DataInput.readUTF`, by JNI's `NewStringUTF`, and by DEX. It differs from standard UTF-8 in exactly
 > two respects, described below.
@@ -973,7 +973,7 @@ MUTF-8         :  C0 80
   combined payload = 00000_000000 = 0  ->  U+0000
 ```
 
-Note that `C0 80` is an **over-long encoding** — standard UTF-8 forbids it precisely because
+`C0 80` is an **over-long encoding** — standard UTF-8 forbids it precisely because
 over-long forms create multiple byte sequences for the same character, which historically broke
 security filters that scanned for `/` or `..` before decoding. MUTF-8 deliberately uses the form that
 UTF-8 outlaws.
@@ -1026,14 +1026,14 @@ correct for a different question, and confusing them is a rich source of bugs.
 
 #### Why this matters for security
 
-> **⚠️ Warning**
+> **Warning**
 > Python's `bytes.decode('utf-8')` will **raise** on `C0 80` and will **mis-handle** surrogate pairs.
 > If you write a DEX parser in Python and call `.decode('utf-8')` on string data, it will crash on
 > perfectly legal DEX files. Use `.decode('utf-8', errors='replace')` for display only, or implement
 > a real MUTF-8 decoder if you need fidelity. The parser script shipped with this chapter
 > ([`examples/dex_parser.py`](examples/dex_parser.py)) implements MUTF-8 properly.
 
-> **🔍 Pentester's Note — parser differentials**
+> **Pentester's Note — parser differentials**
 > This is a genuine, exploited technique, not a curiosity. Consider a class name that a packer writes
 > using an over-long MUTF-8 form. Tool A decodes strictly and rejects or replaces the character; tool
 > B decodes leniently and produces the "real" name; ART decodes with its own rules and produces a
@@ -1047,7 +1047,7 @@ correct for a different question, and confusing them is a rich source of bugs.
 > decoded form and diff them. Anything where the byte length is inconsistent with the decoded text
 > deserves a second look.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > AOSP's MUTF-8 handling is in `art/libdexfile/dex/utf.h` and `art/libdexfile/dex/utf.cc`, with
 > functions such as `GetUtf16FromUtf8`, `CountModifiedUtf8Chars` and `ConvertModifiedUtf8ToUtf16`.
 > The DEX verifier in `art/libdexfile/dex/dex_file_verifier.cc` contains a routine that walks a
@@ -1061,7 +1061,7 @@ correct for a different question, and confusing them is a rich source of bugs.
 Every type in a DEX file is written as a short string called a **type descriptor**. This is the same
 scheme the JVM uses, and once you know it you can read any DEX, Smali listing or stack trace.
 
-> **📖 Definition — type descriptor**
+> **Definition — type descriptor**
 > A **type descriptor** is a compact textual encoding of a Java type. Primitives are single letters,
 > reference types are `L` followed by the fully-qualified class name with dots replaced by slashes
 > and terminated by `;`, and each leading `[` adds one array dimension.
@@ -1091,7 +1091,7 @@ Worked descriptor examples:
 | `[B` | `byte[]` — the single most common type in crypto and networking code |
 | `Lcom/example/app/MainActivity;` | `com.example.app.MainActivity` |
 
-> **⚠️ Warning**
+> **Warning**
 > Note carefully that a long or a double occupies **two consecutive registers**, and that when you
 > refer to such a value in bytecode you name the **lower-numbered** register of the pair. Writing to
 > `v3` with `move-wide` clobbers `v3` and `v4`. Forgetting this is the number one cause of a
@@ -1118,7 +1118,7 @@ long. Four parameters, not seventeen.
 
 #### Shorty descriptors
 
-> **📖 Definition — shorty descriptor**
+> **Definition — shorty descriptor**
 > A **shorty** is a *lossy*, abbreviated form of a method descriptor in which every reference and
 > array type collapses to the single letter `L`. Its purpose is to describe the **shape** of a call —
 > how many registers each argument occupies and whether each is a 32-bit value, a 64-bit value or a
@@ -1138,7 +1138,7 @@ remaining characters are the parameters in order.
 | `([Ljava/lang/String;)V` | `VL` | returns void, takes one reference |
 | `(IJDLjava/lang/String;)J` | `JIJDL` | returns long; int, long, double, reference |
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > The shorty is genuinely load-bearing, not redundant metadata. When ART sets up a call frame it
 > needs to know, for each argument, whether it consumes one or two virtual register slots and whether
 > it must be treated as a reference for garbage-collection root scanning. All three facts are
@@ -1147,7 +1147,7 @@ remaining characters are the parameters in order.
 > absurdly expensive. This is why `proto_id_item` carries `shorty_idx` as a first-class field
 > rather than deriving it.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Shorties are a fast filter when hunting for a method whose name you do not know. If you are looking
 > for a root-detection routine, you are looking for something with shorty `Z` or `ZL` — returns a
 > boolean, takes nothing or one argument. Grepping `dexdump` output for `(...)Z` methods in a
@@ -1189,12 +1189,12 @@ The length lets a consumer allocate the right-sized UTF-16 buffer up front; the 
 code treat the bytes as a plain C string without copying. It also means there are **two** sources of
 truth about where the string ends, and if they disagree, different consumers behave differently.
 
-> **⚠️ Warning**
+> **Warning**
 > `utf16_size` is *not* the byte count. For pure ASCII they happen to be equal, which is why sloppy
 > parsers work on hand-made test files and fail on real ones. Any non-ASCII character makes them
 > diverge; a supplementary character makes them diverge by a factor of three.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > A string whose declared `utf16_size` disagrees with the bytes present is one of the classic
 > anti-analysis tricks. Set `utf16_size` to a huge value and a tool that pre-allocates from it will
 > either fail or read far past the terminator, dragging unrelated file content into what it displays
@@ -1236,7 +1236,7 @@ byte pair is not part of the list.
 
 ### 3.10 `proto_id_item`
 
-> **📖 Definition — prototype**
+> **Definition — prototype**
 > A **prototype** (or **proto**) is a method *signature without a name*: the return type plus the
 > ordered list of parameter types. `(II)I` is a prototype. Many differently-named methods share one
 > prototype, so DEX stores prototypes once and refers to them by index.
@@ -1297,7 +1297,7 @@ The table is sorted by `class_idx`, then `name_idx`, then `type_idx`. Two fields
 with the same name but different types are legal at the bytecode level even though Java forbids them
 at the language level — which is why `type_idx` participates in the sort and in field identity.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `field_ids` is a superb map of what an app touches. A single pass over it, resolving `class_idx` and
 > `name_idx`, tells you whether the app reads `Build.FINGERPRINT` (emulator detection), touches
 > `SharedPreferences` keys with revealing names, or references fields on classes that are not present
@@ -1324,7 +1324,7 @@ Two names are special and appear constantly:
 | `<init>` | An instance constructor. Its prototype's return type is always `V`. Invoked with `invoke-direct`. |
 | `<clinit>` | The static initialiser — the code that runs once when a class is first used. Prototype is always `()V`. Never invoked by bytecode; the runtime calls it. |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `<clinit>` is where string-decryption routines and native library loads hide, because it runs
 > before any other code in the class and before any of your hooks that target ordinary methods. If
 > you are chasing an obfuscated app and your Frida hook on `decrypt()` never fires, check whether the
@@ -1375,14 +1375,14 @@ Three of the eight fields being zero is entirely normal. An interface with no de
 `class_data_off` = 0. A class with no annotations has `annotations_off` = 0. A class whose statics all
 start at zero has `static_values_off` = 0. Zero means "absent", never "offset zero".
 
-> **⚠️ Warning**
+> **Warning**
 > `source_file_idx` is the field ProGuard and R8 rewrite. In a release build it is very often set to
 > a constant such as `"SourceFile"` or removed entirely, which is why obfuscated stack traces lose
 > their file names. If you see every class in an app reporting the same `source_file_idx`, that is a
 > reliable fingerprint of shrinking having been applied. See
 > [Chapter 41 — ProGuard](../41-ProGuard/README.md) and [Chapter 42 — R8](../42-R8/README.md).
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > The specification requires that a class's superclass and implemented interfaces appear **earlier**
 > in `class_defs` than the class itself, when they are defined in the same file. This lets a loader
 > process the table in a single forward pass without needing to defer resolution. A DEX that violates
@@ -1407,7 +1407,7 @@ byte-aligned (no padding requirement), and is built almost entirely from ULEB128
 | 7 | `encoded_method[direct_methods_size]` | `direct_methods` | |
 | 8 | `encoded_method[virtual_methods_size]` | `virtual_methods` | |
 
-> **📖 Definition — direct versus virtual methods**
+> **Definition — direct versus virtual methods**
 > A **direct** method is one whose target is known at compile time and needs no dynamic dispatch:
 > `private` methods, `static` methods, and constructors. A **virtual** method is subject to
 > **dynamic dispatch** — the actual code that runs depends on the runtime type of the receiver
@@ -1474,19 +1474,19 @@ silently reports the wrong method names rather than crashing. This is the single
 amateur DEX parsers, and if you see a tool confidently naming methods that make no sense, this is
 usually why.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Think of the delta scheme as reading a bus timetable that lists "3 minutes later, then 1 minute
 > later, then 192 minutes later" instead of absolute clock times. It is compact, but you must know
 > what time the first bus left, and you must start a new clock when you move to the next route.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > `art/libdexfile/dex/class_accessor-inl.h` and `art/libdexfile/dex/class_iterator.h` implement the
 > iteration in AOSP. The accessor deliberately exposes an iterator interface rather than a random
 > access one, precisely because the delta encoding makes random access impossible: to find member
 > *n* you must decode members 0 through *n*−1 first. Any tool that claims O(1) access to a class's
 > *k*-th method is caching, not indexing.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The delta encoding is a favourite target for anti-analysis. Because the encoding is variable
 > length and cumulative, a single extra byte inserted at the right place shifts every subsequent
 > field. A packer can craft a `class_data_item` where a tolerant parser and a strict parser resolve
@@ -1585,7 +1585,7 @@ desynchronises the parser from the byte stream for everything that follows.
 | 1 | `uleb128` | `size` | Number of elements. |
 | 2 | `encoded_value[size]` | `values` | The elements, back to back, each self-describing. |
 
-An `encoded_array_item` in the data section is simply an `encoded_array`. `class_def_item`'s
+An `encoded_array_item` in the data section is an `encoded_array`. `class_def_item`'s
 `static_values_off` points at one, and its elements correspond **positionally** to the class's static
 fields in the order they appear in `class_data_item.static_fields`. The array may be **shorter** than
 the field list, in which case the remaining statics take their type's default value — zero, `false`,
@@ -1601,7 +1601,7 @@ or `null`.
 
 Each `annotation_element` is a `uleb128 name_idx` (into `string_ids`) followed by an `encoded_value`.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Static initialiser arrays are a hiding place. A hard-coded AES key stored as
 > `static final byte[] KEY = {0x2b, 0x7e, ...}` does **not** appear in the string table, so a
 > `strings`-based triage misses it entirely. It lands either in a `static_values_off` encoded array
@@ -1627,13 +1627,13 @@ section, and everything you will ever patch lives inside it.
 | — | `8 × tries_size` | `try_item[]` | `tries` | Present only if `tries_size` is non-zero. |
 | — | variable | `encoded_catch_handler_list` | `handlers` | Present only if `tries_size` is non-zero. |
 
-> **📖 Definition — code unit**
+> **Definition — code unit**
 > A **code unit** is 16 bits — two bytes. DEX bytecode is measured, addressed and aligned in code
 > units, never in bytes. Every instruction is a whole number of code units long, from one to five.
 > `insns_size` counts code units, so a method whose `insns_size` is 7 occupies 14 bytes of bytecode.
 > Branch offsets are also expressed in code units.
 
-> **📖 Definition — virtual register**
+> **Definition — virtual register**
 > A **virtual register** is a 32-bit storage slot local to one method invocation. DEX bytecode names
 > them `v0`, `v1`, `v2`, and so on. They are not CPU registers; ART maps them to real registers or
 > stack slots as it sees fit. A 64-bit value (long or double) occupies **two adjacent** virtual
@@ -1670,14 +1670,14 @@ For an **instance** method, `this` is always the first incoming argument, so `th
 `v(registers_size − ins_size)`, which Smali writes as `p0`. For a **static** method there is no
 `this`, so `p0` is the first declared parameter.
 
-> **📖 Definition — `p` registers**
+> **Definition — `p` registers**
 > Smali offers an alias syntax: `p0`, `p1`, `p2` … name the parameter registers directly, so you do
 > not have to compute `registers_size − ins_size` yourself. **`pN` and `vM` are the same physical
 > register** when `M = registers_size − ins_size + N`. They are two names for one slot, not two
 > slots. A method declared `.registers 8` with three incoming arguments has `p0 == v5`,
 > `p1 == v6`, `p2 == v7`.
 
-> **⚠️ Warning**
+> **Warning**
 > Smali has two mutually exclusive directives for declaring the frame:
 >
 > - `.registers N` declares the **total** register count, equal to `registers_size`.
@@ -1710,7 +1710,7 @@ how much room to reserve. It equals the largest number of argument register slot
 `invoke-*` in the method body. A method that only calls `foo(int)` on an object needs `outs_size` = 2
 (receiver plus one int). A method that calls nothing has `outs_size` = 0.
 
-> **⚠️ Warning**
+> **Warning**
 > If you add a call to a method during patching and your new call needs more argument slots than the
 > existing `outs_size`, you must raise `outs_size`. `baksmali`/`smali` recompute it for you when you
 > reassemble, which is one of several reasons to patch via Smali rather than with a hex editor
@@ -1748,7 +1748,7 @@ Exception handling in DEX is **table-driven**. There is no instruction that ente
 bytecode inside a `try` is completely ordinary; a side table says which address ranges are protected
 and where to jump when a throw occurs inside them.
 
-> **📖 Definition — exception table**
+> **Definition — exception table**
 > An **exception table** is metadata that maps a range of instruction addresses to a handler address
 > for a given exception type. When an exception is thrown, the runtime walks the current method's
 > table looking for an entry whose address range contains the throwing instruction and whose type
@@ -1796,7 +1796,7 @@ may share one handler, which is why `handler_off` is an offset rather than an in
 
 This is one of the format's genuinely elegant tricks and a favourite interview question.
 
-> **📖 Definition — the `encoded_catch_handler` sign convention**
+> **Definition — the `encoded_catch_handler` sign convention**
 > The `size` field is **signed**. Its absolute value is the number of typed handlers. Its **sign**
 > encodes whether a catch-all handler follows:
 >
@@ -1851,7 +1851,7 @@ semantics, and it means the compiler must emit the `catch` clauses in source ord
 patch that reorders handlers changes which one wins for a subtype — a subtle way to alter behaviour
 without touching a single instruction.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Exception tables are how a lot of anti-tampering works, and how a lot of it is defeated. A common
 > pattern is to wrap an integrity check in `try { check(); } catch (Throwable t) { exit(); }` so that
 > even a Frida hook that throws is caught and treated as tampering. Reading the exception table tells
@@ -1896,7 +1896,7 @@ The special opcodes use the DWARF trick of packing two increments into one byte:
   emit (address, line)
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `debug_info_off` = 0 on every method is a strong signal that the app was built for release with
 > debug information stripped, and it is why a crash in a production app gives you obfuscated frames
 > with no line numbers. Conversely, a production app that *retains* full debug info is handing you
@@ -1931,7 +1931,7 @@ Annotations are stored in a small hierarchy of structures hanging off
 | `0x01` | `VISIBILITY_RUNTIME` | Visible to reflection at runtime. |
 | `0x02` | `VISIBILITY_SYSTEM` | Visible to the runtime internals only. |
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > Several things that look like language features are actually system annotations in the DEX.
 > Generic type information survives erasure as a `dalvik.annotation.Signature` annotation whose value
 > is an array of strings. Inner-class relationships are `dalvik.annotation.InnerClass` and
@@ -1946,12 +1946,12 @@ These two tables arrived with DEX version `038` (Android 8.0) and exist to suppo
 semantics — the mechanism behind Java lambdas, string concatenation in newer `javac`, and anything
 built on `java.lang.invoke`.
 
-> **📖 Definition — method handle**
+> **Definition — method handle**
 > A **method handle** is a directly-executable, typed reference to a method or field. Unlike
 > reflection, it is resolved once and then invoked with near-normal-call performance, and the
 > runtime can verify its type signature statically.
 
-> **📖 Definition — call site**
+> **Definition — call site**
 > A **call site** is a call whose target is decided the first time it executes, by running a
 > **bootstrap method**. The bootstrap method receives a description of the call and returns a
 > `CallSite` object holding the method handle that should actually be invoked. Thereafter the call
@@ -1990,7 +1990,7 @@ specification: a `VALUE_METHOD_HANDLE` naming the bootstrap method, a `VALUE_STR
 method name to link, and a `VALUE_METHOD_TYPE` giving the expected signature. Everything after those
 three is passed to the bootstrap method as extra arguments.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Lambdas compiled for API 26+ without desugaring become `invoke-custom` call sites, and JADX
 > renders them as anonymous classes or as `(v0) -> { ... }` with the real body sitting in a
 > synthetic method named something like `lambda$onCreate$0`. When you cannot find the code behind a
@@ -2009,7 +2009,7 @@ for each member of each class in a platform DEX.
 | 2 | `uint[class_defs_size]` | `offsets` | One offset per class def, relative to the start of this item, or 0 if the class has no flags. |
 | 3 | `uleb128[]` | `flags` | Per-member restriction flags, in `class_data_item` member order. |
 
-Note that this structure only appears in the **platform's** DEX files — the boot classpath — not in
+this structure only appears in the **platform's** DEX files — the boot classpath — not in
 your app's `classes.dex`. It is how the runtime knows that `android.os.SystemProperties.set` is
 restricted while `android.os.Build.MODEL` is not. Hidden API enforcement itself is a runtime
 behaviour and belongs to [Chapter 13 — ART](../13-ART/README.md); what the format chapter owes you is
@@ -2070,14 +2070,14 @@ codes easy to remember.
 The map must contain an entry for every section that is present, its entries must be sorted by
 `offset`, and it must not contain duplicate types.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > If the header is the book's spine label — title, edition, checksum — then the `map_list` is the
 > table of contents at the front, listing every chapter with its page number and length. A parser can
-> reconstruct the whole file from the map alone; indeed a robust parser should **cross-check** the
+> reconstruct the whole file from the map alone; indeed a careful parser should **cross-check** the
 > header's offsets against the map's, because a mismatch between the two is not something `d8` ever
 > produces.
 
-> **🔍 Pentester's Note — the map is the tamper detector**
+> **Pentester's Note — the map is the tamper detector**
 > This is the most practically useful paragraph in the section. Legitimate DEX files produced by `d8`
 > have the property that **every byte of the file is accounted for by exactly one map entry**. Run
 > down the map, add up `size × item_size` for the fixed-size types, walk the variable-size ones, and
@@ -2129,10 +2129,10 @@ bridge methods, lambda bodies, accessors for outer-class private fields (`access
 and `valueOf()` methods on enums, and everything R8 creates. Filtering on this bit is how you separate
 "code someone wrote" from "code the toolchain wrote" during triage.
 
-**`ACC_CONSTRUCTOR`.** Set on `<init>` and `<clinit>`. Note that these also appear in the *direct*
+**`ACC_CONSTRUCTOR`.** Set on `<init>` and `<clinit>`.these also appear in the *direct*
 methods list, never the virtual list — constructors are never virtually dispatched.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `ACC_NATIVE` on a method means the body is in a `.so` file, reached through JNI. There is no
 > `code_item` — `code_off` is 0. When your DEX analysis hits a wall at a native method, the analysis
 > continues in [Chapter 15 — Native Code](../15-Native-Code/README.md) and
@@ -2145,7 +2145,7 @@ methods list, never the virtual list — constructors are never virtually dispat
 Everything up to here has described the file's *containers*. From here on we describe what is actually
 inside `code_item.insns` — the instructions themselves.
 
-> **📖 Definition — register machine**
+> **Definition — register machine**
 > A **register machine** executes instructions that name their operands explicitly, as numbered slots
 > in the current frame. `add-int v0, v1, v2` means "add the contents of v1 and v2, store in v0". A
 > **stack machine** by contrast has instructions that implicitly consume and produce values on a
@@ -2181,11 +2181,11 @@ registers_size = 5, ins_size = 2      (an instance method taking one int)
   so  p0 == v3,  p1 == v4
 ```
 
-That is why Smali shows both `v` and `p` names for the same storage. `p0` is simply an alias for
+That is why Smali shows both `v` and `p` names for the same storage. `p0` is an alias for
 `v(registers_size − ins_size)`. For an **instance** method, `p0` is always `this`; for a **static**
 method, `p0` is the first declared parameter.
 
-> **⚠️ Warning**
+> **Warning**
 > This is the single most common source of error when hand-patching Smali. If you add a local variable
 > you must increase `.registers`, and because parameters live at the *top*, increasing `.registers`
 > **shifts every `p` alias to a different `v` number**. Smali's `.registers` directive handles the
@@ -2214,7 +2214,7 @@ Others use 8 bits (`v0`–`v255`) or 16 bits (`v0`–`v65535`). This is why the 
 near-duplicate opcodes: `move`, `move/from16` and `move/16` do the same thing at three different
 register widths.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > When you insert code into a large method and the assembler complains it cannot encode a register,
 > this is why: your new local landed above `v15` and the instruction you used only has a 4-bit field.
 > The fix is either to use the `/from16` variant, or to `move/16` the value down into a low register
@@ -2226,7 +2226,7 @@ Every DEX instruction has a **format identifier** such as `21c` or `35c`. The na
 worth ten minutes of study, because once you can read the identifier you can decode any instruction
 without a table.
 
-> **📖 Definition — format identifier**
+> **Definition — format identifier**
 > A two-or-three character code `NAx` where:
 > - **N** — the instruction's size in **16-bit code units** (1, 2, 3, 5…)
 > - **A** — the number of registers the instruction addresses (`0`–`5`, or `r` for a range)
@@ -2337,7 +2337,7 @@ Grouped by family. This is a reference to return to, not something to memorise i
 | `0C` | `move-result-object` | after an invoke returning a reference |
 | `0D` | `move-exception` | **Only valid as the first instruction of a catch handler** |
 
-> **⚠️ Warning**
+> **Warning**
 > `move-result*` is not a general instruction — the verifier requires it to directly follow the
 > `invoke-*` (or `filled-new-array`) whose result it collects. Inserting *anything* between them,
 > including a `nop` or a logging call, produces a DEX that fails verification. This bites people
@@ -2382,7 +2382,7 @@ Grouped by family. This is a reference to return to, not something to memorise i
 | `24` `25` | `filled-new-array`, `filled-new-array/range` | array literal |
 | `26` | `fill-array-data vAA, +BBBBBBBB` | branches to a payload (§3.27) |
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > `new-instance` and the subsequent `invoke-direct {vX}, ...-><init>(...)V` are **two separate
 > instructions**. Between them the register holds an *uninitialised* reference, and the verifier
 > tracks this state precisely — you may not pass it anywhere, store it in a field, or return it. This
@@ -2444,7 +2444,7 @@ Format `21c`: `sget-object vAA, field@BBBB`.
 | `FA` `FB` | `invoke-polymorphic`, `/range` | `MethodHandle.invoke` (DEX 038+) |
 | `FC` `FD` | `invoke-custom`, `/range` | call sites / lambdas (DEX 038+) |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The invoke kind tells you a great deal. `invoke-direct` on something that is not `<init>` means a
 > **private** method. `invoke-static` means no `this`, so hooking it in Frida uses the class rather
 > than an instance. And when you are searching for where a method is *called from*, remember the
@@ -2476,7 +2476,7 @@ Opcodes `0x3E`–`0x43`, `0x73` and `0x79`–`0x7A` are **unused** and must not 
 range historically held **quickened** opcodes (`iget-quick`, `invoke-virtual-quick`) used by the
 Dalvik-era and early-ART optimisers.
 
-> **⚠️ Warning**
+> **Warning**
 > Quickened opcodes are **not valid standalone DEX** — they carry precomputed vtable indices and field
 > offsets rather than symbolic references, so `baksmali` cannot render them without the accompanying
 > metadata. If you extract DEX from an Android 8–10 device and the disassembler rejects instructions,
@@ -2523,7 +2523,7 @@ harmlessly instead of misinterpreting them as code.
 | 3 | `uint` | `size` — number of elements |
 | 4 | `ubyte[]` | `data` — padded to an even byte count |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `fill-array-data-payload` is where hardcoded key material usually lives. A developer writes
 > `byte[] key = {0x2b, 0x7e, 0x15, ...}` and the compiler emits exactly this structure — a contiguous
 > run of bytes in the data section that `strings` will not find because it is not text.
@@ -2554,7 +2554,7 @@ A worked switch:
     .end method
 ```
 
-Note that the `default` case is *fall-through*: `packed-switch` branches only when the value matches,
+the `default` case is *fall-through*: `packed-switch` branches only when the value matches,
 otherwise execution continues at the next instruction. That is why the default body appears
 immediately after the switch, which reads oddly until you know the rule.
 
@@ -2563,7 +2563,7 @@ immediately after the switch, which reads oddly until you know the rule.
 A single DEX file's `method_ids`, `field_ids` and `type_ids` tables are indexed by **16-bit** fields in
 several instruction formats. That caps each table at **65,536 entries**.
 
-> **⚠️ Warning — the most misunderstood limit in Android**
+> **Warning — the most misunderstood limit in Android**
 > The limit is on **references**, not on methods you wrote. `method_ids` counts every distinct
 > method *referenced* anywhere in the DEX — including every framework and library method your code
 > calls. An app with 8,000 of its own methods can easily exceed 65,536 references through its
@@ -2614,7 +2614,7 @@ What it proves:
 Verification results are cached — that is exactly what the VDEX's verifier-dependency section records,
 so the work is not repeated on every boot ([13-ART §3.4](../13-ART/README.md)).
 
-> **⚠️ Warning — the crucial point for report writing**
+> **Warning — the crucial point for report writing**
 > **The verifier is a correctness mechanism, not a sandbox.** It guarantees that managed code respects
 > the runtime's own type model, which is what allows the compiler to omit checks and optimise
 > aggressively. It says nothing whatever about what the app is *permitted* to do, and it is bypassed
@@ -2652,7 +2652,7 @@ implementation is what runs on the device.
 | `tools/dexter/` | A DEX instrumentation library, if you want to *modify* rather than read |
 | `d8`/`r8` (`https://r8.googlesource.com/r8`) | The compiler that produces DEX |
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > `dex_instruction_list.h` is worth opening once even if you never read AOSP otherwise. It is a single
 > macro-expanded table listing every opcode with its mnemonic, format, index type and flags, and it is
 > the ground truth behind every opcode table in every blog post — including the one in §3.26. If you
@@ -2708,7 +2708,7 @@ sequenceDiagram
     MV-->>CLK: verified / failed
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Steps 3 and 6 are **different verifications**, and conflating them causes real confusion. Step 3
 > checks that the *file* is well-formed — a malformed container is rejected before any class loads.
 > Step 6 checks that the *bytecode* is type-safe — and it happens lazily, per class, at first use. A
@@ -2812,7 +2812,7 @@ scanners. Medium as a finding on its own; the payload it hides is what matters.
 longer match. Repackaging tools recompute them automatically — which is precisely why an app cannot
 rely on those fields to detect tampering.
 
-> **⚠️ Warning**
+> **Warning**
 > The DEX header's checksum and signature are **integrity fields for corruption, not for security**.
 > They are unkeyed, so anyone who modifies the file can recompute them. Real tamper detection lives in
 > APK signing ([10-APK-Internals](../10-APK-Internals/README.md)), which is keyed. An app checking its
@@ -2953,7 +2953,7 @@ apksigner verify -v signed.apk
 adb install -r signed.apk
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > `apktool` recomputes the DEX checksum and signature for you, and `apksigner` handles the APK
 > signature. What neither does is fix a `.registers` count you got wrong, or a `move-result` you
 > separated from its invoke. Those produce a DEX that fails **verification at class load**, which

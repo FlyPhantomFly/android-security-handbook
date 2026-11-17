@@ -26,14 +26,14 @@ irrelevant — the kernel has already granted access to the open file. Files no 
 sandbox bypass. And it is common, because the naive defences developers reach for — checking for `..`,
 trusting `getLastPathSegment()` not to contain a slash — all fail.
 
-> **📖 Definition**
+> **Definition**
 > **Path traversal** is supplying a filename or path that, after the application resolves it, points
 > outside the directory the application intended to serve — reaching `../../databases/app.db` from a
 > handler that meant to serve only `public/report.pdf`. The reliable defence is **canonicalisation with
 > a containment check**: resolve the path to its real filesystem location (`getCanonicalPath()`, which
 > collapses `..` and follows symlinks) and verify it is inside the intended base directory.
 
-> **⚠️ Warning**
+> **Warning**
 > `query()` and `openFile()` are **different code paths with different permission outcomes**. A provider
 > can deny `query` and permit `openInputStream`, and `FileProvider` does exactly that by design. Test
 > both, always. This lab is about the `openFile` path specifically.
@@ -158,7 +158,7 @@ try (java.io.InputStream in = getContentResolver().openInputStream(u);
 }
 ```
 
-**Q6.** Did the probe app read the token? Note that it used `openInputStream`, not `query` — confirm
+**Q6.** Did the probe app read the token? It used `openInputStream`, not `query` — confirm
 that `query` on the same authority behaves differently.
 
 ### Step 7 — The FileProvider `root-path` variant

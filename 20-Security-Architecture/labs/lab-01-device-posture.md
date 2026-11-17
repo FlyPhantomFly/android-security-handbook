@@ -39,7 +39,7 @@ There is a fourth reason, and it is the one this lab is really built around. Alm
 "device integrity check" reads `getprop`. This lab makes you prove, by measurement, that `getprop`
 is attacker-controlled data — and then shows you the two places where the truth survives.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > A posture signal is not a fact about the device. It is a **claim**, made by some component, that
 > reached your process by some path. The only question that matters is: *who could have edited the
 > claim between its origin and your read?* Every signal in this lab is classified by answering that
@@ -78,7 +78,7 @@ List of devices attached
 emulator-5554          device product:sdk_gphone16k_x86_64 model:sdk_gphone16k_x86_64 device:emu64xa16k transport_id:2
 ```
 
-> **⚠️ Warning — always pin the serial.**
+> **Warning — always pin the serial.**
 > With more than one device attached, `adb shell getprop` fails with `adb: more than one device`, or
 > worse, silently picks one if you have `ANDROID_SERIAL` set from a previous session. Every command
 > in this lab should carry `-s`:
@@ -197,7 +197,7 @@ On this device that fails:
 cat: /proc/cmdline: Permission denied
 ```
 
-> **🔍 Pentester's Note — this failure is a result, not an obstacle.**
+> **Pentester's Note — this failure is a result, not an obstacle.**
 > Find out *which* layer denied you before you reach for root:
 >
 > ```bash
@@ -262,7 +262,7 @@ Whoever wrote that module changed exactly the three fields that detection code l
 rest alone, because changing more creates more chances to be inconsistent. **The forgery is
 targeted, and that is normal.** Do not assume a device that fails one check has failed all of them.
 
-> **📖 Definition — the property area**
+> **Definition — the property area**
 > `getprop` does not perform a lookup on demand. Every property lives in a shared memory region
 > mapped read-only into every process from `/dev/__properties__/*`, written by `init`. Root can open
 > those files for writing and edit the region in place. That is the whole mechanism, and it is why
@@ -395,7 +395,7 @@ A reference implementation lives at
 **Write yours first**, then read that one — the comparison is the exercise, and reading it first
 turns the exercise into transcription.
 
-> **🔍 Pentester's Note — the `--test-device` flag is the most important thing in that script.**
+> **Pentester's Note — the `--test-device` flag is the most important thing in that script.**
 > Your own rooted handset trips almost every posture check. A report that lists those as *findings*
 > is worthless, and worse, it destroys your credibility on the findings that are real. The flag
 > records them as **methodology** — "this is my instrument, and here is how it differs from a stock
@@ -426,7 +426,7 @@ Everything above the last row is a claim made by software the attacker controls.
 claim made by hardware the attacker does not control, and it is the only one on the list that
 survives root.
 
-> **🔬 Under the Hood — the measurement that settles it**
+> **Under the Hood — the measurement that settles it**
 > [50 — HardwareBackedSecurity](../../50-HardwareBackedSecurity/README.md) pulled a TEE-signed key
 > attestation from **this exact device, seconds after** reading `ro.boot.verifiedbootstate=green`.
 > The attestation reported `verifiedBootState=Unverified`, `deviceLocked=false` and an all-zero
@@ -562,7 +562,7 @@ getenforce                      = Enforcing
 ```
 
 Note the shape of the difference. The rooted phone lies by **setting the properties to the values a
-good device would have**. The emulator does not lie at all — it simply **does not set them**, and
+good device would have**. The emulator does not lie at all — it **does not set them**, and
 advertises itself with `dev-keys`, `userdebug`, `ro.debuggable=1` and `ro.kernel.qemu=1`. Those are
 opposite failure modes, and a detection routine tuned for one is blind to the other. That asymmetry
 is the whole subject of [39-EmulatorDetection](../../39-EmulatorDetection/).

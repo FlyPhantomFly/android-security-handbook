@@ -54,7 +54,7 @@ Multiply that by every program on the machine and you have three separate disast
 A **library** is the answer to all three. It is a collection of already-written, already-tested code
 that many programs share.
 
-> **📖 Definition**
+> **Definition**
 > A **library** is a file containing compiled code and data that is designed to be used by other
 > programs rather than run on its own. A **static library** is copied *into* each program at build
 > time. A **shared library** (also called a *dynamic library*; on Linux and Android the file
@@ -92,7 +92,7 @@ packages through Google Play. Conscrypt (the TLS provider), the media codecs, DN
 several others now update independently of the manufacturer's system image. This is a direct,
 deliberate response to the "the vendor never ships an update" problem.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Think of the libraries reachable from an Android app as three concentric rings.
 >
 > The **inner ring** is the platform: Bionic, the ART runtime, `libbinder`, Skia, and everything
@@ -148,7 +148,7 @@ That code:
 - Is often not even inventoried. Ask a developer to list every library in their app and most will
   name eight. The dependency tree has two hundred nodes.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > When you get a new APK, the very first substantive thing you should do — before you read a single
 > line of the app's own code — is enumerate the libraries. It takes ten minutes, it tells you what
 > kind of app you are looking at, it tells you where the parsers are, and roughly one engagement in
@@ -357,7 +357,7 @@ the APK and are mapped directly from it. On a running device you will then see t
 `/proc/<pid>/maps` with an offset, not a `.so` path — a detail that confuses people the first time
 they see it, and which we dissect in [19-Memory](../19-Memory/README.md).
 
-The APEX directories are read-only mounts of signed images. You cannot simply drop a patched
+The APEX directories are read-only mounts of signed images. You cannot drop a patched
 `libcrypto.so` into `/apex/com.android.conscrypt/lib64/` the way you could once patch
 `/system/lib64/`. This is the reason the old "copy your Burp CA into `/system/etc/security/cacerts`"
 trick stopped working on Android 14 — the CA store moved into the Conscrypt APEX.
@@ -390,7 +390,7 @@ has never touched since.
 
 ### 3.1 Bionic — Android's C library
 
-> **📖 Definition**
+> **Definition**
 > **Bionic** is the Android platform's implementation of the standard C library, math library, and
 > dynamic linker. It comprises `libc.so`, `libm.so`, `libdl.so` and `linker`/`linker64`. Its source
 > lives in the AOSP tree under `bionic/`. It is licensed under BSD terms, unlike glibc's LGPL.
@@ -403,7 +403,7 @@ its design.
 | BSD licence required, so OEMs can link statically without source obligations | Written from scratch using BSD-derived code, mostly from OpenBSD and FreeBSD | Different code lineage means different bugs from glibc; glibc exploit write-ups often do not transfer |
 | Must be small — early devices had ~64–128 MB RAM | No full locale support, no `iconv`, minimal wide-char support, no NSS plugin system | Fewer parsers in libc means less libc attack surface than glibc |
 | Must start fast — every app forks from Zygote | Simpler linker, lazy features avoided, `.so` count kept low | Predictable layout; combined with Zygote fork this weakens ASLR (see below) |
-| Runs on a system where every process is sandboxed by UID and SELinux | No `setuid` helper machinery, no `LD_PRELOAD` for privileged binaries in the desktop sense | Some classic Unix privilege-escalation techniques simply do not exist |
+| Runs on a system where every process is sandboxed by UID and SELinux | No `setuid` helper machinery, no `LD_PRELOAD` for privileged binaries in the desktop sense | Some classic Unix privilege-escalation techniques do not exist |
 | Google controls the whole platform | Aggressive adoption of hardening (FORTIFY, Scudo, MTE readiness) without ABI-compatibility fear | Modern Android libc is meaningfully harder to exploit than glibc |
 
 #### Bionic versus glibc — the differences that change exploitation
@@ -414,7 +414,7 @@ not work depending on which libc you are attacking.
 | Area | glibc (desktop Linux) | Bionic (Android) | Why it matters to you |
 |---|---|---|---|
 | **Heap allocator** | ptmalloc2 — bins, tcache, unsorted bin, `__malloc_hook` historically | **Scudo** (hardened, from Android 11 as system default; earlier on some paths), previously **jemalloc**, before that **dlmalloc** | Every glibc heap-exploitation primitive (tcache poisoning, unsorted-bin attack, House of *) is **irrelevant** on modern Android. Do not waste time on them. |
-| **Malloc hooks** | `__malloc_hook`, `__free_hook` (removed in glibc 2.34) | Never existed | A very common CTF primitive is simply absent |
+| **Malloc hooks** | `__malloc_hook`, `__free_hook` (removed in glibc 2.34) | Never existed | A very common CTF primitive is absent |
 | **`stdio` implementation** | Full BSD-derived `FILE` with vtable pointers historically exploitable | Simpler `FILE`, no exploitable vtable in the glibc sense | "FSOP" (File Stream Oriented Programming) does not transfer |
 | **Dynamic linker** | `ld-linux.so`, `LD_PRELOAD` honoured widely, `dl_resolve` lazy binding | `linker64`, namespaces enforced, RELRO + BIND_NOW by default, `LD_PRELOAD` ignored for most processes and blocked by SELinux for system ones | `ret2dl_resolve` is generally not available; `LD_PRELOAD` injection is not the easy path it is on desktop |
 | **Thread-local storage / stack guard** | Stack canary in TLS via `%fs` | Stack canary in TLS reached via `TPIDR_EL0`; `__stack_chk_guard` | Same concept, different register; you need this for [18-ARM](../18-ARM/README.md) |
@@ -427,7 +427,7 @@ not work depending on which libc you are attacking.
 | **Symbol versioning** | Extensive (`GLIBC_2.x` version nodes) | Minimal; Bionic uses `LIBC` version tags but far fewer | Simpler symbol resolution when you are patching |
 | **Static binaries** | Common and fully supported | Supported but discouraged; `libc` static builds lose `dlopen` | Relevant when analysing embedded tools dropped by malware |
 
-> **⚠️ Warning**
+> **Warning**
 > The single most common mistake made by people coming to Android from Linux CTFs is to assume
 > glibc heap internals. If you find yourself drawing tcache freelists while looking at an Android
 > `malloc`, stop. Look up which allocator the target Android version uses (Scudo on anything modern),
@@ -443,7 +443,7 @@ not work depending on which libc you are attacking.
 | Dynamic linker | `linker64` / `linker` | The actual ELF loader; namespaces; relocation; `DT_INIT_ARRAY` execution | Where injection, namespace policy, and load-order all live |
 | C++ runtime | `libc++.so` (or app-bundled `libc++_shared.so`) | STL, `operator new`, exception handling | An app bundling its own `libc++_shared.so` is normal; two different copies loaded in one process is a real bug source |
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > `dlsym(RTLD_DEFAULT, "name")` on Android searches only the caller's linker namespace, not the whole
 > process. This is why a Frida script that resolves a symbol from the wrong module gets `NULL` on
 > Android where the same code works on desktop Linux. Use `Module.findExportByName("libfoo.so", ...)`
@@ -502,7 +502,7 @@ and in crash dumps. Knowing what each one does turns an opaque backtrace into a 
 | `libselinux.so` | Userspace SELinux API: `getcon`, `security_check_context`, label lookup | `init`, `installd`, `zygote` | Read it when you are reasoning about why an operation is denied. See [22-SELinux](../22-SELinux/README.md) |
 | `libbase.so` | Modern C++ helpers used across AOSP: `android::base::ReadFileToString`, `StringPrintf`, `unique_fd`, logging | Most modern AOSP C++ | `unique_fd` adoption fixed a whole class of FD-lifetime bugs; older code that does not use it is worth a second look |
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Sort platform libraries into three buckets by *what kind of input they see*:
 > **(a) parsers of untrusted bytes** — media, image, font, archive, ASN.1, SQLite file format. These
 > are where memory-corruption CVEs come from.
@@ -560,7 +560,7 @@ example of how to fix a class rather than an instance:
 | Disable auto-retrieval of MMS by default in the messaging app | Removed zero-click reachability | Reachability |
 | Compile media code with integer-overflow sanitisation (`-fsanitize=integer` subsets, `signed-integer-overflow` traps) in AOSP media components | Turns a silent wrap into a controlled abort | Exploitability of the primary bug class |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > When you test a modern app, the Stagefright-shaped question is not "does the media parser have a
 > bug" — you are unlikely to find one by fuzzing from an app context in a week. The question is
 > **"does this app hand attacker-controlled media to a parser it does not need to use, in a context
@@ -595,7 +595,7 @@ attacker-facing native code. SQLite's own documentation is explicit that opening
 database file is not a supported security boundary without the specific hardening options. This is a
 memory-corruption story, not an injection story.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > "The app imports a `.db` file chosen by the user" is a finding worth writing up on its own,
 > independent of whether you can demonstrate memory corruption. The remediation is straightforward
 > to state: do not open foreign database files; parse an explicit export format instead, or at
@@ -660,7 +660,7 @@ What you need to know:
 | It ships an `okhttp3.internal.platform` layer that picks the TLS backend | Determines whether your Conscrypt hook or your `SSLSocketFactory` hook fires |
 | Class names are stable and distinctive (`okhttp3.OkHttpClient`, `okhttp3.internal.Util`) | Excellent fingerprinting target — see section 8 |
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > When an app "ignores your proxy", walk this list in order: (1) `Proxy.NO_PROXY` or a custom
 > `ProxySelector` passed to `OkHttpClient.Builder`; (2) certificate pinning causing a silent failure
 > and a fallback path; (3) the traffic is not HTTP at all (gRPC over HTTP/2 still is, but a custom
@@ -671,7 +671,7 @@ What you need to know:
 
 ### 3.5 Third-party SDKs — the real attack surface
 
-> **📖 Definition**
+> **Definition**
 > An **SDK** (Software Development Kit) in the Android sense is a third-party library that an app
 > developer adds to gain a feature — analytics, advertising, crash reporting, payments, maps,
 > authentication, chat, push notifications, A/B testing, attribution. It is distributed as an AAR
@@ -729,7 +729,7 @@ grep -oE '<provider[^>]*android:name="[^"]*"[^>]*>' work/AndroidManifest.xml
 grep -oE 'android:authorities="[^"]*"' work/AndroidManifest.xml | sort -u
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Run that on any large consumer app and count the providers. Ten to thirty is normal. Each one is a
 > vendor whose code runs before the app's own code does. Present that count to the client — it is
 > often the first time anyone has said it out loud, and it reframes the whole conversation about
@@ -756,7 +756,7 @@ because it means the app's security now depends on the vendor's server not being
 
 ### 3.6 Supply chain risk
 
-> **📖 Definition**
+> **Definition**
 > A **software supply chain attack** compromises software not by attacking it directly but by
 > attacking something it depends on, or the process by which it is built and delivered. The victim
 > installs the malicious code themselves, through their normal, trusted update process.
@@ -778,7 +778,7 @@ somewhere in the industry.
 | **Abandoned package takeover** | A maintainer transfers or abandons a package; a new owner ships something different | Downstream consumers pin a range, or never look again | Watch for artifacts whose last release predates the app by years |
 | **Transitive shadowing** | A deep transitive dependency you have never heard of is the actual vector | The dependency tree is 200 nodes deep and nobody has read it | `./gradlew app:dependencies` output routinely surprises the team that wrote the app |
 
-> **⚠️ Warning**
+> **Warning**
 > Be precise in reports. Say "this app bundles version X of library Y, which is affected by
 > CVE-NNNN-NNNN, and here is the code path that reaches the vulnerable function" — or say "this app
 > bundles version X of library Y, which is affected by CVE-NNNN-NNNN; reachability was not
@@ -799,7 +799,7 @@ somewhere in the industry.
 
 #### SBOM for mobile
 
-> **📖 Definition**
+> **Definition**
 > An **SBOM** (Software Bill of Materials) is a machine-readable inventory of every component in a
 > piece of software, with versions, licences, and often supplier and hash information. The two
 > dominant formats are **SPDX** (an ISO standard, ISO/IEC 5962) and **CycloneDX** (an OWASP project).
@@ -820,7 +820,7 @@ So there are two SBOMs, and you should ask for both, or generate the second your
 | **Build-time SBOM** | Gradle's resolved dependency graph (CycloneDX Gradle plugin, SPDX tooling) | "What did we intend to include, at which versions, transitively" | Native static linking, shading, runtime-loaded code, post-R8 reality |
 | **Artifact-derived SBOM** | The APK itself — DEX class prefixes, `.so` symbol sets, embedded version strings, asset scanning | "What is actually shipping" | Version precision is lower; obfuscation degrades it |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Asking a client "can I have the SBOM for this build?" is a diagnostic question in itself. If the
 > answer is yes, and the SBOM matches what you find in the APK, you are dealing with a mature
 > engineering organisation and you can spend your time on deeper issues. If the answer is "the
@@ -873,7 +873,7 @@ part of the SDK's public API, or protected by `-keep` rules the SDK ships in its
 
 The method:
 
-1. List every class in the APK: `jadx --no-src -d out app.apk` then read `out/resources`, or simply
+1. List every class in the APK: `jadx --no-src -d out app.apk` then read `out/resources`, or
    `unzip -p app.apk classes.dex | strings` for a rough pass, or better, use `dexdump`/`baksmali`.
 2. Filter to the library's package prefix.
 3. Compare that set against the class sets of candidate versions of the library, which you obtain by
@@ -920,7 +920,7 @@ Interpretation guide:
 | `JNI_OnLoad` present | The library registers natives dynamically (`RegisterNatives`) — expect obfuscated/dynamic JNI binding |
 | No `JNI_*` symbols at all | Not loaded by Java directly; a dependency of another `.so` |
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > Statically linked third-party code inside an app's `.so` is the biggest blind spot in mobile
 > dependency scanning, and it is why "the Gradle file says we have no OpenSSL" is not an answer. A
 > cross-platform C++ core (common in fintech, VPN, media and games) routinely links OpenSSL, zlib,
@@ -992,7 +992,7 @@ When everything above fails — a heavily obfuscated, stripped, string-encrypted
 for t in /proc/$(pidof -s com.example.target)/task/*; do cat "$t/comm"; done | sort -u
 ```
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Version fingerprinting is triangulation, not lookup. Each technique gives you a constraint —
 > "at least 3.12", "at most 4.0", "built with these codecs", "byte-identical to the vendor's 2.7.1
 > AAR". Intersect the constraints. Report the range you can actually defend, and state your evidence.
@@ -1017,7 +1017,7 @@ for t in /proc/$(pidof -s com.example.target)/task/*; do cat "$t/comm"; done | s
 | 15 | 35 | Continued Mainline expansion; further restrictions on background activity launches and implicit intents | Fewer SDK tricks available |
 | 16 | 36 | Ongoing hardening; MTE availability expands on capable hardware | Memory-safety testing options improve |
 
-> **⚠️ Warning**
+> **Warning**
 > Version-dependent behaviour is a frequent source of false conclusions. An app that fails to load a
 > library on your Android 14 test device may work fine on the Android 11 device the client's users
 > actually have. Always record the API level in your evidence, and test the range your client
@@ -1111,7 +1111,7 @@ Back in ART, after `dlopen` returns, `LoadNativeLibrary` does `dlsym(handle, "JN
 it if present. The library returns the JNI version it wants. This is where `RegisterNatives` is
 usually called to bind native methods dynamically rather than relying on name mangling.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > There are therefore **two** distinct "early" hook points in a native library, and they run in this
 > order: `DT_INIT_ARRAY` constructors (inside `dlopen`, step 5.7) and then `JNI_OnLoad` (step 6).
 > Anti-analysis code that must run before anything else goes in a constructor. If you want to see it,
@@ -1180,7 +1180,7 @@ That list is a security boundary written as a text file. Everything not on it �
 app's `dlopen`, because those are internal interfaces with no ABI stability guarantee and, in several
 cases, meaningful privilege.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > An app that manages to use `libbinder.so` or other private libraries directly has done something
 > unusual: it has either bundled its own copy, or it is exploiting a namespace-escape technique, or
 > it is using a very old `targetSdk`. All three are worth investigating. Check with
@@ -1269,7 +1269,7 @@ Stated carefully. Where I name an identifier, it is one that is widely and publi
 | Dependency confusion research (2021, Alex Birsan) | Research disclosure, not a CVE | Resolution-order abuse across public and private registries | Demonstrated the class works at scale against major organisations. Gradle is in scope |
 | Image and font decoder overflows (industry-wide, recurring) | Many, across libpng, libjpeg, libwebp, FreeType, and platform decoders on every OS | Heap overflow from attacker-controlled dimensions or chunk lengths | Any code path where a network-supplied image is decoded is a real attack surface. The mitigation is sandboxing plus memory-safe decoders, not code review |
 
-> **⚠️ Warning**
+> **Warning**
 > Do not copy CVE identifiers from a scanner into a report without verifying (a) that the identifier
 > applies to the library you actually found, (b) that it applies to the version you actually found,
 > and (c) whether the vulnerable code path is present and reachable in this app. Scanners match
@@ -1379,7 +1379,7 @@ org.apache.commons.*       <- Apache Commons
 com.facebook.*             <- Facebook SDK / Fresco / React Native
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > A library package that appears **un-obfuscated** while the app's own code is renamed is telling you
 > something: the SDK shipped `consumer-rules.pro` keep rules, because it needs reflection or a stable
 > API. That is convenient for you and it is also a reliable fingerprinting anchor — those class names
@@ -1541,7 +1541,7 @@ fingerprint.
 | Removal of the build ID | Loses that fingerprint | Fall back to symbol sets and `.comment` |
 | Resource shrinking | Removes some `META-INF/*.version` files | Fall back to class sets |
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Obfuscation removes *names*. It cannot remove *structure*, *imports*, or *behaviour*. A library
 > still has to call `mmap`, still has to reference `SSL_CTX_new` if it uses OpenSSL, still has to
 > send its distinctive request shape to its own server, and still has to have the same number of
@@ -1639,7 +1639,7 @@ Interceptor.attach(dlopenExt, {
 });
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > `Interceptor.replace` inside an `onLeave` of `dlopen` runs while the linker's internal state is
 > still in flux on some Android versions. If you see crashes, defer with `setImmediate()` or hook
 > `JNI_OnLoad` instead and accept that constructors have already run.
@@ -1915,7 +1915,7 @@ most valuable personal assets):
 | `libsqlcipher.so`, `libcrypto.so` inside an app's `lib/` | App-bundled crypto | Crypto |
 | `librealm-jni.so`, `libjniPdfium.so`, `libpl_droidsonroids_gif.so` | Various single-purpose natives | Varies |
 
-> **⚠️ Warning**
+> **Warning**
 > That table is a starting point, not an authority. Vendors rename, merge, rebrand and relocate
 > packages. Always confirm the vendor from the SDK's own strings, endpoints, or documentation before
 > you name them in a report.
@@ -2108,7 +2108,7 @@ show the client the exact five lines to change is what makes the finding actiona
 | `LiME`/`checksec`-style ELF checks | Hardening flags | Tell you about the build, not the version |
 | Play Console / Play SDK Index | Google's own view of SDK versions and policy status | Only available to the app owner; ask the client for it — it is genuinely useful and often overlooked |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Ask the client whether they have looked at the SDK information in their Play Console. Google
 > surfaces SDK versions and known issues for SDKs it recognises. Many development teams have never
 > opened that page. It costs you nothing to ask and it sometimes hands you a corroborated inventory
@@ -2118,7 +2118,7 @@ show the client the exact five lines to change is what makes the finding actiona
 
 ## 9. Examples
 
-> **✅ Verified against a compiler.** Both C files in `examples/` compile **clean** with
+> **Verified against a compiler.** Both C files in `examples/` compile **clean** with
 > `-Wall -Wextra` using `aarch64-linux-android21-clang` from **NDK 25.2.9519653** and link as shared
 > libraries. `init_array_guard.c` in particular depends on the `.init_array` mechanism this chapter
 > describes, and the built library does carry exactly one constructor entry — measured:
@@ -2810,7 +2810,7 @@ platform, because Conscrypt is Mainline and certificate handling benefits from c
 Compare build IDs between the vendor's published AAR and the `.so` in your build output. Hash the
 artifact and compare against the vendor's published checksum, if they publish one. Enable Gradle
 dependency verification with PGP signature checking. In the longer term, require the vendor to
-publish provenance attestation and, ideally, reproducible builds. Note that if the vendor's own build
+publish provenance attestation and, ideally, reproducible builds.if the vendor's own build
 pipeline is compromised, all of these confirm only that you received what the vendor produced.
 
 ### Principal Engineer
@@ -2828,7 +2828,7 @@ practice of inferring patch status from `ro.build.version.security_patch`. It co
 the platform's security posture in Google rather than in OEMs, which is good for consistency and bad
 for ecosystem diversity. And it broke long-standing techniques such as modifying the system CA store,
 which is a cost borne by defenders and researchers rather than by attackers. On balance the trade is
-clearly correct, but the versioning and observability story is still weaker than it should be: there
+correct, but the versioning and observability story is still weaker than it should be: there
 is no simple, universally available way for an app or an auditor to enumerate module versions and
 map them to known issues.
 

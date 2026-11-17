@@ -231,7 +231,7 @@ privilege escalation for UID 2000.
 Two traps. On a `userdebug` or `eng` build, `ro.debuggable=1` makes `run-as` work on **everything** —
 so never generalise a finding from such a device to a production one. And repackaging a release APK to
 add `android:debuggable="true"` changes the signature, which breaks signature checks, certificate
-pinning tied to the signing key, and integrity attestation; note that in the methodology when you do
+pinning tied to the signing key, and integrity attestation;in the methodology when you do
 it.
 
 ---
@@ -310,7 +310,7 @@ whatever it declares in `<queries>`. `QUERY_ALL_PACKAGES` lifts the restriction 
 permission on Play.
 
 Two things to be careful about. It is a **privacy control, not a security boundary** — it never makes
-an exported component unreachable; an attacker simply declares the target. And when *your own probe
+an exported component unreachable; an attacker declares the target. And when *your own probe
 app* forgets its `<queries>` block, the symptoms are silent and look exactly like absence:
 `NameNotFoundException`, `null` from `resolveActivity()`, `ActivityNotFoundException`,
 `IllegalArgumentException: Unknown URL`. Concluding "nothing is reachable" because your own manifest

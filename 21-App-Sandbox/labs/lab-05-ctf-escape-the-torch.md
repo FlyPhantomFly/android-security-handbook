@@ -442,7 +442,7 @@ authority, not root.
 The vault broadcasts `com.ctf.vault.READY` with a `PendingIntent` extra created **without**
 `FLAG_IMMUTABLE`. The broadcast is unprotected, so the torch's maximum-priority receiver gets it.
 
-> **📖 Definition — `PendingIntent`**
+> **Definition — `PendingIntent`**
 > A token that lets another application later perform an operation **as the creating application**,
 > with the creator's identity and permissions. A *mutable* `PendingIntent` additionally lets the holder
 > fill in unspecified fields of the wrapped `Intent` before it is sent.

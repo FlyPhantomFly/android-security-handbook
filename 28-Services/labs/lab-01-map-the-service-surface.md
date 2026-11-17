@@ -27,7 +27,7 @@ More importantly, this lab teaches the discipline that the rest of the chapter
 depends on. The enumeration step is easy and produces a big, alarming number. The
 skill is in what you do with the number.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Enumeration produces **doors**. A finding needs **a door, a room behind it, and
 > something in the room**. This lab is entirely about doors, and it ends by
 > making you say out loud how many of them you have *not* opened.
@@ -331,7 +331,7 @@ copies a permission name from their own `<uses-permission>` line into
 On the reference device, **five exported services were guarded this way**.
 </details>
 
-> **⚠️ Warning — a real bug found while writing this lab**
+> **Warning — a real bug found while writing this lab**
 > `pm list permissions -f` **without `-g`** prints permissions that belong to a
 > permission *group* indented under a group heading, and a naive parser misses
 > them entirely. The first version of `service-recon.py` reported

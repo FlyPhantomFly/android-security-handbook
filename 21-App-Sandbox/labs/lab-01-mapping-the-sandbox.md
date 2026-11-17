@@ -31,7 +31,7 @@ capabilities) something you have *seen*, not something you have read.
 Third, it makes the seven enforcement layers concrete. Every one of them shows up as a line of text in
 a file you can `cat`.
 
-> **📖 Definition — `/proc`**
+> **Definition — `/proc`**
 > `/proc` is a *pseudo-filesystem*: it contains no data on disk. Reading a file under `/proc` causes
 > the kernel to generate the contents on the spot from its own in-memory structures. `/proc/<pid>/status`
 > is therefore not a report *about* a process; it is the process's kernel state, rendered as text at the
@@ -375,7 +375,7 @@ From Android 10 the `/proc` filesystem is hardened so a process sees only its ow
 shell` (UID 2000) normally still has enough privilege via `AID_READPROC`; if it does not on your build,
 use `su`, or read `/proc/self/status` from inside the app with `run-as` or Frida instead.
 
-This restriction is itself a lab result: note that an *app* cannot read another app's
+This restriction is itself a lab result:an *app* cannot read another app's
 `/proc/<pid>/status` at all on a modern device.
 </details>
 

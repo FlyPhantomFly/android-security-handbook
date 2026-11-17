@@ -25,7 +25,7 @@ decoders are **independent reimplementations**. Reimplementations of a binary fo
 adversary is a classic parser-differential setup, and Android malware has used exactly that to make
 analysis tools print a benign manifest while the device installs a malicious one.
 
-> **📖 Definition**
+> **Definition**
 > A **parser differential** is a security bug in which two programs that are supposed to agree on the
 > meaning of the same bytes do not. The attacker crafts input that lands in the gap. Here, one
 > program is your analysis tool and the other is the device that will actually run the app.
@@ -67,7 +67,7 @@ sha256sum target.apk
 apksigner verify -v --print-certs target.apk | head -30
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Record the SHA-256 and the signing certificate *before* you look at anything else. A finding
 > against an APK you cannot identify later is worthless, and "I downloaded it from the store" is not
 > a chain of custody. On a repackaged or sideloaded build, the signer tells you immediately that you
@@ -129,7 +129,7 @@ ls work/
 head -40 work/AndroidManifest.xml
 ```
 
-Note that `apktool` also decoded `res/`, which is how the `@xml/...` references from Question 4
+`apktool` also decoded `res/`, which is how the `@xml/...` references from Question 4
 become readable files:
 
 ```bash

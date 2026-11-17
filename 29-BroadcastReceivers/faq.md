@@ -224,7 +224,7 @@ team learns to skim your reports.
 
 It stops an **ordered** broadcast from reaching any lower-priority receiver. Nobody
 downstream receives it, and nobody is told why — from their perspective the broadcast
-simply never happened.
+never happened.
 
 Yes, you can use it against another app, subject to three conditions:
 
@@ -470,7 +470,7 @@ One snapshot of an idle Android 11 device:
 A snapshot a few minutes earlier on the *same idle device* read 1,151 / 1,306 / 2,677.
 
 Two lessons. First, quote any such number with a timestamp — the surface is live. Second, a
-receiver you failed to find may simply not have been registered when you looked; re-run
+receiver you failed to find may not have been registered when you looked; re-run
 while exercising the target.
 
 ---

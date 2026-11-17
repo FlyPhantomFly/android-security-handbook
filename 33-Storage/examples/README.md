@@ -102,7 +102,7 @@ audit**. Any assessment built on one method reports a clean app.
   belong to [34-Cryptography](../../34-Cryptography/README.md) in any case. These apps use the
   framework's own `AndroidKeyStore` and JCA, which is enough to make the point that correct
   encryption does not prevent a plaintext copy.
-- **The secrets are fake and obviously so.** `sk_live_EXAMPLE_NOT_A_REAL…`, `ch33-recovery-code-889912`.
+- **The secrets are fake and named so no one can mistake them for real.** `sk_live_EXAMPLE_NOT_A_REAL…`, `ch33-recovery-code-889912`.
   They are shaped like real credentials so the detectors in
   [`../scripts/leak-hunter.py`](../scripts/leak-hunter.py) have something honest to match, and they
   are unmistakably synthetic so nobody reports them.
@@ -132,7 +132,8 @@ teaches, applied to the chapter's own example.
 
 ---
 
-## Authorised testing only
+## Cleanup and handling
 
 `leaky-vault` is deliberately vulnerable. Install it on a device you own, and run
-`./build.sh --uninstall` when you are finished.
+`./build.sh --uninstall` when you are finished. See [SECURITY.md](../../SECURITY.md) for the
+handling rules.

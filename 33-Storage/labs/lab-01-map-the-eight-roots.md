@@ -45,7 +45,7 @@ almost always wrong. Deciding whether a world-readable file **matters** requires
 questions answered in order, and the whole professional difference between a storage assessment and
 a scanner report lives in the discipline of asking all three.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > An Android app's storage is not one box. It is a set of boxes with different lids, and the lids
 > are held shut by different mechanisms: the uid sandbox holds two of them, a FUSE daemon holds
 > three, a content provider holds one, and the system holds the rest on the app's behalf without
@@ -94,7 +94,7 @@ adb shell "su -c 'id'"
 On the reference device those return `M2101K6P`, `11`, `30`, `file`, `encrypted`, `Enforcing`, and
 `uid=0(root) gid=0(root)` respectively.
 
-> **📖 Definition — FBE (file-based encryption)**
+> **Definition — FBE (file-based encryption)**
 > A scheme in which each file (and each filename) under `/data` is encrypted with a key derived per
 > directory tree, rather than the whole partition being encrypted with one key. `ro.crypto.type=file`
 > means FBE is in use. FBE is what makes "credential-encrypted" and "device-encrypted" storage two
@@ -102,7 +102,7 @@ On the reference device those return `M2101K6P`, `11`, `30`, `file`, `encrypted`
 > unreadable — not merely unreadable *by policy*, but cryptographically unavailable — until the user
 > has unlocked the device once since boot.
 
-> **⚠️ Warning**
+> **Warning**
 > FBE is irrelevant to every finding in this chapter, and saying so out loud saves you an argument
 > with a developer later. FBE protects the data on a handset that is **powered off or before first
 > unlock**. It does nothing at all against a process running as another uid on a booted, unlocked
@@ -183,7 +183,7 @@ The script prints a header, then one block per root. The header line that matter
 privilege line — when it says `shell uid 2000 -- /data roots will be unreadable`, every "missing"
 below it means "I was not allowed to look", not "it is not there".
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Absence of evidence is the single most common lie a storage tool tells you. `storage-map.sh`
 > distinguishes `MISSING` from `UNREADABLE` for exactly this reason. If a tool you are using does
 > not make that distinction, you must make it yourself, every time, before writing anything down.
@@ -240,7 +240,7 @@ readlink exit: 1
 means they resolve to the same directory object on the same filesystem. And `/proc/mounts` lists
 `/data/user/0` as a mount point in its own right.
 
-> **📖 Definition — bind mount**
+> **Definition — bind mount**
 > A Linux mount that makes an existing directory subtree visible at a second path. Both paths are
 > real directory entries resolving to the same inode; neither is a link to the other. `mount --bind`
 > creates one. Unlike a symlink, a bind mount is invisible to `readlink`, survives a chroot, and can
@@ -300,7 +300,7 @@ So on this device the shared root is served by the **FUSE daemon**, while `Andro
 `Android/obb` are **bind-mounted sdcardfs** underneath it — a performance shortcut, because routing
 every app's own external I/O through userspace FUSE is expensive.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > FUSE ("Filesystem in Userspace") means a userspace process, here the `MediaProvider`-backed
 > daemon, answers every `open`, `read`, `getattr` and `unlink` on that mount. That is what makes
 > scoped storage enforceable at all: the restriction is implemented in the daemon that services the
@@ -337,7 +337,7 @@ Measured on the reference device:
 Look at the numbers after `s0:`. Those are **MCS categories**, and they are computed from the app's
 uid.
 
-> **📖 Definition — MCS (Multi-Category Security)**
+> **Definition — MCS (Multi-Category Security)**
 > An SELinux mechanism that attaches a set of opaque categories to a label. A subject may access an
 > object only if the subject's category set **dominates** (is a superset of) the object's. Android
 > uses it to isolate apps from one another *within* the single `untrusted_app` domain: two apps that
@@ -375,7 +375,7 @@ and for each one a line reading `DAC-reachable by another uid: yes` or
 `no (blocked at <dir> mode <m>)`. That computation is the whole difference between a finding and a
 false positive, and you should be able to do it by hand.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > `open("/a/b/c")` is not one permission check. The kernel resolves the path one component at a
 > time, and needs **execute** (`x`) on every directory along the way plus **read** on the final
 > file. A mode-0644 file inside a mode-0700 directory is unreachable by anyone but its owner,
@@ -458,7 +458,7 @@ MAC does not object.
 file turned out to contain an OAuth refresh token. Then look at the contents and write the severity
 you would actually assign. Justify the gap.
 
-> **⚠️ Warning**
+> **Warning**
 > The contents are advertising and SDK feature flags. This is **low severity and high teaching
 > value**, and it must not be written up as a vulnerability report against Google. What it
 > demonstrates is a method: that DAC, MAC and content are three independent questions, that a file
@@ -654,7 +654,7 @@ authentication value and no personal data. That is **Informational**, and the wr
 plainly. The gap between the two is the entire reason you read the file instead of grepping for its
 mode: reachability decides whether anyone *can* read it, and content decides whether anyone *cares*.
 
-**8.** DE storage legitimately holds anything a Direct Boot component needs in order to be useful
+**8.** DE storage legitimately holds anything a Direct Boot component needs to be useful
 before unlock and that is not itself secret: an alarm's scheduled time, whether a credential exists,
 a non-sensitive account label, a cached list of notification channels. It must never hold anything
 whose disclosure is the harm — tokens, keys, message bodies, PII. The distinguishing question is

@@ -59,7 +59,7 @@ nm -D --defined-only libfixed.so  | grep ' T Java_'
 Drop both into an app containing `../examples/UnsafeDemo.java`. `System.loadLibrary("unsafe")` picks
 the vulnerable one; change the string to `"fixed"` to switch.
 
-> **⚠️ Warning.** `libunsafe.so` is deliberately exploitable. Use a throwaway app on a device or
+> **Warning.** `libunsafe.so` is deliberately exploitable. Use a throwaway app on a device or
 > emulator you own. Never install it alongside anything you care about, and never leave it on a
 > device you then use for anything else.
 
@@ -285,7 +285,7 @@ never touches.
 ### 4.3 Trigger the *other* branch
 
 Make `GetMethodID` fail instead. Hook the listener's class so its `onData` signature no longer
-matches — or simply pass an object that does not implement it:
+matches — or pass an object that does not implement it:
 
 ```javascript
 // frida

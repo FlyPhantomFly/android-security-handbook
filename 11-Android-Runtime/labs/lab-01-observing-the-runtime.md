@@ -21,7 +21,7 @@ Produce evidence, pulled from a running device rather than from memory, for each
 | Which process created my app's process? | `PPid` in `/proc/<pid>/status` matching the Zygote's PID |
 | What does the runtime map into an app? | `/proc/<pid>/maps` lines naming `base.odex`, `base.vdex`, boot image |
 
-> **📖 Definition — runtime.** A *runtime* is the body of code that is already running before your
+> **Definition — runtime.** A *runtime* is the body of code that is already running before your
 > program starts and that turns your program's instructions into work the CPU performs. On Android
 > that runtime is **ART**, the Android Runtime. It loads bytecode, decides whether to interpret it,
 > JIT-compile it, or use ahead-of-time compiled machine code, and it owns the heap and the garbage
@@ -41,7 +41,7 @@ Produce evidence, pulled from a running device rather than from memory, for each
 - Android 9 (API 28) or newer. Commands below were checked against Android 11 through 14.
 - Comfort with a shell prompt; otherwise read [02 — Linux Basics](../../02-Linux-Basics/README.md).
 
-> **⚠️ Warning.** Do not run this against a personal phone holding real data. `cmd package compile -f`
+> **Warning.** Do not run this against a personal phone holding real data. `cmd package compile -f`
 > rewrites files under `/data/app` and can take minutes, during which the app may be killed. Use a
 > disposable emulator.
 
@@ -93,7 +93,7 @@ machine code before the app ever runs.
 | `speed` | Native code for effectively every method | `-m speed`, some system apps |
 | `everything` | Native code for every method, including ones normally skipped | Diagnostics |
 
-> **📖 Definition — dexopt.** *Dexopt* is the ahead-of-time step in which ART reads your app's DEX
+> **Definition — dexopt.** *Dexopt* is the ahead-of-time step in which ART reads your app's DEX
 > bytecode and writes out verification results and, depending on the filter, compiled native code.
 > The compiler is `dex2oat`, invoked by the package manager at install time and again in the
 > background. The DEX container it consumes is
@@ -119,7 +119,7 @@ Restore the device afterwards:
 cmd package compile --reset com.android.deskclock
 ```
 
-> **🔍 Pentester's Note.** `cmd package compile -m everything -f <pkg>` forces an app's methods into a
+> **Pentester's Note.** `cmd package compile -m everything -f <pkg>` forces an app's methods into a
 > compiled `.odex` before static analysis of the native artefacts, and makes an app that behaves
 > erratically under JIT behave deterministically. `--reset` removes your footprint before handing a
 > client device back.
@@ -146,7 +146,7 @@ file base.odex
 
 It reports an ELF shared object. That is the concrete answer to "where did my Java go".
 
-> **🔬 Under the Hood.** The `.odex` is a real ELF file but not a normal library. Its `.rodata`
+> **Under the Hood.** The `.odex` is a real ELF file but not a normal library. Its `.rodata`
 > carries an OAT header and per-DEX class metadata; its `.text` holds compiled method bodies. ART
 > finds a method's entry point by walking that metadata rather than by symbol lookup, which is why
 > `nm base.odex` shows almost nothing useful.
@@ -171,7 +171,7 @@ runtime ART replaced, and were kept for compatibility.
 | `dalvik.vm.isa.arm64.variant` | CPU variant `dex2oat` targets when generating code |
 | `dalvik.vm.image-dex2oat-filter` | Filter used for the boot image itself |
 
-> **🧠 Mental Model.** Treat `dalvik.vm.*` as ignition settings chosen by the manufacturer before the
+> **Mental Model.** Treat `dalvik.vm.*` as ignition settings chosen by the manufacturer before the
 > engine turns over. Your app cannot change them. When an app appears to have more memory than the
 > documentation suggests, the cause is almost always `android:largeHeap` promoting it from
 > `heapgrowthlimit` to `heapsize`, not a leak.
@@ -189,7 +189,7 @@ same executable, `app_process`, started by `init` with different arguments. The 
 `--zygote`, `--start-system-server`, and `--socket-name=zygote`; that socket is what the package
 manager writes to when it wants a new app process.
 
-> **📖 Definition — Zygote.** The *Zygote* starts during boot, loads the runtime and every framework
+> **Definition — Zygote.** The *Zygote* starts during boot, loads the runtime and every framework
 > class an app is likely to need, then sleeps on a socket. When the system needs a new app process it
 > does not start one from scratch; it tells the Zygote to `fork()`. The child inherits the loaded
 > classes and the mapped boot image, so startup skips work that would otherwise repeat thousands of
@@ -208,7 +208,7 @@ echo "zygote64 = $(pidof zygote64)"
 `PPid` equals the Zygote's PID. That single number is the whole Zygote model, observed rather than
 believed.
 
-> **🔬 Under the Hood.** On devices with the Unspecialized App Process pool enabled, the system keeps
+> **Under the Hood.** On devices with the Unspecialized App Process pool enabled, the system keeps
 > pre-forked, not-yet-specialised children waiting. Your app may be one of them, and its parent is
 > still a Zygote because pool members are themselves Zygote children. If `PPid` names something else,
 > you probably grabbed a helper process such as an isolated WebView renderer.
@@ -228,7 +228,7 @@ Third, **anonymous ART regions** labelled `[anon:dalvik-main space]`, `[anon:dal
 and `[anon:dalvik-LinearAlloc]`. The zygote space is the copy-on-write heap inherited at fork; the
 main space is where your app's own allocations land. See [19 — Memory](../../19-Memory/README.md).
 
-> **🔍 Pentester's Note.** `/proc/<pid>/maps` is the fastest way to catch an app loading code it did
+> **Pentester's Note.** `/proc/<pid>/maps` is the fastest way to catch an app loading code it did
 > not ship with. A `.dex`, `.odex`, or `.so` mapped from a data or cache directory, or one suffixed
 > `(deleted)`, means the app pulled executable content at runtime. That is exactly what
 > [Lab 03](lab-03-dynamic-dex-loading-and-hooking.md) and

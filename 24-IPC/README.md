@@ -58,13 +58,13 @@ Consider what a single ordinary action requires:
 Every one of those is a conversation across a sandbox boundary. **IPC — inter-process communication
 — is the set of mechanisms Android provides for those conversations.**
 
-> **📖 Definition**
+> **Definition**
 > **Process.** A running program together with everything the kernel gives it: its own virtual
 > address space (its private view of memory), its open file descriptors, its user identity (UID),
 > and its threads. Two processes cannot read each other's memory. On Android, in almost all cases,
 > one installed application equals one process with one unique UID.
 
-> **📖 Definition**
+> **Definition**
 > **Inter-Process Communication (IPC).** Any mechanism by which one process causes data to be
 > transferred to, or an action to be performed in, another process. Because processes cannot share
 > memory by default, every IPC mechanism must ultimately go through the kernel, which is the only
@@ -121,7 +121,7 @@ wrote `android:exported="true"`. They very often do *not* know that:
 
 Enumerating the channels the developer forgot is most of the work of an Android IPC assessment.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Think of an Android device as an office building where every tenant has a locked suite. IPC
 > mechanisms are the shared infrastructure: the reception desk (`servicemanager` and Binder), the
 > internal mail system (Intents), pneumatic tubes between two specific suites (UNIX sockets), the
@@ -131,7 +131,7 @@ Enumerating the channels the developer forgot is most of the work of an Android 
 > does not check badges, and which staff members will carry a package into a secure area because
 > someone in a high-visibility vest asked them to.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > When you are handed an Android app to test, the IPC surface is where the high-severity findings
 > live. Hardcoded API keys and missing certificate pinning are findings, but they are usually
 > medium. Intent redirection reaching an internal WebView, an unprotected `ContentProvider` exposing
@@ -293,7 +293,7 @@ for it, and no static analysis tool that reads the manifest will ever see it. Th
 Linux DAC (file permissions) and SELinux — and for abstract-namespace sockets, DAC does not apply at
 all.
 
-> **⚠️ Warning**
+> **Warning**
 > A large fraction of automated Android security tooling only understands mediated IPC, because it
 > works from the manifest. If your methodology is "run MobSF, read the exported-components table",
 > you will systematically miss the entire direct-IPC category. Sections 3.9 through 3.13 are the
@@ -411,7 +411,7 @@ platform.
 | 19 | Sticky broadcasts (deprecated) | AMS-retained Intent | Yes | Any app that registers later | None | Deprecated since API 21 — do not use | Medium |
 | 20 | `android:sharedUserId` (deprecated) | Same UID, no boundary at all | Yes | Both apps share everything | Not applicable | Deprecated since API 29 — migrate off | High |
 
-> **📖 Definition**
+> **Definition**
 > **Exported.** A manifest attribute (`android:exported`) that declares whether a component can be
 > started or accessed by components of *other* applications. If absent, the default depends on
 > whether the component declares an `<intent-filter>`: with a filter the historical default was
@@ -436,7 +436,7 @@ platform.
 | 14 / 34 | Implicit intents cannot target non-exported components even within an app; `registerReceiver` export flag enforced | Kills a family of internal-implicit-intent bugs |
 | 15 / 35 | Further restrictions on background activity launches and `PendingIntent` creator checks | Affects task-hijack and PI-based chains |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The `targetSdk` of the APK — not the OS version of your test device — decides which of these rules
 > applies to the app. An app targeting API 19 running on Android 14 still gets many legacy
 > behaviours. Read it first with `aapt2 dump badging app.apk | grep targetSdkVersion`. A low
@@ -537,7 +537,7 @@ flowchart TD
 | Classic failures | Intent redirection; trusting `getIntent().getStringExtra("url")` in a WebView; trusting a boolean extra like `is_authenticated` |
 | How to test | `am start` / `am broadcast` with every extra type; Drozer; a purpose-built attacker APK |
 
-> **⚠️ Warning**
+> **Warning**
 > `getIntent()` returns attacker-controlled data in any exported component. Treat it exactly as you
 > would treat an HTTP request body on a web server: parse defensively, validate every field, and
 > never let it decide an authorisation outcome.
@@ -612,7 +612,7 @@ security control: an attacker can write the same token.
 | Classic failure | The developer assumes "only our other app calls this", so `transfer()` has no caller check |
 | Reverse-engineering note | The generated `Stub` is highly recognisable in JADX; Section 6 shows how to reconstruct the `.aidl` from it |
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > `Stub.asInterface(IBinder)` first calls `queryLocalInterface()`. If the `IBinder` is a local object
 > in the same process it returns the real implementation directly, with **no Binder transaction and
 > no marshalling**. Cross-process, it wraps the handle in a `Proxy`. This is why a bug that only
@@ -691,7 +691,7 @@ Full treatment in [29-BroadcastReceivers](../29-BroadcastReceivers/README.md).
 
 ### 3.9 UNIX domain sockets — the filesystem-named kind
 
-> **📖 Definition**
+> **Definition**
 > **UNIX domain socket.** A socket (a bidirectional communication endpoint) that connects two
 > processes on the *same machine*. Unlike a TCP socket it has no IP address and no port; it is named
 > either by a path in the filesystem (`/data/data/com.example/ipc.sock`) or by a string in the
@@ -740,7 +740,7 @@ if (getsockopt(client_fd, SOL_SOCKET, SO_PEERCRED, &cred, &len) == 0) {
 This section deserves your full attention. It is one of the most reliably missed pieces of Android
 attack surface, and it is present in a surprising number of real applications.
 
-> **📖 Definition**
+> **Definition**
 > **Abstract namespace.** A Linux extension to `AF_UNIX` sockets. If the first byte of
 > `sun_path` in the `sockaddr_un` structure is a NUL byte (`\0`), the remainder is treated not as a
 > filesystem path but as an opaque name in a **kernel-global namespace** that has no filesystem
@@ -788,7 +788,7 @@ Common sources of abstract sockets on a real device:
 | Multi-process apps talking to their own `:remote` process | `@<pkg>_worker` | Developer assumes only their own process connects |
 | Native helper binaries spawned by the app | arbitrary | Usually the least defended |
 
-> **⚠️ Warning**
+> **Warning**
 > `@chrome_devtools_remote` deserves special mention. If an app enables
 > `WebView.setWebContentsDebuggingEnabled(true)` — which many do unconditionally rather than gating
 > on `BuildConfig.DEBUG` — the WebView opens an abstract socket exposing the Chrome DevTools
@@ -932,7 +932,7 @@ adb push scripts/abstract-socket-probe.py /data/local/tmp/
 adb shell "cd /data/local/tmp && python3 abstract-socket-probe.py --name com.example.app.ipc --send '{\"cmd\":\"get_token\"}'"
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > Running the probe from `adb shell` proves the *socket exists and speaks*, but `shell` is UID 2000
 > with a different SELinux context from `untrusted_app`. To claim "any third-party app can do this"
 > you must reproduce it from a real app. Build the attacker APK. This is the same discipline
@@ -1013,7 +1013,7 @@ supports.
 This is a close cousin of the abstract socket and appears just as often, usually for even weaker
 reasons.
 
-> **📖 Definition**
+> **Definition**
 > **Loopback / localhost.** The virtual network interface `lo`, address `127.0.0.1` (IPv4) and `::1`
 > (IPv6). Traffic to it never leaves the device. It is a *network* interface, so the ordinary
 > network permission model applies: a process needs the `INTERNET` permission to create a socket at
@@ -1248,7 +1248,7 @@ See [33-Storage](../33-Storage/README.md) for the full storage model.
 
 ### 3.13 Shared memory — ashmem and memfd
 
-> **📖 Definition**
+> **Definition**
 > **Shared memory.** A region of physical memory mapped into the address space of two or more
 > processes, so that a write by one is immediately visible to the other with no copying and no
 > syscall. It is the fastest IPC there is, and the one with the fewest built-in checks.
@@ -1512,7 +1512,7 @@ public ParcelFileDescriptor openFile(Uri uri, String mode) throws FileNotFoundEx
 }
 ```
 
-`uri.getLastPathSegment()` on `content://auth/x/..%2F..%2Fdatabases%2Fapp.db` — or simply a path with
+`uri.getLastPathSegment()` on `content://auth/x/..%2F..%2Fdatabases%2Fapp.db` — or a path with
 segments — can escape the base directory. Combined with `MODE_READ_WRITE`, the caller gets a writable
 handle on the app's own database.
 
@@ -1615,7 +1615,7 @@ link.
 | Web deep link (http/https, no `autoVerify`) | `<data android:scheme="https" android:host="ex.com"/>` | Any app declaring the same host, plus browsers | None — chooser appears |
 | **App Link** (`android:autoVerify="true"`) | Same plus `autoVerify` | Only apps that pass verification | Android fetches `https://ex.com/.well-known/assetlinks.json` and checks the signing certificate fingerprint |
 
-> **📖 Definition**
+> **Definition**
 > **`assetlinks.json`.** A JSON file served at `https://<host>/.well-known/assetlinks.json` listing
 > the package names and SHA-256 signing-certificate fingerprints permitted to handle links for that
 > host. Android fetches it at install time (and periodically) and only grants verified default
@@ -1689,12 +1689,12 @@ Full treatment in [26-Intent](../26-Intent/README.md).
 This is the most important concept in the chapter, so it gets a full worked example rather than a
 definition and a shrug.
 
-> **📖 Definition**
+> **Definition**
 > **Confused deputy.** A program that holds authority is tricked by a less-privileged party into
 > misusing that authority on the less-privileged party's behalf. The term comes from Norm Hardy's
 > 1988 paper describing a compiler on a timesharing system: the compiler had permission to write to
 > a billing file, and accepted an arbitrary output filename from its caller. A user who could not
-> write the billing file directly simply asked the compiler to write its output there. The compiler
+> write the billing file directly asked the compiler to write its output there. The compiler
 > was not malicious and was not compromised. It was *confused* about whose authority it was acting
 > under.
 
@@ -1760,7 +1760,7 @@ Now count the authority the deputy holds that the caller does not:
 - It can read `content://com.example.photos.credentials/...`, because the provider is exported
   `false` but the owning app always has access.
 - It can *grant* URI permissions on its own provider's URIs to a third party, because
-  `grantUriPermissions="true"` and the granter must simply be the provider's owner.
+  `grantUriPermissions="true"` and the granter must be the provider's owner.
 
 The exploit, in full:
 
@@ -1968,7 +1968,7 @@ if (uid != Process.myUid() && !isTrustedUid(uid)) {
 
 Use the PID for log lines and for diagnostics. Never use it for a decision.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > The values come from `binder_transaction()` in `drivers/android/binder.c`, which populates the
 > transaction's sender fields from the current task: the sender's `pid` from `task_tgid_nr(...)` and
 > the sender's `euid` from the task's credentials. In userspace, `IPCThreadState` stores them in
@@ -2199,7 +2199,7 @@ echo "== file modes in the data dir =="
 ls -laZ /data/data/$PKG /data/data/$PKG/shared_prefs 2>/dev/null
 ```
 
-The full, robust version is [`scripts/enumerate-ipc-surface.sh`](scripts/enumerate-ipc-surface.sh).
+The full version is [`scripts/enumerate-ipc-surface.sh`](scripts/enumerate-ipc-surface.sh).
 
 #### Step 4 — Prove reachability from an unprivileged app
 
@@ -2317,7 +2317,7 @@ The `Cursor` is not copied through Binder. The rows are written into a `CursorWi
 This is why a query returning megabytes does not hit the ~1 MB Binder transaction limit, and it is a
 concrete example of shared memory (Section 3.13) being used by the framework itself.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > Notice that there were two permission checks: one in `system_server` when acquiring the provider,
 > and one inside the provider's own process on each call. The second exists because a provider
 > reference can be passed around after acquisition. This layering — a coarse check at acquisition,
@@ -2975,7 +2975,7 @@ run scanner.provider.finduris
 run app.package.attacksurface --permission android.permission.INTERNET
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `run scanner.provider.injection -a <pkg>` and `run scanner.provider.traversal -a <pkg>` are the two
 > highest-value commands in Drozer. They test every exported provider's `projection`, `selection` and
 > `sortOrder` for SQL injection and every `openFile` path for traversal, in seconds. Run them on every
@@ -3621,7 +3621,7 @@ adb shell am start -n com.attacker.poc/.MainActivity
 adb logcat -s poc:I
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Keep a generic version of this app in your toolkit with the target package name in a
 > `BuildConfig` field, so a rebuild for a new target takes thirty seconds. It answers the "can an
 > ordinary app really do this?" question definitively, and a client engineer can install it and see
@@ -4012,7 +4012,7 @@ just produces creative workarounds that are usually worse than what was banned.
 - **Testing on one Android version** and generalising. Clipboard, scoped storage, implicit
   broadcasts, and `PendingIntent` mutability all changed behaviour across versions.
 - **Assuming a `SecurityException` means "secure".** It may mean you got the URI path wrong, or that
-  the provider requires a permission your test app can simply request.
+  the provider requires a permission your test app can request.
 - **Destroying evidence.** Running `pm clear` or an exploit that wipes data before capturing the
   before-state.
 - **Missing the `<queries>` requirement on API 30+.** Your attacker app may fail to see the target

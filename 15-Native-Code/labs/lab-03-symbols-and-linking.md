@@ -115,7 +115,7 @@ You should see roughly nine `UND` rows (`__cxa_finalize`, `__strcpy_chk`, `__sta
 (`check_password`, `build_command`, `run_helper`, `set_logger`, `emit`, `public_checksum`, and the
 `OBJECT` `g_logger`).
 
-Note that `g_logger` is `STT_OBJECT`, not `STT_FUNC` — a **variable** in the export table. Libraries
+`g_logger` is `STT_OBJECT`, not `STT_FUNC` — a **variable** in the export table. Libraries
 export data as well as functions, and an exported writable global is a hooking target that costs
 nothing to reach.
 
@@ -147,7 +147,7 @@ python3 $S/elf-inspect.py libdemo-hard.so --dynsyms --grep checksum
 ```
 
 `internal_checksum` is `LOCAL`/`HIDDEN` and is **not in `.dynsym`**. It is a real function, at
-`0x4df8`, forty bytes long, and it executes every time `public_checksum` is called. It simply has no
+`0x4df8`, forty bytes long, and it executes every time `public_checksum` is called. It has no
 name that the dynamic linker — or Frida, or `nm -D`, or `dlsym` — can see.
 
 </details>

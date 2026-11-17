@@ -25,7 +25,7 @@ The platform half is written by Google, reviewed publicly, and covered by a larg
 
 Before Android 8 and Treble, a device had one policy. After it, a device has two, and only one of them has been looked at. That single structural fact is why this lab exists.
 
-> **⚠️ Scope and legality**
+> **Scope and legality**
 > Analyse a device you own or are explicitly authorised to test. Reading policy files off a device is passive and harmless, but the *findings* you produce may be sensitive. If you find something serious on a shipped device, follow the vendor's disclosure process; [§5.13](../README.md#513-bug-bounty-patterns) discusses what triage teams accept.
 
 ---
@@ -66,7 +66,7 @@ adb pull /product/etc/selinux/product_sepolicy.cil
 ls -la
 ```
 
-> **⚠️ Some pulls will fail silently.** On the reference device, `vendor_service_contexts`, `plat_hwservice_contexts` and `plat_mac_permissions.xml` were unreadable from a shell — they showed as `-?????????` in `ls -l`, which is the `getattr` denial pattern from Lab 02. If `adb pull` produces nothing, check for the denial rather than assuming the file is absent:
+> **Some pulls will fail silently.** On the reference device, `vendor_service_contexts`, `plat_hwservice_contexts` and `plat_mac_permissions.xml` were unreadable from a shell — they showed as `-?????????` in `ls -l`, which is the `getattr` denial pattern from Lab 02. If `adb pull` produces nothing, check for the denial rather than assuming the file is absent:
 > ```bash
 > adb logcat -d -b all | grep -a 'avc:' | grep -a getattr | tail
 > ```
@@ -484,7 +484,7 @@ grep -A2 'typeattributeset mlstrustedsubject' plat_sepolicy.cil
 grep -A2 'typeattributeset mlstrustedsubject' vendor_sepolicy.cil
 ```
 
-The platform set is the baseline. Anything in the vendor set that is not in the platform set is the vendor's addition. Note that the attribute *set* may be declared once and added to in both files, so check both.
+The platform set is the baseline. Anything in the vendor set that is not in the platform set is the vendor's addition.the attribute *set* may be declared once and added to in both files, so check both.
 </details>
 
 <details>

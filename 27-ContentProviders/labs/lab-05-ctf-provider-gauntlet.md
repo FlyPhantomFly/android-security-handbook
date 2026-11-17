@@ -18,7 +18,7 @@ declaration or code that caused it, the exploit, the *reproduced-from-an-unprivi
 honest severity with its precondition, and the fix as code.
 
 ```
-Flag 1  —  An exported provider you can simply read.               (Beginner)
+Flag 1  —  An exported provider you can read.               (Beginner)
 Flag 2  —  A provider whose authority is not the one you expect.   (Enumeration)
 Flag 3  —  Injection that works ONLY through the projection.       (Intermediate)
 Flag 4  —  A traversal that only an ENCODED payload reaches.       (Intermediate)
@@ -35,7 +35,7 @@ Flag 5  —  A URI grant laundered through a forwarding activity.    (Advanced)
   final flag is the confused-deputy mechanism, which `adb shell`'s privilege would let you skip.
 - For every flag, you must be able to state *why* the naive first attempt failed.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Flags 1–4 can each be *demonstrated* from `adb shell`, but a real engagement requires reproducing them
 > from an ordinary app UID. Build the probe app early and confirm every flag through it, not just through
 > the shell. The gap between "worked in the shell" and "worked from an app" is the entire subject of
@@ -188,7 +188,7 @@ public class ForwarderActivity extends Activity {
 `SecretProvider` is not exported, so a direct read is denied. But `ForwarderActivity`, running with the
 target's identity, will issue a grant for `content://com.gauntlet.target.secret/flag` and return it —
 and if the attacker supplies a `next_intent` that resolves back to the forwarder's own result path, or
-simply invokes the forwarder's normal grant path and collects the returned URI, the grant lands in the
+invokes the forwarder's normal grant path and collects the returned URI, the grant lands in the
 attacker's package.
 
 ### Build and install
@@ -214,7 +214,7 @@ content read  --uri "content://com.gauntlet.target.vault/../flag.txt"  # literal
 content read  --uri content://com.gauntlet.target.secret/flag         # not exported: denied
 ```
 
-**Q0.** Four of those five failed. For each failure, state the *specific* reason — and note that each
+**Q0.** Four of those five failed. For each failure, state the *specific* reason — and confirm that each
 reason maps to a different section of the chapter.
 
 ---

@@ -41,7 +41,7 @@ So Android's designers added something that had no equivalent in the Unix model 
 
 That second lock system is **SELinux**, and this chapter is about it.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > **Root is a DAC concept. SELinux is orthogonal to it.** When people say "SELinux constrains root", they usually imagine SELinux checking whether you are root and then deciding to be strict. That is not what happens. SELinux *never looks at the UID*. It looks at the process's **security context** — a label the kernel attached to the process — and at the **label on the object** being touched, and consults a policy table for that pair. A process running as UID 0 in a domain with no matching rule is refused, and a process running as UID 10156 in a domain with a matching rule is permitted. The UID is not an input to the decision. This is why root and SELinux are not on a spectrum: they are two different questions, asked by two different pieces of kernel code, and **both must answer yes**.
 
 ### 1.2 What would break if SELinux did not exist
@@ -60,17 +60,17 @@ None of that is hypothetical. Each corresponds to a class of bug that was routin
 
 ### 1.3 The two words you must not confuse: discretionary and mandatory
 
-> **📖 Definition — DAC (Discretionary Access Control)**
+> **Definition — DAC (Discretionary Access Control)**
 > Access control where **the owner of an object decides who may access it**. Classic Unix permissions are DAC: if you own a file you may `chmod 777` it and give it to the world, and the system will let you, because the policy is at your discretion. Chapter 21 covers Android's DAC layer in full.
 
-> **📖 Definition — MAC (Mandatory Access Control)**
+> **Definition — MAC (Mandatory Access Control)**
 > Access control where **a system-wide policy decides, and no participant can override it** — not the object's owner, not the process doing the access, not root. The policy is loaded once, early in boot, from a file the running system cannot rewrite, and it applies uniformly. "Mandatory" means exactly that: it is not a default that can be relaxed by whoever holds the object.
 
 The distinction has a consequence people find genuinely surprising the first time they meet it. Under DAC, an app that wants to share a file with the world can do so. Under MAC it *cannot*, even by giving the file mode `0777`, if policy does not allow the other domain to read that file's type. The permission bits become a necessary condition rather than a sufficient one.
 
 Both checks run, in a fixed order, on the same system call. This is the single most important sentence in the chapter:
 
-> **🧠 Mental Model**
+> **Mental Model**
 > **DAC and MAC are serial, not alternative. An operation succeeds only if BOTH permit it.** The kernel's VFS layer checks the permission bits first and returns `EACCES` if they fail. If they pass, control reaches an **LSM hook**, where SELinux consults its policy and returns `EACCES` if *that* fails. Two independent mechanisms, two independent chances to say no, one indistinguishable error code. A bug that defeats one leaves the other standing — which is the entire argument for defence in depth, made concrete and checkable.
 
 That shared error code is why the practical skill this chapter teaches matters so much. `EACCES` from a DAC failure and `EACCES` from a MAC failure look identical to the calling program, to `strace`, and to your Java exception handler. The **only** way to tell them apart is to go and look at the audit log. If there is an `avc: denied` record with a matching timestamp, it was MAC. If there is not, it was DAC. Guessing which one it was, and writing the guess into a report, is how a finding gets dismissed by a developer in one sentence.
@@ -91,7 +91,7 @@ Control now reaches `security_file_permission()`, an LSM hook. SELinux asks a co
 
 The UID never entered that second calculation. Not once. Being root did not help, because being root is not a fact SELinux consults.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > This is the single highest-value diagnostic reflex in Android work. **A root shell that gets "Permission denied" is almost always SELinux, and the log will tell you exactly which rule was missing.** Run `dmesg | grep avc` (needs root) or `logcat -b all | grep avc` (usually does not), find the record whose timestamp matches, and read the `scontext`, `tcontext`, `tclass` and `{ }` fields. Thirty seconds of looking beats an hour of guessing, and being the person in the room who does this instantly is a small but genuine mark of experience. [§3.11](#311-reading-an-avc-denial-field-by-field-and-deriving-the-rule) teaches the read; `scripts/avc-decode.py` automates it.
 
 ### 1.5 What SELinux is *not*
@@ -209,7 +209,7 @@ Three layers, and only two of them run on the device.
 
 **neverallow** runs at *build time only*. It is an assertion: "no rule matching this pattern may exist anywhere in the compiled policy." If a vendor adds a rule that violates one, `secilc` refuses to build the policy, and Android's CTS re-checks a subset on the shipped device. It is a governance mechanism, not a runtime control. A `neverallow` in a device's CIL file is a *record of an assertion that passed*, and a common beginner error is to read one and believe the kernel is enforcing it at runtime. It is not. The kernel has never heard of it.
 
-> **⚠️ Warning**
+> **Warning**
 > Because `neverallow` is compile-time, **a device whose policy was patched after the build — by Magisk, by an exploit, or by a modified boot image — is not constrained by any `neverallow` at all.** `magiskpolicy` injects rules directly into the loaded binary policy and no assertion re-runs. This is one reason a rooted device is a bad place to conclude anything about the security of a stock one. [62 — Magisk](../62-Magisk/README.md) owns that mechanism.
 
 ### 2.3 Boot: how the policy gets loaded, and why the order matters
@@ -256,7 +256,7 @@ Four things in that sequence are worth stopping on, because each is a place wher
 
 **Steps 14 to 17: the app's domain change is NOT an exec.** The zygote forks; the child is a copy of the zygote in every respect, including its security context. There is no `execve`, so there is no `type_transition` to hang the change on. Instead, the child computes its target context in userspace, from `seapp_contexts`, and *writes it to itself*. [§3.5](#35-domain-transitions-how-zygote-becomes-untrusted_app) covers this in detail, with the two measured policy rules that make it legal.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > There is a window, between the kernel booting and `init` loading policy, in which SELinux is present but has no policy. During that window nothing is labelled and nothing is enforced. It is short, it is before any code from the data partition runs, and it is protected by Verified Boot — the boot image containing `init` and the policy is signature-checked before the kernel starts, which is [20 — Security Architecture](../20-Security-Architecture/README.md)'s subject. The security of the MAC layer therefore *rests on* the security of the verified boot chain: an attacker who can modify the boot image can ship a policy that allows everything, and no runtime check will notice.
 
 ### 2.4 The trust boundaries SELinux draws
@@ -305,7 +305,7 @@ flowchart TB
 
 Five groupings, and the interesting boundaries are the ones *inside* a group rather than between groups.
 
-The boundary between `untrusted_app` at categories `c156` and `untrusted_app` at `c150` is drawn with a crossed arrow because those two processes have **the same domain**. Type enforcement cannot distinguish them; every `allow` rule that names `untrusted_app` names both. The only thing separating them is the MLS constraint on their category sets. That is not a footnote — it is the mechanism behind app-vs-app isolation at the MAC layer, and if MLS were not compiled into the kernel it would simply be absent.
+The boundary between `untrusted_app` at categories `c156` and `untrusted_app` at `c150` is drawn with a crossed arrow because those two processes have **the same domain**. Type enforcement cannot distinguish them; every `allow` rule that names `untrusted_app` names both. The only thing separating them is the MLS constraint on their category sets. That is not a footnote — it is the mechanism behind app-vs-app isolation at the MAC layer, and if MLS were not compiled into the kernel it would be absent.
 
 The boundary between `installd` and `dex2oat` is drawn as a one-way arrow carrying a file descriptor, because that is literally what policy permits and nothing more. Measured on the device: `dex2oat` may `read` and `write` `app_data_file`, and a `neverallow` forbids it to `open` one. The only way it gets a descriptor is `(allow dex2oat installd (fd (use)))`. A compromised `dex2oat` cannot go looking for anything; it can only act on the exact descriptors it was given. [§3.12](#312-dex2oat-in-its-own-domain-a-real-trust-property-not-a-slogan) unpacks this.
 
@@ -342,10 +342,10 @@ Four fields, separated by colons:
 | 3 | **Type** | `untrusted_app` | `zygote_exec` | **Yes. This is the entire game.** Every `allow` rule in policy is written about types. When a type labels a process it is conventionally called a **domain**; when it labels an object it is just called a type. Same namespace, same mechanism, different word by convention. |
 | 4 | **Level** | `s0:c107,c256,c512,c768` | `s0` | **Yes, on Android, for apps.** Sensitivity plus an optional category set. Android uses exactly one sensitivity, `s0`, and uses the *categories* for per-app isolation. See [§3.7](#37-mcs-the-category-encoding-and-what-it-actually-enforces). |
 
-> **📖 Definition — domain**
+> **Definition — domain**
 > A *domain* is a type that labels a process. There is no separate "domain" concept in the policy language; `untrusted_app` is a type, and the word "domain" is what people say when that type is being used on a process. AOSP formalises the distinction with an attribute: types intended for processes are given the `domain` attribute, and a large body of policy is written about that attribute rather than about individual types.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > When you read a context aloud, say only the third and fourth fields. `u:r:untrusted_app:s0:c107,c256,c512,c768` is "untrusted_app, categories one-oh-seven and two-five-six for the app, five-one-two and seven-six-eight for user zero". The `u:` and `r:` are decoration. Beginners spend time trying to interpret them and there is nothing there to interpret.
 
 #### Where the context physically lives
@@ -418,7 +418,7 @@ The attributes you will meet most often:
 | `binderservicedomain` | processes that publish Binder services | Lets apps `binder call` them as a group. |
 | `halserverdomain` / `halclientdomain` | HAL implementations and their clients | The Treble HAL boundary. |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `mlstrustedsubject` is worth memorising as a phrase to grep for. A domain carrying it is **exempt from every MLS constraint**, which means MCS categories stop protecting anything from it. If a vendor adds one of its own domains to `mlstrustedsubject`, that domain can read every app's private data despite having different categories, and the only remaining barrier is DAC. Grep the vendor CIL:
 > ```bash
 > # host, against a pulled policy
@@ -427,7 +427,7 @@ The attributes you will meet most often:
 
 ### 3.3 The access decision: what the kernel actually computes
 
-> **📖 Definition — access vector**
+> **Definition — access vector**
 > An *access vector* is a bitmask, one bit per permission, for a given (source type, target type, object class) triple. `read` might be bit 1, `write` bit 2, `open` bit 15, and so on. The security server computes the whole vector once and the AVC caches it, so a subsequent check of a *different* permission on the same triple is also a cache hit. This is why SELinux's per-syscall cost is small enough to leave on by default on a phone.
 
 The decision procedure, in order:
@@ -441,7 +441,7 @@ The decision procedure, in order:
 7. **Emit an audit record if warranted.** Denied and not suppressed by `dontaudit`: emit `avc: denied`. Granted and covered by `auditallow`: emit `avc: granted`. Otherwise emit nothing.
 8. **Return.** `0` to proceed, `-EACCES` to fail — *unless the domain is permissive or the system is globally permissive*, in which case the record is emitted and `0` is returned anyway.
 
-> **⚠️ Warning**
+> **Warning**
 > Step 6 is the one that gets skipped in mental models, and it produces the single most confusing class of denial. **An `avc: denied` record does not tell you whether type enforcement or a constraint refused the operation.** The fields are identical either way. If you look up the policy, find a perfectly good `allow` rule, and conclude the log is lying — it is not; you have hit a constraint. The tell is the category sets: if the subject's categories do not contain the object's, suspect a constraint. `scripts/avc-decode.py` flags exactly this case and says explicitly that it cannot be certain, because the record genuinely does not carry the information.
 
 #### The AVC is observable
@@ -514,7 +514,7 @@ ls /sys/fs/selinux/class/binder/perms
 # call impersonate set_context_mgr transfer
 ```
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > The `file` class does not declare most of those permissions itself. They come from `common file`, a shared declaration inherited by `file`, `dir`, `lnk_file`, `chr_file`, `blk_file`, `sock_file` and `fifo_file`. That is why `execmod` — a permission about executable mappings — appears on `lnk_file` and `sock_file`, where it is meaningless. Measured from the device's CIL, line 476:
 > ```lisp
 > (common file (ioctl read write create getattr setattr lock relabelfrom
@@ -538,7 +538,7 @@ avc: denied { sys_module } for pid=3050 comm="rootshell" capability=16
     scontext=u:r:shell:s0 tcontext=u:r:shell:s0 tclass=capability permissive=0
 ```
 
-Note that `scontext` and `tcontext` are identical, and there is no file, no path, no inode. The subject is asking to use a capability *over itself*. DAC would have permitted it: the process is root and holds the bit. MAC refused it. That single record is the entire argument of this chapter compressed into one line.
+`scontext` and `tcontext` are identical, and there is no file, no path, no inode. The subject is asking to use a capability *over itself*. DAC would have permitted it: the process is root and holds the bit. MAC refused it. That single record is the entire argument of this chapter compressed into one line.
 
 ### 3.5 Domain transitions: how `zygote` becomes `untrusted_app`
 
@@ -616,7 +616,7 @@ Two things about the ordering matter and are worth being precise about.
 
 **The transition is one-way.** After the child is `untrusted_app`, there is no rule permitting `untrusted_app` to `dyntransition` anywhere. Search the policy and you will not find `(allow untrusted_app <anything> (process (dyntransition)))`. An app process is stuck in its domain for its entire life. That is why "the app changed its SELinux context" is not a thing that happens, and why claims to that effect should be treated with suspicion.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > `setcon()` is not a system call. It is a libselinux function that opens `/proc/self/attr/current` and `write()`s the context string to it, with the trailing NUL. The kernel's `proc_pid_attr_write()` handler parses the string, validates it against the loaded policy, performs the `setcurrent` and `dyntransition` checks, and installs the new context on the task's credentials. That is why the operation shows up in `strace` as an ordinary `openat` and `write`, and why the audit records for a failed transition name `tclass=process` and not anything file-shaped. If you want to see it, `strace -f -e trace=write` a zygote fork on a userdebug build and look for the write to fd pointing at `attr/current`.
 
 #### The other two zygotes
@@ -635,7 +635,7 @@ On the measured device, `ps -A -Z` showed `u:r:zygote:s0` (two processes, 32- an
 
 The `dyntransition` rule says zygote *may* become any `appdomain` type. It does not say *which one*. That decision is made entirely in userspace, by libselinux, reading a text file.
 
-> **📖 Definition — `seapp_contexts`**
+> **Definition — `seapp_contexts`**
 > A plain-text configuration file that maps app properties (signing certificate, package name, privileged status, target SDK, isolated status) to an SELinux domain, a data-file type, and an MCS level scheme. It ships at `/system/etc/selinux/plat_seapp_contexts` from AOSP's `system/sepolicy/private/seapp_contexts`, with vendor and other-partition additions alongside. **This file is where an app's domain is decided.** Not the policy, not the manifest, not PackageManager.
 
 The complete, unedited file from the measured device is in [`examples/seapp_contexts-measured.txt`](examples/seapp_contexts-measured.txt), annotated line by line. Here is the shape.
@@ -690,7 +690,7 @@ Read as a ladder: an app matches the **highest** `minTargetSdkVersion` that is l
 | 26–27 | `untrusted_app_27` | **`user`** | **No per-app categories at all** |
 | ≤ 25 | `untrusted_app_25` | **`user`** | **No per-app categories, plus `execute_no_trans` and `execmod` on its own data** |
 
-> **⚠️ Warning**
+> **Warning**
 > That table contains a real, measurable security difference and it is routinely missed. An app targeting API 26 or 27 receives `levelFrom=user`, which means its context is `u:r:untrusted_app_27:s0:c512,c768` — **the same context as every other such app on the device**. The MLS constraint that separates modern apps from each other does not separate them, because their category sets are identical. They are still separated by DAC (different UIDs), but an entire layer is gone. If you are assessing an app with a low `targetSdkVersion`, "this app is measurably less isolated than a modern one at the MAC layer, and here is the `seapp_contexts` line that proves it" is a legitimate finding with a one-line remediation.
 
 #### `levelFrom=user` on privileged apps: an asymmetry worth knowing
@@ -753,10 +753,10 @@ If type enforcement were the whole story, one app could read another's private f
 
 #### The solution: MLS categories, repurposed
 
-> **📖 Definition — MLS, MCS, sensitivity, category**
+> **Definition — MLS, MCS, sensitivity, category**
 > *MLS* (Multi-Level Security) is the Bell–LaPadula model built into SELinux: every subject and object has a **level**, consisting of a **sensitivity** (`s0`, `s1`, ... an ordered scale) and a set of **categories** (`c0`–`c1023`, unordered compartments). *MCS* (Multi-Category Security) is the degenerate case where there is only one sensitivity and only the categories are used. Android uses MCS: exactly one sensitivity `s0`, and up to 1024 categories.
 
-> **📖 Definition — dominance**
+> **Definition — dominance**
 > Level A *dominates* level B when A's sensitivity is at least B's **and** A's category set is a **superset** of B's. Written `dom l1 l2` in constraint syntax. With one sensitivity, dominance reduces to set containment.
 
 Android assigns each app a category set derived arithmetically from its UID. Two different apps get two different sets, neither of which contains the other, so neither dominates the other, so the constraints refuse the operation in both directions.
@@ -849,7 +849,7 @@ avc: denied { find } for pid=1672 uid=1068 name=nfc
 
 **Exact match, including the high-byte category `c260`.** This is the measurement that settles the encoding, because every app on the device happened to have an appid below 256 and therefore could not distinguish `c(appid & 0xff)` from `c(appid)`.
 
-> **⚠️ Warning — a diagnostic that catches fabricated contexts**
+> **Warning — a diagnostic that catches fabricated contexts**
 > **The first category is always in the range `c0`–`c255`, and the second is always in `c256`–`c511`.** That follows directly from the encoding: the first is a masked byte, the second is `256 +` a byte. A context whose *first* category is greater than 255 — `s0:c288,c256,...` — is arithmetically impossible and has been made up or mistyped. The same applies to the user pair: third category in `c512`–`c767`, fourth in `c768`–`c1023`. If you are checking someone's write-up (or your own), this takes two seconds and catches a real class of error. `scripts/avc-decode.py` reports a malformed pair explicitly rather than producing a confident wrong number.
 
 #### What the categories actually enforce
@@ -886,7 +886,7 @@ Categories on their own do nothing. What enforces them is the set of **MLS const
 
 Read constraint 501 in English: *for directory operations, either the target is not an app data file type, or the subject's level dominates the object's, or the subject is `mlstrustedsubject`.* For one `untrusted_app` traversing another's data directory: the target **is** `app_data_file_type`, so the first clause is false; `{c107,c256,c512,c768}` does **not** contain `{c150,c256,c512,c768}` (it is missing `c150`), so the second is false; `untrusted_app` is not `mlstrustedsubject`. All three false, so the operation is refused — **even though `(allow untrusted_app_all app_data_file (file (... read ...)))` exists and matches perfectly.**
 
-That is the answer to "why can't app A read app B's file when policy clearly allows `untrusted_app` to read `app_data_file`?" The allow rule is there. The constraint is what stops it.
+That is the answer to "why can't app A read app B's file when policy allows `untrusted_app` to read `app_data_file`?" The allow rule is there. The constraint is what stops it.
 
 #### The read/write asymmetry
 
@@ -1097,7 +1097,7 @@ It requires `security:setenforce`, which almost nothing has. Four reasons it mat
 
 **4. It is often *why* your tooling works.** Frida gadget injection, several hooking frameworks and a great deal of ad-hoc root tooling work because somebody ran `setenforce 0`. If your bypass only reproduces on a permissive device, you have demonstrated nothing about a stock one. Say so in the report; it is a stronger document for admitting it.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The first three commands of every Android engagement should be `getenforce`, `getprop ro.build.type` and `getprop ro.debuggable`. All three change what your subsequent measurements *mean*, and all three take a second. `scripts/selinux-posture.sh` runs them plus the twenty other things worth checking before you write a sentence about a device.
 
 #### Why "just turn it off" is not an answer for developers either
@@ -1211,7 +1211,7 @@ Here is the version that survives contact with a knowledgeable developer.
 
 So SELinux did not *force* the move. It closed the simpler alternatives and left the in-memory path as the only one with no labelling problem. Combined with the framework's own hardening and Play policy against dynamic code loading from untrusted sources, the result is that a modern packer loads DEX from memory.
 
-> **⚠️ Warning**
+> **Warning**
 > Be precise when you write this up. "SELinux prevents apps from executing code" is wrong and a developer will dismiss it on sight. "On this device, `untrusted_app` has `file:execute` but not `file:execute_no_trans` on `app_data_file`, so the app can `dlopen` a library from its data directory but cannot `execve` a dropped binary — here is the measured rule" is correct, checkable, and taken seriously.
 
 ### 3.11 Reading an `avc` denial field by field, and deriving the rule
@@ -1353,7 +1353,7 @@ Three habits that prevent it:
 2. **Prefer a narrower type to a broader rule.** The correct fix for "my daemon needs one file in `/vendor/etc`" is usually a new type for that file plus a rule for the new type — not a rule against `vendor_configs_file`.
 3. **Ask whether the denial should be `dontaudit`ed rather than allowed.** Most denials on a healthy device are probes that the caller handles perfectly well. AOSP's answer to those is `dontaudit`, which silences the record without granting anything. See [§3.16](#316-neverallow-dontaudit-auditallow-and-the-rules-that-are-not-rules).
 
-> **⚠️ Warning — `audit2allow` is a suggestion engine, not an oracle**
+> **Warning — `audit2allow` is a suggestion engine, not an oracle**
 > `audit2allow`, and this chapter's `avc-decode.py --rules-only`, mechanically convert denials into rules. Neither has **any idea** whether the operation *should* be permitted. Feed either one a malware sample's denials and you get a policy that permits the malware. Feed either one a bring-up log and you get `sys_admin` and `dac_override`. Both tools' documentation says so; this script's header says so in the "what this will NOT tell you" block. Use the output to understand; write the shipped rule by hand.
 
 ### 3.12 `dex2oat` in its own domain: a real trust property, not a slogan
@@ -1405,7 +1405,7 @@ That is a genuine, checkable trust property, and it is checkable in four ways:
 
 Compare that with the usual formulation — "`dex2oat` runs in its own domain, so a bug in it is contained". That sentence is not checkable and would be equally true of a domain that had been granted everything.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > This is the shape to look for whenever you evaluate a vendor component that parses untrusted input: a media parser, a firmware updater, a proprietary DRM daemon. Does it have `open` on the data it processes, or only `read`/`write` on passed descriptors? Does it have `dir search` on directories it should never enumerate? Does its domain carry `mlstrustedsubject`? Three greps against `vendor_sepolicy.cil` tell you whether the vendor understood the pattern or merely copied the domain name.
 
 ### 3.13 The `keystore_key` and `keystore2_key` classes
@@ -1430,7 +1430,7 @@ You will meet both. Devices upgraded from Android 11 or earlier may still have l
 
 #### The object is a NAMESPACE, not a key
 
-This trips people up. The `tcontext` on a `keystore2_key` denial is not a per-key label; it labels a **namespace**, and the namespaces are enumerated in a contexts file. Measured verbatim from `/system/etc/selinux/plat_keystore2_key_contexts` — note that the file carries its own AOSP provenance on line 1:
+This trips people up. The `tcontext` on a `keystore2_key` denial is not a per-key label; it labels a **namespace**, and the namespaces are enumerated in a contexts file. Measured verbatim from `/system/etc/selinux/plat_keystore2_key_contexts` —the file carries its own AOSP provenance on line 1:
 
 ```
 #line 1 "system/sepolicy/private/keystore2_key_contexts"
@@ -1509,7 +1509,7 @@ Read that as a capability list. `vold` can touch disk-encryption keys and nothin
 
 This is the mechanism-level answer to a question that comes up constantly: *why can't my app request device ID attestation?* It is not a framework permission check you could hook, and not a Play Services restriction you could work around. It is a MAC rule. An app that forces the framework call to be attempted — by Frida, by reflection, by anything — still produces a `keystore2_key` denial, and the operation fails in the kernel rather than in Java. **There is no app-side bypass on a stock device**, and a report claiming one should be checked very carefully before it goes out.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Two checks on any device where Keystore matters. First, whether a **vendor** domain has been granted `manage_blob` on a key namespace: that permission lets the holder extract and inject raw KeyMint blobs, and on stock AOSP exactly one domain (`vold`) has it. Second, whether any app domain has `use_dev_id` or `gen_unique_id`. Both are one grep:
 > ```bash
 > # host, against a pulled policy
@@ -1524,10 +1524,10 @@ This is the mechanism-level answer to a question that comes up constantly: *why 
 
 #### The abstract namespace
 
-> **📖 Definition — abstract-namespace UNIX socket**
+> **Definition — abstract-namespace UNIX socket**
 > A UNIX-domain socket whose address begins with a **NUL byte** instead of a `/`. The rest is a name in a flat, kernel-managed namespace. There is **no filesystem entry**: no inode, no directory, no owner, no group, no permission bits. The socket exists only in kernel memory and disappears when the last reference closes. The convention is to render the leading NUL as `@` when printing, so `@myservice` in `/proc/net/unix` is a NUL followed by `myservice`.
 
-> **⚠️ Warning**
+> **Warning**
 > **An abstract-namespace socket has no DAC protection whatsoever.** There is nothing to `chmod`, nothing to `chown`, no directory to lock down. Any process on the device that knows the name can `connect()` to it. The **only** access control is SELinux. If policy does not stop you, nothing does.
 
 This is not a theoretical gap. Abstract sockets are used widely on Android by daemons and by vendor code, precisely because they are convenient: no path to create, no cleanup, no permission fiddling. Every one of them is protected by exactly one mechanism.
@@ -1688,7 +1688,7 @@ The consequence: a device whose loaded policy was modified after boot — by `ma
 
 The cost is that **absence of a denial is not evidence that the operation succeeded**. If you probe something and see no `avc` record, there are three explanations: it succeeded; it failed on DAC (which produces no `avc` record at all); or it failed on MAC with a `dontaudit` in place. Distinguishing them needs either `setenforce 0` — which changes what you are measuring — or `sesearch -d` against the actual policy, which needs the policy.
 
-> **⚠️ Warning**
+> **Warning**
 > Never conclude "this operation is permitted" from the absence of a denial. It is one of three explanations and it is not the most likely one. This is the most common way an SELinux analysis goes quietly wrong, and it is quiet precisely because nothing appears in any log.
 
 #### `auditallow` and the `granted` records
@@ -1742,7 +1742,7 @@ allowxperm system_server system_file:file ioctl { 0x6686 };
 | 14 | 34 | More `sdk_sandbox` work; more `anon_inode` labelling as userfaultfd and memfd usage grows. |
 | 15–16 | 35–36 | Continued tightening and more vendor-interface restriction under Treble. Rather than trusting any written list, diff the device's own `plat_sepolicy.cil` against the previous release — see [§8](#8-static-analysis). |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The most useful row in that table for field work is Android 8 / Treble. Before it, a device had one policy. After it, a device has a *platform* policy that Google reviews and a *vendor* policy that nobody outside the OEM reviews, of comparable size. Measured on the test device: 1,981,460 bytes of platform CIL against 1,072,684 bytes of vendor CIL. **Roughly a third of the policy on your target has had no external review, and it is the third written under schedule pressure by the team least likely to have an SELinux specialist.** That is where to look.
 
 ---
@@ -1825,7 +1825,7 @@ Measured on the device, both artefacts present:
 
 **Step 5 — `security_load_policy()`.** `init` writes the linked binary policy to `/sys/fs/selinux/load`. The kernel parses it, builds the type/class/permission tables, and switches on. From this instant the device is enforcing.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > Why does the device ship both a compiled CIL *and* a precompiled binary of the same policy? Because they can go out of sync. A platform OTA replaces `plat_sepolicy.cil` and its hash but cannot replace `/vendor`, so the precompiled blob's recorded hash no longer matches and `init` falls back to on-device compilation. That fallback is what makes a platform-only OTA possible at all on a Treble device. It also means **you can tell whether a device has had a platform update since its vendor image was built** by comparing the hashes — a small forensic signal.
 
 ### 4.3 `seapp_context_lookup` — where an app's domain is chosen
@@ -1888,7 +1888,7 @@ Each of these eventually calls `avc_has_perm()` in `security/selinux/avc.c`, whi
 4. calls `avc_audit()` if the bit is absent and the audit-deny vector says to log — **this is where the `avc: denied` string is formatted**;
 5. returns `0` or `-EACCES`, unless the domain is permissive, in which case it returns `0` regardless.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > The exact text of the `avc: denied { read } for ...` line is produced by `avc_audit_pre_callback` and `dump_common_audit_data` in the kernel. That is why the field set differs by class: `dump_common_audit_data` has a `switch` on the audit data type, and emits `path=` for `LSM_AUDIT_DATA_PATH`, `name=` for `LSM_AUDIT_DATA_DENTRY`, `capability=` for `LSM_AUDIT_DATA_CAP`, and nothing object-shaped at all for `LSM_AUDIT_DATA_NONE`. **The format is not a convention you can rely on being uniform** — it is a switch statement, and a parser has to handle every branch. `scripts/avc-decode.py` does, which is why it selects the object field by class rather than assuming `path=`.
 
 ### 4.5 One complete trace: `new FileInputStream("/data/user/0/other.app/x")` from Java to a policy rule
@@ -1929,7 +1929,7 @@ avc: denied { search } for pid=... comm="..." name="other.app" dev="dm-7" ino=..
 
 **12. Return.** `-EACCES` back up through the VFS, through Bionic, through JNI. `Posix_open` throws `ErrnoException`, `IoBridge` converts it to `FileNotFoundException("... Permission denied")`, and the app catches a `FileNotFoundException` that says nothing about which of two completely different mechanisms refused it.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Step 12 is why this chapter exists. **The app, the developer, `strace`, and your exception handler all see the same thing whether DAC or MAC refused the operation.** The `avc` record is the only place the difference is written down. Everything in [§3.11](#311-reading-an-avc-denial-field-by-field-and-deriving-the-rule) is about reading that one place correctly.
 
 ### 4.6 `android.os.SELinux` — the tiny Java surface
@@ -1947,7 +1947,7 @@ avc: denied { search } for pid=... comm="..." name="other.app" dev="dm-7" ino=..
 
 There is deliberately **no API to enumerate policy, to change a context, or to query which rules exist.** An app can observe the effects of policy and nothing more, and that is by design: an app that could read the policy could enumerate exactly which attacks were worth attempting.
 
-`examples/SelinuxProbe.java` avoids reflection entirely and reads `/proc/self/attr/current` directly, which is more robust across releases and is what the platform does internally anyway.
+`examples/SelinuxProbe.java` avoids reflection entirely and reads `/proc/self/attr/current` directly, which is more portable across releases and is what the platform does internally anyway.
 
 ### 4.7 `servicemanager` — where `service_manager:find` is checked
 
@@ -1977,7 +1977,7 @@ Attackers do not usually "bypass SELinux". They do one of six things.
 
 **6. Attack the boot chain.** Ship a policy that allows everything. Requires defeating Verified Boot, which is [20 — Security Architecture](../20-Security-Architecture/README.md).
 
-> **🧠 Mental Model**
+> **Mental Model**
 > **SELinux does not stop exploitation; it constrains what a successful exploit is worth.** An exploit against `mediaextractor` still gives code execution in `mediaextractor`. What SELinux changes is that `mediaextractor`'s domain can reach almost nothing, so the attacker's next step is a second exploit rather than a data grab. Chaining is what modern Android attacks look like, and the chain lengths are set by policy.
 
 ### 5.2 How developers misuse it
@@ -2245,7 +2245,7 @@ Every single one is benign, and it is worth saying why, because "trust me, it's 
 
 That paragraph is worth memorising. It saves an argument on most engagements, and it is true.
 
-> **⚠️ Warning**
+> **Warning**
 > The corresponding error in the other direction is just as bad: **reporting the absence of denials as evidence of correctness.** `dontaudit` rules suppress records for known-benign probes, and DAC failures produce no `avc` record at all. Silence means nothing. See [§3.16](#316-neverallow-dontaudit-auditallow-and-the-rules-that-are-not-rules).
 
 ### 5.10 How malware abuses and evades it
@@ -2329,7 +2329,7 @@ What actually pays, in rough order of frequency:
 5. **A service or property that fell to a default type, plus a broad rule granting access to that default type.** [§5.5](#55-vulnerability-class--the-default-label-trap-in-the-dangerous-direction).
 6. **A policy rule permitting an app domain to reach something it plainly should not** — a HAL, a debug interface, a factory-test service.
 
-> **⚠️ Warning**
+> **Warning**
 > Do not submit "the device logs SELinux denials" as a bug bounty report. It is the single most common invalid submission in this area, and [§5.9](#59-honest-severity-an-avc-denial-is-not-a-finding) explains why. Every serious triage team has a canned rejection for it.
 
 ---
@@ -2622,7 +2622,7 @@ adb logcat -c
 adb logcat -d -b all | grep -a 'avc:'
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > Use `grep -a`. Logcat output on some devices contains bytes that make `grep` treat the stream as binary and print only "Binary file matches" — which looks exactly like "no denials found". This has cost people hours. Also use `-b all`: denials often land in the `events` or `kernel` buffer rather than `main`, and the default `-b main` misses them entirely.
 
 Decode with the chapter's tool:
@@ -2696,7 +2696,7 @@ try {
 }
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Running `frida-server` requires root, and root usually means a modified boot image, which usually means a patched policy. **Anything you measure with Frida on a rooted device may not hold on a stock one.** The way to keep the measurement honest is to note the device's `getenforce`, note whether Magisk's policy patches are active, and — where the finding matters — reproduce it with `examples/SelinuxProbe.java` compiled into an ordinary app on a stock device, where no policy has been patched.
 
 ### 7.4 `strace` — watching the syscall boundary
@@ -2805,7 +2805,7 @@ adb pull /vendor/etc/selinux/plat_pub_versioned.cil
 | `plat_keystore2_key_contexts` | which key namespaces exist |
 | `plat_pub_versioned.cil` | the Treble compatibility surface the vendor was built against |
 
-> **⚠️ Warning**
+> **Warning**
 > On a stock device some of these are **unreadable from a shell**, and `adb pull` fails quietly. Measured on the test device, `plat_hwservice_contexts`, `plat_mac_permissions.xml`, `system_ext_hwservice_contexts`, `system_ext_mac_permissions.xml` and `vendor_service_contexts` all appeared in `ls -l` as `-?????????` — the `getattr` denial pattern from [§3.11](#311-reading-an-avc-denial-field-by-field-and-deriving-the-rule). If a pull produces nothing, check for the denial rather than assuming the file is absent.
 
 ### 8.2 Grepping the CIL — the queries that find things
@@ -3259,7 +3259,7 @@ allow my_vendor_app licensed:binder call;
 allow licensed my_vendor_app:binder { call transfer };
 ```
 
-Note that `find` is granted to the **specific vendor app domain**, not to `appdomain` or `untrusted_app`. If the companion app is an ordinary third-party app, it will be in `untrusted_app` and cannot have its own domain — in which case the right answer is to give the app a `seapp_contexts` line keyed on `seinfo=`, so that only the correctly-signed app lands in a domain that can reach the service.
+`find` is granted to the **specific vendor app domain**, not to `appdomain` or `untrusted_app`. If the companion app is an ordinary third-party app, it will be in `untrusted_app` and cannot have its own domain — in which case the right answer is to give the app a `seapp_contexts` line keyed on `seinfo=`, so that only the correctly-signed app lands in a domain that can reach the service.
 
 *5. No capabilities at all, unless proven necessary.*
 
@@ -3699,7 +3699,7 @@ Rather than cite a URL that may have rotted, here are the *search terms* that fi
 
 ### 14.7 CVEs and vulnerability classes
 
-> **⚠️ On CVE identifiers**
+> **On CVE identifiers**
 > This chapter deliberately cites **no specific CVE numbers**. SELinux-related Android vulnerabilities are almost always reported against the *component* that was compromised, not against SELinux, and the SELinux relevance appears only in the severity assessment. Quoting a specific ID and attributing it to SELinux would misrepresent the record. The *classes* below are stable, checkable, and what you should actually look for. If you need identifiers, search the Android Security Bulletins for the component and read the assessment.
 
 | Class | Shape | Where this chapter covers it |
@@ -3723,7 +3723,7 @@ Rather than cite a URL that may have rotted, here are the *search terms* that fi
 
 | File | What it is | Provenance |
 |---|---|---|
-| [`examples/avc-denials-measured.log`](examples/avc-denials-measured.log) | denial corpus | measured on a physical Android 13 device, plus a clearly-marked synthetic section |
+| [`examples/avc-denials-measured.log`](examples/avc-denials-measured.log) | denial corpus | measured on a physical Android 13 device, plus a labelled synthetic section |
 | [`examples/seapp_contexts-measured.txt`](examples/seapp_contexts-measured.txt) | the device's `seapp_contexts`, annotated line by line | measured, verbatim, both platform and vendor |
 | [`examples/policy-rules-measured.cil`](examples/policy-rules-measured.cil) | ~40 policy rules with commentary | measured, verbatim, from the device's `plat_sepolicy.cil` |
 | [`examples/SelinuxProbe.java`](examples/SelinuxProbe.java) | in-app probe | compiled clean against `android.jar` SDK 35 |

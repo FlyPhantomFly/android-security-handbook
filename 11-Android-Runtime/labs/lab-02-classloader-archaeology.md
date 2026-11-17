@@ -20,7 +20,7 @@ Build a small app with a deliberately interesting loader topology, attach
    every DEX file the process has open.
 3. Load a class that exists in **two** loaders and prove by identity, not assertion, which one won.
 
-> **📖 Definition — ClassLoader.** A *ClassLoader* turns a class name such as `com.example.Greeter`
+> **Definition — ClassLoader.** A *ClassLoader* turns a class name such as `com.example.Greeter`
 > into a loaded, executable class. It is not a file reader; it is a namespace authority. Two classes
 > with identical names loaded by two different ClassLoaders are different types to the runtime,
 > cannot be cast to one another, and each carry their own static fields. That rule explains most
@@ -150,7 +150,7 @@ cp ~/loaderlab-alt/classes.dex \
 adb logcat -c && adb shell am start -n com.example.loaderlab/.MainActivity && adb logcat -s LoaderLab
 ```
 
-> **⚠️ Warning.** `DexClassLoader`'s second parameter, `optimizedDirectory`, has been deprecated since
+> **Warning.** `DexClassLoader`'s second parameter, `optimizedDirectory`, has been deprecated since
 > API 26 and is ignored by the runtime. Passing `null` is correct on modern Android. Code online that
 > passes `getCodeCacheDir()` is not wrong, merely obsolete.
 
@@ -201,13 +201,13 @@ the root of the namespace: the classes ART mapped out of the boot image in
 should also see the app's loader listing `/data/app/~~…/com.example.loaderlab-…/base.apk`, and two
 further loaders each listing `/data/user/0/com.example.loaderlab/files/greeter2.dex`.
 
-> **🧠 Mental Model.** The loader chain is a chain of librarians, not a chain of shelves. When you ask
+> **Mental Model.** The loader chain is a chain of librarians, not a chain of shelves. When you ask
 > a librarian for a book she does not look on her own shelf first — she asks her supervisor, who asks
 > hers, all the way to the head librarian. Only when everyone above says "we don't have it" does she
 > check her own shelf. That upward-first rule is **parent delegation**, and it is why an app cannot
 > replace `java.lang.String` by shipping its own copy.
 
-> **🔬 Under the Hood.** `BaseDexClassLoader` holds one field, `pathList`, of type `DexPathList`.
+> **Under the Hood.** `BaseDexClassLoader` holds one field, `pathList`, of type `DexPathList`.
 > `DexPathList` holds an array `dexElements`, and each `Element` wraps one open `DexFile`. The
 > `DexFile` object is a thin Java handle over a native cookie pointing at ART's internal structures.
 > `findClass` walks `dexElements` **in order** and returns the first match, which is the entire
@@ -270,7 +270,7 @@ Two distinct `Class` objects means two distinct types. Ask ART to cast one to th
 refuses, even though `getName()` returns the identical string for both. Restart the activity with the
 script attached and both greetings should be wrapped in `HOOKED(...)`.
 
-> **🔍 Pentester's Note.** When an app appears to have a check you already patched, and the patch has
+> **Pentester's Note.** When an app appears to have a check you already patched, and the patch has
 > no effect, count the loaders. Packers and commercial protectors routinely install a loader whose
 > `dexElements` ordering means the class Frida hooked is not the class that executes. `Java.use()`
 > resolves through Frida's chosen loader; if the target lives elsewhere you hooked a namesake. The fix

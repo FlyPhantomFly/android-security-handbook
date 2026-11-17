@@ -31,7 +31,7 @@ catastrophically wrong.
 | The wrong ABI | You disassembled `arm64-v8a` and the process is running `armeabi-v7a` |
 | A patched file that never loaded | The app loaded a copy from somewhere else entirely |
 
-There is also a number you simply cannot get from the file: **the load base**. Every Ghidra address,
+There is also a number you cannot get from the file: **the load base**. Every Ghidra address,
 every offset in your notes, and every breakpoint you want to set has to be corrected by it, and it
 changes on every launch.
 

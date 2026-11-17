@@ -18,7 +18,7 @@ again be confused about which file holds what.
 Three situations make this the difference between working and being stuck.
 
 The app was patched in place after installation, so the APK you can download is not what runs. The app
-is a preinstalled system application whose APK is awkward to obtain. Or you simply need to answer "is
+is a preinstalled system application whose APK is awkward to obtain. Or you need to answer "is
 this app compiled or interpreted right now?" before spending an hour debugging a Frida script that was
 never going to work.
 
@@ -273,7 +273,7 @@ Then `adb pull /data/local/tmp/oat.txt`. A full dump of a large app can exceed 1
 <details>
 <summary>Hint 4 — export-dex-to produces nothing</summary>
 
-Ensure the output directory exists and is writable, and that you are running as root. Some builds
+Confirm the output directory exists and is writable, and that you are running as root. Some builds
 require an absolute path. If it still fails, your ART version may name the flag differently — check
 `oatdump --help | grep -i export`.
 </details>

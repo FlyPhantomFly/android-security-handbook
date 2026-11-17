@@ -59,7 +59,7 @@ a set of **screens** and takes over the job of deciding which one is visible, wh
 constructed, when each is destroyed, and what happens when the user presses Back. A screen, under
 that arrangement, is an **Activity**.
 
-> **📖 Definition**
+> **Definition**
 > An **Activity** is one screen of an application, together with the code that runs while that
 > screen exists. It is a Java (or Kotlin) class extending `android.app.Activity`, declared in
 > `AndroidManifest.xml`, whose lifetime is controlled by the operating system rather than by the
@@ -82,7 +82,7 @@ spike holds a coherent piece of work — "the thing I was doing in my email app"
 doing in my banking app". Switching apps swings a different spike into view, with all its sheets
 still stacked exactly as you left them. A spike is a **task**.
 
-> **📖 Definition**
+> **Definition**
 > A **task** is a stack of Activities that the user perceives as a single piece of work. The
 > Activities in a task are ordered; the topmost is the one on screen; pressing Back pops the top
 > one. A device has many tasks and shows one at a time. The Recents (Overview) screen is a picture
@@ -91,12 +91,12 @@ still stacked exactly as you left them. A spike is a **task**.
 Here is where the analogy breaks, and this break is the single most important sentence in this
 chapter:
 
-> **⚠️ Warning**
+> **Warning**
 > **A task is not an app.** Sheets on one spike can come from different applications. The user
 > perceives a task as "the app I am in", and that perception is not enforced by anything. Two
 > packages' Activities can sit in one task, and the Back button will walk the user from one
 > package's screen to another package's screen with no visual seam and no permission check. This is
-> not a bug; it is how a share sheet, a photo picker, or an OAuth consent screen feels seamless. It
+> not a bug; it is how a share sheet, a photo picker, or an OAuth consent screen feels smooth. It
 > is also, precisely, the attack surface this chapter is about.
 
 I did not take that on faith. §3.8 contains a `dumpsys` capture, taken on the device described at the
@@ -198,7 +198,7 @@ Four nouns, nested:
 | **Task** | an ordered stack of `ActivityRecord`s | `system_server` (ATMS) | outlives every process in it; survives in Recents |
 | **taskAffinity** | a *string* naming which task an Activity prefers | computed at parse time, stored on `ActivityInfo` | fixed for the install |
 
-> **🧠 Mental Model**
+> **Mental Model**
 > An `Activity` object is the app's copy. An `ActivityRecord` is the system's copy. They can
 > disagree, and every interesting Activity bug lives in the gap: the system can destroy your Java
 > object and keep the `ActivityRecord`, then rebuild the object from a `Bundle` later. Anything you
@@ -316,7 +316,7 @@ flowchart TB
     style TJ fill:#f9d0d0
 ```
 
-This is the decision tree the rest of the chapter fills in. Note that one of the five boxes is blue:
+This is the decision tree the rest of the chapter fills in.one of the five boxes is blue:
 task hijacking in its classic form was **measured as blocked** on the device this chapter was written
 against, and §5.2 says so plainly rather than repeating a claim that has aged badly. The box directly
 below it — mixed-package tasks — was measured as **working**, and it is the one most write-ups do not
@@ -354,7 +354,7 @@ stateDiagram-v2
 | `onActivityResult(int,int,Intent)` | a started Activity returned | **A third attacker-controlled Intent**, and the one developers validate least. §5.6. |
 | `onDestroy` | going away | — |
 
-> **⚠️ Warning — the `onNewIntent` / `getIntent()` trap**
+> **Warning — the `onNewIntent` / `getIntent()` trap**
 > When the system reuses an instance it calls `onNewIntent(newIntent)`. It does **not** update what
 > `getIntent()` returns. Unless the Activity calls `setIntent(newIntent)` itself, `getIntent()` keeps
 > returning the *original* Intent forever.
@@ -368,7 +368,7 @@ stateDiagram-v2
 
 ### 3.2 What a task actually is
 
-> **📖 Definition**
+> **Definition**
 > A **task** is an object of class `Task` inside `system_server`'s
 > `ActivityTaskManagerService`. It holds an ordered list of `ActivityRecord`s, an integer id, a
 > **task affinity string**, a base `Intent`, and a *real activity* (the component the task resolves
@@ -424,7 +424,7 @@ Here is a real task, captured on the device, with the fields that matter annotat
 | `launchMode=` | the resolved launch mode, as an int | 0 standard, 1 singleTop, 2 singleTask, 3 singleInstance, 4 singleInstancePerTask. |
 | `mNeverRelinquishIdentity` | inverse of `relinquishTaskIdentity` | `false` here means the task's identity can move to a later Activity. |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `launchedFromPackage` is the closest thing to caller attribution that exists for an Activity, and
 > it lives in `system_server` where the app cannot reach it. You can read it from `adb shell`; the
 > app being attacked cannot. When you are reconstructing "how did the user get to this screen", this
@@ -432,7 +432,7 @@ Here is a real task, captured on the device, with the fields that matter annotat
 
 ### 3.3 `taskAffinity` — the string that decides which spike
 
-> **📖 Definition**
+> **Definition**
 > **`taskAffinity`** is a string naming the task an Activity *prefers* to belong to. It is declared
 > with `android:taskAffinity` on `<activity>` or `<application>`. **Its default is the package
 > name.** An Activity with affinity `com.example.app` will, when a task must be chosen or created
@@ -476,7 +476,7 @@ Affinity is consulted when:
 | Started from a non-Activity context (Service, Receiver, `adb shell am`) | **Yes** — because `FLAG_ACTIVITY_NEW_TASK` is mandatory there, so the previous row applies. |
 | `android:allowTaskReparenting="true"` and a matching task comes forward | **Yes**, at that later moment rather than at start time. |
 
-> **⚠️ Warning**
+> **Warning**
 > That last table row is why `adb shell am start` is a poor instrument for task experiments. `am`
 > runs in the shell process, which is not an Activity and has no task, so `am` supplies
 > `FLAG_ACTIVITY_NEW_TASK` for you. **Every measurement you take with `am` is silently a NEW_TASK
@@ -547,7 +547,7 @@ else is pushed above it, the next start builds a fresh instance. Developers who 
 `singleTop` to mean "only one of these ever" have not fixed the bug they thought they fixed — and if
 that Activity is a login screen, the second instance is a second, unvalidated entry point.
 
-#### `singleTask`, measured — and the claim that is simply wrong
+#### `singleTask`, measured — and the claim that is wrong
 
 The near-universal statement is *"`singleTask` creates a new task"*. Here is what actually happened:
 
@@ -591,7 +591,7 @@ I CH30 : AlphaActivity taskId=272 instance=148316109   <- went BACK to 272, not 
       * Hist #0: .DeltaActivity t273
 ```
 
-`singleInstance` gets a task to itself and that task never accepts another Activity — note that
+`singleInstance` gets a task to itself and that task never accepts another Activity —
 Alpha, started while Delta was on screen, was routed back into task 272 rather than stacked on Delta.
 This is the strictest mode and it has real usability costs, which is why it is rare in production
 and why finding it in a manifest is usually worth a moment's thought about *why* the developer
@@ -617,7 +617,7 @@ semantics* are this chapter's, and here they are.
 | `FLAG_ACTIVITY_FORWARD_RESULT` | `0x02000000` | Re-point the result channel one level outward. **The single most important flag in §5.6.** |
 | `FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS` | `0x00800000` | Hide the task from Recents. Malware hygiene; also a legitimate privacy choice. |
 
-> **🧠 Mental Model — the placement decision, in one sentence**
+> **Mental Model — the placement decision, in one sentence**
 > If `FLAG_ACTIVITY_NEW_TASK` is absent and the launch mode is `standard` or `singleTop`, the target
 > joins **the caller's task** and affinity is irrelevant. Otherwise the system looks for a task whose
 > **effective affinity** matches, and creates one if there is none. Everything else is refinement.
@@ -659,7 +659,7 @@ The reason is §2.2: `system_server` performed the start, so the only Binder tra
 `onCreate` runs is the one *from `system_server` to you*. There is no thread-local record of the
 original caller because it was a different transaction on a different thread in a different process.
 
-> **🧠 Mental Model — three tiers, and you must be able to place any claim instantly**
+> **Mental Model — three tiers, and you must be able to place any claim instantly**
 > 1. **Kernel-stamped** — `Binder.getCallingUid()` *inside a live Binder transaction*, i.e. in a
 >    Service's `onTransact`. Unforgeable. [25-Binder](../25-Binder/README.md) demonstrates this by
 >    trying to forge it and failing three times.
@@ -734,7 +734,7 @@ reused, and the activity actually on screen is the victim's. **The classic Stran
 does not work on this device.** The `allowTaskReparenting` variant was tested separately and also
 failed — §5.2 has that capture.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > The namespacing is applied in `system_server` when the effective affinity for an `ActivityRecord`
 > is computed, in
 > `frameworks/base/services/core/java/com/android/server/wm/ActivityRecord.java`. It is a *runtime*
@@ -745,7 +745,7 @@ failed — §5.2 has that capture.
 > Note the one case that is *not* prefixed: an empty declared affinity stays empty (`null`). "No
 > affinity" cannot be namespaced because there is nothing to namespace.
 
-> **⚠️ Warning — do not turn this into a version claim**
+> **Warning — do not turn this into a version claim**
 > This chapter measured **one device**: Android 11 / API 30, MIUI 12.5. That is a single data point
 > from a single OEM fork. It tells you the mitigation is present *there*. It does not tell you the
 > API level at which AOSP introduced it, it does not tell you what an OEM with a heavier fork does,
@@ -814,7 +814,7 @@ They press Back. The victim's Activity finishes, and the next thing revealed is 
 Activity**, in the same task, with the same Recents entry, with no transition animation between apps
 and no visual seam. If the attacker's Activity imitates the victim, the user has no cue at all.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `scripts/task-affinity-map.py` reports this as `MIXED-PACKAGE-TASK` at HIGH, deliberately above the
 > squatted-affinity finding on a namespacing platform. The severity ordering is the point: on a
 > modern device the *declaration* is inert and the *placement* is live, which is the opposite of what
@@ -843,7 +843,7 @@ Everything so far went through `ActivityTaskManagerService`. Tapjacking goes thr
 `WindowManagerService` and the input pipeline, and treating it as "another task attack" leads people
 to apply the wrong mitigations.
 
-> **📖 Definition**
+> **Definition**
 > **Tapjacking** is an attack in which the user's touch is delivered to a window they cannot see,
 > because another application has drawn a window on top of it and made that window pass touches
 > through.
@@ -903,7 +903,7 @@ It is implemented in `View.onFilterTouchEventForSecurity()` in
 `frameworks/base/core/java/android/view/View.java`, which returns `false` for an obscured event; a
 `View` that returns `false` from that method never sees the touch.
 
-> **🧠 Mental Model — why "discard" and not "warn"**
+> **Mental Model — why "discard" and not "warn"**
 > The obvious instinct is to show the user a warning instead of dropping the touch. It cannot work.
 > A warning is a UI element, and the attacker already controls the pixels on top of your UI —
 > anything you draw, they can cover. **The only response available to you that the attacker cannot
@@ -933,7 +933,7 @@ entry in the Recents/Overview thumbnail, and the window is excluded from non-sec
 about **exfiltration of what is on screen**, and it is the right control for a screen showing a
 one-time code, a private key, or account details.
 
-> **⚠️ Warning**
+> **Warning**
 > `FLAG_SECURE` and `filterTouchesWhenObscured` solve *opposite* problems and neither substitutes for
 > the other. `FLAG_SECURE` stops information leaving the screen. `filterTouchesWhenObscured` stops
 > input arriving at it. A consent screen needs the second; a secrets screen needs the first; a screen
@@ -979,7 +979,7 @@ disappear from the flow. It also means that if a **deputy** forwards an attacker
 flag set, the result — and any grant on it — comes straight back to the attacker with no cooperation
 from the deputy. `examples/hijacker-app/DeputyExploitActivity.java` sets it for one line's cost.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The result channel is the reason `getCallingActivity()` exists at all, and the two facts are
 > linked: an Activity that returns a result *can* identify its caller, and an Activity started with a
 > plain `startActivity` cannot. If you find a component that checks `getCallingPackage()` and refuses
@@ -1023,7 +1023,7 @@ and it is a deputy. §5.3 and `labs/lab-03` build exactly that shape.
 | `android:requireContentUriPermissionFromCaller` | — | — | — | **35+** | Directly targets the deputy pattern: the *caller* must already hold the grant. |
 | Task affinity uid-namespacing | **measure it** | **measure it** | **measured: present** | **measure it** | Deliberately not asserted. §3.7 and `scripts/task-affinity-map.py --check`. |
 
-> **⚠️ Warning**
+> **Warning**
 > The bottom row is written that way on purpose. This chapter measured one device. The repository has
 > been wrong before by carrying a version-keyed claim forward from memory, and a mitigation table is
 > exactly where that happens. Run the check.
@@ -1057,7 +1057,7 @@ Everything under `core/java` is the **app-side** half and runs in your process; 
 | `frameworks/base/services/core/java/com/android/server/wm/WindowManagerService.java` | system | Window z-order, and where the obscured flag is decided during input dispatch. |
 | `frameworks/base/services/core/java/com/android/server/uri/UriGrantsManagerService.java` | system | Where the URI grant of §5.3 is actually issued, on the *caller's* behalf. |
 
-> **⚠️ Warning — this part of the tree moves**
+> **Warning — this part of the tree moves**
 > Activity and task code was reorganised substantially in Android 10, when
 > `ActivityTaskManagerService` was split out of `ActivityManagerService`, and again in Android 12,
 > when `ActivityStack` was folded into `Task` and `ActivityDisplay` became `TaskDisplayArea`. Method
@@ -1297,7 +1297,7 @@ matters more than learning individual bugs, because a family tells you what evid
 | 5 | **Result-channel abuse** | `onActivityResult` treats an attacker's Intent as trusted | that the value reaches a decision or a sink | §5.6 |
 | 6 | **Over-exposed screen** | `exported`, `showWhenLocked`, `allowEmbedded`, weak `permission` | that an unprivileged app (not `adb shell`) can reach it, and that reaching it matters | §5.7 |
 
-> **🔍 Pentester's Note — the discipline that keeps findings alive**
+> **Pentester's Note — the discipline that keeps findings alive**
 > Families 1, 3, 5 and 6 all need the same two proofs, and reports that skip either get closed:
 >
 > 1. **Reachability from an unprivileged app.** `adb shell` runs as uid 2000, which holds
@@ -1440,7 +1440,7 @@ mitigated independently:
 No reparenting occurred. The attacker's Activity stayed in its own task, for the same reason: the
 affinities that reparenting matches on are namespaced, so nothing matches.
 
-> **⚠️ Warning — what this result does and does not license you to say**
+> **Warning — what this result does and does not license you to say**
 > It licenses: *"On the tested device (Redmi M2101K6P, Android 11 / API 30, MIUI 12.5, patch
 > 2021-12-01) the classic `taskAffinity` + `singleTask` hijack and the `allowTaskReparenting` variant
 > both failed, because effective task affinities are namespaced with the declaring app's uid."*
@@ -1543,7 +1543,7 @@ Two further options, with honest caveats:
 | **"StrandHogg"** — Promon vendor disclosure, 2019 | In-the-wild exploitation of the 2015 paper's affinity variant, against banking apps. | Vendor publication; treat the marketing name as a label for a class, not a single bug. |
 | **"StrandHogg 2.0"** — Promon, 2020, tracked as **CVE-2020-0096** | A *code-based* variant that does not need a manifest declaration at all, so it is invisible to every manifest scanner. Patched via the Android Security Bulletin. | **Check the ID and the affected-version range in the Android Security Bulletin for May 2020 before you cite it in a report.** A bulletin entry is the authoritative record; a blog post is not. |
 
-> **⚠️ Warning**
+> **Warning**
 > The 2.0 variant matters for a reason that outlives the specific bug: it demonstrated that **the
 > manifest is not the whole attack surface for task attacks.** A checklist that greps for
 > `taskAffinity` and stops has already missed one published family. This is a live argument for
@@ -1637,7 +1637,7 @@ Nothing about `InternalActivity` changed between the two runs. Its manifest entr
 platform's check is identical, and the check was performed both times. **The only thing that changed
 is who asked.**
 
-> **⚠️ Warning**
+> **Warning**
 > A very common counter-argument from developers is "but that Activity is harmless, it just shows a
 > screen." Sometimes true. But `exported="false"` is frequently the *only* control on screens that
 > assume they are unreachable — an admin panel, a debug menu, a "you are already authenticated"
@@ -1773,9 +1773,9 @@ I CH30 : DeputyActivityFixed forwarding to allow-listed com.pentest.ch30.victim.
 I CH30 : onCreate InternalActivity taskId=303 ...
 ```
 
-The nested Intent was simply never read. No sink, no grant, no theft.
+The nested Intent was never read. No sink, no grant, no theft.
 
-> **⚠️ Warning — read the last line of that capture honestly**
+> **Warning — read the last line of that capture honestly**
 > `InternalActivity` was still reached, because `"internal"` is on the allow-list and the attacker
 > supplied that selector. **Allow-listing a non-exported screen makes that screen reachable by
 > anyone who can reach the deputy.** The fix removes arbitrary redirection and grant laundering; it
@@ -1833,7 +1833,7 @@ the device"** *and*, if the deputy is reachable from a browsable deep link, no i
 precondition at all. A web-reachable deputy is a genuinely different severity from a locally
 reachable one, and §3.11 is where you check which you have.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Write the precondition into the finding title, not the appendix. *"Exported Activity launders URI
 > grants on a non-exported provider (any installed app)"* and *"Launcher Activity lacks
 > `taskAffinity=\"\"` (requires malicious app; mitigated on tested devices)"* are two titles a triager
@@ -1889,7 +1889,7 @@ WindowManager.LayoutParams lp = new WindowManager.LayoutParams(
 wm.addView(overlayView, lp);
 ```
 
-> **🔍 Pentester's Note — how to recognise an overlay sample**
+> **Pentester's Note — how to recognise an overlay sample**
 > Look at **Services**, not Activities, and grep for `addView` with a
 > `WindowManager.LayoutParams`. Then check the type constant and the flags. An overlay service is
 > almost never exported, and it is almost always accompanied by a trivial launcher Activity that
@@ -1943,7 +1943,7 @@ if (f & FLAG_WINDOW_IS_OBSCURED) {
 
 #### What this chapter could NOT execute, and why
 
-> **⚠️ Warning — an honest gap**
+> **Warning — an honest gap**
 > **The end-to-end tapjacking demonstration was not performed on the test device.** The overlay was
 > never raised, so no obscured touch was ever delivered and no "the victim accepted it" measurement
 > exists in this chapter.
@@ -2033,7 +2033,7 @@ startActivityForResult(i, RC_PICK_ACCOUNT);
 }
 ```
 
-> **🧠 Mental Model**
+> **Mental Model**
 > `onActivityResult` is an **inbound IPC entry point wearing a callback's clothes.** It looks like a
 > return value from a function you called, which is why developers validate it like one — that is,
 > not at all. It is not a return value. It is a message from another process that you invited but do
@@ -2152,7 +2152,7 @@ The five attributes worth extracting into a table before you do anything else:
 | `android:launchMode` | whether `onNewIntent` is reachable (§3.1's trap) |
 | `android:taskAffinity` | present at all is unusual; naming another package is a red flag |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `<activity-alias>` is the entry point people forget. It is a second, independently configured door
 > to an existing Activity, and its `exported` and `permission` attributes are its **own** — they do
 > not inherit from the target. An Activity that is correctly `exported="false"` can have an alias
@@ -2245,7 +2245,7 @@ you can see both is the fastest way to convince yourself the mitigation is real.
 | Extra key strings (`"next"`, `"dest"`) | **usually yes** | they are protocol, so they must match what callers send. String encryption can hide them; if the app is deep-linkable, the keys are usually still plaintext because a URL has to produce them |
 | The manifest itself | **never** | the platform must parse it |
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Obfuscation hides the *app's* names. It cannot hide the *platform's* names, and every interesting
 > thing in this chapter is expressed in platform names. That is why an Activity/task audit is one of
 > the few analyses that is barely affected by R8 — and it is a good argument for doing this audit
@@ -2322,7 +2322,7 @@ adb shell "dumpsys activity activities" | grep -E "ResumedActivity|mResumedActiv
 adb shell "dumpsys activity recents" | grep -E "Recent #|affinity=|realActivity="
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The dump prints the whole graph **twice** — once per display, then again in a summary block. Every
 > naive `grep | wc -l` over it double-counts, and every naive parser produces duplicate tasks.
 > `scripts/task-affinity-map.py` keys tasks by id specifically to collapse this, and the fact that it
@@ -2397,7 +2397,7 @@ measurement in §3.4 — this time from *inside* the app process rather than fro
 Same `instance=167020598` across an `onCreate` and a later `onNewIntent`: the object was reused.
 That is `singleTop`, read off a running app, with no manifest and no source.
 
-> **🧠 Mental Model — the two tools answer different questions**
+> **Mental Model — the two tools answer different questions**
 > `dumpsys` tells you **where things ended up**. Frida tells you **what the app saw**. When they
 > disagree — and the `getIntent()` trap of §3.1 is exactly a case where they can — the disagreement
 > *is* the finding.
@@ -2434,7 +2434,7 @@ I CH30 : EXPLOIT control OK: direct query DENIED (Permission Denial: opening pro
          that is not exported from UID 10311)
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > **A null cursor is not evidence of absence.** On API 30 and above it usually means package
 > visibility, not a missing provider. The three outcomes are distinct and you must distinguish them:
 > a `SecurityException` means *it exists and refused you*; a **null cursor** means *it did not
@@ -2500,7 +2500,7 @@ adb shell "su -c 'pm install -r /data/local/tmp/app.apk'"
 to the root path automatically. Every measurement in this chapter that required an installed app was
 obtained that way.
 
-> **⚠️ Warning**
+> **Warning**
 > Rooting is not a workaround you get to assume in an engagement. If you meet
 > `INSTALL_FAILED_USER_RESTRICTED` on a device you may not root, the correct answers are: enable the
 > vendor toggle if you can, or use a different device. Do not report "untestable" — say which test
@@ -2940,7 +2940,7 @@ public final class LoginActivity extends AppCompatActivity {
 }
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > `ActivityManager.getAppTasks()` returns only **your own** tasks — it cannot see an attacker's. The
 > `onResume` check above therefore detects "my Activity is in a task I do not root", which is the
 > §3.8 shape, and cannot detect much else. `getRunningTasks()`, which people reach for instead, has
@@ -3022,7 +3022,7 @@ public final class PartnerGatewayActivity extends Activity {
 }
 ```
 
-> **🧠 Mental Model**
+> **Mental Model**
 > This is about as good as an Activity can be at identity, and it is still worse than a bound
 > Service, which reads a **kernel-stamped** uid inside a live Binder transaction. If identity is
 > load-bearing, the right recommendation is usually "move this to a Service, or put a
@@ -3246,10 +3246,10 @@ which you build and install with one command.
 cd examples && ./build.sh --install
 ```
 
-> **⚠️ Warning — authorised testing only**
 > The apps in `examples/` are deliberately vulnerable and the attacker app deliberately squats a task
-> affinity. Install them on a device you own. Never point `taskAffinity` at an application you do not
-> own, and uninstall both when you are finished:
+> affinity. Install them on a device you own, and uninstall both when you are finished. Never point
+> `taskAffinity` at an application you do not own — see [SECURITY.md](../SECURITY.md) for the
+> handling rules:
 >
 > ```bash
 > cd examples && ./build.sh --uninstall

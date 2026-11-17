@@ -8,7 +8,7 @@
 
 ---
 
-## ⚠ Read this before anything else: the device must be UNLOCKED
+## Read this before anything else: the device must be UNLOCKED
 
 **This is the only lab in the chapter that cannot be run on a locked device**, and the failure mode
 is confusing enough that it is worth stating up front rather than letting you diagnose it.
@@ -56,9 +56,10 @@ and treating it as "another task attack" leads people to apply the wrong mitigat
 It is also the attack with the cleanest defence in the whole chapter: **one line**, whose absence is
 invisible in code review because there is no wrong line to spot, only a missing one.
 
-> **⚠️ Authorised testing only.** The attacker app draws an overlay over other applications. Install
-> it on a device you own, remove the overlay when you are finished, and uninstall both apps at the
-> end. A `FLAG_NOT_TOUCHABLE` window you forget about is invisible to the task switcher.
+> The attacker app draws an overlay over other applications. Install it on a device you own, remove
+> the overlay when you are finished, and uninstall both apps at the end. A `FLAG_NOT_TOUCHABLE`
+> window you forget about is invisible to the task switcher. See
+> [SECURITY.md](../../SECURITY.md) for the handling rules.
 
 ---
 
@@ -102,12 +103,12 @@ adb shell "appops get com.pentest.ch30.attacker SYSTEM_ALERT_WINDOW"
 # -> SYSTEM_ALERT_WINDOW: allow
 ```
 
-> **⚠️ Measured trap.** The appop is **reset to `ignore` by every reinstall**. If you rebuild the
+> **Measured trap.** The appop is **reset to `ignore` by every reinstall**. If you rebuild the
 > attacker app mid-lab, re-grant it or you will spend twenty minutes debugging a permission you
 > already granted.
 
 > **Question 1.** Route A shows a Settings screen. Route B does not. What kind of permission is
-> `SYSTEM_ALERT_WINDOW` — normal, dangerous, signature, or something else? Why can it not simply be
+> `SYSTEM_ALERT_WINDOW` — normal, dangerous, signature, or something else? Why can it not be
 > requested with `requestPermissions()`?
 >
 > **Question 2.** How many packages on your device already hold it?
@@ -184,7 +185,7 @@ adb shell "logcat -d -s CH30:I" | grep -i overlay
 > **Question 11.** Did the overlay report success? If you got the `TPSL`/background error, re-read
 > the box at the top of this file.
 
-Confirm the window exists, and note that this is the command you would use on a real target:
+Confirm the window exists, and confirm that this is the command you would use on a real target:
 
 ```bash
 # host
@@ -224,7 +225,7 @@ adb shell "logcat -d -s CH30:I" | grep -iE "ConsentActivity|CONSENT GRANTED"
 > **Question 15.** Did `CONSENT GRANTED -- the sensitive action ran` appear?
 >
 > **Question 16.** The platform **knew** the window was obscured — it set the flag. It delivered the
-> event anyway. Why does the platform not simply block obscured touches globally? Give a concrete
+> event anyway. Why does the platform not block obscured touches globally? Give a concrete
 > example of what that would break.
 
 ---

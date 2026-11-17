@@ -104,7 +104,7 @@ lc_verify_signature                       0x000048d0  224 bytes  score 10
 4. Run it with `--show` and `--min-score 3`. Which candidate would you reject immediately if this
    were a real library, and on what grounds?
 
-> **⚠️ A score is not a finding.** The script says so in its own output. A boolean-returning
+> **A score is not a finding.** The script says so in its own output. A boolean-returning
 > `isEmpty()` has exactly the shape of a licence check. The score tells you what to *read*.
 
 ---
@@ -360,7 +360,7 @@ lc_verify_signature: 1
 lc_decrypt_flag    : ANDROID-ARM64-FLAG
 ```
 
-> **⚠️ If the runner will not execute**
+> **If the runner will not execute**
 > Some OEM builds block `execve` on `/data`, even for the shell user with correct permissions. The
 > symptom is one of:
 > ```text
@@ -524,7 +524,7 @@ not merely gating the computation; the thing being checked was also the thing th
 That is the difference between an authorisation decision (patchable) and a cryptographic dependency
 (not).
 
-You *could*, of course, recover the flag: you already extracted the token in Lab 01 by reading the
+You *could* recover the flag: you already extracted the token in Lab 01 by reading the
 `movk` chain, and with the correct token the pristine library prints it. The point is that the patch
 did not get it for you — the analysis did.
 
@@ -582,7 +582,7 @@ spot, and why?
 
 Why is the comparison on `w2` here and `w0` in `lc_is_licensed`? Patch it. Then explain why patching
 this function and patching `lc_is_licensed` are two different patches with two different blast
-radii — and note that the compiler inlined `lc_is_licensed` here too.
+radii — and confirm that the compiler inlined `lc_is_licensed` here too.
 
 ### S3 — Break something on purpose
 

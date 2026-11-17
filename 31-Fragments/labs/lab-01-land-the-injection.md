@@ -25,11 +25,11 @@ By the end you will have four artefacts a report can be built from:
 4. the same result read three independent ways — logcat, `dumpsys`, and the screen — so that no
    single reading has to be trusted.
 
-> **⚠️ Authorised testing only**
 > `../examples/victim-app/` is deliberately vulnerable. `../examples/attacker-app/` exists to attack
 > it and nothing else: it requests **no permissions** and hard-codes `com.pentest.ch31.victim` as its
 > only target, so it cannot be aimed elsewhere without editing and rebuilding it. Install both on a
-> device you own and remove them when you are finished.
+> device you own and remove them when you are finished. See
+> [SECURITY.md](../../SECURITY.md) for the handling rules.
 
 ---
 
@@ -236,7 +236,7 @@ Stop and read this list carefully, because it is the entire manifest-level view 
 - Nothing distinguishes `SettingsActivity` from `SettingsHardenedActivity`. They differ by one method
   body, which is invisible from here.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > If your assessment stops at the manifest, this app looks fine. That is [README §6.5](../README.md),
 > and it is the reason chapter 32's manifest audit is a **necessary first step** and never the last
 > one.
@@ -272,7 +272,7 @@ W CH31   : ADMIN-FRAGMENT-REACHED secret=CH31{fragment_injection_skipped_the_log
 **Look at the device.** The admin panel is on screen, with the secret rendered, inside an Activity
 called "Settings", started by an app with no permissions, with no PIN typed.
 
-> **⚠️ Warning — the trap that will waste your afternoon**
+> **Warning — the trap that will waste your afternoon**
 > Without `-S` (or an explicit `am force-stop`), your *second* run of any attack will print nothing.
 > `am start` compares Intents with `Intent.filterEquals()`, **which does not compare extras**, so an
 > Intent that differs only in its payload is "the same Intent" and gets delivered to the already-
@@ -338,7 +338,7 @@ I CH31: FragmentHostActivity.onCreate name=com.pentest.ch31.victim.PublicFragmen
 I CH31: PUBLIC-FRAGMENT-REACHED (this one is harmless)
 ```
 
-This proves the app is not simply broken. The mechanism works as designed for the Fragment it is
+This proves the app is not broken. The mechanism works as designed for the Fragment it is
 designed for; the fault is the absence of a boundary, not the presence of a bug.
 
 ### Step 3.2 — Control B: the hardened Activity refuses

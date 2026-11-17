@@ -17,14 +17,14 @@ Almost every rejected Android finding is rejected for the same reason. The teste
 something from `adb shell`, wrote it up as "reachable by a malicious app", and a developer replied —
 correctly — that it is not.
 
-> **📖 Definition**
+> **Definition**
 > **`adb shell`.** The interactive shell `adbd` gives you on the device. It runs as the Linux user
 > `shell`, **UID 2000**, in the SELinux domain `shell`, with **no seccomp filter**, a **non-empty
 > capability bounding set**, and supplementary groups no application holds. It can read
 > `/data/local/tmp`, traverse directories an app cannot, and invoke `pm`, `am`, `dumpsys` and
 > `run-as`. It is not an app.
 
-> **⚠️ Warning**
+> **Warning**
 > A file you read or a provider you queried from `adb shell` is **not** thereby proven reachable by an
 > attacker. Reproducing the same operation from an ordinary installed app is a **different
 > experiment** with a **different answer**, and only that second answer supports the sentence "any app
@@ -36,7 +36,7 @@ the 10000+ range, runs in the `untrusted_app` SELinux domain with its own MCS ca
 `protectionLevel="normal"`, granted silently at install on every Android version, and never shown to
 the user.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > The shell is a maintenance engineer with a master key. This APK is a member of the public. Both can
 > walk up to the same door. Only one of them tells you whether the door is locked.
 
@@ -86,7 +86,7 @@ Requirements: JDK 11 or 17, Gradle 7.5+ (or Android Studio), and an Android SDK 
 If Gradle cannot find the SDK, create `local.properties` here containing
 `sdk.dir=/absolute/path/to/Android/sdk`.
 
-> **⚠️ Warning**
+> **Warning**
 > `build.gradle` pins Android Gradle Plugin **7.4.2** on purpose. AGP 8.0 removed the `package="…"`
 > attribute in `AndroidManifest.xml` in favour of `namespace` in `build.gradle`. To use AGP 8: bump
 > the classpath version, add `namespace 'com.attacker.sandboxprobe'` to the `android { }` block, and
@@ -108,12 +108,12 @@ am start -n com.attacker.sandboxprobe/.ProbeActivity --es target com.example.tar
 
 **Second — and this is the one that catches everyone — the `<queries>` block.**
 
-> **📖 Definition**
+> **Definition**
 > **Package visibility filtering.** From `targetSdk` 30 (Android 11), an app can no longer see the
 > full list of installed packages. It sees itself, a small set of always-visible system packages,
 > packages it interacts with through certain APIs, and whatever it declares in `<queries>`.
 
-This is a privacy control, not a security boundary. A real attacker simply declares the target, or
+This is a privacy control, not a security boundary. A real attacker declares the target, or
 holds `QUERY_ALL_PACKAGES`. It never makes an exported component unreachable. But if *you* forget it,
 the platform hides the target from your probe and every symptom looks like absence:
 
@@ -124,7 +124,7 @@ the platform hides the target from your probe and every symptom looks like absen
 | `ContentResolver.query()` throws `IllegalArgumentException: Unknown URL` | "no such provider" | filtered |
 | Every data-directory probe returns `ABSENT` | "nothing there" | you never resolved the target |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Reporting "the target's data is not reachable from a third-party app" because your own manifest hid
 > the target is a self-inflicted false negative, and it is common. The probe checks this in **section
 > 1** of its output and tells you plainly which explanation applies. Read that section before reading
@@ -189,7 +189,7 @@ adb logcat -d -s SANDBOXPROBE:W > evidence/sandbox-probe-$(date +%Y%m%d-%H%M).tx
 adb exec-out screencap -p       > evidence/sandbox-probe.png
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > The clipboard section requires the probe to be in the **foreground**. Since Android 10 an app may
 > read the clipboard only while it holds input focus or is the default IME. A `null` result from a
 > background read is the platform working, not the target being safe.
@@ -223,7 +223,7 @@ recording a component as guarded; the probe marks these `INCONCLUSIVE` for exact
 false when the path cannot be traversed, which is what mode `0700` on the parent produces. That is the
 sandbox working. If it ever returns `REACHABLE`, check for `sharedUserId` first.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > Why does the target's data directory deny you but its APK does not? Two different files with two
 > different owners and modes. `/data/data/<pkg>` is `0700` owned by the app's UID, and the missing
 > execute bit blocks traversal one level up — so a careless `0666` file inside is still unreachable by
@@ -263,7 +263,7 @@ Run **both** experiments and record **both** results. The table is the artefact:
 Then, for every `REACHABLE` row, do the part no tool does for you: **walk the reach-through.** What can
 you make that thing do that you could not do directly? A door is only as serious as the room behind it.
 
-> **⚠️ Warning**
+> **Warning**
 > Severity comes from what the door reaches, not from the fact that it opened. An exported provider
 > that returns a version string is **Low**. Reading the credential store is **High**. And an
 > `openFile` traversal grants the *target's* read authority — not root, not arbitrary system access —
@@ -274,7 +274,7 @@ device's build fingerprint, the Android release and the security patch level. Ha
 mitigations are `targetSdk`-gated, so a finding that is real against an app targeting API 28 may be
 impossible against the same source targeting API 34.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Build the target at two `targetSdk` levels and run the probe against both. The rows that change are
 > exactly the version-conditional findings, and knowing which those are is the difference between a
 > report that survives review and one that does not.
@@ -298,7 +298,7 @@ In rough order of value:
 6. **`FLAG_SECURE` checking** across the target's screens, which pairs with the clipboard and screen
    capture material in §3.14.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Keep a generic build of this in your toolkit with the target package in an Intent extra, as here.
 > Its real value is not the probing — it is that a client engineer can install the same APK and see
 > the same output, which ends arguments about whether a finding is real.

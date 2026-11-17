@@ -198,7 +198,7 @@ until something else claims it and overwrites it — which may be never.
 This is the mechanism behind every "we found the session token in a heap dump" finding. The fix is
 to overwrite the secret yourself before freeing, with something the optimiser is not allowed to
 delete. A plain `memset` before `free` is legal C that the compiler *may remove* as a dead store,
-because the memory is dead. Use a `volatile` write loop — and note that `explicit_bzero()`, which
+because the memory is dead. Use a `volatile` write loop — and confirm that `explicit_bzero()`, which
 every guide recommends, is **absent from the NDK r25c sysroot** and fails at link time.
 
 ---
@@ -332,7 +332,7 @@ That third one is the significant omission for anyone hunting dropped payloads, 
 runtime address = load base + static address
 ```
 
-The load base is the **lowest mapping of that file whose file offset is `00000000`**. Not simply its
+The load base is the **lowest mapping of that file whose file offset is `00000000`**. Not its
 lowest mapping.
 
 The difference bites for a library mapped straight out of an APK (`android:extractNativeLibs="false"`),

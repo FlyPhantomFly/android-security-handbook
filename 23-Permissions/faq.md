@@ -473,7 +473,7 @@ Fix it in your probe's manifest:
 </queries>
 ```
 
-then rebuild and reinstall. Note that providers are matched by **authority**, not by package, which
+then rebuild and reinstall.providers are matched by **authority**, not by package, which
 is the form to use when you do not know the owning package.
 
 `QUERY_ALL_PACKAGES` also works and is `normal` level, so it is granted on request — but a probe
@@ -635,7 +635,7 @@ A `<permission-tree>` in a manifest is a prompt to go looking in the DEX, not a 
 grep -rn 'addPermission' jadx-out/
 ```
 
-Note that this is invisible to every manifest-only tool, including this chapter's own
+this is invisible to every manifest-only tool, including this chapter's own
 [permission-audit.py](scripts/permission-audit.py) — which is why that tool prints a dedicated
 warning when it sees a tree rather than silently ignoring it.
 

@@ -376,7 +376,7 @@ is not zero. So it accepts you when your PID *is* zero.
 <details>
 <summary>Hint 3.1</summary>
 
-Your process's PID is obviously not zero. But the guard does not read your process's PID. It reads
+Your process's PID is never zero. But the guard does not read your process's PID. It reads
 `Binder.getCallingPid()`, which is a **property of the transaction**, filled in by the driver.
 
 Where, in this chapter, is `getCallingPid()` documented as returning 0?

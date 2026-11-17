@@ -20,7 +20,7 @@ Second, **almost every methodological error in Android testing is an identity er
 
 Third, **the context is the input to everything else in this chapter.** You cannot read a denial, decode an MCS category, or evaluate a policy rule without first being fluent in the four-field format.
 
-> **📖 Definition — security context**
+> **Definition — security context**
 > The label SELinux attaches to every process and every object. Written `user:role:type:level`. On Android the first two fields are fixed and carry no information; the third — the **type**, called the **domain** when it labels a process — is what every policy rule is written about; the fourth carries the MCS categories that separate apps from each other.
 
 ---
@@ -94,7 +94,7 @@ cat /proc/self/attr/current
 # u:r:shell:s0
 ```
 
-`/proc/self/attr/current` is the authoritative source. `id -Z` is a convenience that reads the same thing. Note that the kernel appends a NUL byte, so the output may look slightly odd in a pipeline:
+`/proc/self/attr/current` is the authoritative source. `id -Z` is a convenience that reads the same thing.the kernel appends a NUL byte, so the output may look slightly odd in a pipeline:
 
 ```bash
 # adb shell — see the trailing NUL

@@ -49,7 +49,7 @@ Three things make this the most valuable page in many mobile reports:
 
 ## Setup
 
-> **⚠️ Warning**
+> **Warning**
 > Only run this against an application you have written permission to test. Intercepting and
 > decoding traffic from a third-party app you do not own is not a grey area.
 
@@ -81,7 +81,7 @@ knowing before you spend an hour confused:
 | App targets API 24+ | Only *system* CAs are trusted; your user CA is ignored | Add a debug `network_security_config` if it is your build; otherwise use a system CA store on a rooted device or Magisk module |
 | Android 14+ | The system CA store moved under APEX/Conscrypt control | The old `/system/etc/security/cacerts` remount trick no longer applies; see [62-Magisk](../../62-Magisk/README.md) for current approaches |
 | Certificate pinning | TLS handshake fails for *some* hosts only | Unpin at runtime. Note **which** hosts pin — that itself belongs in your table, because a pinning SDK is one you cannot audit passively |
-| Native TLS | Traffic never appears in the proxy at all, but the app clearly works | The SDK is not using the Java stack. See step 5 |
+| Native TLS | Traffic never appears in the proxy at all, but the app still works | The SDK is not using the Java stack. See step 5 |
 
 **Q0.** Before you capture anything: which of the four obstacles above applies to your target? You
 will misread an empty proxy log as "no traffic" at least once in your career. Do it here instead.
@@ -110,7 +110,7 @@ python3 ../../04-Java/scripts/dump-strings.py app.apk --min-len 8 \
 **Q1.** List the SDKs you expect, and for each the host you expect it to contact. Keep this list.
 Every host that appears in the capture and is *not* on it is a question you must answer.
 
-**Q2.** Which hosts in the string dump are not obviously attributable to anything in your inventory?
+**Q2.** Which hosts in the string dump are not attributable to anything in your inventory?
 Those get priority.
 
 ### Step 2 — Capture with attribution

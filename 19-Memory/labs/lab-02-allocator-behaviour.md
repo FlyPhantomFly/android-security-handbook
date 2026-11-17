@@ -33,7 +33,7 @@ enough. Within "Scudo", behaviour still depends on:
 
 None of that is knowable from a version number. All of it is measurable in five minutes.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The deliverable from this lab is not "the heap is groomable". It is a table of measured distances
 > for the size classes the target app actually uses. That table is what turns "there is an overflow"
 > into "there is an overflow that reaches *this*", and it is the difference between an accepted
@@ -151,7 +151,7 @@ rpc.exports.probe()
 
 That prints a size ladder from 8 bytes to 4 MiB with the region each landed in.
 
-> **🧠 Mental Model — primary and secondary**
+> **Mental Model — primary and secondary**
 > The primary is a set of pre-reserved regions, one per size class, from which small blocks are
 > carved with almost no work. The secondary is "just call `mmap`". Small allocations are fast and
 > crowded together; large ones are slower, individually mapped, and usually flanked by guard pages.
@@ -214,7 +214,7 @@ The important four lines:
 `other` was filled with `0x77`. Its first byte is now `0x41`, written through a pointer whose owner
 believed it still owned that memory. Two objects, one address, and no diagnostic of any kind.
 
-> **⚠️ Warning**
+> **Warning**
 > Read the last sentence again. The stock build printed nothing, returned zero, and carried on. This
 > is the normal case: a use-after-free on a stock Android device is **silent**. That silence is why
 > Lab 03 exists.
@@ -328,7 +328,7 @@ parent's page tables. Every library the Zygote had loaded — `libart.so`, `libc
 the whole framework — is at **exactly the same address in every app on the device**, and stays there
 until the Zygote restarts, which in practice means until reboot.
 
-> **⚠️ Warning — the ASLR consequence, stated plainly**
+> **Warning — the ASLR consequence, stated plainly**
 > ASLR randomises per-`exec`. Android apps do not `exec`. Therefore for the inherited portion of an
 > app's address space there is effectively **one** layout per boot, shared by every app.
 >

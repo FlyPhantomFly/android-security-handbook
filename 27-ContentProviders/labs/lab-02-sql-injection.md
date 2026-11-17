@@ -26,7 +26,7 @@ A tester who reports "no injection" after testing one channel has tested the rou
 documented, not the routes the code accepts. This lab makes you exploit each of the four, and shows why
 their payloads are *not* interchangeable.
 
-> **📖 Definition**
+> **Definition**
 > **SQL injection in a provider** is the concatenation of caller-controlled text into a SQL statement
 > that the provider compiles, such that the caller can alter the statement's structure — reading tables,
 > columns or rows the provider's author never intended to expose. The safe alternative is a **bound
@@ -54,7 +54,7 @@ adb logcat -c
 adb logcat -s VulnNotesProvider
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Debug logging inside a provider is itself a finding, and a gift when you have it: `adb logcat -s
 > VulnNotesProvider` shows you the exact compiled SQL for every request, so you can see precisely which
 > of your inputs reached the statement verbatim. When the target does *not* log, hook

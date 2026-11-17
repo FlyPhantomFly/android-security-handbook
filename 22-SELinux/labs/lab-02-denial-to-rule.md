@@ -33,7 +33,7 @@ adb shell getenforce          # must say Enforcing, or this lab measures nothing
 adb shell getprop ro.build.type
 ```
 
-> **⚠️ If `getenforce` says `Permissive`, stop.** Every denial you provoke will carry `permissive=1` and every operation will *succeed*. You would be measuring a different device. Set it back with `setenforce 1` if you have root, or use a device that has not been modified.
+> **If `getenforce` says `Permissive`, stop.** Every denial you provoke will carry `permissive=1` and every operation will *succeed*. You would be measuring a different device. Set it back with `setenforce 1` if you have root, or use a device that has not been modified.
 
 Open two terminals.
 
@@ -48,7 +48,7 @@ adb logcat -b all | grep -a 'avc:'
 adb shell
 ```
 
-> **⚠️ Two flags that are not optional.**
+> **Two flags that are not optional.**
 > **`-b all`**: denials frequently land in the `events` or `kernel` buffer, and logcat's default is `main`. Without `-b all` you will see nothing and conclude there were no denials.
 > **`grep -a`**: logcat output can contain bytes that make `grep` treat the stream as binary and print only "Binary file matches" — or, through a pipe, nothing at all. This looks exactly like success and has cost people hours.
 
@@ -186,7 +186,7 @@ Reaching a file *inside* would need `dir:search` on the directory (to traverse i
 Getting the class and permission right is what makes your derived rule minimal rather than a guess. A rule granting `dir:read` when only `dir:getattr` was needed is four times broader than necessary.
 </details>
 
-**Question 4.** This is `/data/misc/keystore` — the Keystore daemon's private directory. Would granting this rule be a good idea? Answer in terms of what `shell` would then be able to do, and note that granting `getattr` alone does *not* let you read the contents.
+**Question 4.** This is `/data/misc/keystore` — the Keystore daemon's private directory. Would granting this rule be a good idea? Answer in terms of what `shell` would then be able to do, and confirm that granting `getattr` alone does *not* let you read the contents.
 
 ### Probe 3 — try to read the binary policy
 
@@ -329,7 +329,7 @@ allow priv_app default_android_service:service_manager find;
 
 (a) `name=` is the **Binder service name**, not a filename. This is one of the classes where the object is not a file at all, and where `name=` therefore means something completely different.
 
-(b) No. `uid=10028` is the **DAC** identity; `scontext` is the **MAC** identity. They are set by different mechanisms and consulted by different code. `uid=10028` tells you appId 28 — and note that `priv_app` uses `levelFrom=user`, so the context carries only `c512,c768` and does *not* encode the appId. The two fields carry different information and you need both.
+(b) No. `uid=10028` is the **DAC** identity; `scontext` is the **MAC** identity. They are set by different mechanisms and consulted by different code. `uid=10028` tells you appId 28 — and confirm that `priv_app` uses `levelFrom=user`, so the context carries only `c512,c768` and does *not* encode the appId. The two fields carry different information and you need both.
 
 (c) `default_android_service` is the fallback type for a service name that appears in **no** `service_contexts` file. The vendor registered a service called `USDKPlus` and forgot to label it. No `find` rule exists for that default type, so even a privileged app cannot reach it — the vendor's own app is silently broken and retrying in a loop.
 </details>
@@ -506,7 +506,7 @@ For each of the rules you derived in Parts 1 and 2, answer:
 
 **`allow shell kernel:security read_policy;`** — this lets the shell dump the entire binary policy. That is not catastrophic on its own (the CIL is world-readable anyway), but `security` is the class containing `setenforce` and `load_policy`, and granting *any* permission on it to a domain reachable by ADB is the kind of decision that should require a written justification.
 
-`allow dexoptanalyzer privapp_data_file:dir search;` is arguably the worst of all in terms of what it would *undo* — it would defeat the containment described in [§3.12](../README.md#312-dex2oat-in-its-own-domain-a-real-trust-property-not-a-slogan) — but note that it may not even work, because the refusal may have been a constraint rather than a missing rule.
+`allow dexoptanalyzer privapp_data_file:dir search;` is arguably the worst of all in terms of what it would *undo* — it would defeat the containment described in [§3.12](../README.md#312-dex2oat-in-its-own-domain-a-real-trust-property-not-a-slogan) — but it may not even work, because the refusal may have been a constraint rather than a missing rule.
 </details>
 
 **Question 20.** Read [§3.16](../README.md#316-neverallow-dontaudit-auditallow-and-the-rules-that-are-not-rules) on `dontaudit`. For each of the six rules above, decide whether the *right* answer for a platform engineer is (a) grant it, (b) `dontaudit` it, or (c) fix the underlying labelling or data flow. Justify each in one sentence.

@@ -74,7 +74,7 @@ anybody access to the hardware that produced the event.
 
 That mechanism is the **broadcast**.
 
-> **📖 Definition**
+> **Definition**
 > A **broadcast** is an [Intent](../26-Intent/README.md) delivered to *every* component
 > that has said it is interested, rather than to one chosen component. A
 > **BroadcastReceiver** is the object that receives one. The delivery is performed by
@@ -186,7 +186,7 @@ the boundary right saves you reading the same thing three times.
 5. **Sticky broadcasts** — what they were and why they are gone.
 6. **Finding runtime receivers on a live device**, which nothing else in this repository does.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > An Activity is a door with a doorbell. A ContentProvider is a filing cabinet with a
 > librarian. A Service is a workshop you hire. A **BroadcastReceiver is a tannoy speaker
 > bolted to the wall of your app** — and the microphone it is wired to is in a public
@@ -336,7 +336,7 @@ PackageManager — which is why a runtime receiver is every bit as reachable as 
 one, and in one important respect more so: below API 33 a runtime receiver has **no export
 flag at all**. It is reachable by any sender unless the app supplied a permission.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > When a report says "the application declares three broadcast receivers", ask how that
 > number was obtained. If the answer is "from the manifest", the number is a lower bound
 > and possibly a badly wrong one. On the measured device, one preinstalled calculator app
@@ -522,7 +522,7 @@ is up, to anybody who asks.
 
 ### 3.1 What, precisely, a BroadcastReceiver is
 
-> **📖 Definition**
+> **Definition**
 > `android.content.BroadcastReceiver` is an abstract class with one method you must
 > implement: `void onReceive(Context context, Intent intent)`. An instance of it is
 > **not** a process, **not** a thread, and **not** long-lived. It is an object that the
@@ -597,9 +597,9 @@ Every overload, and what each buys you:
 | `registerReceiver(r, filter, broadcastPermission, scheduler)` | 1 | Guarded: sender must hold `broadcastPermission`. | Same, plus the flag requirement. |
 | `registerReceiver(r, filter, broadcastPermission, scheduler, flags)` | 26 | Guarded. | Guarded plus explicit export state. |
 
-> **⚠️ Warning**
+> **Warning**
 > `RECEIVER_EXPORTED` and `RECEIVER_NOT_EXPORTED` were added in **API 33** and did not
-> exist before. On the measured device (API 30) they are simply absent from the platform.
+> exist before. On the measured device (API 30) they are absent from the platform.
 > Do **not** report "the app failed to pass `RECEIVER_NOT_EXPORTED`" against an app whose
 > `targetSdk` is below 33 as though it were a missing mitigation — the flag was not
 > available to it. What you *can* say is that the receiver is reachable by any app, which
@@ -635,7 +635,7 @@ com.miui.securitycenter.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
     requiredPermission=com.google.android.youtube.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > A `requiredPermission` ending in `DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION` is a
 > **positive** finding. It means the developer explicitly asked for a non-exported
 > receiver and the support library honoured it on an old device. Do not report it as "a
@@ -662,7 +662,7 @@ Three things escape restriction 1, and each is a route back to the pre-26 behavi
 | **The exemption list** | A set of actions the platform still delivers to manifest receivers — `BOOT_COMPLETED`, `LOCKED_BOOT_COMPLETED`, `MY_PACKAGE_REPLACED`, SMS and MMS delivery, `ACTION_NEW_OUTGOING_CALL`, `USB_ACCESSORY_ATTACHED`, `ACTION_LOCALE_CHANGED` and others. | Almost every action on this list is *also* a protected broadcast, so the exemption does not hand an attacker anything directly. |
 | **Signature-permission broadcasts** | A broadcast the receiver could only get by holding a signature permission is exempt. | Rarely relevant offensively. |
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > The escape via `setPackage()` is not an oversight; it is the documented behaviour, and it
 > is the reason "we moved to targetSdk 26, so our manifest receivers are safe" is wrong.
 > The restriction removed *incidental* reachability from the whole device. It did not
@@ -671,7 +671,7 @@ Three things escape restriction 1, and each is a route back to the pre-26 behavi
 
 ### 3.4 Protected broadcasts — measured, not remembered
 
-> **📖 Definition**
+> **Definition**
 > A **protected broadcast** is an action string declared with
 > `<protected-broadcast android:name="..."/>` in the manifest of a **system** package.
 > `ActivityManagerService` refuses to dispatch such an action on behalf of any caller that
@@ -807,7 +807,7 @@ modelling.
 Conversely, and usefully: a *refusal* at uid 2000 is a reliable "protected", because uid
 2000 is more privileged than an ordinary app, not less. If shell cannot send it, no app can.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The complete workflow is: enumerate the actions a target listens for, classify each as
 > protected or forgeable **on the device in front of you**, and spend your time only on
 > the forgeable ones. `scripts/protected-broadcast-map.sh --check actions.txt` does the
@@ -930,7 +930,7 @@ Somebody wanted to be first badly enough to write the largest number that fits.
 
 Calling `abortBroadcast()` from a receiver in an ordered chain stops delivery. No
 lower-priority receiver in **any** app receives the broadcast, and none of them is told
-why. To the victim, the broadcast simply never arrives.
+why. To the victim, the broadcast never arrives.
 
 The historical, famous instance of this is SMS interception: register for
 `android.provider.Telephony.SMS_RECEIVED` at a high priority, read the one-time password,
@@ -955,7 +955,7 @@ receiver does not send the token "to the framework". It sends it to whoever sent
 broadcast. If an arbitrary app can send the broadcast, an arbitrary app collects the
 result — with no permission, no user interaction, and nothing in any log the victim reads.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `am broadcast` sends an **ordered** broadcast whether you asked for one or not.
 > Measured: a plain `adb shell am broadcast -a com.pentest.ORDER_TEST` produced a
 > historical record reading `resultAbort=false ordered=true sticky=false
@@ -968,7 +968,7 @@ result — with no permission, no user interaction, and nothing in any log the v
 
 ### 3.7 Sticky broadcasts — and precisely why they are gone
 
-> **📖 Definition**
+> **Definition**
 > A **sticky broadcast** is one that AMS *retains* after delivery. Any receiver that
 > registers a matching filter **later** — minutes or hours later, in a process that did
 > not exist when the broadcast was sent — is immediately handed the retained Intent as the
@@ -1031,8 +1031,8 @@ similar names, do opposite things, and only one of them is visible in a manifest
 ```mermaid
 flowchart LR
     S["SENDER app"] -- "sendBroadcast(intent, receiverPermission)" --> AMS["AMS"]
-    AMS -- "delivers only to apps<br/>HOLDING receiverPermission" --> R1["Receiver A<br/>holds it ✓"]
-    AMS -. "not delivered" .-> R2["Receiver B<br/>does not hold it ✗"]
+    AMS -- "delivers only to apps<br/>HOLDING receiverPermission" --> R1["Receiver A<br/>holds it: yes"]
+    AMS -. "not delivered" .-> R2["Receiver B<br/>does not hold it: no"]
 
     S2["ANY sender"] -- "sendBroadcast(intent)" --> AMS2["AMS"]
     AMS2 -- "checks the RECEIVER's<br/>android:permission /<br/>broadcastPermission<br/>against the SENDER" --> R3["Receiver C"]
@@ -1140,7 +1140,7 @@ queue on this device. This is a genuine and under-appreciated data-exposure chan
 is the concrete reason the rule "never put a secret in a broadcast extra" is a rule rather
 than a style preference.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `dumpsys activity broadcasts` is the first thing to grab in a forensic or malware triage
 > workflow, before anything is restarted. It is the only record that a malicious broadcast
 > was ever sent, it names the sending uid, and it contains the payload.
@@ -1206,10 +1206,10 @@ What `goAsync()` actually does:
 `setResultData`, `setResultExtras`, `abortBroadcast` — so an async receiver can still
 intercept.
 
-> **⚠️ Warning**
+> **Warning**
 > Forgetting `pending.finish()` is a real and common bug. The symptom is an ANR attributed
 > to a broadcast receiver, minutes after the broadcast, with a stack trace that does not
-> obviously involve the receiver. If you are trying to *cause* an ANR in a target as a
+> name the receiver. If you are trying to *cause* an ANR in a target as a
 > denial-of-service, a receiver that calls `goAsync()` and can be made to take a slow path
 > is the place to look.
 
@@ -1230,7 +1230,7 @@ intercept.
 | 33 | 13 | **`RECEIVER_EXPORTED` / `RECEIVER_NOT_EXPORTED` mandatory** for context-registered receivers of non-system broadcasts, for apps with `targetSdk` 33+ | The single biggest change to the *runtime* surface. Below 33 there is no export flag at all. |
 | 34 | 14 | Registration for non-system broadcasts continues to require the flag; further background-start restrictions | — |
 
-> **⚠️ Warning**
+> **Warning**
 > The API 33 flag requirement is `targetSdk`-gated, not device-gated. An app with
 > `targetSdk 30` running on an Android 14 device still gets the old, unconditionally
 > exported behaviour from the two-argument overload. Check `targetSdkVersion`, not the
@@ -1261,7 +1261,7 @@ intercept.
 | `frameworks/base/services/core/java/com/android/server/am/BroadcastConstants.java` | `bcast_timeout`, `bcast_slow_time`, `bcast_deferral` and friends |
 | `frameworks/base/core/res/AndroidManifest.xml` | Every platform `<protected-broadcast>` declaration |
 
-> **⚠️ Warning**
+> **Warning**
 > No line numbers appear anywhere in this chapter. AOSP file paths are stable across
 > releases; line numbers are not, and a wrong one wastes a reader's afternoon. Search for
 > the method name.
@@ -1345,7 +1345,7 @@ some other check.
    ordered; manifest receivers always go through the ordered path, because AMS may have to
    start their processes one at a time.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > Step 6 explains a behaviour that confuses people: even a *plain* `sendBroadcast()` is
 > partly ordered. Runtime-registered receivers get it in parallel, then manifest receivers
 > get it serially. That is why a manifest receiver sees the broadcast slightly later than a
@@ -1698,7 +1698,7 @@ runtime registration with `RECEIVER_NOT_EXPORTED`, sent to with `setPackage()` a
 | Forgeable action triggers an action with real-world effect — a payment, a wipe, a message send | **High / Critical** | Reachable, irreversible. |
 | Receiver leaks a token via `setResultData` on an ordered broadcast | **High** | Credential theft with no permission and no user interaction. |
 
-> **⚠️ Warning**
+> **Warning**
 > "The application exports a BroadcastReceiver" is not a finding, and a report full of them
 > is how a security team learns to ignore your reports. On the measured device, of 1,438
 > live runtime filters, **1,227 had no protection at all** — that is the normal state of
@@ -1815,7 +1815,7 @@ that trusts its Intent, it becomes a phishing surface.
 
 ### 5.6 Real vulnerability classes, without invented identifiers
 
-> **⚠️ Warning**
+> **Warning**
 > **This chapter cites no CVE identifiers.** The repository's accuracy rule is that a CVE
 > number is either verified or omitted, and describing the class of issue is preferred to
 > guessing an identifier. Every pattern below is a well-documented class that recurs;
@@ -2136,11 +2136,11 @@ python3 scripts/receiver-surface.py --brief
     third-party AND at least one unguarded filter : 364
 ```
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > A snapshot taken a few minutes earlier on the same idle device read **1,151**
 > registrations, **1,306** filters and **2,677** action strings. The surface is *live*: it
 > grows and shrinks as processes start and die. Any single number you quote is a snapshot,
-> and any receiver you fail to find may simply not have been registered at the moment you
+> and any receiver you fail to find may not have been registered at the moment you
 > looked. Re-run while exercising the target.
 
 ### 7.3 Proving the gap: static view versus runtime view
@@ -2205,7 +2205,7 @@ python3 scripts/receiver-surface.py --third-party --runtime-only --brief
 third-party broadcast surface on a stock, unmodified Android 11 device is invisible to
 every tool that works from an APK.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Read this correctly before you quote it. A manifest count of zero does not mean the
 > action is secret or undocumented; several of those are perfectly public Android actions.
 > It means that *on this device, at this moment*, the only listeners are runtime
@@ -2359,14 +2359,14 @@ adb shell "am broadcast -a X --user 0"
 | `--receiver-permission` | the send-side permission | Accepted on API 30 (measured). |
 | `--user` | target user | `-1` is `USER_ALL`, and requires a permission shell may not have. |
 
-> **⚠️ Warning**
+> **Warning**
 > `am broadcast --help` is not a thing. Passing it throws
 > `IllegalArgumentException: Unknown option: --help` from `Intent.parseCommandArgs` — the
 > options are parsed by the generic Intent argument parser, which has no help text.
 > Measured. Use `adb shell am help` and read the `am broadcast` block, or read
 > `ActivityManagerShellCommand.java`.
 
-> **⚠️ Warning**
+> **Warning**
 > **`am broadcast` sends an ORDERED broadcast.** Measured: `ordered=true` in the historical
 > record for a plain `am broadcast -a X`, and confirmed inside a receiving app with Frida.
 > Two consequences. First, you get result-channel leaks for free. Second, a bug you can

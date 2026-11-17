@@ -1,7 +1,8 @@
 # Chapter 31 examples — the vulnerability tag table
 
-**AUTHORISED TESTING ONLY.** `victim-app/` is deliberately vulnerable and `attacker-app/` exists to
-attack it. Install them on a device you own and uninstall them when you are done:
+`victim-app/` is deliberately vulnerable and `attacker-app/` exists to attack it. Install them on a
+device you own and uninstall them when you are done — see [SECURITY.md](../../SECURITY.md) for the
+handling rules:
 
 ```bash
 cd examples && ./build.sh --install

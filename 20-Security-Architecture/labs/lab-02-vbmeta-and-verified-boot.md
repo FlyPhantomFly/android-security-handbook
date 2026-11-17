@@ -37,7 +37,7 @@ that lies. It did **not** show you a way to establish the truth without a TEE. T
 block devices. Anyone with root can therefore verify the boot chain **from the outside**, with `dd`
 and `sha256sum` — no attestation, no Play Integrity, no vendor cooperation.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Think of `vbmeta` as a **manifest**, in the shipping sense: a signed list saying "the crate marked
 > `boot` weighs exactly this much and its seal reads exactly this". The bootloader is the customs
 > officer who checks the manifest against the crates. On an unlocked device that officer has gone
@@ -68,7 +68,7 @@ adb pull /data/local/tmp/vbmeta.img
 adb shell "su -c 'rm -f /data/local/tmp/vbmeta.img'"
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > `dd` **to** a block device destroys a phone. Every `dd` in this lab has the block device as `if=`
 > (input) and a file as `of=` (output). Read the direction of every `dd` you type here twice, and
 > never copy one from a forum post without doing so. There is no undo.
@@ -82,7 +82,7 @@ difference is tampering.
 Emulator vbmeta is structurally reduced — few descriptors, often unsigned — and Steps 5–7 will not
 work, but Steps 1–4 will.
 
-> **⚠️ Only work with images for devices you own, obtained from the manufacturer.** Redistributing
+> **Only work with images for devices you own, obtained from the manufacturer.** Redistributing
 > OEM firmware is frequently a licence violation, and pulling firmware off a device you do not own
 > is a different problem entirely.
 
@@ -153,7 +153,7 @@ Record four things and be able to defend each:
 4. **Release String.** `avbtool 1.1.0` — the tool version that *built* the image. Free build-process
    intelligence, and occasionally the thing that dates an OEM's toolchain.
 
-> **🔬 Under the Hood — the layout, so the offsets stop being magic**
+> **Under the Hood — the layout, so the offsets stop being magic**
 > A vbmeta image is three blocks in a fixed order:
 >
 > | Block | Contents |
@@ -236,9 +236,9 @@ Measured on the same device — 16 descriptors, abbreviated:
 - **What is descriptor [9] telling you?** Every other fingerprint in this image ends `release-keys`.
   The `odm` one ends **`test-keys`**. On a shipping retail device. That is a real observation from a
   real phone: some partition in this build was signed with AOSP's public test keys. Note it, and
-  note that you found it by reading a structure most testers never open.
+ you found it by reading a structure most testers never open.
 
-> **🔍 Pentester's Note — property descriptors are free reconnaissance.**
+> **Pentester's Note — property descriptors are free reconnaissance.**
 > This image carries the vendor, boot, odm and dtbo fingerprints, OS versions and security patch
 > levels **inside the signed structure**. Those cannot be edited by a root module the way
 > `ro.build.*` can, because editing them invalidates the signature. So if `getprop` and the vbmeta
@@ -314,7 +314,7 @@ the kernel needs is here.
 byte anywhere in `system` and the root digest changes, which is why the tree exists and why it can
 be checked lazily.
 
-> **⚠️ Warning — your device may have no `Kernel Cmdline descriptor` at all, and mine does not.**
+> **Warning — your device may have no `Kernel Cmdline descriptor` at all, and mine does not.**
 > Many write-ups tell you to find a descriptor whose value begins `dm="` and parse the verity table
 > out of it. On this device there is **no kernel-cmdline descriptor in either vbmeta** — the dm
 > parameters come from the hashtree descriptors directly and `init` assembles the table. Do not
@@ -431,7 +431,7 @@ Clean up after yourself:
 su -c 'rm -f /data/local/tmp/salt.bin /data/local/tmp/salt2.bin'
 ```
 
-> **🔍 Pentester's Note — you now have three independent proofs of the same lie.**
+> **Pentester's Note — you now have three independent proofs of the same lie.**
 > The device reports `ro.boot.verifiedbootstate=green` and `ro.boot.flash.locked=1`. Against that:
 >
 > | # | Evidence | Source | Needs |
@@ -485,7 +485,7 @@ Answer these in writing. They are the questions an interviewer asks after you sa
 
 4. **And on *this* device?** `Rollback Index: 0` in both vbmetas. Anti-rollback is present as
    machinery and carries no protection here, because nothing can be lower than zero. Whether that is
-   worth reporting depends on the engagement — say what you measured, note that it is an OEM
+   worth reporting depends on the engagement — say what you measured,it is an OEM
    platform choice rather than an app defect, and do not inflate it.
 
 ---

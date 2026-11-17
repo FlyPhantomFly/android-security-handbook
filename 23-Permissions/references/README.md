@@ -37,7 +37,7 @@ about at least the flag set.
 | `frameworks/base/core/java/com/android/server/SystemConfig.java` | You want to know *how* `platform.xml` is parsed, which other files in `etc/permissions/` are read, and in what order. Also where the privileged-app allow-lists are loaded |
 | `system/core/libcutils/include/private/android_filesystem_config.h` | The AID table. `platform.xml` names groups (`inet`, `net_bt`); this file maps those names to numbers (3003, 3002). A vendor build can add names your reference table does not have |
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > You do not need AOSP to read the mapping — the file is on the device and is world-readable:
 > ```bash
 > adb shell cat /system/etc/permissions/platform.xml
@@ -61,7 +61,7 @@ about at least the flag set.
 |---|---|
 | `frameworks/base/core/java/android/app/ContextImpl.java` | The `check*Permission` / `enforce*Permission` family. Put `checkCallingPermission` and `checkCallingOrSelfPermission` side by side — the first tests `pid != Process.myPid()` and fails closed, the second does not. That single difference is a vulnerability class |
 | `frameworks/base/core/java/android/content/ContextWrapper.java` | The pass-through your `Activity` or `Service` actually is. Where a Frida hook lands |
-| `frameworks/base/core/java/android/app/Activity.java` | `requestPermissions` — note that it builds an `Intent` to another app rather than drawing anything, and that a second concurrent request is silently dropped |
+| `frameworks/base/core/java/android/app/Activity.java` | `requestPermissions` —it builds an `Intent` to another app rather than drawing anything, and that a second concurrent request is silently dropped |
 | `frameworks/base/core/java/android/os/Binder.java` | `getCallingUid`, `getCallingPid`, `clearCallingIdentity`, `restoreCallingIdentity`. The UID here is the one the binder driver stamped into the transaction, and it is the only caller identity worth trusting |
 
 ### App Ops — the second state machine
@@ -106,7 +106,7 @@ about at least the flag set.
 | **MASTG — Testing App Permissions** | The procedure §7 implements. Note what MASTG under-emphasises and this chapter does not: the separation of *requested* from *granted*, and the app-op half of `appop`-flagged permissions |
 | **MASTG — Testing for Sensitive Functionality Exposure Through IPC** | The confused-deputy work in §3.9 and [lab-03](../labs/lab-03-confused-deputy.md) |
 
-> **⚠️ Warning**
+> **Warning**
 > Cite a MASVS control by identifier **and** by what you actually observed. "Fails MASVS-PRIVACY-1"
 > on its own is unactionable; "requests `RECORD_AUDIO`, holds it, and no code path calls
 > `AudioRecord` — MASVS-PRIVACY-1" is a fix. See [71-OWASP-Mobile](../../71-OWASP-Mobile/README.md)

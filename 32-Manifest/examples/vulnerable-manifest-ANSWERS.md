@@ -12,7 +12,7 @@ Every finding below follows the same five-part structure this repository uses ev
 4. **What an attacker does with it** — the exploit, concretely.
 5. **The secure fix as code**, and an **honest severity** with the reasoning.
 
-> **⚠️ Warning — read this before you use any severity below**
+> **Warning — read this before you use any severity below**
 > Every severity here is a *starting point for this fictional app*. Severity is a function of what
 > the component does and what data the app holds, and this file has no code behind it. On a real
 > engagement you adjust every one of these after reading the implementation, and you do not report
@@ -330,7 +330,7 @@ aapt2 dump xmltree --file AndroidManifest.xml target.apk | grep -iE 'usesClearte
 grep -roE 'http://[a-zA-Z0-9./_-]+' work/ | sort -u
 ```
 
-**Exploit.** Plaintext HTTP on a hostile network: read and modify every request. Note that at
+**Exploit.** Plaintext HTTP on a hostile network: read and modify every request.at
 `targetSdk` 28 the default is already `false`, so the explicit `true` here is an active decision to
 re-enable it.
 
@@ -398,7 +398,7 @@ sampling from an unprivileged shell can expose secrets held in memory.
 
 **Fix:** restrict `<profileable>` to debug variants via `src/debug/AndroidManifest.xml`.
 
-**Severity: Medium.** State clearly that it is *not* equivalent to `debuggable`, or a competent
+**Severity: Medium.** State explicitly that it is *not* equivalent to `debuggable`, or a competent
 developer will correctly dismiss the whole finding.
 
 ---
@@ -827,7 +827,7 @@ am broadcast -n com.example.vulnerable/.CommandReceiver \
 am broadcast -a com.example.vulnerable.ACTION_LOGOUT
 ```
 
-⚠️ `sendBroadcast` is fire-and-forget: no exception does **not** prove the receiver ran. Confirm from
+`sendBroadcast` is fire-and-forget: no exception does **not** prove the receiver ran. Confirm from
 the target's own logcat, or use an ordered broadcast with a result receiver.
 
 **Exploit.** Any app changes the app's backend endpoint, or forces a logout, or triggers whatever
@@ -846,7 +846,7 @@ and in code, verify `Binder.getCallingUid()` for anything that survives.
 
 **Severity: High**, because `ACTION_SET_ENDPOINT` redirects the app's traffic.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > A manifest audit **cannot** enumerate this app's receiver surface. At `targetSdk` 28,
 > context-registered receivers do not have to declare an export state and are effectively exported —
 > and they appear nowhere in this file. Hook `registerReceiver` with

@@ -38,7 +38,7 @@ The matching rules differ, and this is the part people get wrong:
 
 - **Action:** if the Intent has one, the **filter must list it**. One action, one lookup.
 - **Category:** **every** category on the Intent must appear on the filter. Categories the filter
-  declares that the Intent does not name are simply ignored.
+  declares that the Intent does not name are ignored.
 
 So a filter with ten categories is not "harder to match" than one with two — it is *easier*, because
 matching only ever iterates the Intent's categories, never the filter's.
@@ -253,8 +253,7 @@ adb shell "dumpsys package com.android.chrome" | sed -n '/Activity Resolver Tabl
 It prints one filter with a flat list of `Scheme:` lines and a flat list of `StaticType:` lines. Two
 lists, not a list of pairs.
 
-For a tester this is a finding generator: enumerate the combinations the developer clearly did not
-intend and test those, because the handling code usually branches on scheme *or* host, not both.
+For a tester this is a finding generator: enumerate the combinations the developer never intended and test those, because the handling code usually branches on scheme *or* host, not both.
 
 ---
 
@@ -288,7 +287,7 @@ Six causes, in rough order of frequency:
 3. **A redirect.** The platform fetches over HTTPS and does not follow a redirect to a different
    host. A CDN that redirects `example.com` to `www.example.com` breaks it.
 4. **Content type / JSON validity.** It must be valid JSON served as `application/json`.
-5. **Verification simply has not run.** Force it: `adb shell "pm verify-app-links --re-verify PKG"`
+5. **Verification has not run.** Force it: `adb shell "pm verify-app-links --re-verify PKG"`
    (API 31+).
 6. **You are on Android 11 or earlier** and reading the wrong tool's output — `pm get-app-links` does
    not exist there. Use `pm get-app-link PKG` and `dumpsys package domain-preferred-apps`.

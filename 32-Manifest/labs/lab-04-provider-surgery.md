@@ -218,7 +218,7 @@ private void probeProviders() {
 }
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > The `insert` probe **writes to the target app's data**. On an app you do not own, or on production
 > data, do not run it — or snapshot the data directory first. Read-only probing is sufficient to
 > establish most findings.

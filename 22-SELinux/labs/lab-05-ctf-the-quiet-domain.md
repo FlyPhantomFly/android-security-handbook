@@ -27,7 +27,7 @@ labs/ctf-quiet-domain/
 └── avc.log                   one uptime's audit records
 ```
 
-> **⚠️ These artefacts are SYNTHETIC.** They are constructed for this exercise in the exact formats a real device uses, but the domains, daemons and rules are invented. Every file says so in its header. Do not quote anything from them as evidence of real platform behaviour — the measured, real material is in [`../examples/`](../examples/).
+> **These artefacts are SYNTHETIC.** They are constructed for this exercise in the exact formats a real device uses, but the domains, daemons and rules are invented. Every file says so in its header. Do not quote anything from them as evidence of real platform behaviour — the measured, real material is in [`../examples/`](../examples/).
 >
 > The rules are, however, **realistic**. Every mistake in this policy is one that has been made on shipping devices, and the shapes are the seven from [Lab 04](lab-04-vendor-policy-review.md).
 

@@ -11,7 +11,7 @@ and its files under `/data/data/com.yourapp` are owned by UID 10123 with permiss
 everyone else. The kernel enforces this, exactly as it would on a Linux server with two user accounts.
 There is no Android-specific magic involved; it is ordinary POSIX file ownership.
 
-So if the Contacts app wants to let you read contacts, it cannot simply "give you the file". It has to
+So if the Contacts app wants to let you read contacts, it cannot "give you the file". It has to
 run code that reads the file *as itself* and hands you the answer. That code is the content provider.
 
 ---
@@ -117,7 +117,7 @@ milliseconds.
 
 ### 9. Why is `getType()` not permission-checked? That seems like a bug.
 
-It is deliberate. The framework needs to ask "what type of data is at this URI?" in order to resolve
+It is deliberate. The framework needs to ask "what type of data is at this URI?" to resolve
 intents — for example, to decide which apps can handle `ACTION_VIEW` on a `content://` URI. If that
 question required a permission, intent resolution would break for every app that has not yet been
 granted access.

@@ -35,7 +35,7 @@ documentation page you will bookmark is still called *Dalvik bytecode*. The VM t
 for has been gone since 2014. Nobody renamed the format because renaming it would have broken every
 tool on earth.
 
-> **🧠 Mental Model.** Latin is a dead language. Nobody has spoken it natively for fifteen hundred
+> **Mental Model.** Latin is a dead language. Nobody has spoken it natively for fifteen hundred
 > years. Every doctor, lawyer and biologist still has to read it, because the vocabulary of their
 > profession was written down in it and never re-coined. Dalvik is Latin. The VM is dead; the notation
 > is professional literacy.
@@ -174,7 +174,7 @@ distributed inside a `.jar`, which is a ZIP archive. Every one of those class fi
 field name it mentions. Two hundred classes that all call `java.lang.String.equals` store the strings
 `"java/lang/String"` and `"equals"` two hundred times each.
 
-> **📖 Definition — constant pool.** A table at the front of a compiled class file holding every
+> **Definition — constant pool.** A table at the front of a compiled class file holding every
 > symbolic name and literal that the class's code refers to. Instructions do not contain names; they
 > contain *indices into this table*. It is a deduplication mechanism — but in the JVM it deduplicates
 > only within a single class.
@@ -205,7 +205,7 @@ once, and every app process forked from it shares those physical pages. On a 64 
 difference between running four apps and running one. [11 — Android Runtime](../11-Android-Runtime/README.md)
 covers Zygote in full.
 
-> **🔬 Under the Hood.** "Memory-mapped" means the kernel is told *this region of virtual address space
+> **Under the Hood.** "Memory-mapped" means the kernel is told *this region of virtual address space
 > corresponds to this region of this file*, and pages are faulted in from flash on first touch,
 > shared physically between every process that maps the same file, and dropped under memory pressure
 > without ever being written back. A decompressed-into-RAM class file can do none of those things: it
@@ -234,7 +234,7 @@ to have an unusually good notation for it.
 
 Dalvik bytecode is *bytes*. Nobody reads bytes.
 
-> **📖 Definition — Smali.** *Smali* is the assembly language for Dalvik bytecode: a human-readable,
+> **Definition — Smali.** *Smali* is the assembly language for Dalvik bytecode: a human-readable,
 > line-oriented textual notation in which every line corresponds to exactly one bytecode instruction or
 > one piece of class metadata. **`smali`** is the assembler that turns `.smali` text into a `.dex`
 > file; **`baksmali`** is the disassembler that turns a `.dex` file back into `.smali` text. The names
@@ -252,7 +252,7 @@ Three properties make Smali different from a decompiler's output, and all three 
 3. **It is one-to-one with the instruction stream.** One Smali line, one instruction. When you change
    a line you know exactly which four bytes moved.
 
-> **⚠️ Warning — "lossless" has an important exception.** `baksmali` is lossless with respect to
+> **Warning — "lossless" has an important exception.** `baksmali` is lossless with respect to
 > *instructions*, not with respect to everything in the file. Some DEX-level details are regenerated
 > rather than preserved on reassembly: the ordering of items in the data section, the debug info if you
 > disassemble without it, and the layout the original `d8` chose. A `baksmali`-then-`smali` round trip
@@ -277,7 +277,7 @@ format.** Every "bypass the root check", "disable certificate pinning without Fr
 licence check" workflow ends in a Smali edit, because it is the only representation you can modify and
 reliably put back.
 
-> **🔍 Pentester's Note.** The correct workflow is not "Smali instead of Java" — it is **Java to
+> **Pentester's Note.** The correct workflow is not "Smali instead of Java" — it is **Java to
 > understand, Smali to change**. Read JADX output to find the method that matters in ten minutes.
 > Then open that one method in Smali to patch it correctly. People who skip the first step waste hours;
 > people who skip the second step produce APKs that crash.
@@ -369,11 +369,11 @@ Both diagrams describe the same computation: `local0 = local1 + local2`. The JVM
 instructions and an invisible operand stack that every one of them mutates. Dalvik needs one
 instruction that names all three storage locations outright.
 
-> **📖 Definition — stack machine.** An execution model in which instructions take their operands from,
+> **Definition — stack machine.** An execution model in which instructions take their operands from,
 > and leave their results on, an implicit last-in-first-out **operand stack** belonging to the current
 > frame. Instructions are short — usually one byte — because they encode no operand names.
 
-> **📖 Definition — register machine.** An execution model in which instructions name their operands
+> **Definition — register machine.** An execution model in which instructions name their operands
 > explicitly as numbered slots in a flat per-frame array. Instructions are wider — usually two to six
 > bytes — because the operand numbers must be encoded, but far fewer are needed.
 
@@ -395,7 +395,7 @@ addresses, branch to it, and take the pipeline flush that an indirect branch cau
 instruction count halves that cost, and it does not matter that each instruction is a couple of bytes
 wider — the bytes are in a memory-mapped, shared, read-only page and cost nothing extra to hold.
 
-> **⚠️ Warning — a claim you will hear that is not quite true.** "Dalvik bytecode is smaller than Java
+> **Warning — a claim you will hear that is not quite true.** "Dalvik bytecode is smaller than Java
 > bytecode." At the level of a single method's instruction stream it is usually slightly *larger*. The
 > size win of a DEX file comes almost entirely from **sharing one constant pool across the whole
 > application**, not from the instruction encoding. Keep the two claims separate; conflating them is a
@@ -478,7 +478,7 @@ The bytes did not shrink, and they were never going to: naming three registers c
 implicit stack does not spend. But the interpreter now goes round its dispatch loop nine times instead
 of eighteen, and in 2008 that was the entire ball game.
 
-> **🔬 Under the Hood.** Count the code units yourself against the format table in
+> **Under the Hood.** Count the code units yourself against the format table in
 > [12 §3.25](../12-DEX-Internals/README.md): `const/4` is `11n`, 1 unit; `array-length` is `12x`, 1
 > unit; `if-ge` is `22t`, 2 units; `aget` is `23x`, 2 units; `add-int/2addr` is `12x`, 1 unit;
 > `add-int/lit8` is `22b`, 2 units; `goto` is `10t`, 1 unit; `return` is `11x`, 1 unit. Total
@@ -535,7 +535,7 @@ The second thing the picture shows is that `p` numbering counts **registers, not
 `amount` is `p2` — there is no `p3` you can meaningfully name on its own, because `p3` is the high
 half of `amount`.
 
-> **🔍 Pentester's Note.** When you write a hook or a patch that needs "the second argument", count
+> **Pentester's Note.** When you write a hook or a patch that needs "the second argument", count
 > registers, not commas in the signature. A method `f(long, String)` has its `String` in `p2` for a
 > static method and `p3` for an instance method. Getting this wrong produces a `VerifyError` if you are
 > lucky and silent garbage if you are not.
@@ -568,7 +568,7 @@ sequenceDiagram
 This is the design that shipped in Android 2.2 (Froyo, 2010) and it is worth understanding properly,
 because "why did they compile *traces*" is a genuinely good question with a genuinely good answer.
 
-> **📖 Definition — trace.** A **trace** is a single linear path through the code — a run of
+> **Definition — trace.** A **trace** is a single linear path through the code — a run of
 > instructions that were actually executed one after another, with no branches in the middle. It
 > typically begins at a loop header or a method entry and ends at the first branch, call, return or
 > throw. It is not a method, and it is not a basic block; it is *the path the program actually took*.
@@ -585,7 +585,7 @@ Froyo chose traces for four reasons, and the first is the one that decided it:
    A trace's IR is a few dozen instructions and its native code is a few hundred bytes.
 2. **Latency.** Traces compile in microseconds. A method JIT's compile times are long enough that you
    need a sophisticated tiering scheme to hide them. Froyo's JIT ran on a background thread and the
-   app thread simply kept interpreting until the translation appeared.
+   app thread kept interpreting until the translation appeared.
 3. **It profiles itself for free.** You do not need a separate profiling pass to find a trace: the
    trace *is* the profile. What you record is by construction what actually executed.
 4. **It handles the common Android case.** Most of the time that a 2010 Android app spent in
@@ -613,7 +613,7 @@ with a **profile** that gets written to disk and fed back into an offline compil
 described in [13 §3.11](../13-ART/README.md) — is the synthesis: JIT-quality profiling, AOT-quality
 compilation, and none of it thrown away at process exit.
 
-> **🧠 Mental Model.** Froyo's JIT learned a route through a city every morning and forgot it every
+> **Mental Model.** Froyo's JIT learned a route through a city every morning and forgot it every
 > night. Lollipop printed a complete road atlas once, at install time, including every street nobody
 > ever drives. Nougat and later keep a diary of the routes you actually took and redraw a small,
 > accurate map overnight while the phone charges.
@@ -702,7 +702,7 @@ checks that your instruction stream is internally consistent: that registers hol
 instructions expect, that branches land on instruction boundaries, that a `move-result` follows an
 invoke, that you did not use a register number the frame does not have.
 
-> **⚠️ Warning — the single most useful diagnostic fact in this chapter.** A verifier failure does
+> **Warning — the single most useful diagnostic fact in this chapter.** A verifier failure does
 > **not** appear at install time. It appears when the *class containing your edit* is first loaded,
 > which is usually when the user navigates to the screen that uses it. Symptom: the app installs, the
 > launcher icon works, and it dies the moment you open one particular screen. If that happens, do not
@@ -731,7 +731,7 @@ allocated when the method is entered and destroyed when it returns.
 
 That third row is the one to internalise, because it explains the entire design of the instruction set.
 
-> **📖 Definition — the registers are untyped, the *verifier* is not.** There is no bit anywhere
+> **Definition — the registers are untyped, the *verifier* is not.** There is no bit anywhere
 > recording that `v3` currently holds a `String`. The instruction does the typing: `aget-object` says
 > "the thing in this register is an object reference", `add-int` says "these are integers". Before the
 > class is ever executed, ART's verifier walks every path through the method and computes what type
@@ -745,7 +745,7 @@ works on anything; there is `move` for 32-bit non-object values, `move-wide` for
 `move-object` for references, and using the wrong one is a verification failure. Likewise `return`,
 `return-wide` and `return-object`; likewise every field and array accessor.
 
-> **🔍 Pentester's Note.** This has a direct practical consequence when patching. If a method returns
+> **Pentester's Note.** This has a direct practical consequence when patching. If a method returns
 > `Ljava/lang/String;` you cannot make it return your constant with `const/4 v0, 0x1` and `return v0` —
 > you need `const-string v0, "whatever"` and `return-object v0`. Getting the family wrong is the single
 > most common cause of a patched APK that installs and then dies with a `VerifyError`.
@@ -786,7 +786,7 @@ Both names work everywhere. `iget-object v0, v3, ...` and `iget-object v0, p0, .
 **identical bytes**. `baksmali` prints the `p` form for parameter registers and the `v` form for
 locals, because that is what a human wants to read.
 
-> **🧠 Mental Model.** The frame is a row of numbered lockers. `v` numbers are the numbers painted on
+> **Mental Model.** The frame is a row of numbered lockers. `v` numbers are the numbers painted on
 > the lockers. `p` numbers are sticky notes saying "argument 1", "argument 2", stuck on the *last few*
 > lockers. Move the wall — change `.registers` — and the sticky notes stay with the arguments while
 > the painted numbers underneath them change.
@@ -804,7 +804,7 @@ Two directives declare the frame, and choosing between them is a real decision:
 | `.registers N` | The frame has **N registers in total**, parameters included | You are reading `baksmali` output — it always emits this form |
 | `.locals N` | The frame has **N registers *in addition to* the parameters**; the assembler computes the total | You are **writing** or editing Smali. Safer: adding a local means `.locals 3` → `.locals 4` and nothing else moves |
 
-> **⚠️ Warning — never mix them in one method, and never edit `.registers` casually.** If a method
+> **Warning — never mix them in one method, and never edit `.registers` casually.** If a method
 > says `.registers 6` with three incoming words, `p0` is `v3`. Change it to `.registers 7` to make room
 > for a local and `p0` becomes `v4` — but every existing `v3` reference in the body still says `v3`,
 > and now points at a local instead of `this`. The method will verify (the types may happen to work)
@@ -843,7 +843,7 @@ Rules that follow from this, all of which are enforced by the verifier:
 .end method
 ```
 
-> **🔍 Pentester's Note.** Miscounting wide pairs is the second most common Smali patching error after
+> **Pentester's Note.** Miscounting wide pairs is the second most common Smali patching error after
 > `.registers`. When a method signature contains `J` (long) or `D` (double), stop and count on paper
 > before you touch it. A useful habit: write the frame diagram from §2.4 in a comment above the method
 > before you edit it, and leave it there.
@@ -883,13 +883,13 @@ The escape hatch is the `/range` variant:
     invoke-virtual/range {v20 .. v26}, Lcom/example/A;->g(IIIIII)V
 ```
 
-> **📖 Definition — `/range`.** The `/range` instruction variants take a **first register** and a
+> **Definition — `/range`.** The `/range` instruction variants take a **first register** and a
 > **count** instead of an explicit list. This lets them address any register up to `v65535` and pass
 > any number of arguments up to 255 — but it **requires the arguments to already sit in consecutive
 > registers**, in order. The compiler arranges this when it emits the call. If you are writing the call
 > by hand you must arrange it yourself, usually with a run of `move` instructions.
 
-> **🔍 Pentester's Note — the error you will actually hit.** You insert two lines into a large method,
+> **Pentester's Note — the error you will actually hit.** You insert two lines into a large method,
 > bump `.locals`, and `smali` refuses with a message about a register being out of range. What has
 > happened is that your new local landed above `v15` and the instruction you wrote only has a 4-bit
 > field for it. Three fixes, in order of preference: (1) use a **low** register that is dead at that
@@ -1010,11 +1010,11 @@ Inside a method body:
 | `constructor` | `0x10000` | method — `<init>` and `<clinit>` |
 | `declared-synchronized` | `0x20000` | method |
 
-Note that `0x0040` and `0x0080` mean different things on fields and methods; the bit is the same, the
+`0x0040` and `0x0080` mean different things on fields and methods; the bit is the same, the
 interpretation depends on what it is attached to. [12 §3.23](../12-DEX-Internals/README.md) has the
 raw table.
 
-> **🔍 Pentester's Note.** `synthetic` is a gift. It marks everything the compiler invented: lambda
+> **Pentester's Note.** `synthetic` is a gift. It marks everything the compiler invented: lambda
 > classes, the `access$000` bridges that let an inner class touch its outer class's private fields, the
 > `$VALUES` array in an enum, Kotlin's `DefaultImpls`. When you are trying to find *the code the
 > developer wrote*, `grep -L synthetic` is a cheap first filter. And `native` is the other one:
@@ -1053,7 +1053,7 @@ and in ART log messages.
     Shorty:      ZLLJ            <- return type first, then arguments
 ```
 
-> **⚠️ Warning.** In a method descriptor the parameter types run together with **no separators**:
+> **Warning.** In a method descriptor the parameter types run together with **no separators**:
 > `(Ljava/lang/String;[IJ)Z` is three parameters, not one. The `;` after `String` is the terminator of
 > that one descriptor, not a delimiter between parameters. Read them by walking the string one
 > descriptor at a time.
@@ -1091,7 +1091,7 @@ Three details that matter:
    `<clinit>` is the static initialiser that runs once when the class is first used. Both are invoked
    with `invoke-direct` / never called directly by user code.
 
-> **🔍 Pentester's Note.** The single highest-value grep in Android reverse engineering is a method
+> **Pentester's Note.** The single highest-value grep in Android reverse engineering is a method
 > reference. `grep -rn "Ljavax/crypto/Cipher;->getInstance" smali*/` finds every place the app sets up
 > encryption, in one command, with no false positives, on an obfuscated app — because framework class
 > names cannot be renamed. Build a personal library of these; §6.7 is a starting set.
@@ -1126,7 +1126,7 @@ Three practical consequences:
    is still correct, merely inconsistent with what a fresh disassembly would produce. That is fine for
    a patch, and annoying if you later diff against a re-disassembly.
 2. **You can invent your own label names.** `:my_patch_exit` assembles perfectly. When hand-patching,
-   use obviously non-generated names so a later reader can see what you added.
+   use visibly non-generated names so a later reader can see what you added.
 3. **A label is not an instruction and occupies no bytes.** You cannot "jump past" a label; you jump to
    the instruction after it.
 
@@ -1170,7 +1170,7 @@ Dalvik's does not:
 | `Ldalvik/annotation/MemberClasses;` | The nested classes a class declares |
 | `Ldalvik/annotation/Throws;` | The checked exceptions in the `throws` clause |
 
-> **🔍 Pentester's Note.** Runtime annotations are a goldmine and obfuscators usually cannot strip
+> **Pentester's Note.** Runtime annotations are a goldmine and obfuscators usually cannot strip
 > them, because the app reads them reflectively at runtime and would break. Retrofit endpoints
 > (`@GET`, `@POST`, `@Path`), Gson field names (`@SerializedName`), Room schema, Dagger bindings and
 > Jackson mappings all survive full ProGuard/R8 obfuscation as annotation blocks in Smali. When class
@@ -1230,7 +1230,7 @@ For **how each instruction is encoded into bytes**, see
 | `0c` | `11x` | `move-result-object vAA` | Collect a reference return value |
 | `0d` | `11x` | `move-exception vAA` | Put the caught exception into `vAA`. **Only legal as the first instruction of a catch handler** |
 
-> **⚠️ Warning — the `move-result` adjacency rule.** `move-result*` is not a general-purpose
+> **Warning — the `move-result` adjacency rule.** `move-result*` is not a general-purpose
 > instruction. The verifier requires it to **immediately follow** the `invoke-*` or
 > `filled-new-array` whose result it collects. Putting *anything* in between — even a `nop`, even a
 > `.line` directive's worth of debug info is fine but an actual instruction is not — produces a DEX
@@ -1270,7 +1270,7 @@ declared return descriptor:
 | `J D` | `return-wide` |
 | `L…;` or `[…` | `return-object` |
 
-> **🔍 Pentester's Note — the three most-used patches in the world.** Almost every "bypass the check"
+> **Pentester's Note — the three most-used patches in the world.** Almost every "bypass the check"
 > patch is one of these three, and all three are two lines:
 >
 > ```smali
@@ -1309,7 +1309,7 @@ The `/high16` forms exist because floating-point constants are overwhelmingly "n
 bits are zero. `1.0f` is `0x3F800000`; its low 16 bits are zero, so `const/high16 v0, 0x3f800000`
 encodes it in 4 bytes instead of 6.
 
-> **🔍 Pentester's Note.** `const-string` is *the* grep. Every URL, every API key a developer was
+> **Pentester's Note.** `const-string` is *the* grep. Every URL, every API key a developer was
 > foolish enough to hardcode, every log tag, every SharedPreferences key, every JSON field name in
 > hand-rolled parsing code appears as a `const-string`. See §6.7. And note the corollary: **an app
 > whose Smali contains almost no `const-string` is not a simple app, it is a string-encrypted one** —
@@ -1335,7 +1335,7 @@ A `synchronized (obj) { … }` block compiles to `monitor-enter` … body … `m
 exception path. A `synchronized` *method* has no such instructions at all: the `declared-synchronized`
 access flag tells the runtime to take the lock on entry.
 
-> **⚠️ Warning.** If you are deleting code from inside a `synchronized` block, count your
+> **Warning.** If you are deleting code from inside a `synchronized` block, count your
 > `monitor-enter`/`monitor-exit` pairs. An unbalanced pair produces a method the verifier rejects on
 > some paths, and — worse — if it slips through, a lock that is never released and a deadlock that
 > looks like the app hanging for no reason.
@@ -1364,13 +1364,13 @@ constructors:
     invoke-direct {v0}, Ljava/lang/StringBuilder;-><init>()V # NOW v0 is a usable StringBuilder
 ```
 
-> **🔬 Under the Hood.** Between those two instructions the verifier tracks `v0` in a special
+> **Under the Hood.** Between those two instructions the verifier tracks `v0` in a special
 > "uninitialised reference" state. In that state you may not pass it to a method, store it in a field,
 > return it, or use it in any way except as the receiver of its own `<init>`. This is the bytecode-level
 > enforcement of "you cannot touch a half-constructed object". It is also why inserting code between
 > `new-instance` and `invoke-direct` is almost always a verification failure.
 
-> **🔍 Pentester's Note.** `fill-array-data` is where hardcoded keys live. A developer writes
+> **Pentester's Note.** `fill-array-data` is where hardcoded keys live. A developer writes
 > `byte[] KEY = {0x2b, 0x7e, 0x15, ...}` and the compiler emits `new-array` + `fill-array-data`
 > pointing at a `.array-data` payload full of raw bytes. `strings` will never find it, because it is
 > not text. `grep -rn "fill-array-data" smali*/` finds every array literal in the application in one
@@ -1431,7 +1431,7 @@ like Java's `==` on objects. The `*z` forms therefore double as null checks: `if
 object register means "if `v0` is null". A `boolean` is an `int` that is 0 or 1, so `if-eqz` on a
 boolean means "if false".
 
-> **⚠️ Warning — the polarity trap.** The single most common patching mistake after register counting
+> **Warning — the polarity trap.** The single most common patching mistake after register counting
 > is inverting a branch and getting it backwards. **The condition is the condition under which the
 > branch is TAKEN.** `if-eqz v0, :cond_5` means "if `v0` is zero, jump to `:cond_5`" — so the code
 > *immediately following* is the non-zero path. Java's `if (x) { A } else { B }` normally compiles to
@@ -1471,7 +1471,7 @@ into `v1[v2]`.
 The `byte`/`char` sign-extension difference is a genuine source of bugs when hand-writing code:
 `aget-byte` of `0xFF` gives you `-1`, `aget-char` of `0xFFFF` gives you `65535`.
 
-> **🔍 Pentester's Note.** `aput-object` is the only array store that can throw. Java's arrays are
+> **Pentester's Note.** `aput-object` is the only array store that can throw. Java's arrays are
 > covariant — `Object[] o = new String[1];` is legal — so the runtime must check on every store that
 > the value fits the array's actual element type. If you are patching around an array store and see an
 > exception handler you did not expect, this is why.
@@ -1531,7 +1531,7 @@ Identical semantics, one register instead of two, format `21c` (8-bit register, 
 | `6c` | `sput-char vAA, …:C` | |
 | `6d` | `sput-short vAA, …:S` | |
 
-> **🔬 Under the Hood.** An `sget` or `sput` on a class that has not been initialised yet triggers
+> **Under the Hood.** An `sget` or `sput` on a class that has not been initialised yet triggers
 > **class initialisation** — the `<clinit>` runs at that moment. This is the bytecode-level definition
 > of Java's lazy class initialisation, and it is why a static field read can execute arbitrary code and
 > throw `ExceptionInInitializerError`. When you are tracing why some initialisation ran earlier than
@@ -1581,7 +1581,7 @@ Three rules that follow, and all three are checked by the verifier:
 2. **The total number of register entries is capped at 5 for the `35c` form.** Count *words*, not
    parameters: a static method taking three `long`s needs six entries and must use `/range`.
 3. **The return value is not in the instruction.** It is collected by the `move-result*` that must
-   immediately follow — or discarded, if you do not care about it, by simply not writing one.
+   immediately follow — or discarded, if you do not care about it, by not writing one.
 
 The dispatch kind is genuinely informative when you are reading:
 
@@ -1593,12 +1593,12 @@ The dispatch kind is genuinely informative when you are reading:
 | `invoke-super` | An override calling up. Frequently the thing you want to keep when you neuter the override |
 | `invoke-interface` | The static type at the call site was an interface — so the actual implementation could be **any** class implementing it. Grepping for the interface name will not find the implementation |
 
-> **🔍 Pentester's Note.** When you want to know where a method is called from, grep for the **method
+> **Pentester's Note.** When you want to know where a method is called from, grep for the **method
 > name**, not for an invoke kind and not for the whole reference. The same target may be reached by
 > `invoke-virtual` on a subclass reference, by `invoke-interface` through an interface, and by
 > `invoke-super` from an override — three different reference strings for one method.
 
-> **⚠️ Warning — `/range` is not cosmetic.** `invoke-virtual/range {v4 .. v7}` requires the four
+> **Warning — `/range` is not cosmetic.** `invoke-virtual/range {v4 .. v7}` requires the four
 > arguments to *already* be in `v4`, `v5`, `v6`, `v7` in that order. If you are writing a `/range`
 > call by hand you must emit the `move` instructions to marshal them first. Converting a `35c` call to
 > a `3rc` call is not a textual change.
@@ -1673,7 +1673,7 @@ instead of two:
 | `c6`–`ca` | `add-float/2addr`, `sub-float/2addr`, `mul-float/2addr`, `div-float/2addr`, `rem-float/2addr` |
 | `cb`–`cf` | the same five, `-double/2addr` |
 
-> **🔬 Under the Hood.** `/2addr` exists purely to save two bytes, and it is why decompiled arithmetic
+> **Under the Hood.** `/2addr` exists purely to save two bytes, and it is why decompiled arithmetic
 > sometimes looks like the source mutated a variable in place when it did not. `int c = a + b;` where
 > the compiler happened to reuse `a`'s register for `c` becomes `add-int/2addr v0, v1`, and a naive
 > reading says "a += b". Do not infer source-level intent from `/2addr`.
@@ -1715,7 +1715,7 @@ reading the tables and knowing the instruction set:
 3. **The shift operations have `/lit8` but no `/lit16`.** A shift amount is masked to 5 bits for `int`
    and 6 bits for `long`, so a 16-bit literal would be pointless.
 
-> **⚠️ Warning — shift amounts are masked, not clamped.** `shl-int` uses only the low 5 bits of the
+> **Warning — shift amounts are masked, not clamped.** `shl-int` uses only the low 5 bits of the
 > shift operand for `int` (low 6 bits for `long`). `x << 32` is therefore `x << 0`, which is `x`, not
 > zero. This is a real source of "the obfuscator's arithmetic does not do what I think" confusion when
 > you are reverse-engineering a hand-rolled hash or string-decryption routine.
@@ -1741,7 +1741,7 @@ turns `"a" + b + "c"` into an `invoke-custom` rather than the `StringBuilder` ch
 default for most `minSdk` values is still to *desugar* it back into `StringBuilder`, so which one you
 see tells you something about the app's build configuration.
 
-> **🔍 Pentester's Note.** Lambdas are the other place. A Java or Kotlin lambda may compile to a
+> **Pentester's Note.** Lambdas are the other place. A Java or Kotlin lambda may compile to a
 > synthetic class implementing the functional interface (older desugaring), or to an `invoke-custom`
 > with `LambdaMetafactory` as the bootstrap (newer). If you are hunting for the body of a lambda and
 > cannot find a class for it, look for `invoke-custom` and follow the call-site reference — the actual
@@ -1757,7 +1757,7 @@ see tells you something about the app's build configuration.
 | `79`–`7a` | **Unused** | |
 | `e3`–`f9` | **Unused in current AOSP.** Twenty-three slots | Used by ART on **Android 8.0–10** for *quickened* instructions, and by Dalvik before that for its own ODEX-only forms |
 
-> **📖 Definition — quickening.** An optimisation in which a symbolic instruction is rewritten into a
+> **Definition — quickening.** An optimisation in which a symbolic instruction is rewritten into a
 > faster, non-symbolic one after the field or method it refers to has been resolved. `iget v0, v1,
 > Lcom/example/A;->x:I` — which requires a name lookup — becomes `iget-quick v0, v1, offset@12`, which
 > just reads 12 bytes into the object. It is faster and it is **not portable**: the offset is only
@@ -1777,7 +1777,7 @@ The ART-era quickened opcodes, present in DEX inside a VDEX on Android 8.0 throu
 | `e9` | `invoke-virtual-quick` | `f1` | `iget-char-quick` |
 | `ea` | `invoke-virtual/range-quick` | `f2` | `iget-short-quick` |
 
-> **⚠️ Warning — this is a real problem you will hit on old devices.** DEX extracted from a VDEX on an
+> **Warning — this is a real problem you will hit on old devices.** DEX extracted from a VDEX on an
 > Android 8–10 device contains these opcodes. They carry vtable indices and field offsets instead of
 > symbolic references, so `baksmali` cannot render them meaningfully and `jadx` will produce nonsense
 > or refuse. The symptom is a disassembler complaining about unknown or invalid instructions in an
@@ -1892,7 +1892,7 @@ The `element_width` is in **bytes** and must match the array's element type: 1 f
 for `short`/`char`, 4 for `int`/`float`, 8 for `long`/`double`. Get it wrong and you either fail
 verification or silently read garbage.
 
-> **⚠️ Warning.** A payload must be **4-byte aligned**, which is why `baksmali` sometimes emits a bare
+> **Warning.** A payload must be **4-byte aligned**, which is why `baksmali` sometimes emits a bare
 > `nop` immediately before one. If you insert or delete an odd number of code units earlier in the
 > method, the alignment changes; the assembler will insert or remove the padding for you, but only if
 > you left the `nop` alone or removed it entirely. Do not "clean up" a stray `nop` sitting just before
@@ -1938,7 +1938,7 @@ Reading rules:
 - **Handlers are tried in the order the directives appear.** A `.catch` for a subclass must come before
   the `.catch` for its superclass, exactly as in Java source.
 - **`move-exception` must be the handler's first instruction** if the handler wants the exception
-  object at all. A handler that ignores the exception simply omits it.
+  object at all. A handler that ignores the exception omits it.
 
 A `finally` block therefore appears **twice** in the Smali, sometimes three or four times if there are
 several exit paths. This is normal and is not obfuscation.
@@ -1958,14 +1958,14 @@ several exit paths. This is normal and is not obfuscation.
     throw v0
 ```
 
-> **🔍 Pentester's Note.** Exception tables are an underrated hiding place. Because the table is
+> **Pentester's Note.** Exception tables are an underrated hiding place. Because the table is
 > separate from the instruction stream, you can have a protected range that no linear reading of the
 > code makes obvious, and a handler that a decompiler renders as unreachable. Anti-tamper code
 > sometimes uses a deliberately thrown exception as its control transfer: the "check" is a `throw` and
 > the "response" is in a handler far away. If a method has an exception table entry whose handler you
 > cannot account for, read the handler.
 
-> **⚠️ Warning — the trap when patching.** If you delete instructions from inside a `try` range, the
+> **Warning — the trap when patching.** If you delete instructions from inside a `try` range, the
 > `:try_start`/`:try_end` labels move with the surrounding text and the assembler recomputes the
 > offsets, which is fine. If you delete the *entire* body of a `try` so the range becomes empty, the
 > assembler will reject it — a `try_item` covering zero instructions is invalid. Replace the body with
@@ -2025,13 +2025,13 @@ runtime binary-searches them, so **the keys must be sorted ascending**.
     .end sparse-switch
 ```
 
-> **⚠️ Warning — the fall-through default.** Neither switch instruction encodes a default target. If
-> the value matches no case, execution simply **continues at the next instruction**. That is why the
+> **Warning — the fall-through default.** Neither switch instruction encodes a default target. If
+> the value matches no case, execution **continues at the next instruction**. That is why the
 > default body appears immediately after the switch, which reads oddly until you know the rule, and
 > why a "`switch` with no default" in Java produces Smali where the code after the switch is the
 > default *and* the join point.
 
-> **🔍 Pentester's Note.** A `switch` on a very large, apparently meaningless set of integers, sitting
+> **Pentester's Note.** A `switch` on a very large, apparently meaningless set of integers, sitting
 > inside a `while(true)` loop, with each case ending in an assignment to the switch variable, is the
 > signature of **control-flow flattening**. The original straight-line code has been chopped into
 > basic blocks and reassembled as a state machine. See
@@ -2056,7 +2056,7 @@ shapes instantly is what separates fluent reading from slow decoding.
 | Autoboxing | `invoke-static … Ljava/lang/Integer;->valueOf(I)Ljava/lang/Integer;` |
 | String `switch`, `try-with-resources`, lambdas | Desugared into extra synthetic methods and classes by D8 |
 
-> **🔍 Pentester's Note.** `access$000`-style bridges are a quiet gift on obfuscated apps. R8 renames
+> **Pentester's Note.** `access$000`-style bridges are a quiet gift on obfuscated apps. R8 renames
 > them like everything else, but the *shape* survives: a `synthetic static` method whose whole body is
 > one `iget`/`iput` and a return. When you find one, you have found a private field that an inner class
 > cares about — often the state variable of a check you are trying to defeat.
@@ -2161,7 +2161,7 @@ remembers: after a system update, the phone displayed **"Optimising app 47 of 31
 minutes on first boot. Every ODEX's dependencies had just been invalidated by the new framework, so
 every one had to be regenerated.
 
-> **🔬 Under the Hood.** ART kept the mechanism and changed the artefact. The compiled file is still
+> **Under the Hood.** ART kept the mechanism and changed the artefact. The compiled file is still
 > written next to the app, still named `.odex`, and still regenerated when the boot classpath changes.
 > But it is now an **ELF shared object containing native code**, not a rewritten DEX — the name
 > survived the format change entirely. That is why [13 §3.1](../13-ART/README.md) has to spend a
@@ -2216,7 +2216,7 @@ That last row is the fatal one for a phone. An application is launched, used for
 killed. A trace JIT is optimising for a steady state that phone apps rarely reach, and it pays the
 warm-up cost every single time.
 
-> **🧠 Mental Model.** A trace JIT is a person who learns the fastest route from the front door to the
+> **Mental Model.** A trace JIT is a person who learns the fastest route from the front door to the
 > kitchen by walking it, and writes it on a sticky note. Very cheap, very effective for that one
 > route, and the sticky notes are thrown away every night. A method JIT surveys the whole house once
 > and draws a floor plan. ART's modern design keeps a diary of which rooms you actually used and
@@ -2284,7 +2284,7 @@ Historical `-X` flags worth recognising if you read old material or old bug repo
 | `-Xverify:none` | **Skip verification.** Existed, was used to speed up installs, and was a genuinely bad idea |
 | `-Xdeadlockpredict:<mode>` | Lock-ordering deadlock prediction |
 
-> **⚠️ Warning.** Do not carry `-Xverify:none` advice forward. Modern ART ignores it, and on the
+> **Warning.** Do not carry `-Xverify:none` advice forward. Modern ART ignores it, and on the
 > platforms where it worked it disabled the only structural check standing between a malformed DEX and
 > the interpreter. Old blog posts recommending it as a "speed tip" are a good marker that the post is
 > from 2012 and should be read with suspicion throughout.
@@ -2316,7 +2316,7 @@ The reasons for the replacement, in the order they mattered:
 5. **Optimisation ceiling.** A trace JIT cannot inline, and Java is a language in which not inlining
    getters is expensive.
 
-> **⚠️ Warning — an important nuance for interviews.** ART did **not** replace Dalvik bytecode. It
+> **Warning — an important nuance for interviews.** ART did **not** replace Dalvik bytecode. It
 > replaced the *virtual machine that executed it*. The instruction set, the DEX format, the register
 > model and every opcode in §3.10 are unchanged. Saying "ART uses a different bytecode" is wrong and
 > is a common enough error that interviewers use it as a filter.
@@ -2398,7 +2398,7 @@ dalvik/
 └── OWNERS
 ```
 
-**The `vm/` directory is simply gone.** That single fact is the clearest possible statement of what
+**The `vm/` directory is gone.** That single fact is the clearest possible statement of what
 this chapter is about: the virtual machine was deleted from the Android source tree, and the format
 tooling — the DEX reader, the disassembler, the opcode tables and the documentation — was kept.
 
@@ -2431,7 +2431,7 @@ handler and which fall back to the C implementation. `opcode-gen` and the mterp 
 those into `out/InterpC-<arch>.c` and `out/InterpAsm-<arch>.S`, which are the files actually compiled.
 Nobody hand-edited the generated output; you edit the per-opcode fragment and regenerate.
 
-> **🔬 Under the Hood.** The debugger and profiler were implemented by pointing the dispatch base at
+> **Under the Hood.** The debugger and profiler were implemented by pointing the dispatch base at
 > an **alternate handler table** whose entries all trap into the runtime first. Flipping one pointer
 > converted the entire interpreter into an instrumented interpreter. ART's `instrumentation_` object
 > and its deoptimisation machinery — [13 §3.20](../13-ART/README.md) — are the direct descendants of
@@ -2490,7 +2490,7 @@ Two trees hold authoritative opcode tables, and they must agree:
 | `libdex/DexOpcodes.h`, `.cpp` | `platform/dalvik` | Generated opcode enums and names used by `dexdump` |
 | `libdex/InstrUtils.h`, `.cpp` | `platform/dalvik` | Instruction width and format tables used to walk an instruction stream |
 
-> **🔍 Pentester's Note.** When a tool tells you an opcode does not exist and you think it does, open
+> **Pentester's Note.** When a tool tells you an opcode does not exist and you think it does, open
 > `dex_instruction_list.h` for the AOSP branch matching the device, and `opcode-gen/bytecode.txt` for
 > the tooling. The `invoke-polymorphic` family exists only from DEX 038; a `baksmali` old enough not to
 > know about it will reject a perfectly valid modern APK. The version mismatch, not the file, is
@@ -2590,7 +2590,7 @@ afternoon someone has lost:
 | You need to *observe* rather than change | [53 — Frida](../53-Frida/README.md) |
 | You need to change behaviour based on runtime state | Frida. Smali is static |
 
-> **🔍 Pentester's Note.** The professional answer is that these are complementary, not competing.
+> **Pentester's Note.** The professional answer is that these are complementary, not competing.
 > The normal engagement rhythm is: Frida to explore quickly and find what matters, then a Smali patch
 > if you need the change to be permanent, reproducible, or usable by someone without Frida — for
 > example, to hand a client a proof-of-concept APK that demonstrates the finding on a stock device.
@@ -2711,7 +2711,7 @@ adjacency rule makes the obvious version wrong:
 ```
 
 Two details make this correct rather than nearly correct. The inserted block needs `v1` and `v2` to
-exist, so `.registers` or `.locals` must be raised. And `Log.d` returns an `int` which we simply do not
+exist, so `.registers` or `.locals` must be raised. And `Log.d` returns an `int` which we do not
 collect — omitting `move-result` entirely is legal and discards the value.
 
 ### 5.5 Verifier interaction and tool-divergence evasion
@@ -2743,7 +2743,7 @@ the other.
 | Old tool versus new format | A DEX 039 opcode in a file a scanner parses with a DEX 035 table |
 | Signature verifier versus DEX loader | The Janus class of bug, §5.6 |
 
-> **⚠️ Warning — do not treat "jadx rendered it" as ground truth.** When an app's behaviour and the
+> **Warning — do not treat "jadx rendered it" as ground truth.** When an app's behaviour and the
 > decompiled Java disagree, the Java is wrong. Drop to Smali. When Smali and behaviour disagree, drop
 > to bytes with [12](../12-DEX-Internals/README.md). The ordering of authority runs: the bytes are
 > truth, Smali is a faithful rendering, Java is an interpretation.
@@ -2821,7 +2821,7 @@ cannot:
 | Was it modified after signing? | Compare `baksmali` output against a known-good build. Instruction-level diff, not hash diff — remember §1.3's warning |
 | Is this a repackaged version of a legitimate app? | Diff the Smali trees. Repackagers usually add classes rather than modify them, so a new package under the original's namespace is the signal |
 
-> **🔍 Pentester's Note.** The `.line` directives are a genuinely underused forensic artefact. They map
+> **Pentester's Note.** The `.line` directives are a genuinely underused forensic artefact. They map
 > instructions to original source line numbers. If a release APK retains them, you can reconstruct the
 > approximate shape of the developer's source file — including how many blank lines were between
 > methods — which is occasionally enough to match an APK to a leaked source tree.
@@ -2992,7 +2992,7 @@ call. `iput-boolean p1, p0, …->strict:Z` stores the argument. `.registers 2` w
 (`this` and the boolean) means there are **zero** free locals: `p0 == v0`, `p1 == v1`.
 
 **The method.** `.registers 7` with three incoming words means the first parameter register is
-`7 − 3 = 4`, so `p0 == v4`, `p1 == v5`, `p2 == v6` — and note that the body *also* uses `v4`, `v5` and
+`7 − 3 = 4`, so `p0 == v4`, `p1 == v5`, `p2 == v6` — and confirm that the body *also* uses `v4`, `v5` and
 `v6` as scratch after the parameters are dead. That is normal and legal; it is also exactly the kind
 of overlap that will destroy you if you raise `.registers` without care.
 
@@ -3010,7 +3010,7 @@ question for the client is where `strict` comes from — search for `new-instanc
 argument at the construction site. If it is `false` in any release code path, pinning is off.
 
 **The patch, if you want to test the endpoint anyway:** change `if-nez v0, :cond_8` to
-`if-eqz v0, :cond_8`, or simply put `const/4 v0, 0x1` / `return v0` at the top of `verify`.
+`if-eqz v0, :cond_8`, or put `const/4 v0, 0x1` / `return v0` at the top of `verify`.
 
 ### 6.3 The `baksmali` / `smali` round trip
 
@@ -3036,7 +3036,7 @@ apktool b work/ -o patched.apk         # build
 | `-b` / `--no-debug-info` | Omit `.line`, `.local`, `.param` directives. Produces much cleaner Smali to read, but you lose the source-line mapping |
 | `--use-aapt2` | Resource encoding backend; occasionally the fix for a rebuild that fails on resources |
 
-> **🔍 Pentester's Note.** `apktool d -r` is the flag that turns a five-minute decode into a
+> **Pentester's Note.** `apktool d -r` is the flag that turns a five-minute decode into a
 > twenty-second one, and it removes an entire class of rebuild failure, because resource
 > re-encoding is where `apktool b` fails most often. If your edit is purely in Smali, use it.
 
@@ -3070,7 +3070,7 @@ apksigner sign --ks ~/.android/debug.keystore --ks-pass pass:android \
     --out signed.apk aligned.apk
 ```
 
-> **⚠️ Warning.** A `baksmali` → `smali` round trip of an **unmodified** DEX produces a file that
+> **Warning.** A `baksmali` → `smali` round trip of an **unmodified** DEX produces a file that
 > behaves identically but is not byte-identical: item ordering in the data section, debug info, and
 > layout choices are regenerated. Always establish your baseline by round-tripping the *original*
 > first, then diffing your patched build against that baseline — never against the untouched original
@@ -3155,7 +3155,7 @@ Kotlin compiles to the same instruction set, but its runtime library leaves dist
 | Inline function | The body is **copied into the caller**; the original may still exist but is not called |
 | `sealed class` | A normal hierarchy plus `Lkotlin/Metadata;` recording the sealedness |
 
-> **🔍 Pentester's Note — the coroutine state machine is the one that surprises people.** A `suspend`
+> **Pentester's Note — the coroutine state machine is the one that surprises people.** A `suspend`
 > function does not look like a function. It becomes a class with an integer `label` field and a
 > `switch` on it, where each case is one segment between suspension points. This is structurally
 > identical to control-flow flattening, and reverse engineers regularly mistake it for obfuscation.
@@ -3241,7 +3241,7 @@ grep -rn '^\.method.*\(is\|has\|check\|verify\|valid\|allow\|enable\)[A-Za-z]*(.
 grep -rn 'Landroid/util/Log;->' smali*/ | wc -l
 ```
 
-> **🔍 Pentester's Note.** Greps 1 and 11 together will, on a majority of real applications, put you
+> **Pentester's Note.** Greps 1 and 11 together will, on a majority of real applications, put you
 > within one screen of the thing you were hired to find. Grep 1 tells you what the app talks about;
 > grep 11 tells you what it decides. Everything else is refinement.
 
@@ -3311,7 +3311,7 @@ Four things had to be right and each of them is a way to fail:
    said `v3`, the patch would now be reading a local.
 3. **The insertion is after `move-result-object`**, not between the invoke and it.
 4. **No `move-result` after `Log.d`.** It returns an `int` we do not want, and discarding a return
-   value by simply not collecting it is legal.
+   value by not collecting it is legal.
 
 Then:
 
@@ -3325,7 +3325,7 @@ adb uninstall com.example.target ; adb install signed.apk
 adb logcat -s SMALIPATCH:D
 ```
 
-> **⚠️ Warning.** `Landroid/util/Log;->d` takes two `String`s. If the value you want to print is not a
+> **Warning.** `Landroid/util/Log;->d` takes two `String`s. If the value you want to print is not a
 > `String`, you must convert it first — `String;->valueOf(I)`, `valueOf(Z)`, `valueOf(J)`, or for an
 > object `String;->valueOf(Ljava/lang/Object;)`. Passing an `int` register where a `String` is expected
 > is a verification failure, not a compile warning.
@@ -3437,7 +3437,7 @@ value**, and a **stack trace** naming the caller — which is usually the thing 
 because the interesting question is rarely "what does this method do" but "who calls it and with
 what".
 
-> **🔍 Pentester's Note.** If the class is loaded by a non-default `ClassLoader` — very common in
+> **Pentester's Note.** If the class is loaded by a non-default `ClassLoader` — very common in
 > packed or multi-DEX apps — `Java.use` will fail with "class not found" even though the class exists.
 > The fix is `Java.enumerateClassLoaders` and `Java.classFactory.loader = <the right one>`;
 > [53 — Frida](../53-Frida/README.md) covers it, and [13 §3](../13-ART/README.md) explains why there is
@@ -3465,7 +3465,7 @@ This proves the bytes on the device are the bytes you wrote. It does not prove t
 **3. Confirm the behaviour changed** — the actual observable effect. Traffic now appears in Burp; the
 premium feature unlocks; the root check no longer fires.
 
-> **⚠️ Warning.** Only the third is a finding. "I patched the method" is not a result; "the app now
+> **Warning.** Only the third is a finding. "I patched the method" is not a result; "the app now
 > sends the request without pinning, and here is the intercepted traffic" is. Clients and reviewers
 > reject the first and accept the second.
 
@@ -3517,7 +3517,7 @@ unzip -l app.apk | grep -E 'classes[0-9]*\.dex'
 ls -d work/smali*                       # smali/  smali_classes2/  smali_classes3/ ...
 ```
 
-> **⚠️ Warning.** Every grep in this chapter uses `smali*/`, with the glob, for exactly this reason.
+> **Warning.** Every grep in this chapter uses `smali*/`, with the glob, for exactly this reason.
 > Searching only `smali/` and concluding a feature is absent because it lives in `classes3.dex` is a
 > genuine and embarrassing failure mode.
 
@@ -3717,7 +3717,7 @@ question "what changed in the security-relevant bytecode since last month" is an
 command, and it is the question that actually finds regressions — a pinning check quietly removed, a
 new `native` method, a `Log.d` of a token that appeared in a hotfix.
 
-> **🔍 Pentester's Note.** Store the profile JSON with the report. Six months later, when the client
+> **Pentester's Note.** Store the profile JSON with the report. Six months later, when the client
 > asks whether a finding was present in an earlier version, you can answer from data instead of from
 > memory. This is also how you demonstrate that obfuscation was *added* — the `const-string` density
 > falls off a cliff between two releases.

@@ -19,7 +19,7 @@ different fixes and re-test after each one to see exactly which attack each fix 
 An abstract-namespace UNIX socket is the most under-tested surface on Android, and the reason is
 structural rather than incidental.
 
-> **📖 Definition**
+> **Definition**
 > **Abstract namespace.** A Linux extension to `AF_UNIX`. If the first byte of `sun_path` in the
 > `sockaddr_un` structure is a NUL byte, the kernel treats the remainder not as a filesystem path but
 > as an opaque name in a **kernel-global namespace with no filesystem representation whatsoever**.
@@ -490,7 +490,7 @@ because there is nothing for a permission to attach to.
 **Q5.** An endpoint that copies a private file to a caller-chosen path is an **arbitrary file write
 with the victim's authority**, and the prerequisite is *nothing at all*. That combination is Critical
 in most applications: it is a write primitive inside another app's sandbox, and combined with a
-readable destination it becomes arbitrary read as well. Note that the attacker cannot choose a
+readable destination it becomes arbitrary read as well.the attacker cannot choose a
 destination the *victim* cannot write — the write happens with the victim's UID, which is exactly
 what makes it a confused deputy in miniature.
 

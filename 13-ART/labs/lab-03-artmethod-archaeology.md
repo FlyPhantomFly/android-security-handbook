@@ -23,7 +23,7 @@ it fails you have no next step unless you know what it was doing.
 This lab opens the box. Afterwards you will be able to reason about hook failures structurally, write
 tooling that works where the Java bridge does not, and read the ART source with confidence.
 
-> **⚠️ Warning.** This lab writes to another process's memory. Do it on a test device with a target
+> **Warning.** This lab writes to another process's memory. Do it on a test device with a target
 > app you built. Getting an offset wrong crashes the app; getting it very wrong can destabilise the
 > system. Never do this to an app you did not build, on a device you care about.
 
@@ -129,7 +129,7 @@ Java.perform(function () {
 **Record** the offset at which the bridge appears. That is
 `entry_point_from_quick_compiled_code_` on your device.
 
-**Question 3.** Why is deriving the offset this way more robust than reading it from a blog post?
+**Question 3.** Why is deriving the offset this way more reliable than reading it from a blog post?
 
 ### Step 4 — Classify execution state
 
@@ -269,7 +269,7 @@ Java.perform(function () {
 
 Observe the app's output. `describe()` should now report `insecure`.
 
-> **⚠️ Warning.** This stub ignores the calling convention beyond the return value, does no argument
+> **Warning.** This stub ignores the calling convention beyond the return value, does no argument
 > handling, and does not support calling the original. It is a demonstration of the *mechanism*, not a
 > hooking framework. Real frameworks generate a proper trampoline that preserves registers, marshals
 > arguments, and can invoke the original through a saved `ArtMethod` copy.

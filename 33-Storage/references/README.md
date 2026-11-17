@@ -119,13 +119,13 @@ Described by shape rather than by identifier, for the reason given at the top of
 
 | Tool | What it is used for here |
 |---|---|
-| `adb` | Everything. Note that `adb shell` is a *more privileged principal than any app* — section 3.13 |
+| `adb` | Everything.`adb shell` is a *more privileged principal than any app* — section 3.13 |
 | `frida` / `frida-server` | [`../scripts/storage-trace.js`](../scripts/storage-trace.js), for the writes a filesystem diff structurally cannot see. Depth in [53-Frida](../../53-Frida/README.md) |
 | `objection` | `env` prints every storage root in one command — the fastest possible orientation |
 | `apktool`, `jadx` | Manifest and DEX inspection, section 8 |
 | `aapt2`, `d8`, `zipalign`, `apksigner` | [`../examples/build.sh`](../examples/build.sh) builds both example apps with no Gradle |
 | Python `sqlite3` (read-only URI mode) | There is **no `sqlite3` binary on a stock device**. Pull the database and analyse it on the host |
-| `toybox find -printf` | The snapshot engine behind [`../scripts/storage-diff.py`](../scripts/storage-diff.py). Note that `%y` is not supported — the type comes from `%M`'s first character |
+| `toybox find -printf` | The snapshot engine behind [`../scripts/storage-diff.py`](../scripts/storage-diff.py).`%y` is not supported — the type comes from `%M`'s first character |
 
 ---
 

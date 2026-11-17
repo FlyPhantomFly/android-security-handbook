@@ -28,7 +28,7 @@ Every clause of that is measurable. None of it is visible in the APK.
 
 ## Background: request versus state
 
-> **📖 Definition**
+> **Definition**
 > A **deep link** is any URI that opens a screen in an app. It is **not exclusive**
 > — Android imposes no uniqueness constraint on schemes or hosts.
 > An **Android App Link** is an `https` filter with `android:autoVerify="true"`
@@ -69,7 +69,7 @@ Unknown command: get-app-links
 ```
 
 Carrying that command into an Android 11 engagement produces a confident
-"verification state could not be determined", which is simply wrong. The API-30 and
+"verification state could not be determined", which is wrong. The API-30 and
 earlier subsystem is different and has a different command set:
 
 | | API 31+ (`DomainVerificationService`) | API ≤ 30 (legacy `IntentFilterVerification`) |
@@ -114,7 +114,7 @@ bash scripts/appstate-linkcheck.sh --help
 ## Step 1 — Survey the whole device first
 
 Before looking at any one app, look at the population. This tells you what "normal"
-is on this device, which is what you need in order to say an app is abnormal.
+is on this device, which is what you need to say an app is abnormal.
 
 ```bash
 # host
@@ -190,7 +190,7 @@ On the reference device these two disagreed for YouTube: `pm get-app-link` print
 and one `always : 200000001`. Does yours agree with itself? If not, which would you
 quote, and what would you say about the other?
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > When two of the platform's own readers disagree, quote **both** and say so.
 > "`pm get-app-link` reports `always`; `dumpsys package domain-preferred-apps`
 > reports two records for the same package, `ask` and `always`" is a defensible
@@ -319,7 +319,7 @@ adb install -r target.apk        # reinstall triggers the legacy verifier
 adb shell "pm get-app-link <package>"
 ```
 
-**Q16.** Did the state change? Note that on many OEM builds the legacy verifier is
+**Q16.** Did the state change? On many OEM builds the legacy verifier is
 disabled or heavily rate-limited, which is itself worth recording: **on this
 device, App Links verification does not run at all** is a platform observation, not
 an app finding, and belongs in a different section of your report.
@@ -374,7 +374,7 @@ most persuasive single artefact this lab produces.
 (API 31+). What happened to your competing app? Explain the difference in terms of
 what the platform fetched and checked.
 
-> **⚠️ Scope**
+> **Scope**
 > Step 7 competes for a real host name. Do it against an application and an account
 > you own, on your own device, and uninstall the competing app afterwards. If you
 > want the OAuth-flow version of this — intercepting a live authorisation code —
@@ -438,7 +438,7 @@ not? What would `assetlinks.json` even be fetched *from*?
    changed at 31, and why does that make the command split more than cosmetic?
 
 4. An app's state reads `always` on Android 11. A developer says "so it is
-   verified". Correct them, and say what you would need in order to establish
+   verified". Correct them, and say what you would need to establish
    verification on that platform.
 
 5. The most common cause of a failed App Link is a certificate-fingerprint

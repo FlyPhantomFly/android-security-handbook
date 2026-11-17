@@ -363,7 +363,7 @@ was inlined and constant-folded. See [18-ARM](../../18-ARM/README.md) for the in
 
 **1.** With `speed`, there should be **no** `bl` to `isSecure` in `describe()`'s disassembly. The
 optimizing compiler inlined the body, saw that it unconditionally returns `true`, constant-folded the
-ternary, and emitted code that simply returns the `"secure"` string reference. The call site your hook
+ternary, and emitted code that returns the `"secure"` string reference. The call site your hook
 was waiting for does not exist in the compiled code. Its absence is the direct, physical explanation
 for the hook having no effect.
 

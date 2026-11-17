@@ -91,7 +91,7 @@ public final class a {
 
 > **Note on `@CriticalNative`.** The annotation lives in `dalvik.annotation.optimization` and is not
 > part of the public SDK, so a plain app build may warn or refuse. If your toolchain rejects it,
-> build the challenge without the annotation and simply *pretend* the calling convention is
+> build the challenge without the annotation and *pretend* the calling convention is
 > different for `d` — or better, read [§3.21](../README.md#321-fastnative-and-criticalnative) and
 > work out by hand what a hook on it would see. The lesson survives either way. On a platform build
 > or with the annotation stripped from the DEX manually, it works as written.
@@ -304,7 +304,7 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
     }
 
     /* D2, part 2: replace it. Re-registration is explicitly permitted and
-     * ART simply overwrites the ArtMethod's native pointer. An analyst who
+     * ART overwrites the ArtMethod's native pointer. An analyst who
      * stops reading after the first [jni] block gets the decoy. */
     build((void *)real_check);
     if ((*env)->RegisterNatives(env, k, tbl, 3) != JNI_OK) {
@@ -335,7 +335,7 @@ The first check is the one that must hold: if any implementation function is exp
 and the challenge collapses. The second must also hold, and does — the flag is derived into heap
 memory at runtime (D4) and no part of it exists on disk.
 
-> **⚠️ Warning — two things `strings` *does* find, and neither is a broken build.**
+> **Warning — two things `strings` *does* find, and neither is a broken build.**
 > An earlier version of this lab added a third check, `strings -a libunlisted.so | grep -E
 > '^\([A-Z\[L]'`, annotated "nothing", and told you to fix the build if it produced output. **The
 > source above can never pass that check**, and the instruction was impossible to follow. Compiled
@@ -373,7 +373,7 @@ You are expected to be defeated by at least two of these on the first pass. That
 | D3 | `@CriticalNative` on the byte accessor | The `args[0] == JNIEnv*` assumption | [§3.21](../README.md#321-fastnative-and-criticalnative), [§3.9](../README.md#39-the-calling-convention-every-native-hook-sees) |
 | D4 | The flag derived into a heap struct, address handed out as a `jlong` | `strings`, and any search for a constant | [§5.5](../README.md#55-vulnerability-class-4--the-jlong-handle) |
 
-Note that D4 is a *defence* from the developer's point of view and a **gift** from yours. That
+D4 is a *defence* from the developer's point of view and a **gift** from yours. That
 inversion is the lesson of the whole lab.
 
 ---
@@ -493,7 +493,7 @@ Java.perform(function () {
 
 That shows you the input, not the flag. To get the flag, put a hook one level lower: the real check
 reads `g_ctx->expected[i]` in a loop. Hook the recovered `real_check` address and dump the memory the
-comparison touches — or, much more simply, note that `real_check` dereferences a global that Path A
+comparison touches — or, more directly, `real_check` dereferences a global that Path A
 already told you how to find.
 
 **The general lesson**, which is worth more than this flag: the JNI function table is a
@@ -525,7 +525,7 @@ The proper reverse-engineering route.
    `derive`. The keystream is trivial, but you do not even need to invert it: hook `make_ctx`'s
    return and read the struct, which is Path A arriving from the other direction.
 
-**What this teaches:** re-registration is legal and ART simply overwrites the pointer. An analyst who
+**What this teaches:** re-registration is legal and ART overwrites the pointer. An analyst who
 reads the first table and moves on is analysing a decoy. Always run the hook for the whole session
 and look for duplicate class/method pairs.
 

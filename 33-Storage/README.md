@@ -84,7 +84,7 @@ that the kernel refuses to let any other uid open. Chapter
 recorded, and [21-App-Sandbox](../21-App-Sandbox/README.md) covers how the boundary is enforced. For
 this chapter, the consequence is what matters:
 
-> **📖 Definition — the app's private directory**
+> **Definition — the app's private directory**
 > The directory an application owns, created at install time, whose owner is the application's own
 > uid and whose mode denies every other uid. On a modern device it is at
 > `/data/user/<userId>/<packageName>`. Nothing else on the device can read it without root or a
@@ -104,7 +104,7 @@ A file in the private directory at mode `0600` is, on a locked non-rooted device
 as a file on a phone can be. The interesting question is never whether *that* file is safe. It is
 **whether a second copy of the same bytes exists somewhere else** — and it very often does.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Encryption moves a secret; it does not remove one. Storage security is not about the strength of
 > the lock on the safe. It is about how many photocopies of the document are lying around the
 > office, and which of those rooms are unlocked.
@@ -156,7 +156,7 @@ That is not a hypothetical list. It is the exact set of leaks in
 encryption in the same method that creates all five. Every one of them has shipped in real
 applications.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > When a report says "the app encrypts sensitive data at rest", ask what was searched for the
 > *unencrypted* copy, and how. If the answer is "we reviewed the encryption implementation", the
 > question has not been asked. The method is in [section 7](#7-dynamic-analysis) and the tooling is
@@ -274,7 +274,7 @@ A write to `/storage/emulated/0/DCIM/x.jpg` goes through the kernel to the FUSE 
 which package is calling, what permissions it holds, whether the file is in that package's own
 directory, whether it is a media type the caller may touch. Only then does the real I/O happen.
 
-> **📖 Definition — FUSE (Filesystem in Userspace)**
+> **Definition — FUSE (Filesystem in Userspace)**
 > A kernel mechanism that lets an ordinary userspace program implement a filesystem. The kernel
 > forwards each operation — `open`, `read`, `getattr`, `readdir` — to that program over a character
 > device and waits for its answer. The filesystem's rules are therefore *code someone wrote*, not
@@ -331,7 +331,7 @@ not a description of the documentation:
 - `adb shell`, running as uid 2000 with supplementary group `1078 (ext_data_rw)`, lists all 111
   entries without complaint.
 
-> **⚠️ Warning**
+> **Warning**
 > This is why "I checked with `adb shell` and the file was readable" proves nothing about whether an
 > *app* can read it, and why "the app could not read it" proves nothing about whether `adb` or a
 > file manager with all-files access can. Every storage finding must name the adversary. A finding
@@ -407,12 +407,12 @@ recovers.
 
 ### 3.2 CE and DE: the two internal trees
 
-> **📖 Definition — credential-encrypted (CE) storage**
+> **Definition — credential-encrypted (CE) storage**
 > App storage encrypted with a key derived from the user's lock-screen credential. It cannot be
 > decrypted until the user has unlocked the device at least once since boot. Path:
 > `/data/user/<userId>/<packageName>`.
 
-> **📖 Definition — device-encrypted (DE) storage**
+> **Definition — device-encrypted (DE) storage**
 > App storage encrypted with a key bound to the device rather than to the user's credential. It is
 > available from the moment the kernel mounts `/data`, before any unlock. Path:
 > `/data/user_de/<userId>/<packageName>`.
@@ -445,7 +445,7 @@ $ grep " /data/user/0 " /proc/mounts
 `/data/user/0` is a **bind mount** of the same directory on the same f2fs device. Historically AOSP
 did create a symlink here; on this build, `vold` bind-mounts instead.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > Android 11 added a further layer visible in the same mount table:
 > `/data_mirror/data_ce/null/0` and `/data_mirror/data_de/null`. These are bind mounts that
 > `installd` keeps so it can hand a *specific app's* data directory into that app's mount namespace
@@ -523,7 +523,7 @@ somebody who has the powered-on but never-unlocked device and can run code on it
 an acquisition against it. Against a thief with a powered-off phone, DE and CE are equally
 protected. Against a person who knows the PIN, both are equally exposed.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > DE storage is a reliable, high-value finding *and* a frequently over-reported one. The finding is
 > "this credential is available before first unlock, which the app's own threat model assumes it is
 > not". The non-finding is "the app uses DE storage", which is true of nearly every app that has a
@@ -541,7 +541,7 @@ ls -laR /data/user_de/0/<package>
 
 ### 3.4 File-based encryption, and what it does not protect
 
-> **📖 Definition — file-based encryption (FBE)**
+> **Definition — file-based encryption (FBE)**
 > Encryption applied per file and per directory rather than to the whole block device. Each file's
 > contents are encrypted with a key derived from a per-directory key, and filenames are encrypted
 > separately. It replaced full-disk encryption because it is what makes two different availability
@@ -569,7 +569,7 @@ controller's inline crypto engine rather than by the CPU.
 
 Here is the part that matters for every finding you will ever write about storage:
 
-> **⚠️ Warning**
+> **Warning**
 > **FBE protects against an adversary holding the hardware. It protects against nothing that runs on
 > a booted device.** Every process on a running phone sees plaintext, because the kernel decrypts
 > transparently for anyone the keys are installed for. A root shell reads your `shared_prefs` in
@@ -631,7 +631,7 @@ fsyncs before its atomic rename so that a power loss cannot leave a zero-length 
 
 ### 3.6 External app-specific storage
 
-> **📖 Definition — external app-specific storage**
+> **Definition — external app-specific storage**
 > A per-package directory on the shared volume, at
 > `/storage/emulated/<userId>/Android/data/<packageName>`, reachable through
 > `getExternalFilesDir()` and `getExternalCacheDir()`. No permission has been required to write to
@@ -668,7 +668,7 @@ by FUSE, but `Android/data` and `Android/obb` bind-mounted as `sdcardfs` on top 
 /data/media /mnt/pass_through/0/emulated         sdcardfs rw,...
 ```
 
-> **📖 Definition — sdcardfs**
+> **Definition — sdcardfs**
 > A kernel-space shim, predating FUSE on Android, that presented `/data/media` with synthesised
 > ownership and permissions. It was replaced by FUSE in Android 11 for policy flexibility, at a
 > performance cost — and OEMs then bind-mounted sdcardfs back over the hot paths to recover it. The
@@ -678,14 +678,14 @@ The practical consequence: **the mode bits and ownership you see under `/sdcard`
 not stored.** Every file appears as `root:everybody` with mode `0660` because the mount options say
 so (`fsuid=1023,fsgid=1023,gid=1015,mask=6`), regardless of which app created it. So:
 
-> **⚠️ Warning**
+> **Warning**
 > File ownership under `/sdcard` tells you nothing about who wrote the file. Do not report "this file
 > is owned by root" as a finding, and do not attribute a file to an app based on its uid there. The
 > only reliable attribution is MediaStore's `owner_package_name` column — see the next section.
 
 ### 3.7 Shared collections and MediaStore
 
-> **📖 Definition — shared collection**
+> **Definition — shared collection**
 > One of the media directories on the shared volume — `DCIM/`, `Pictures/`, `Movies/`, `Music/`,
 > `Documents/`, `Download/` — whose contents belong to *the user*, not to any app. They are indexed
 > by MediaStore, and they **survive the uninstall of the app that created them**.
@@ -694,7 +694,7 @@ That last clause answers the FAQ's "why did my file survive uninstall". The syst
 belonged to the app. A photo in `DCIM/` was never the app's; it was the user's, and the app merely
 created it. This is a deliberate design decision and not a bug.
 
-> **📖 Definition — MediaStore**
+> **Definition — MediaStore**
 > A `ContentProvider` maintained by the MediaProvider app that indexes every file in the shared
 > collections. It is both the *permission-mediated API* for reaching shared media and a *database
 > about the user's files*.
@@ -714,7 +714,7 @@ The `owner_package_name` column records which application created each file. Rea
 as an adversary would: this user downloaded a root-patching image using a root manager, and
 side-loaded Telegram through Chrome. Nothing was opened. The *index* said it.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `owner_package_name` is a privacy surface in its own right and belongs under MASVS-PRIVACY, not
 > just MASVS-STORAGE. An app that can query MediaStore learns which other apps produced which files
 > — an installed-app fingerprint and a behaviour profile, obtained without any package-visibility
@@ -775,7 +775,7 @@ holding no storage permission at all, can still put a token in `Download/` with 
 pre-scoped-storage `java.io.File` code — while a write to the shared **root**
 (`getExternalStorageDirectory()`) from the same app fails with `EPERM`.
 
-> **⚠️ Warning**
+> **Warning**
 > Do not assume the legacy path is dead on API 30, and do not stop grepping for
 > `getExternalStoragePublicDirectory` because "scoped storage would have blocked it". Test the write
 > rather than reasoning from the version number. The file this produced survived the app's own
@@ -783,7 +783,7 @@ pre-scoped-storage `java.io.File` code — while a write to the shared **root**
 
 ### 3.8 The Storage Access Framework
 
-> **📖 Definition — Storage Access Framework (SAF)**
+> **Definition — Storage Access Framework (SAF)**
 > A set of system UI flows — `ACTION_OPEN_DOCUMENT`, `ACTION_CREATE_DOCUMENT`,
 > `ACTION_OPEN_DOCUMENT_TREE` — in which **the user picks the file or directory** and the app
 > receives a URI grant for exactly that selection. The app never holds a broad storage permission.
@@ -884,7 +884,7 @@ Set it before `setContentView`, and set it on **every** window that can display 
 [32-Manifest](../32-Manifest/README.md) records the common error precisely: `excludeFromRecents` and
 `noHistory` do *not* prevent the snapshot; only `FLAG_SECURE` does.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Test it, do not read the source. Open the sensitive screen, press the recents key, and look. If
 > `FLAG_SECURE` is set the preview is blank and `adb shell screencap` on that window is refused.
 > Snapshot directories move between releases and OEMs — on the test device the credential-encrypted
@@ -901,7 +901,7 @@ you get nothing. The developer is not lying.
 
 Then read the write-ahead log.
 
-> **📖 Definition — write-ahead logging (WAL)**
+> **Definition — write-ahead logging (WAL)**
 > A SQLite journal mode in which changes are appended to a companion file, `<db>-wal`, instead of
 > being written into the main database. Readers consult the WAL first. Only at a **checkpoint** are
 > those pages folded back into the main file. WAL is the default for databases opened through
@@ -972,7 +972,7 @@ instead of asserting success.
 | `<db>-shm` | Shared-memory index into the WAL | Alongside the WAL |
 | `<db>-journal` | Rollback journal | Non-WAL mode, during a transaction, and sometimes left behind |
 
-> **⚠️ Warning**
+> **Warning**
 > The WAL's *absence* proves nothing. SQLite checkpoints and deletes it on a clean close, so an app
 > you stopped before snapshotting will often show a bare `.db`. Snapshot **while the app is
 > running**, or accept that you are looking at the post-checkpoint state where the residue has moved
@@ -1036,7 +1036,7 @@ entirely.
 
 The trap that renders a correct-looking exclusion useless:
 
-> **⚠️ Warning**
+> **Warning**
 > `dataExtractionRules` is read from API 31. `fullBackupContent` is read up to API 30. An app that
 > declares only the newer attribute is **unprotected on every device below API 31** — and since the
 > older format is the one that governs `adb backup`, that is precisely the population where
@@ -1114,7 +1114,7 @@ $ id
 uid=2000(shell) gid=2000(shell) groups=...,1015(sdcard_rw),1028(sdcard_r),1078(ext_data_rw),1079(ext_obb_rw),...
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > That asymmetry is the single most important practical fact about scoped storage. Your `adb`
 > session is a **more privileged principal than any app**, and every conclusion you draw with it
 > about app-to-app reachability is wrong by default. When you want to know what an app can see, ask
@@ -1439,7 +1439,7 @@ time:
 2. **MAC** — do the SELinux type and MCS categories permit this reader?
 3. **Content** — is there anything in it worth having?
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > [`scripts/storage-diff.py`](scripts/storage-diff.py) computes gate one and prints
 > `DAC-reachable: yes/no` with the blocking directory named. It deliberately does **not** compute
 > gate two, and its output says so on every finding, because guessing at SELinux is how a report
@@ -1493,7 +1493,7 @@ frida -U -f com.pentest.ch33.vault -l scripts/storage-trace.js
 **Exploit and impact.** Against the happy path: a device acquisition, a debuggable-build `run-as`, or
 a raw partition carve, since `delete()` unlinks a name and does not erase blocks — and on f2fs, a
 log-structured filesystem, an in-place overwrite does not reliably touch the same physical blocks
-either. Against the error path: the file simply persists, and the error path is the state the device
+either. Against the error path: the file persists, and the error path is the state the device
 is in when it is most likely to be examined.
 
 **Secure fix.** Encrypt in memory, write once to a temporary name in the same directory, `fsync`,
@@ -1558,7 +1558,7 @@ leave behind. All three are in
 
 **Honest severity.** **High** when the residue is credentials or content the user was told was
 deleted, because it directly contradicts a promise the product made. **Medium** for stale session
-identifiers. Note that this finding is unusually defensible: you can show the developer the exact
+identifiers.this finding is unusually defensible: you can show the developer the exact
 bytes in `-wal` next to the passing test that says the row is gone.
 
 ### 5.6 `allowBackup`: a candidate, not a finding
@@ -1780,7 +1780,7 @@ adb logcat -d > session.log
 python3 -B scripts/storage-diff.py diff before.json after.json
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > Step 3 must be scripted. A lab or a report whose exercise step is "tap around the app for a while"
 > cannot be reproduced, and a diff you cannot reproduce is an anecdote. The example apps are driven
 > entirely through `am start --es action …` for this reason.
@@ -1902,7 +1902,7 @@ signature manifest — `app_chrome/*/_metadata/verified_contents.json`, keys `pa
 values beginning `eyJ`. They match a JWT-shaped rule because they *are* signed JSON: Chrome verifying
 its own component downloads, which is the browser doing exactly the right thing.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > 132 out of 132. That is the honest baseline for a shape-based scanner on a large real app, and it
 > is why `leak-hunter.py`'s docstring carries a numbered false-positive list — advertising
 > identifiers that look like session tokens, public keys and certificates that look like secret
@@ -2270,7 +2270,7 @@ grep -rn "getExternalFilesDir\|getExternalStorageDirectory" --include=*.kt src/ 
 }
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > `-assumenosideeffects` removes the *call*, not the *string construction*, in every case. A
 > `Log.d(TAG, "token=" + token)` may leave the concatenation in the DEX string pool and in memory
 > even after the call is stripped. Verify against the built artefact, not the rules file — which is

@@ -10,7 +10,7 @@ separated from the chapter that justifies it is how a reader ends up pasting a
 command they cannot defend — see [`../README.md`](../README.md) section 7.
 
 
-**79 sheets, 1212 sections, 29456 lines.** Concatenating them would produce a 29,456-line file that is stale the moment any chapter is edited. This is the index instead.
+**79 sheets, 1212 sections, 29484 lines.** Concatenating them would produce a 29,484-line file that is stale the moment any chapter is edited. This is the index instead.
 
 
 | Sheet | Lines | Sections | Fences | Covers |
@@ -68,11 +68,11 @@ command they cannot defend — see [`../README.md`](../README.md) section 7.
 | [50 — HardwareBackedSecurity](../../50-HardwareBackedSecurity/cheatsheet.md) | 310 | 11 | 3 | 1. The security-level capability matrix; 2. Determine each capability on a device; 3. The scripts; 4. Measured results (record the device with every number); 5. Gatekeeper and the hardware auth token; 6. Attestation; … |
 | [51 — DynamicAnalysis](../../51-DynamicAnalysis/cheatsheet.md) | 270 | 14 | 1 | The pipeline; Device posture — 40 seconds, run it first; The nine channels; Altitudes — pick the lowest that works; The unrooted path; Correlation — three subtractions, four questions; … |
 | [52 — StaticAnalysis](../../52-StaticAnalysis/cheatsheet.md) | 285 | 13 | 5 | The pipeline; Five-minute pass; The grep catalogue; The triage decision table; The four questions (severity comes from #4); The kill list; … |
-| [53 — Frida](../../53-Frida/cheatsheet.md) | 541 | 12 | 33 | The four commands that start every session; Setup; CLI; Java API; Native API; Agent structure; … |
+| [53 — Frida](../../53-Frida/cheatsheet.md) | 554 | 12 | 34 | The four commands that start every session; Setup; CLI; Java API; Native API; Agent structure; … |
 | [54 — Objection](../../54-Objection/cheatsheet.md) | 385 | 16 | 5 | 1. CLI; 2. Session hygiene — the four commands that prevent most problems; 3. Generic REPL commands; 4. `android hooking` — reconnaissance; 5. `android hooking` — modification; 6. `android root` — exactly three hooks; … |
 | [55 — MobSF](../../55-MobSF/cheatsheet.md) | 321 | 11 | 7 | 1. Install, run, authenticate; 2. REST API; 3. Finding categories — what it detected, and how to confirm; 4. Classify a "secret" before you name it; 5. Reading the JSON; 6. This chapter's scripts; … |
 | [56 — JADX](../../56-JADX/cheatsheet.md) | 372 | 13 | 6 | Invocation; The ten-command first pass; Flags; Input formats; Search; Failure census; … |
-| [57 — Ghidra](../../57-Ghidra/cheatsheet.md) | 369 | 13 | 17 | The first five minutes; Setup; Keyboard; The JNIEnv problem — fix this FIRST; JNI symbol mangling; Type signatures; … |
+| [57 — Ghidra](../../57-Ghidra/cheatsheet.md) | 382 | 13 | 17 | The first five minutes; Setup; Keyboard; The JNIEnv problem — fix this FIRST; JNI symbol mangling; Type signatures; … |
 | [58 — IDA](../../58-IDA/cheatsheet.md) | 315 | 14 | 7 | Editions — what you can actually do [D]; Keyboard [D — verify on your build]; Headless [D]; IDAPython essentials; FLIRT; Debugger; … |
 | [59 — radare2](../../59-radare2/cheatsheet.md) | 433 | 21 | 5 | The grammar in one table; Launching; Info — no analysis required, fast on any size; Analysis — the expensive family; Functions and cross-references; Print; … |
 | [60 — ADB](../../60-ADB/cheatsheet.md) | 370 | 17 | 6 | The 24-byte message header; Message types; Stream rules; Service strings (the `A_OPEN` payload); shell v2 packet framing (inside `A_WRTE` payloads); sync sub-protocol (`SYNC.TXT`); … |
@@ -91,7 +91,7 @@ command they cannot defend — see [`../README.md`](../README.md) section 7.
 | [73 — Labs](../../73-Labs/cheatsheet.md) | 266 | 14 | 11 | The corpus; Commands; Device identity — run before trusting anything; The `su` form; Install refusals; Vantages; … |
 | [74 — CaseStudies](../../74-CaseStudies/cheatsheet.md) | 294 | 18 | 6 | The six cases in one table; Symptom to first hypothesis; The H/P/R/E/O/V block; Evidence ladder — a claim inherits its WEAKEST rung; Five correction techniques; Four defects in a written case study; … |
 | [75 — InterviewQuestions](../../75-InterviewQuestions/cheatsheet.md) | 291 | 16 | 1 | The answer shape — five moves, 90–150 s; The five tiers — what escalates; Not knowing — four parts, 20 s; Stage → what is measured; Where candidates are lost (most → least common); Situation → move; … |
-| [76 — CheatSheets](../../76-CheatSheets/cheatsheet.md) | 351 | 17 | 6 | Start of every session — four commands; The five shell rules; Device posture; Root; Vantage — the same probe, three heights; Task: APK and one hour; … |
+| [76 — CheatSheets](../../76-CheatSheets/cheatsheet.md) | 353 | 17 | 6 | Start of every session — four commands; The five shell rules; Device posture; Root; Vantage — the same probe, three heights; Task: APK and one hour; … |
 | [77 — UsefulCommands](../../77-UsefulCommands/cheatsheet.md) | 291 | 17 | 6 | Connection; Files; Install; Packages; Activities & Intents; Providers; … |
 | [78 — Diagrams](../../78-Diagrams/cheatsheet.md) | 238 | 12 | 3 | Mermaid families; Flowchart notation; Sequence notation; State and class notation; Repository conventions (STYLE-GUIDE.md §6); Commands; … |
 
@@ -786,7 +786,7 @@ Jump straight to the block you need. Anchors are GitHub's.
 - [Other elements](../../32-Manifest/cheatsheet.md#other-elements)
 - [Manifest merging](../../32-Manifest/cheatsheet.md#manifest-merging)
 - [Audit commands](../../32-Manifest/cheatsheet.md#audit-commands)
-- [⚠️ THE DISCIPLINE](../../32-Manifest/cheatsheet.md#-the-discipline)
+- [THE DISCIPLINE](../../32-Manifest/cheatsheet.md#the-discipline)
 - [Severity quick guide](../../32-Manifest/cheatsheet.md#severity-quick-guide)
 - [Rules](../../32-Manifest/cheatsheet.md#rules)
 

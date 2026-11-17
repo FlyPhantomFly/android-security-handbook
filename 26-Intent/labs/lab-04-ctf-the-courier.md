@@ -67,7 +67,7 @@ adb install -r out/deputy.apk
 adb install -r out/attacker.apk
 ```
 
-> **⚠️ If `adb install` fails**
+> **If `adb install` fails**
 > Some OEM builds refuse with `INSTALL_FAILED_USER_RESTRICTED` — measured on the
 > Redmi / MIUI 12.5 / Android 11 device used to write this chapter. MIUI gates USB
 > installation behind a developer-options toggle tied to a vendor account. Use an
@@ -119,7 +119,7 @@ Which, and how many URIs does it actually accept?
 
 ## Flag A — the cross product
 
-**Difficulty:** ★★☆☆☆
+**Difficulty:** 2/5
 
 > *The developer wrote down two addresses. The courier accepts four.*
 
@@ -140,7 +140,7 @@ printed as two **flat lists**, not as a list of pairs. That is the platform's ow
 data structure telling you the answer, and getting the flag this way is worth the
 first bonus.
 
-**A2.** Two of the four are obviously intended. Two are not. Confirm all four
+**A2.** Two of the four are meant to work. Two are not. Confirm all four
 resolve:
 
 ```bash
@@ -176,7 +176,7 @@ sentence?
 
 ## Flag B — the courier carries your parcel
 
-**Difficulty:** ★★★☆☆
+**Difficulty:** 3/5
 
 > *You are refused at the door. So you post the parcel to somebody who is not.*
 
@@ -239,7 +239,7 @@ with no component.)
 
 ## Flag C — the blank cheque
 
-**Difficulty:** ★★★★☆
+**Difficulty:** 4/5
 
 > *The courier hands you a signed form with the destination left empty.*
 
@@ -330,7 +330,7 @@ rebuild if you *remove* the `FLAG_MUTABLE` it passes? Quote the exception.
 
 ## Flag D — the door with no handle
 
-**Difficulty:** ★★★☆☆
+**Difficulty:** 3/5
 
 > *There is a door in the plans. It has no handle on the outside. It is still a door.*
 

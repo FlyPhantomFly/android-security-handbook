@@ -217,7 +217,7 @@ logs
 
 ---
 
-## Part 4 — `singleTask`, and the claim that is simply wrong
+## Part 4 — `singleTask`, and the claim that is wrong
 
 ```bash
 # host
@@ -265,7 +265,7 @@ logs
 > **Question 16.** `AlphaActivity` was started *while Delta was on screen*. Which task did it land in?
 > What does that tell you about a `singleInstance` task's willingness to accept other Activities?
 >
-> **Question 17.** Note that Delta's task and Main's task have the **same** affinity string. Explain
+> **Question 17.** Delta's task and Main's task have the **same** affinity string. Explain
 > why they are nevertheless two different tasks.
 
 ---

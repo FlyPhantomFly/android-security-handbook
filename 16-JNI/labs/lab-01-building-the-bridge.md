@@ -299,7 +299,7 @@ apktool d -f -o out app-debug.apk >/dev/null
 grep -rn "\.method.*native" out/smali/com/example/jnidemo/HelloJni.smali
 ```
 
-Note that each native method has **no body and no `.locals`** — there is no bytecode for it. In the
+each native method has **no body and no `.locals`** — there is no bytecode for it. In the
 DEX these carry `ACC_NATIVE` (`0x0100`) with `code_off = 0`
 ([12 DEX Internals](../../12-DEX-Internals/README.md) §3.13).
 
@@ -311,7 +311,7 @@ This is the technique to remember from this lab.
 
 ### 5.1 Break the binding
 
-Take a copy of your library and remove one symbol, or simply rename the C function and rebuild:
+Take a copy of your library and remove one symbol, or rename the C function and rebuild:
 
 ```c
 /* change */  Java_com_example_jnidemo_HelloJni_greeting

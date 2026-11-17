@@ -124,7 +124,7 @@ adb shell "am start -n com.pentest.attacker/.ExploitActivity"
 Then press the button on screen for lab 01's redirection run, or **long-press** it
 for lab 04's `PendingIntent` run.
 
-> **⚠️ Measured environment limitation**
+> **Measured environment limitation**
 > The device used to write this chapter (Redmi, MIUI 12.5, Android 11 / API 30)
 > **refuses `adb install`**:
 >

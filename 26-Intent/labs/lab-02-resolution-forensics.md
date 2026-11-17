@@ -27,7 +27,7 @@ deep links, scheme hijacking, chooser interception and half of the redirection
 findings you will ever write. People who guess at it produce reports that get
 rejected; people who can derive it produce reports that get paid.
 
-> **🔍 Why "predict, then measure" and not just "measure"**
+> **Why "predict, then measure" and not just "measure"**
 > Measuring teaches you what this device does. Predicting first teaches you the
 > *algorithm*, and the algorithm is what transfers to the next device, the next
 > Android version, and the app whose filters you can only read in a manifest
@@ -75,7 +75,7 @@ adb shell getprop ro.build.version.release
 Record the API level. Two things in this lab depend on it: package-visibility
 filtering (API 30+) and the App Links command set (lab 03's subject).
 
-> **⚠️ Quote for TWO shells, every single time**
+> **Quote for TWO shells, every single time**
 > `adb shell "…"` hands the whole string to the **device's** `sh`, which re-parses
 > it. `*`, `;`, `?`, `&`, `|` and `$` are metacharacters *there*. Wrap the entire
 > device command in one set of quotes on the host, and use a second, inner set for
@@ -502,7 +502,7 @@ what a developer can dispute.)
 - [ ] The `*/*`-declaring components on your device enumerated
 - [ ] A multi-scheme, multi-type filter found, its cross product computed by hand
       and confirmed by `intent-surface-map.py`
-- [ ] One cross-product combination the developer clearly did not intend, tested
+- [ ] One cross-product combination the developer never intended, tested
       and matched
 - [ ] Both quoting failures reproduced deliberately, with the difference between
       the real and apparent cause written down

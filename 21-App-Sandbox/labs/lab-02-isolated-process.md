@@ -28,7 +28,7 @@ offers to an app developer, and when you find it in a target you should recognis
 platform relies on it for its own highest-risk code: WebView renderer processes, and — in spirit, via
 `minijail` — the media extraction and software-codec stack.
 
-> **📖 Definition — `android:isolatedProcess`**
+> **Definition — `android:isolatedProcess`**
 > A `<service>` attribute. When `true`, the platform runs that service in a process assigned a
 > **throwaway UID** in the 99000–99999 range (or 90000–98999 when an App Zygote is used), in the
 > SELinux domain `isolated_app`, with **every permission check denied**, no network access, no data
@@ -36,7 +36,7 @@ platform relies on it for its own highest-risk code: WebView renderer processes,
 > interface is the Binder connection established by `bindService()` plus whatever file descriptors the
 > host explicitly passes across it.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > `android:process` is a *memory and lifecycle* tool: it buys you a crash boundary and the ability to
 > free memory by killing a process. It buys you no isolation, because the new process has the same
 > UID and can open every file the main process can. `android:isolatedProcess` is a *security* tool. The
@@ -227,7 +227,7 @@ The manifest is where the entire experiment lives:
     android:exported="false" />
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > An isolated service **must** be `android:exported="false"` unless you have a very specific reason
 > otherwise, and it must not be given an `intent-filter`. An exported isolated service is bindable by
 > any app on the device — the isolation protects *you* from the code inside it, not the other way

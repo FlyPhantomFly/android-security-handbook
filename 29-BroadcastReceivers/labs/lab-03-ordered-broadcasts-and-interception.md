@@ -118,7 +118,7 @@ Two consequences you have to internalise:
 - Conversely, a bug you can only reproduce with `am broadcast` may be unreachable to the
   attacker you are modelling. **Reproduce from an app.**
 
-> **✅ Checkpoint 1.**
+> **Checkpoint 1.**
 > You can state, with the `dumpsys` line as evidence, that `am broadcast` sends an ordered
 > broadcast, and name two consequences for your testing.
 
@@ -195,7 +195,7 @@ On a healthy device this is usually empty or shows system chains. **`resultAbort
 app's own ordered broadcast is interception**, and it is one of the few places the platform
 records the fact.
 
-> **✅ Checkpoint 2.**
+> **Checkpoint 2.**
 > You have your device's queue timeouts, you can name the three consequences, and you have
 > listed the ordered broadcasts currently flowing.
 
@@ -228,7 +228,7 @@ Reference:
     priority : 999   <-- ordered broadcasts reach this filter EARLY; it can abortBroadcast()
 ```
 
-> **⚠️ Note**
+> **Note**
 > The manifest also declares `UpdateInterceptor` at `android:priority="2147483647"` for the
 > same action. That one **is** visible statically. The runtime one at 999 is not. Both are
 > the same primitive; only one is auditable from an APK.
@@ -278,7 +278,7 @@ Restart the attacker without the `abortBroadcast()` call and fire again. The vic
 callback and no indication.** That is the property that makes this dangerous: an app whose
 security agent depends on an ordered broadcast can be neutralised, and it will not know.
 
-> **✅ Checkpoint 3.**
+> **Checkpoint 3.**
 > You have suppressed another app's receiver, and you can show both the presence and the
 > absence of its log line under otherwise identical conditions.
 
@@ -324,7 +324,7 @@ it can un-claim messages so that two handlers both act.
 That is not a hypothetical anti-pattern; it is the shape of every ordered-broadcast-based
 dispatch system, including the historical SMS handling the platform itself used.
 
-> **✅ Checkpoint 4.**
+> **Checkpoint 4.**
 > You changed what a downstream receiver in another app observed, without preventing it
 > from running.
 
@@ -403,7 +403,7 @@ The result **code** comes back on stdout. The result **data** does not — `am` 
 it. So a shell test tells you the channel is live but not what is on it, which is exactly
 why "I saw `result=1`" is not a finding and the app-side harvest is.
 
-> **✅ Checkpoint 5.**
+> **Checkpoint 5.**
 > You have another app's secret in your process, obtained through the ordered-broadcast
 > result channel.
 
@@ -500,7 +500,7 @@ Do not use an ordered broadcast. Almost nothing needs one.
 
 Read the bottom two rows together: the only complete answers are structural.
 
-> **✅ Checkpoint 6.**
+> **Checkpoint 6.**
 > You have tested both defences, shown what each does and does not cover, and demonstrated
 > that a `normal`-level permission is not a defence at all.
 

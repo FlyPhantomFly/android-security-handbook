@@ -41,11 +41,12 @@ Flag format: CH30{...}
 4. The victim app is not to be attacked through any bug that is not in this chapter — no memory
    corruption, no `run-as`, no pulling `/data`.
 
-> **⚠️ Authorised testing only.** Device you own. Uninstall both apps afterwards.
+> Device you own. Uninstall both apps afterwards. See [SECURITY.md](../../SECURITY.md) for the
+> handling rules.
 
 ---
 
-## ⚠ Precondition: the device must be UNLOCKED
+## Precondition: the device must be UNLOCKED
 
 Unlock the device by hand and keep it unlocked. Do not disable the lock screen.
 
@@ -107,7 +108,7 @@ cat examples/victim-app/AndroidManifest.xml
 **Questions to answer before you touch anything:**
 
 - Which Activities are exported and which are not?
-- Which one is obviously the target, and which one is obviously the way in?
+- Which one is the target, and which one is the way in?
 - One Activity has a `launchMode` that is not `standard`. Which, and what does that buy an attacker?
 - One provider exists. Is it exported? Does it grant URI permissions?
 

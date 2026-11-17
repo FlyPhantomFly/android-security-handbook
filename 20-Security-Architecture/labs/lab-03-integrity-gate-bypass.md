@@ -48,7 +48,7 @@ state and the patch level actually assert, where those assertions physically liv
 reads them, and why an application evaluating them *by itself* is a structurally unsound design no
 matter how many of them it reads.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Root detection asks "are there traces of tampering on this device?" — a question about artefacts.
 > This lab asks "can this process trust its own answer to any question about its environment?" — a
 > question about trust boundaries. The first has better and worse implementations. The second has the
@@ -242,7 +242,7 @@ adb install -r app/build/outputs/apk/debug/app-debug.apk
 adb shell am start -n com.archlab.gate/.MainActivity
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > `adb install` leaves the installer package name empty, so the gate's install-source signal will
 > mismatch on *any* device, including a stock one. To see the `TRUSTED` path on your clean device,
 > install with `adb install -i com.android.vending -r app-debug.apk`. Note what you just did: you set
@@ -303,7 +303,7 @@ you should be able to say why.
 `Build.TAGS` is a `public static final String` — explain why hooking a read of it is not
 straightforward, and what you would do instead if you needed to know whether the app read it.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The reason the chapter tells you to run this before anything else is not thoroughness, it is
 > *writability*. Every line in `obs.log` is a sentence you can put in a report: "the application reads
 > `ro.boot.verifiedbootstate` from `com.archlab.gate.LocalIntegrityGate.evaluate`". A bypass you
@@ -488,7 +488,7 @@ attacker controls?
 
 ```javascript
 // gate-d.js — frida -U -f com.archlab.gate -l gate-d.js --no-pause
-// There is no bypass here. There is no hook here. We simply ask for the thing.
+// There is no bypass here. There is no hook here. We ask for the thing.
 'use strict';
 
 Java.perform(function () {
@@ -638,10 +638,10 @@ control usually spans several mechanisms.
 `resetprop` is a Magisk utility, so it exists only on Magisk-rooted devices, and it must be run in a
 root shell (`adb shell "su -c 'resetprop ...'"` — note the outer quotes — or from `adb shell` after
 `su`). On an AVD with a
-writable system but no Magisk you have no equivalent, and altitude A is simply unavailable — which is
+writable system but no Magisk you have no equivalent, and altitude A is unavailable — which is
 itself worth noting in your comparison table under "prerequisites".
 
-Also note that `ro.` properties are read-only *by convention enforced in `property_service`*, not by
+`ro.` properties are read-only *by convention enforced in `property_service`*, not by
 hardware. `resetprop` writes the property area directly. Chapter §4.5 explains why that is possible.
 </details>
 
@@ -1002,7 +1002,7 @@ it Critical when the blast radius is the attacker's own device spends credibilit
 finding that really is critical, and the first developer who points out that "useless" is false will
 be right, in front of everyone, and the rest of your report will be read more sceptically.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The single sentence that makes this finding land is the one about the asset shipping in the APK. It
 > converts the conversation from "how good are our checks" — which is unbounded, and which the
 > developer will always want to continue — into "why is the secret on the attacker's disk", which has
@@ -1055,7 +1055,7 @@ python3 /path/to/20-Security-Architecture/scripts/verify-integrity-token.py self
 Read the bottom three rows against the top four. Everything a developer instinctively reaches for is
 in the top half of that table.
 
-> **⚠️ Warning**
+> **Warning**
 > Do not write "Play Integrity cannot be bypassed" in the remediation. Chapter §3.6's warning is
 > explicit: hardware attestation spoofing and leaked keyboxes have produced `MEETS_DEVICE_INTEGRITY`
 > on modified devices. The defensible claim is about *where verification happens*, not about

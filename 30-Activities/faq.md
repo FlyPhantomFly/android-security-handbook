@@ -12,7 +12,7 @@ time; the Recents screen is a picture of them.
 
 The sentence that matters more is the second one: **a task is not an app.** Screens from two
 different apps can sit in the same task, and pressing Back will walk you from one app's screen to the
-other's with no visual seam. That is not a bug — it is what makes a share sheet feel seamless — and it
+other's with no visual seam. That is not a bug — it is what makes a share sheet feel smooth — and it
 is the root of half of this chapter. See [README §2.1](README.md).
 
 ---
@@ -263,7 +263,7 @@ For the analysis, no: `dumpsys activity activities`, `dumpsys window windows`, `
 
 For the labs, you need to **install two apps**, and that is where devices vary. The device used for
 this chapter refuses `adb install` with `INSTALL_FAILED_USER_RESTRICTED` — an OEM "Install via USB"
-gate, not a fault in the APK, and the message ("Install canceled by user") is simply untrue. On that
+gate, not a fault in the APK, and the message ("Install canceled by user") is untrue. On that
 device the labs were run by installing through root:
 
 ```bash

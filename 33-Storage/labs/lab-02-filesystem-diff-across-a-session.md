@@ -35,7 +35,7 @@ coverage is stated rather than assumed. And because the exercise is scripted, a 
 themselves and get the same list — which is what makes a finding survive the meeting where it is
 disputed.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > A snapshot is a photograph of a hard drive; a diff is what changed between two photographs. That
 > analogy also tells you the method's limit, immediately and without any Android knowledge: anything
 > that happened *between* the two photographs and was cleaned up before the second one is not in
@@ -76,7 +76,7 @@ package:com.pentest.ch33.vault
 package:com.pentest.ch33.vaultfixed
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > `examples/leaky-vault` is deliberately vulnerable and writes a plaintext token to several places,
 > including one file in the shared Downloads collection that **survives its own uninstall**. Install
 > it on a device you own, and finish with `./examples/build.sh --uninstall`, which removes that file
@@ -135,7 +135,7 @@ accumulated during install, during your last test run, and during whatever the a
 background — and every one of those files becomes a permanent unexplained resident of your baseline
 that you will spend the rest of the session mentally subtracting.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > On a real engagement you frequently **cannot** `pm clear`, because the app's state is the
 > engagement — a logged-in session you cannot easily recreate, or data belonging to a test account
 > the client set up once. In that case take the baseline anyway and accept a noisier diff, and say
@@ -192,7 +192,7 @@ A lab whose "exercise the app" step reads *tap around for a bit* cannot produce 
 reproduce, including you tomorrow. Every step here is one `am start`, so the sequence is identical
 on every run, and a developer disputing your finding can run the same five lines.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > `am start` sets `FLAG_ACTIVITY_NEW_TASK`. With the default `standard` launch mode, a second
 > `am start` for an activity that is already top of its task does **not** deliver a new Intent — the
 > system brings the existing task forward and `onNewIntent` is never called. `adb` prints
@@ -295,7 +295,7 @@ read permission — unlike `Android/data`.
 
 The `CONTENT` change on `primary.prof` is the ART profile:
 
-> **📖 Definition — ART profile**
+> **Definition — ART profile**
 > A file the Android Runtime writes under `/data/misc/profiles/cur/<user>/<pkg>/`, recording which
 > methods of the app were executed, so that the profile-guided compiler can optimise the hot ones
 > later. It is not app data and the app cannot control it. It went from **0 to 84 bytes** across this
@@ -376,7 +376,7 @@ amount of improving the tool changes it. The script says so in its own docstring
 > *Anything about a file that was created and deleted between the two snapshots. A temp file that
 > lives for 40 ms during a login is invisible to this method by construction.*
 
-> **⚠️ Warning**
+> **Warning**
 > Read the error path in `Vault.store()` before you decide LEAK-1 is minor. The `delete()` sits at
 > the end of the `try` block, so it does **not** run when `seal()` throws — and `seal()` throws on
 > any keystore error, which is precisely the situation in which a device is most likely to be
@@ -433,7 +433,7 @@ Add `--content` in `CONFIG` at the top of the script if you want the bytes previ
 `<<< OUTSIDE` marker the tracer appends to any path that has left the app's uid-protected
 directories — that marker fires on `export.json` and on anything written to a shared collection.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > The two tools answer different questions and neither replaces the other. `storage-diff.py` tells
 > you **what state persists**, which is what a forensic acquisition of the handset would find.
 > `storage-trace.js` tells you **what happened**, which is what an attacker with code execution in

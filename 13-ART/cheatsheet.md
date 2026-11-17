@@ -203,7 +203,7 @@ void*                 entry_point_from_quick_compiled_code_;  // *** THE HOOK TA
 | `dalvik.vm.usejitprofiles` | Profile recording |
 
 JIT code cache = anonymous `r-xp`, often `[anon:jit-code-cache]` in `/proc/<pid>/maps`.
-⚠️ Legitimate executable anonymous memory → naive anti-Frida checks false-positive here.
+Legitimate executable anonymous memory → naive anti-Frida checks false-positive here.
 
 ---
 
@@ -248,7 +248,7 @@ Maximally observable device: `dalvik.vm.usejit false` + `cmd package compile -m 
 | `NonMovingSpace` | No | Classes, internal structures |
 | `ZygoteSpace` | No | Inherited COW from Zygote |
 
-⚠️ Objects move → raw addresses invalid across GC → Frida uses handles.
+Objects move → raw addresses invalid across GC → Frida uses handles.
 
 ---
 
@@ -276,7 +276,7 @@ dumpsys package com.google.android.art | grep versionName
 getprop ro.build.version.security_patch
 ```
 
-⚠️ Two devices, same Android version, **different ART internals**. Never hard-code `ArtMethod` offsets.
+Two devices, same Android version, **different ART internals**. Never hard-code `ArtMethod` offsets.
 
 `odrefresh` regenerates the boot image after a module update → `odsign` signs it → all app OAT files
 invalidated → background dexopt recompiles over the following hours.
@@ -332,7 +332,7 @@ Use this when installed bytecode may differ from the APK (in-place patch, packer
 | `iget-object`/`iput-object` | `-object-quick` |
 | `invoke-virtual` | `invoke-virtual-quick` |
 
-⚠️ Not valid standalone DEX → `baksmali` fails → needs unquickening (`vdexExtractor`).
+Not valid standalone DEX → `baksmali` fails → needs unquickening (`vdexExtractor`).
 Gone from A11+ (nterp).
 
 ---

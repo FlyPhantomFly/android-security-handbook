@@ -6,7 +6,7 @@
 [§7.1–7.3](../README.md#71-enumerating-providers-on-a-device), a device or emulator, `adb`, Android
 Studio (or `gradle`) to build a tiny app. Root is **not** required.
 
-> **⚠️ Warning — read this before you start**
+> **Warning — read this before you start**
 > The *ideas* in this lab are beginner-level: query a provider, then prove an ordinary app can do the
 > same. The **Setup is not**. It asks you to create **two Android Studio projects from scratch**, add
 > a class to each, edit two manifests, and build and install both. If you have never built an Android
@@ -42,7 +42,7 @@ teaches the same discipline across all four component types; here you apply it t
 second twist appears: `query()` and `openFile()` take different permission paths and must both be
 tested.
 
-> **📖 Definition**
+> **Definition**
 > A **provider is "reachable"** by a principal if that principal's process can obtain the provider and
 > perform an operation on it. Reachability depends on the caller's UID and permissions, *not* on
 > whether some other, more-privileged principal (like the shell) can reach it.
@@ -77,7 +77,7 @@ adb install -r app/build/outputs/apk/debug/app-debug.apk
 adb shell content query --uri content://com.example.vuln.notes.provider/notes
 ```
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > That last command did more than read. Resolving the authority forced Android to fork the target's
 > process, run its `Application` constructor, call `installContentProviders()` (which ran
 > `ContentProvider.onCreate()` and seeded the database), and only then serve the query. An app with no

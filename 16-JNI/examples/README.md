@@ -2,7 +2,7 @@
 
 The five graded examples from [§9 of the chapter](../README.md#9-examples), shipped as sources.
 
-> **✅ Every C and C++ file here has now been compiled.** All six build **clean** with
+> **Every C and C++ file here has now been compiled.** All six build **clean** with
 > `-Wall -Wextra` using `aarch64-linux-android21-clang` and `aarch64-linux-android21-clang++` from
 > **NDK 25.2.9519653**, targeting `arm64-v8a` at API 21. Run [`build.sh`](build.sh) to reproduce
 > that in one command; it builds out of tree and then measures the three claims this page makes
@@ -299,7 +299,7 @@ Same source file, five optimisation levels, one `grep` — measured, not argued:
 | `-Os` | *(nothing — obfuscation holds)* |
 | `-Oz` | *(nothing — obfuscation holds)* |
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > At `-O2`, clang can see that `kClassEnc` is a compile-time constant array, that `XK` is a
 > compile-time constant, and that `unxor()` is a small loop with no side effects. So it evaluates the
 > loop **at compile time** and emits the answer directly. The de-obfuscation code that appears in

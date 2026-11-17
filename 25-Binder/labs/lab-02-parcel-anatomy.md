@@ -105,7 +105,7 @@ FIELDS (explicit layout)
   [0x0000] String16   'android.app.IActivityManager'
 ```
 
-> **📖 The `String16` wire format, which you now know**
+> **The `String16` wire format, which you now know**
 > `int32` **character** count → that many UTF-16LE code units → a UTF-16 NUL → zero padding to the
 > next 4-byte boundary.
 
@@ -265,7 +265,7 @@ stack-trace header size = 996
                           + 4  (the String16 length field)
                           + 493 * 2  (the UTF-16 payload)
                           + 2  (the UTF-16 NUL)
-                          = 4 + 4 + 986 + 2 = 996        ✓
+                          = 4 + 4 + 986 + 2 = 996        OK
 ```
 
 If that had not closed, your layout would have been wrong and the "stack trace" would have been

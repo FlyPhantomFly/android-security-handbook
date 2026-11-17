@@ -31,7 +31,7 @@ in-memory DEX sweep in [40-Obfuscation](../../40-Obfuscation/README.md) enumerat
 If you cannot read it unaided you will be permanently dependent on tools agreeing with each other,
 and you will have no way to tell which one is wrong when they do not.
 
-> **⚠️ Warning — an important limitation you will hit in Part 1**
+> **Warning — an important limitation you will hit in Part 1**
 > On a stock Android 13 device, an ordinary `adb shell` **cannot** read another app's maps:
 >
 > ```
@@ -80,7 +80,7 @@ Write out what each of the six fields is, then check yourself against the table.
 printf '%d\n' $((0x7bd3ebb000 - 0x7bd3e7e000))
 ```
 
-> **📖 Definition — page**
+> **Definition — page**
 > The smallest unit of memory the hardware can protect or map independently. On almost every
 > Android device it is 4096 bytes; since Android 15 some devices use 16384. Every address in the
 > maps file is a multiple of the page size, because the kernel cannot describe anything finer.
@@ -102,8 +102,8 @@ Expect no output. Every start address ends in three hex zeros, which is `& 0xfff
 <details><summary>Answer</summary>
 
 16384 is `0x4000`. An address that is a multiple of `0x4000` still ends in three hex zeros, but the
-fourth-from-last digit must be `0`, `4`, `8` or `c`. So "three zeros" passes on both, and is simply
-a weaker test on a 16 KiB device. The robust check is `addr % pagesize == 0` with the page size read
+fourth-from-last digit must be `0`, `4`, `8` or `c`. So "three zeros" passes on both, and is
+a weaker test on a 16 KiB device. The reliable check is `addr % pagesize == 0` with the page size read
 from `getconf PAGESIZE`. `maps-analyse.py` infers it from the greatest common divisor of every
 boundary, which gets it right on both without being told.
 
@@ -150,7 +150,7 @@ Three things follow, and each answers a question people ask repeatedly.
 3. **The load base is the first line's start.** `0x7bd3e7e000`, the lowest mapping whose file
    offset is `00000000`.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > A shared library on disk is one file. In memory it is a small terrace of mappings that share a
 > wall, cut where the permissions need to change. "Why does maps list libc three times?" has the
 > same answer as "why does a house have more than one room".
@@ -207,7 +207,7 @@ adb push /tmp/ch19/. /data/local/tmp/ch19/
 adb shell chmod 755 /data/local/tmp/ch19/heap-bugs /data/local/tmp/ch19/mem-landmarks
 ```
 
-> **⚠️ Warning — two things that will waste your time**
+> **Warning — two things that will waste your time**
 > **Git Bash mangles absolute paths in `adb push`.** `adb push x /data/local/tmp/` becomes
 > `C:/Program Files/Git/data/local/tmp/` and fails with `secure_mkdirs failed`. Prefix the command
 > with `MSYS_NO_PATHCONV=1`, or use PowerShell or `cmd`.
@@ -248,7 +248,7 @@ Three things to notice, and all three matter later.
 3. **`stack=7fe7abb000` is nowhere near the others.** Stack, heap and libraries are randomised
    independently.
 
-> **🔬 Under the Hood — the `0xb4`**
+> **Under the Hood — the `0xb4`**
 > Since Android 11, 64-bit processes get a tag in the top byte of every heap pointer, on hardware
 > and kernels that support Arm's Top-Byte-Ignore. The constant is `POINTER_TAG` in
 > `bionic/libc/bionic/malloc_tagged_pointers.h`, and its value is `0xB4`. The hardware ignores the
@@ -443,7 +443,7 @@ rpc.exports.where('0x7311223344')
 rpc.exports.context('0x7311223344', 128)
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `utf16()` exists because the ASCII search misses Java `String`s outright — every character has a
 > zero byte after it. Since Android 6 ART also compresses Latin-1 strings to one byte per character,
 > so sometimes the ASCII search *does* hit. Try both, always. "We could not find the token in

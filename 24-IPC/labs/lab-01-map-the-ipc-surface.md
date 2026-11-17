@@ -387,7 +387,7 @@ exported** when `targetSdk` ≤ 30. From 31 the attribute is mandatory and the a
 without it, so the ambiguity only exists for older targets. `ContentProvider`s are the special case:
 they defaulted to exported even without a filter below `targetSdk` 17. The working list is exported
 components whose guard is absent, `normal` or `dangerous` — because any app can hold a `normal`
-permission silently and can simply ask the user for a `dangerous` one.
+permission silently and can ask the user for a `dangerous` one.
 
 **Q5.** They should agree, and `dumpsys` — the platform's own view — is authoritative because it is
 what `PackageManager` actually enforces. A disagreement between `apktool`, `aapt2` and `dumpsys` is

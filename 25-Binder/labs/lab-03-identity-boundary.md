@@ -128,7 +128,7 @@ Run 2 printed, before sending:
           binder_transaction_data before calling ioctl().
 ```
 
-so we know the field really was set. It simply never arrived.
+so we know the field really was set. It never arrived.
 
 ## Task A4 — Explain it
 
@@ -502,7 +502,7 @@ Now run each exploit from Part C and watch.
 **Exercise.** Run the *fixed* service under the same tracer. Which alarms stop? Which, if any,
 remain, and is each remaining one a true positive?
 
-> **⚠️ Expect false positives, and understand why**
+> **Expect false positives, and understand why**
 > `[ALARM 1]` fires on any `getCallingUid()` after a clear — including the very common and entirely
 > correct case of reading it for a *log line*. A tool that could tell those apart would have to
 > understand what the value is used for. Yours does not, and neither does any other. Every

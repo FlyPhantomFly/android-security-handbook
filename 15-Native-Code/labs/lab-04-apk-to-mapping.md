@@ -315,7 +315,7 @@ run-as com.example.app cat /proc/self/maps | grep '\.so' | head -20
 adb shell 'su -c "grep libnative /proc/$(pidof com.example.app)/maps"'
 ```
 
-> **⚠️ The quoting trap.** `adb shell` does not preserve quoting from the host shell. Writing
+> **The quoting trap.** `adb shell` does not preserve quoting from the host shell. Writing
 > `adb shell su -c "grep x y"` reaches the device as `su -c grep x y`, and `su -c` runs only `grep`. <!-- lint:allow SU-DASH-C SU-DASH-C-BARE -- the broken form, quoted as the counter-example this warning teaches -->
 > Wrap the whole device-side command in single quotes as above.
 

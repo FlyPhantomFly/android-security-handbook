@@ -17,11 +17,11 @@ judging the severity of a redirection honestly, including one you correctly rule
 
 ## Why this matters
 
-> **📖 Definition**
+> **Definition**
 > **Confused deputy.** A program that holds authority is tricked by a less-privileged party into
 > misusing that authority on the less-privileged party's behalf. Norm Hardy's 1988 example was a
 > compiler that could write to a billing file and accepted an output filename from its caller. A user
-> who could not write the billing file simply asked the compiler to write its output there. The
+> who could not write the billing file asked the compiler to write its output there. The
 > compiler was not malicious and was not compromised. It was **confused about whose authority it was
 > exercising**.
 
@@ -304,7 +304,7 @@ outer.putExtra("next_intent", inner);
 startActivity(outer);
 ```
 
-`GrantSink` then simply queries the URI it was handed. Watch:
+`GrantSink` then queries the URI it was handed. Watch:
 
 ```bash
 # host
@@ -482,7 +482,7 @@ declaring a behaviour universal, and state the API level every result came from.
 
 **Q1–Q2.** Direct attempts fail: `am start` on the non-exported activity yields `Permission Denial:
 starting Intent … not exported from uid …`, and the provider query yields `SecurityException:
-Permission Denial: opening provider …`. Note that `adb shell` may be *allowed* things the app is
+Permission Denial: opening provider …`.`adb shell` may be *allowed* things the app is
 not — the shell is not an application. The probe app is authoritative for a finding, always.
 
 **Q3.**

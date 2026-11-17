@@ -47,7 +47,7 @@ Browse at `https://android.googlesource.com/kernel/common/` or, for the mainline
 | Path | Why you would open it |
 |---|---|
 | `frameworks/native/cmds/servicemanager/ServiceManager.cpp` | `addService`'s two gates — the `AID_APP` numeric refusal and the SELinux `service_manager:add` check — plus `getService`, `checkService`, `listServices` and `getServiceDebugInfo` |
-| `frameworks/native/cmds/servicemanager/Access.cpp` | `canAdd`, `canFind`, `canList`. Note that the caller's context comes from `IPCThreadState`, i.e. from the kernel, not from the parcel |
+| `frameworks/native/cmds/servicemanager/Access.cpp` | `canAdd`, `canFind`, `canList`.the caller's context comes from `IPCThreadState`, i.e. from the kernel, not from the parcel |
 | `frameworks/native/cmds/servicemanager/main.cpp` | Where `BINDER_SET_CONTEXT_MGR` is issued, making this process handle 0 |
 | `frameworks/native/libs/binder/aidl/android/os/IServiceManager.aidl` | Method order equals transaction code. `getService` is 1, `checkService` is 2, `addService` is 3, `listServices` is 4 |
 | `frameworks/native/cmds/service/service.cpp` | What `service list` and `service call` actually send. Crucially, it calls `data.writeInterfaceToken(service->getInterfaceDescriptor())` for you — see FAQ 13 — and its argument vocabulary (`i32`, `s16`, `afd`, …) is the whole of what the tool can express |

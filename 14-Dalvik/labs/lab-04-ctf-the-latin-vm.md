@@ -34,7 +34,7 @@ Step 1 is a Smali-reading exercise, and it is exactly what this chapter has been
 is also a nice closing joke: to solve this you have to learn a second dead instruction set by reading
 the Smali of a first one.
 
-> **🧠 Why this is called the Latin VM.** Chapter 14 opens with the observation that Dalvik is Latin —
+> **Why this is called the Latin VM.** Chapter 14 opens with the observation that Dalvik is Latin —
 > a dead language whose notation every practitioner still has to read. This challenge adds a second
 > dead language on top, invented by one developer, documented nowhere, and readable only from the code
 > that interprets it. That is the situation you are actually in when you meet a commercial packer.
@@ -80,7 +80,7 @@ package com.example.latin;
 
 /**
  * A tiny stack machine. The program it runs is in PROGRAM.
- * Nothing here is obfuscated; it is simply written for a machine you have
+ * Nothing here is obfuscated; it is written for a machine you have
  * never seen. That is the whole difficulty.
  */
 public final class Latin {

@@ -66,7 +66,7 @@ one of them can be got wrong, and this chapter is about how, and about how you f
 
 ### 1.2 What breaks without each of them
 
-> **📖 Definition — virtual memory**
+> **Definition — virtual memory**
 > Every process is given its own private map of addresses. When your code uses address
 > `0x7bd3e7e000`, the hardware translates that to some physical location using a table the kernel
 > maintains for your process alone. Another process using the same number gets somewhere completely
@@ -282,7 +282,7 @@ to give it up.
 
 **What it costs.** ASLR randomises at `exec`. Apps do not `exec`. Therefore:
 
-> **⚠️ Warning — the Zygote ASLR consequence, stated plainly**
+> **Warning — the Zygote ASLR consequence, stated plainly**
 > For the portion of an app's address space inherited from the Zygote — `libart.so`, `libc.so`, the
 > boot image, the framework — there is effectively **one layout per boot**, shared by **every app on
 > the device**.
@@ -347,7 +347,7 @@ use-after-free do not.
 
 ### 3.1 Pages: the unit everything is measured in
 
-> **📖 Definition — page**
+> **Definition — page**
 > The smallest block of memory the hardware can map, protect or account for independently. On almost
 > every Android device it is 4096 bytes; since Android 15, AOSP supports devices configured for
 > 16384.
@@ -392,7 +392,7 @@ assumption cannot compile.
 | The build fix | `-Wl,-z,max-page-size=16384` and `-Wl,-z,common-page-size=16384` on NDK r27 and lower |
 | How to check a `.so` | `llvm-readelf -l lib.so` and confirm no `LOAD` alignment is below `2**14` |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > A hard-coded 4096 in native code that computes a page base for `mprotect` does not fail cleanly on
 > a 16 KiB device — it computes the wrong base and either fails the syscall or protects the wrong
 > memory. The symptoms look exactly like memory corruption. If you are triaging weird crashes on a
@@ -438,7 +438,7 @@ device shows `libcrypto.so` with segments `r--p r-xp --xp rw-p` — one of its c
 execute-only. `maps-analyse.py` reports it under the tag `XOM` and explicitly says it is a good
 thing, because the alternative is a reader panicking at an unfamiliar permission string.
 
-> **🔬 Under the Hood — enforced, not checked**
+> **Under the Hood — enforced, not checked**
 > When a page loses its write permission, nothing in your program starts checking anything. The
 > permission bit in the page table entry changes, and the MMU refuses the store in hardware. There
 > is no code path to bypass, no flag to flip in userspace, no function to hook. That is what makes
@@ -499,7 +499,7 @@ below was observed in real output, not recalled.
 | `[anon:.bss]` | zero-initialised data that outgrew its file-backed segment |
 | `[anon:cfi shadow]` | Control Flow Integrity's shadow table |
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Read the `[anon:]` names first and everything else second. They answer "which allocator", "is a
 > sanitiser running", "is this the Java heap or the native heap" and "is this a thread stack" in one
 > glance. `scripts/maps-analyse.py` does nothing cleverer than look them up in a table — the
@@ -566,7 +566,7 @@ $ adb shell cat /proc/sys/kernel/randomize_va_space
 cat: /proc/sys/kernel/randomize_va_space: Permission denied
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > This is why every maps-reading technique in this repository that targets a *real app* goes through
 > Frida rather than through `adb shell`. An agent injected into the app is running **as** the app, so
 > `/proc/self/maps` is its own file. `scripts/enumerate-ranges.js` exists for exactly this, and its
@@ -579,7 +579,7 @@ cat: /proc/sys/kernel/randomize_va_space: Permission denied
 
 ### 3.5 ASLR on Android: what is randomised, and what is not
 
-> **📖 Definition — ASLR**
+> **Definition — ASLR**
 > Address Space Layout Randomisation. The kernel places the stack, the heap, the loaded libraries
 > and (for a PIE binary) the executable itself at addresses chosen randomly at `exec` time, so that
 > an attacker cannot know in advance where anything is.
@@ -646,7 +646,7 @@ This is the section other chapters cite. It must be right, so every claim below 
 | 10 | jemalloc remains the default; **Scudo is introduced** and described in the platform security enhancements as "a dynamic user-mode memory allocator designed to be more resilient against heap-related vulnerabilities" | AOSP security enhancements |
 | **11 and later** | **Scudo**, for all native code — **except on low-memory devices, where jemalloc is still used** | AOSP: *"Since the Android 11 release, scudo is used for all native code (except on low-memory devices, where jemalloc is still used)."* |
 
-> **⚠️ Warning — do not state the boundary more simply than that**
+> **Warning — do not state the boundary more than that**
 > "Scudo since Android 11, jemalloc before" is the summary and it is what
 > [15-Native-Code](../15-Native-Code/README.md) says. The exception matters in practice: a low-RAM
 > device running Android 12 may still be on jemalloc, and jemalloc's layout, its bin structure and
@@ -686,7 +686,7 @@ Run `heap-bugs layout` on any Android 11+ 64-bit device and every heap pointer s
   small[0]  0xb400007cbeeee2e0  in 007cbeeee000-007cbef2e000 rw-p [anon:scudo:primary]
 ```
 
-> **📖 Definition — Top-Byte-Ignore (TBI)**
+> **Definition — Top-Byte-Ignore (TBI)**
 > An Arm AArch64 feature: the hardware ignores the top byte of a 64-bit address when dereferencing
 > it. A 64-bit pointer only needs 48 or 52 bits for a real address, so the top byte is free for
 > software to use as metadata.
@@ -744,7 +744,7 @@ The mask is one line, and every script in this chapter has it:
 uintptr_t untagged = (uintptr_t)p & (uintptr_t)0x00ffffffffffffffULL;
 ```
 
-> **⚠️ Warning — a real bug this caught**
+> **Warning — a real bug this caught**
 > Writing that mask as `0x00ffffffffffffffUL` compiles clean on arm64 and **silently truncates** on
 > armeabi-v7a, where `unsigned long` is 32 bits. Building `examples/heap-bugs.c` for both ABIs with
 > `-Wall -Wextra` is what surfaced it, along with a `volatile unsigned long` initialised from a
@@ -782,7 +782,7 @@ calls:
 ```
 
 Not monotonic. That is deliberate anti-grooming: an attacker who wants object B directly after
-object A cannot get it by simply allocating them in order.
+object A cannot get it by allocating them in order.
 
 **Every delta is a multiple of 48.** A 32-byte request occupies a 48-byte slot: 32 bytes of payload
 plus a 16-byte header. **48 is the stride for this size class**, and it is the number that decides
@@ -834,7 +834,7 @@ The full documented message set is: *corrupted chunk header*, *race on chunk hea
 state*, *misaligned pointer*, *allocation type mismatch*, *invalid sized delete*, *RSS limit
 exhausted*.
 
-> **🔬 Under the Hood — why overflows survive and double-frees do not**
+> **Under the Hood — why overflows survive and double-frees do not**
 > Scudo's header sits *before* the payload and is checksummed. Overflowing **forward** past your
 > block damages the *next* chunk's header, and that damage is only noticed when that chunk is freed
 > — which may be never. Freeing the same pointer twice, or freeing an interior pointer, makes Scudo
@@ -997,7 +997,7 @@ buffer whose contents the attacker cannot influence is a crash, not a hijack. A 
 reclaimed by a buffer the attacker fills with network bytes is a different thing entirely. The
 difference is often one function call away in the source and is invisible from the crash.
 
-> **🔍 Pentester's Note — the honest sentence**
+> **Pentester's Note — the honest sentence**
 > The finding you can defend reads like: *"Attacker-supplied frame content reaches a `memcpy` bounded
 > against the wrong size (confirmed from source). The overflow lands in the adjacent chunk of the
 > same size class, whose contents are also attacker-supplied (measured stride 48, confirmed by
@@ -1030,7 +1030,7 @@ time, and how much harder they make each step.
 | **Pointer tagging** | using a pointer whose tag no longer matches (deallocation check) | nothing, on its own — it is a correctness check, not a mitigation until MTE | top byte `0xb4` |
 | **MTE** | use-after-free and overflow, at the access | a 1-in-16 tag collision; and it needs the hardware | `SEGV_MTESERR` on a crash |
 
-> **🧠 Mental Model — mitigations are a toll, not a wall**
+> **Mental Model — mitigations are a toll, not a wall**
 > Each row above raises the cost of one *step* in a chain. None of them prevents the bug. A report
 > that says "the library has full RELRO so the overflow is not exploitable" is making an argument it
 > has not done the work for: RELRO protects the GOT, and the overflow may not need the GOT.
@@ -1059,7 +1059,7 @@ faults at the first out-of-bounds byte. A use-after-free is caught by unmapping 
 | Catches | use-after-free and heap-buffer-overflow |
 | Visible in maps as | `[anon:GWP-ASan …]` regions, with `---p` guards between them |
 
-> **⚠️ Warning — what sampling means for a tester**
+> **Warning — what sampling means for a tester**
 > At roughly 1%, a bug on a path you trigger once will almost certainly be missed. GWP-ASan is a
 > *fleet* tool: across a million installs, 1% finds what matters. For a two-week engagement it is
 > free and occasionally lucky, and **"we ran with GWP-ASan and found nothing" is not evidence of
@@ -1229,7 +1229,7 @@ APP_LDFLAGS := -fsanitize=memtag -fsanitize-memtag-mode=sync -march=armv8-a+memt
 
 and requires Android 14 QPR3 or later.
 
-> **⚠️ Warning — a verified toolchain limitation, not a guess**
+> **Warning — a verified toolchain limitation, not a guess**
 > On NDK r25c (clang 14.0.7), running the compiler produces:
 >
 > ```
@@ -1299,9 +1299,9 @@ export LIBC_DEBUG_MALLOC_OPTIONS=backtrace
 | `abort_on_error` | | abort on detection rather than logging |
 | `verbose` | | more logging |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `fill_on_free` is the option to reach for when chasing a use-after-free by hand: it turns the
-> residue in a freed block into a recognisable pattern, so a stale read produces obviously wrong
+> residue in a freed block into a recognisable pattern, so a stale read produces visibly wrong
 > data instead of plausibly correct data. Pair it with `free_track` and you get "this freed block was
 > written to after it was freed, and here is where it was allocated".
 
@@ -1344,7 +1344,7 @@ f.close();
 dd if=/proc/1234/mem bs=1 skip=$((0x7300000000)) count=$((0x40000)) of=/data/local/tmp/r.bin
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > Do not write "we dumped the heap and found the token" without saying **which** heap. A finding
 > that says "found in the Java heap dump" is checkable by the developer with Android Studio and has
 > an obvious remediation direction (stop holding it in a `String`). A finding that says "found in
@@ -1388,7 +1388,7 @@ exhausted. This is why you get a useful crash report from a stack overflow at al
 | `[anon:stack_and_tls:NNN]` | `pthread_create` via `mmap` | **no**, fixed at creation | yes, a `PROT_NONE` page below it |
 | `[anon:thread signal stack]` | `sigaltstack` | no | — |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Two practical consequences. First, `heap-bugs stack` demonstrates that a bounded 40-byte overflow
 > of a 16-byte array reached far enough to produce
 > `SIGBUS BUS_ADRALN, fault addr 0x42424242424242` — the fault address is made of the bytes the
@@ -1510,7 +1510,7 @@ and not `rw-p`.**
 7bd3f50000-7bd3f52000 rw-p 000d1000 fc:04 618   libc.so    <- step 6, segment 4
 ```
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > Two facts follow from step 5 that nothing else explains. First, the load base is the reservation's
 > base, which is the first segment's address — and that segment has file offset 0, which is why
 > "lowest mapping at file offset 0" is the correct definition and "lowest mapping" is not. Second,
@@ -1605,7 +1605,7 @@ to go and read the real ones.
 | Race-condition UAF | an object freed on one thread while another uses it | Lab 04 |
 | Binder and parcel handling | a size read from a `Parcel` and trusted | [24-IPC](../24-IPC/README.md), [25-Binder](../25-Binder/) |
 
-> **⚠️ Warning — do not invent identifiers**
+> **Warning — do not invent identifiers**
 > This repository's rule is absolute: never fabricate a CVE number. If you want a real example to
 > cite, open the Android Security Bulletin for a specific month and read the "Media framework" and
 > "System" tables; count how many entries are `EoP` or `RCE` with a use-after-free or out-of-bounds
@@ -1861,7 +1861,7 @@ In C++ this is `std::shared_ptr` and the whole discussion disappears, which is t
 for using it. In Rust it does not compile in the first place, which is the honest argument for the
 platform's direction of travel.
 
-> **⚠️ Warning — the fix that is not a fix**
+> **Warning — the fix that is not a fix**
 > "We added a null check before using `s->on_flush`" fixes nothing. The pointer is not null; it is
 > stale. A check for `NULL` passes and the call proceeds into freed memory. This is the single most
 > common wrong remediation for a use-after-free, and if a developer proposes it, the demonstration is
@@ -1912,13 +1912,13 @@ The chain, in order, with what confirms each link:
 **State which links you confirmed and which you did not.** A finding that says "links 1–5 confirmed,
 6 not attempted" is honest, checkable, and more persuasive than a confident "critical".
 
-> **🔍 Pentester's Note — the two failure modes**
+> **Pentester's Note — the two failure modes**
 > **Over-claiming** turns an unreachable `sprintf` into a critical, the client's developers check it,
 > find it unreachable, and discount everything else you wrote.
 >
 > **Under-claiming** is the quieter and more common failure: a genuine, reachable use-after-free
 > reported as "informational — we could not demonstrate exploitation". You do not need to
-> demonstrate exploitation. You need to demonstrate reachability, and say clearly that the last step
+> demonstrate exploitation. You need to demonstrate reachability, and say explicitly that the last step
 > was out of scope.
 
 ### 5.7 Writing the severity honestly
@@ -1950,7 +1950,7 @@ almost always omitted:
 | Black-box pentest of a release APK | **malloc_debug**, then GWP-ASan | the only options that work on a prebuilt binary |
 | A third-party `.so` you cannot rebuild | **malloc_debug** — and upgrading or removing the library | you cannot instrument what you cannot compile |
 
-> **⚠️ Warning**
+> **Warning**
 > In the black-box case, say in the report that your detection coverage was weak. "No memory-safety
 > findings" after a fortnight with malloc_debug and no source is a statement about your tooling, not
 > about the app.
@@ -1996,12 +1996,12 @@ static void scrub(void *p, size_t n)
 }
 ```
 
-> **⚠️ Warning — check the advice against your toolchain**
+> **Warning — check the advice against your toolchain**
 > Every guide says "use `explicit_bzero()`". Grepping the **NDK r25c** sysroot finds no
 > `explicit_bzero` and no `memset_s` at all, and a build that calls it fails with
 > `undefined symbol: explicit_bzero`. A plain `memset` before `free` is legal C that the optimiser
 > is *allowed to delete*, because the memory is dead. The `volatile` loop is the portable answer on
-> Android. Verify, do not assume — and note that this exact check is why the shipped example does
+> Android. Verify, do not assume — and confirm that this exact check is why the shipped example does
 > not use `explicit_bzero`.
 
 **Bounded string copy — and treat truncation as an error.**
@@ -2061,7 +2061,7 @@ The artefacts, in the order they usually arrive:
 4. **A Java heap dump**, if the crash was on the managed side or if secrets are the question.
 5. **`smaps`**, to know which regions had content worth dumping.
 
-> **🔍 Pentester's Note — the fault address is evidence**
+> **Pentester's Note — the fault address is evidence**
 > A cluster of crashes with the *same stack* but *different fault addresses* — `0x0`, `0x41`,
 > `0x4141414141414141` — is the signature of a use-after-free, because the value depends on whatever
 > reclaimed the memory. A null-pointer dereference crashes at `0x0` every time. That single
@@ -2129,7 +2129,7 @@ Native memory bugs are usually reached through JNI. In Smali the call site is un
 .end method
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The `native` keyword in Smali is where your static analysis of the Java side stops and the native
 > side begins. Every `native` method is a boundary at which Java's bounds checking is handed to code
 > that has none. [16-JNI](../16-JNI/README.md) covers `GetArrayLength`, and the failure mode is
@@ -2278,7 +2278,7 @@ rpc.exports.neighbours(64)   // the stride for one size class -- the number §3.
 rpc.exports.reuse()          // did freed blocks come back, and did the tag change?
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > An `Interceptor` callback on `malloc` runs thousands of times per second. `malloc-trace.js` records
 > into a fixed ring buffer, stays off until you call `start()`, and carries a re-entrancy guard —
 > because `console.log` itself allocates, and an unguarded hook on `malloc` recurses until the stack
@@ -2938,7 +2938,7 @@ Supporting material:
 - A process's memory is a list of **regions**, readable from `/proc/<pid>/maps`. Six fields per line,
   and the most informative is the `[anon:NAME]` label that userspace gives its own mappings.
 - **One library occupies four mappings**, because its segments need different permissions. The load
-  base is the lowest mapping **at file offset 0** — not simply the lowest.
+  base is the lowest mapping **at file offset 0** — not the lowest.
 - **Scudo is the default native allocator since Android 11**, for all native code *except on
   low-memory devices, where jemalloc is still used*. Measure it from the `[anon:]` names rather than
   inferring it from a version number.

@@ -91,7 +91,7 @@ Or as a one-liner:
 printf '%s' 'your answer here' | sha256sum
 ```
 
-> **⚠️ `echo` adds a newline** and will give you the wrong hash. Use `printf '%s'` or the Python
+> **`echo` adds a newline** and will give you the wrong hash. Use `printf '%s'` or the Python
 > form.
 
 ---
@@ -617,7 +617,7 @@ fold the whole thing into constants at compile time — which is exactly what it
 
 **Q3.1.** `0x4894` is a **non-exported helper**. The library is stripped, so it has no `.symtab`
 entry, and it is `static` in the source, so it was never in `.dynsym` either. `--list-symbols`
-reported `v_stage3` as 24 bytes because that is its `st_size`; the helper simply follows it in
+reported `v_stage3` as 24 bytes because that is its `st_size`; the helper follows it in
 `.text` with no symbol of its own. **A stripped library is full of these**, and this is why
 `find-check-shapes.py` — which walks symbols — cannot see them.
 
@@ -750,7 +750,7 @@ You have now read AArch64 with no symbols, no source, no decompiler and no devic
 not the ceiling — but it is the floor that everything else stands on.
 
 - [57-Ghidra](../../57-Ghidra/README.md) — the decompiler you are finally allowed to use. Re-do this
-  lab with it and time yourself. Then note which of the four flags it did *not* simply hand you.
+  lab with it and time yourself. Then note which of the four flags it did *not* hand you.
 - [53-Frida](../../53-Frida/README.md) — Stalker, which recompiles the instruction stream you have
   just spent four hours reading.
 - [16-JNI](../../16-JNI/README.md) — the bridge whose far side you can now read fluently.

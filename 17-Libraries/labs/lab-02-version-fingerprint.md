@@ -146,7 +146,7 @@ apksigner sign --ks debug.keystore app-release.apk
 apksigner verify app-release.apk
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The planted stamp is not artificial. Build pipelines copy `META-INF` forward, vendors ship AARs
 > containing stamps for the versions *they* built against, and repackagers edit whatever they like.
 > A stamp is a text file in a zip. Treat it as a claim, not as a fact.

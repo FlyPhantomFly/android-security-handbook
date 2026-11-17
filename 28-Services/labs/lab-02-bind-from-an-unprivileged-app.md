@@ -37,7 +37,7 @@ wrong report:
 | Holds shell-only permissions an app never has | Holds only what it declared |
 | `am start-service` is subject to background-start policy in a way an app in the foreground is not | Behaves like the attacker you are modelling |
 
-> **🧠 Mental Model**
+> **Mental Model**
 > The shell is a *privileged observer*. The app is the *actual attacker*. Any
 > claim about reachability that was measured from the shell is a claim about the
 > wrong principal.
@@ -65,7 +65,7 @@ javac -version
 adb devices
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > **Use build-tools 35.0.1 or newer.** 34.0.0's `d8` fails on the anonymous inner
 > class in `ProbeActivity.java` with
 > `NullPointerException: Cannot invoke "String.length()" because "<parameter1>" is null`,
@@ -167,7 +167,7 @@ sh build.sh install root
 adb -e install out/probe.apk
 ```
 
-> **⚠️ Warning — read this before quoting any result from this lab**
+> **Warning — read this before quoting any result from this lab**
 > If you use option 2, **root was used only to install.** The app then runs as an
 > ordinary unprivileged app with no root, no ADB in the attack path, and one
 > permission. That distinction is the difference between "an attacker app can do
@@ -500,7 +500,7 @@ grep -rn -A20 "ICore\$Stub" out/sources/ | grep -E "getCallingUid|checkSignature
 If that grep is empty for a method that does something interesting, you have a
 finding. If it is not empty, you have a control observed.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Stop when you have an answer, and be willing for the answer to be "nothing".
 > The chapter's own audit of the reference device stopped exactly here for the
 > three real system services it probed: reaching `com.miui.analytics.ICore` is

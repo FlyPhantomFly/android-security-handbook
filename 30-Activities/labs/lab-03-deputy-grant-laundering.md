@@ -59,8 +59,8 @@ The permission question is asked about the **caller** and the answer is given to
 deputy lets the attacker control the target while remaining the caller. See
 [README §5.3](../README.md) and [README §4.4](../README.md).
 
-> **⚠️ Authorised testing only.** Both apps are deliberately vulnerable. Device you own; uninstall
-> afterwards.
+> Both apps are deliberately vulnerable. Device you own; uninstall afterwards. See
+> [SECURITY.md](../../SECURITY.md) for the handling rules.
 
 ---
 

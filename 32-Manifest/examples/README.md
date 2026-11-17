@@ -52,7 +52,7 @@ manifests, and a real APK's manifest also references code you have not seen yet.
 
 ## Three things these files cannot teach you
 
-> **⚠️ Warning**
+> **Warning**
 > Everything in this directory is a *declaration*. A manifest audit bounds the **static** attack
 > surface and nothing more.
 
@@ -64,7 +64,7 @@ manifests, and a real APK's manifest also references code you have not seen yet.
 | Whether a `<meta-data>` value is a live credential | Use it, or say explicitly that you could not validate it |
 | **Whether an exported component is genuinely attacker-reachable** | [Lab 03](../labs/lab-03-proving-reachability.md) — an unprivileged probe app |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > That last row is the one that gets reports rejected. `adb shell` runs as UID 2000 and holds
 > privileges an ordinary application does not. Reaching a component from `adb shell` is an
 > observation. Reaching it from an app with no permissions is a finding. Keep the two claims separate

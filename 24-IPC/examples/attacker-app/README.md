@@ -15,14 +15,14 @@ Almost every rejected Android IPC finding is rejected for the same reason. The
 tester demonstrated something from `adb shell`, wrote it up as "reachable by a
 malicious app", and a developer replied — correctly — that it is not.
 
-> **📖 Definition**
+> **Definition**
 > **`adb shell`.** The interactive shell `adbd` gives you on the device. It runs
 > as the Linux user `shell`, **UID 2000**, in the SELinux domain `shell`. That
 > user is not an application. It holds capabilities and SELinux permissions that
 > no installed app has, including the ability to start some components,
 > read some providers, and traverse directories an app cannot.
 
-> **⚠️ Warning**
+> **Warning**
 > A component you launched with `am start` is **not** thereby proven reachable
 > by an attacker. `am` runs in your shell's context, with your shell's identity.
 > Reproducing the same operation from an ordinary app is a **different
@@ -35,7 +35,7 @@ SELinux domain, and declares exactly one permission — `INTERNET`, which is
 granted silently at install to every app on every Android version and is never
 shown to the user.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Think of the shell as a maintenance engineer with a master key, and this APK
 > as a member of the public. Both can walk up to the same door. Only one of them
 > tells you whether the door is locked.
@@ -90,7 +90,7 @@ Requirements: JDK 11 or 17, Gradle 7.5+ (or Android Studio), and an Android SDK
 with `compileSdk 33` installed. If Gradle cannot find the SDK, create
 `local.properties` here containing `sdk.dir=/absolute/path/to/Android/sdk`.
 
-> **⚠️ Warning**
+> **Warning**
 > `build.gradle` pins Android Gradle Plugin **7.4.2** on purpose. AGP 8.0 removed
 > the `package="…"` attribute in `AndroidManifest.xml` in favour of `namespace`
 > in `build.gradle`. If you prefer AGP 8: bump the classpath version, add
@@ -114,13 +114,13 @@ am start -n com.attacker.poc/.ProbeActivity --es target com.example.target
 **Second — and this is the one that catches everyone — the `<queries>` block in
 `AndroidManifest.xml`.**
 
-> **📖 Definition**
+> **Definition**
 > **Package visibility filtering.** From `targetSdk` 30 (Android 11), an app can
 > no longer see the full list of installed packages. It sees only: itself, a
 > small set of always-visible system packages, packages it interacts with
 > through certain APIs, and whatever it declares in a `<queries>` element.
 
-This is a privacy control, not a security boundary. A real attacker simply
+This is a privacy control, not a security boundary. A real attacker
 declares the target, or holds `QUERY_ALL_PACKAGES`. It never makes an exported
 component unreachable. But if *you* forget it, the platform hides the target
 from your probe and every symptom looks like absence:
@@ -132,7 +132,7 @@ from your probe and every symptom looks like absence:
 | `startActivity()` throws `ActivityNotFoundException` | "not reachable" | filtered |
 | `ContentResolver.query()` throws `IllegalArgumentException: Unknown URL` | "no such provider" | filtered |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Reporting "no exported components are reachable from a third-party app"
 > because your own manifest hid the target is a self-inflicted false negative,
 > and it is common. The probe checks this **first**, in section 0 of its output,
@@ -240,7 +240,7 @@ path did not match its `UriMatcher`, not because it refused you. Try more paths,
 and harvest the real ones from the decompiled provider's `UriMatcher.addURI()`
 calls — see [27-ContentProviders](../../../27-ContentProviders/README.md).
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > Why does a denial arrive as a `SecurityException` in *your* process for an
 > Activity, but as a `false` return value for `bindService`? Because the check
 > happens in `system_server`. `ActivityManagerService.checkComponentPermission`
@@ -264,7 +264,7 @@ calls — see [27-ContentProviders](../../../27-ContentProviders/README.md).
 | Localhost TCP | `INTERNET` | Any app holding a silently-granted `normal` permission can drive the local server. |
 | Confused deputy | none | The target will exercise its own authority on an attacker's instructions. |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The abstract-socket probe is the one people skip and the one that most often
 > pays. An abstract-namespace `AF_UNIX` socket — the `@name` form, created by
 > `LocalServerSocket("name")`, which is the SDK's *default* — has **no inode, no
@@ -300,7 +300,7 @@ Then, for every `REACHABLE` row, do the part no tool does for you: **walk the
 reach-through.** What can you make that component do that you could not do
 directly? A door is only as serious as the room behind it.
 
-> **⚠️ Warning**
+> **Warning**
 > Severity comes from what the door reaches, not from the fact that it opened.
 > An abstract socket that returns a version string is **Low**. An intent
 > redirection that reaches only components that were *already exported* is **not
@@ -338,7 +338,7 @@ Things worth adding for a specific engagement, in rough order of value:
    `Host` and `Origin` header handling, because a browser-reachable localhost
    service is exploitable by DNS rebinding with no malicious app at all.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Keep a generic build of this in your toolkit with the target package in a
 > `BuildConfig` field or, as here, in an Intent extra. Re-targeting should take
 > thirty seconds. Its real value is not the probing — it is that a client

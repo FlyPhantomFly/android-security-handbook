@@ -217,7 +217,7 @@ Answer each of these in writing:
 called on — and which is the argument? What is the Java source line this corresponds to, and is it
 `"1337".equals(pin)` or `pin.equals("1337")`?
 
-**Q3.** Why is `move-result v1` a separate instruction? Why is the return value not simply written
+**Q3.** Why is `move-result v1` a separate instruction? Why is the return value not written
 into a register by the invoke?
 
 **Q4.** What would happen if you inserted a `nop` between the `invoke-virtual` and the `move-result`?
@@ -360,7 +360,7 @@ and 500; a packed payload would need 301 entries, almost all pointing at the def
 emits explicit key/target pairs instead.
 
 **A12.** There is no default entry anywhere. Neither switch instruction encodes one. If the value
-matches nothing, execution simply continues at the **next instruction after the switch** — so the
+matches nothing, execution continues at the **next instruction after the switch** — so the
 default body is sitting immediately below the `packed-switch` line.
 
 **A13.** Because the runtime binary-searches the key array. Unsorted keys would make the search
@@ -476,7 +476,7 @@ each of these shapes. Write your answer, then check.
    the `declared-synchronized` access flag tells the runtime to take the lock on entry.
 4. An `access$NNN` bridge: an inner class reaching the outer class's private `premium` field.
 5. An `enum`. `$VALUES` is built in `<clinit>`.
-6. `if (o instanceof String) { String s = (String) o; … }`. Note that `check-cast` validates and does
+6. `if (o instanceof String) { String s = (String) o; … }`.`check-cast` validates and does
    **not** write a register — it exists so the verifier can narrow the register's type.
 7. `callWide()` calling `wide6(1L, 2L, 3L)`. Three longs is **six words**, past the five-word limit of
    the `35c` form, so the compiler had to use `/range` and had to lay the arguments out contiguously

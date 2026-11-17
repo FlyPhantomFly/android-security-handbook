@@ -165,13 +165,13 @@ constant, which is a uniquely frustrating way to lose an afternoon.
 
 ---
 
-### 8. `Module.findExportByName` returns `null` for a function I can clearly see. Why?
+### 8. `Module.findExportByName` returns `null` for a function I can see listed. Why?
 
 It searches `.dynsym`, and only `.dynsym`, of the module you named. Four reasons it comes back empty:
 
 1. **The function is not exported.** A `static` function, or one compiled with
    `__attribute__((visibility("hidden")))`, or a library built with `-fvisibility=hidden`, is never
-   in `.dynsym`. It is still in `.text` and still executes; it simply has no run-time name. Reach it
+   in `.dynsym`. It is still in `.text` and still executes; it has no run-time name. Reach it
    by offset from an export.
 2. **The name is mangled.** `Crypto::decrypt(char const*)` is `_ZN6Crypto7decryptEPKc`, not
    `decrypt`. Use `llvm-cxxfilt`, or filter `Module.enumerateExports()` by substring.

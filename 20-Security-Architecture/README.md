@@ -43,7 +43,7 @@ Android was designed at a moment when three things were simultaneously true:
 
 No single mechanism can address all three. A permission prompt does nothing for a stolen phone. Disk encryption does nothing against a malicious app that the user willingly granted access to their photographs. A signature check on an app does nothing if the operating system underneath it has been replaced. Android's answer was therefore not a mechanism but an *architecture*: a stack of independent mechanisms, each one assuming that the layer above it may have already failed.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Android's security model is not a wall. It is a set of nested boxes. Each box assumes the box outside it has already been opened by an attacker, and asks: *what can I still guarantee?* Verified Boot assumes the flash chip is attacker-writable. The sandbox assumes the app is malicious. SELinux assumes the process running as root has been hijacked. Encryption assumes the device is in someone else's hands. You attack the model by finding the place where two boxes were assumed to protect each other and neither actually does.
 
 ### 1.2 What would break if this did not exist
@@ -69,7 +69,7 @@ By the end of this chapter you should be able to answer, for any Android device 
 3. **If a malicious app is installed on it, what can it reach?** (sandbox, SELinux, permissions)
 4. **Given all of the above, where should I spend my testing time?** (the synthesis in §5.9 — and the answer is almost always "the app", not "the platform")
 
-> **📖 Definition — threat model**
+> **Definition — threat model**
 > A *threat model* is a written statement of who you are defending against, what they are assumed to be able to do, and what you are trying to protect. A control is only meaningful relative to a threat model. "Is Android secure?" is an unanswerable question. "Does Android's file-based encryption protect a powered-off device against an attacker with physical possession and chip-off capability, assuming a strong user credential?" is answerable — and the answer is *largely yes*.
 
 ### 1.4 The adversaries
@@ -85,7 +85,7 @@ Android's design documents and, more importantly, the real world, recognise six 
 | 5 | **Supply chain** | Ships code inside the app (an SDK), inside the ROM, or inside a build pipeline | Whatever the compromised component's privileges allow | App signing, Verified Boot, APEX/Mainline signing, Play's SDK policies, dependency review |
 | 6 | **Compromised or careless OEM** | Signs the platform key; writes vendor HALs, system apps, and SELinux policy | (Usually not malicious — just wrong.) Effect: privileged code with weak checks | AOSP baseline policy, `neverallow` rules, CTS/VTS/GTS, Treble separation, monthly bulletins |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Adversary #4 is the one clients rarely think about and the one you almost always *are*. When you root a device to test an app, you are not "cheating" — you are modelling the fraudster who roots their own phone to abuse a promotion, forge a location, or extract a hardcoded API key. If the client says "but the user would have to root their phone", the correct reply is: "yes, and roughly one in every few hundred of your users has, and the ones who have are disproportionately the ones committing fraud." Then quantify the impact.
 
 ### 1.5 A note on where trust actually lives
@@ -207,7 +207,7 @@ flowchart LR
 
 Six boundaries, and each one is crossed by a different class of vulnerability. Boundary 1 is crossed by fault injection and boot ROM bugs, which are the domain of hardware research labs, not application pentests. Boundary 2 is why `/data` is *encrypted but not verified*: nothing stops root from writing to `/data`, so nothing stored there may be trusted for integrity decisions. Boundary 3 is crossed by kernel exploits. Boundary 4 is crossed by privilege escalation through a privileged service — the classic Android local privilege escalation chain. Boundary 5 is the sandbox, covered in [21 — App Sandbox](../21-App-Sandbox/README.md). Boundary 6 is the one that matters commercially, because it is where money moves, and it is the only boundary whose defence does not depend on the phone being honest.
 
-> **⚠️ Warning**
+> **Warning**
 > Note carefully that `/data` (the userdata partition) sits inside the red-shaded box. It is encrypted, so a physical attacker cannot read it, but it is **not** integrity-protected by dm-verity, because it must be writable. Any security decision that relies on a file under `/data` being unmodified is therefore only as strong as the process permissions on that file — which root ignores. This single fact explains why Magisk works, why root detection based on files fails, and why an app's own "integrity flag" stored in SharedPreferences is worthless.
 
 ### 2.3 The boot-time sequence
@@ -280,7 +280,7 @@ This is called an **evil maid attack**, and it defeats every software control on
 
 The only defence is to verify software *before* it runs, using a key the attacker cannot substitute. That is Verified Boot.
 
-> **📖 Definition — chain of trust**
+> **Definition — chain of trust**
 > A *chain of trust* is a sequence of stages in which each stage cryptographically verifies the next before transferring control to it. The first link — the *root of trust* — cannot itself be verified by anything earlier, so it must be immutable. On Android that root is the SoC's boot ROM plus a public key (or a hash of one) burned into one-time-programmable fuses at manufacture.
 
 #### AVB 2.0 structure
@@ -299,7 +299,7 @@ Android Verified Boot 2.0, usually just called AVB, is the current implementatio
 
 The chain-partition descriptor is worth dwelling on. Project Treble split the Android system into a Google-maintained *system* half and an OEM-maintained *vendor* half so that the system half could be updated independently. AVB mirrors that split: the top-level `vbmeta` can delegate `vbmeta_system` to a key that Google controls and `vbmeta_vendor` to a key the OEM controls. Each half is independently signed and independently updatable, and neither can silently alter the other.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > The reference implementation lives in `external/avb/` in AOSP. `libavb` is deliberately written to be embeddable in a bootloader: freestanding C, no libc dependency, with all platform interaction funnelled through an `AvbOps` structure of function pointers (`read_from_partition`, `validate_vbmeta_public_key`, `read_rollback_index`, `write_rollback_index`, `read_is_device_unlocked`). The host-side tool is `external/avb/avbtool.py`, which you can run yourself to inspect an image: `avbtool info_image --image vbmeta.img`. Reading `avbtool.py` is one of the fastest ways to genuinely understand AVB, because the format and the verification logic are both expressed in one readable Python file.
 
 #### Rollback protection
@@ -314,7 +314,7 @@ AVB defeats it with **rollback indexes**. Each vbmeta carries a `rollback_index`
 
 The stored value must live somewhere an attacker cannot rewind. In practice that is the **RPMB** (Replay Protected Memory Block) partition of the eMMC/UFS device — a small region that only accepts writes accompanied by an HMAC using a key known to the TEE and the storage controller, with a monotonically increasing write counter to prevent replay — or dedicated fuses, or TEE-owned secure storage.
 
-> **⚠️ Warning**
+> **Warning**
 > Rollback indexes are burned monotonically. On many devices, once the index advances, downgrading to an older firmware becomes permanently impossible even for the legitimate owner with an unlocked bootloader, because the *stored* index is now higher than the old image's. This is the mechanism behind "anti-rollback fuse blown" bricks. If you are building a test device fleet, check the anti-rollback version before you accept an OTA on a device you intend to downgrade later. Getting this wrong destroys the device's usefulness as a research target.
 
 #### The four boot states
@@ -350,7 +350,7 @@ getprop ro.build.type
 cat /proc/cmdline | tr ' ' '\n' | grep -i -E 'verifiedboot|veritymode|vbmeta|androidboot'
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `ro.boot.verifiedbootstate` is set from the kernel command line, which is set by the bootloader. On a device where you control the boot chain — which is exactly a rooted research device — you can also control that property. Magisk's `resetprop` will happily set it to `green`. Therefore: **an app reading this property learns nothing an attacker cannot fake.** It is useful to *you* as an honest observer of your own test device, and useless to a *defender* as an integrity signal. When you find an app whose root detection reads `ro.boot.verifiedbootstate`, that is a finding: the check is trivially defeated and creates a false sense of assurance. The only non-forgeable equivalent is the `deviceLocked` and `verifiedBootState` fields inside a hardware key attestation certificate, because those are populated by the TEE and signed with a key the normal world never sees. See [49 — KeyStore](../49-KeyStore/README.md) and [50 — Hardware-Backed Security](../50-HardwareBackedSecurity/README.md).
 
 #### What unlocking the bootloader actually breaks
@@ -363,7 +363,7 @@ Unlocking is not a single switch; it triggers a cascade, and being precise about
 4. **Keys bound to the boot state are invalidated.** Keys generated in the Keystore with certain authorisation tags become unusable across the lock-state transition, because the TEE derives key material partly from state that changes.
 5. **Some hardware-backed features degrade or disable themselves.** Payment apps, DRM at Widevine L1 (on some devices the provisioning is untouched, on others it drops to L3), and enterprise management may all refuse to operate.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Locking the bootloader is a statement by the device owner: "I delegate the decision about what software may run to whoever holds this key." Unlocking withdraws that delegation: "I decide." Verified Boot never stops working — it just stops having an authority to appeal to. This is why the ORANGE warning screen says the software *cannot be checked*, not that it is *bad*.
 
 ### 3.2 dm-verity — integrity for partitions too large to hash at boot
@@ -374,7 +374,7 @@ The `system` partition is measured in gigabytes. Hashing all of it before handin
 
 #### The mechanism: a Merkle tree
 
-> **📖 Definition — Merkle tree (hash tree)**
+> **Definition — Merkle tree (hash tree)**
 > A *Merkle tree* is a tree in which every leaf node is the hash of a data block and every internal node is the hash of its children's hashes concatenated. The single hash at the top — the *root hash* — therefore depends on every byte of the underlying data. Changing one byte anywhere changes the root hash. Crucially, verifying that one specific block is authentic requires only that block plus the sibling hashes along the path to the root: `log(n)` work rather than `n`.
 
 `dm-verity` is a Linux kernel *device-mapper* target. Device-mapper is the kernel framework that lets a virtual block device be constructed from a mapping over a real one — it is the same machinery behind LVM and dm-crypt. The `verity` target presents a read-only virtual block device that, on every block read, walks the hash tree and compares.
@@ -428,7 +428,7 @@ The `dm-verity` target is configured with a policy for what to do when a hash mi
 | `restart` (`enforcing`) | The kernel immediately reboots the device, setting a persistent flag so that the next boot enters a corrupted state. | The default for user builds on many devices — a corrupted system reliably fails rather than half-working. |
 | `logging` | The mismatch is logged and the read is allowed to succeed. | Used on `userdebug`/`eng` builds, and set by `adb disable-verity`. **No integrity guarantee at all.** |
 | `panic` | Kernel panic. | Some vendor configurations. |
-| `restart_on_corruption` / `ignore_zero_blocks` / `check_at_most_once` | Tuning options; `check_at_most_once` trades security for performance by caching per-block verification results. | Note that `check_at_most_once` weakens the guarantee for a block that is read twice. |
+| `restart_on_corruption` / `ignore_zero_blocks` / `check_at_most_once` | Tuning options; `check_at_most_once` trades security for performance by caching per-block verification results. | `check_at_most_once` weakens the guarantee for a block that is read twice. |
 
 ```bash
 # adb shell — what mode is this device in?
@@ -446,8 +446,8 @@ adb reboot
 adb remount             # now /system can be mounted read-write
 ```
 
-> **⚠️ Warning**
-> `adb disable-verity` followed by `adb remount` is the classic way to get a writable `/system` on an engineering device, and it is also a complete removal of the integrity guarantee for that partition. It requires an unlocked bootloader and a build that permits it. On a production, locked device it simply fails — and that failure is the control working as designed. If you are asked to test "whether the system partition can be modified", the honest answer for a GREEN-state device is that it cannot be, without first unlocking, which wipes the device.
+> **Warning**
+> `adb disable-verity` followed by `adb remount` is the classic way to get a writable `/system` on an engineering device, and it is also a complete removal of the integrity guarantee for that partition. It requires an unlocked bootloader and a build that permits it. On a production, locked device it fails — and that failure is the control working as designed. If you are asked to test "whether the system partition can be modified", the honest answer for a GREEN-state device is that it cannot be, without first unlocking, which wipes the device.
 
 #### Why dm-verity forced Magisk to be "systemless"
 
@@ -491,7 +491,7 @@ lsattr /data/app/~~*/com.example.app-*/base.apk 2>/dev/null
 ls -la /data/app/~~*/com.example.app-*/
 ```
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > The relevant AOSP and kernel pieces are `fs/verity/` in the kernel tree, `system/security/fsverity_init/` and `system/apex/apexd/` for APEX verification, and the framework side in `frameworks/base/services/core/java/com/android/server/security/` for the verity job. APK Signature Scheme v4 is documented in `tools/apksig/` and implemented alongside v2/v3 in the same library. See [10 — APK Internals](../10-APK-Internals/README.md) for the full signature scheme comparison.
 
 **How it actually works, step by step.** The mechanism is worth knowing in detail, because its properties are unusual and testers routinely mis-state them.
@@ -505,7 +505,7 @@ Three consequences a tester should be able to state:
 
 - **The verification is in the kernel, so it survives the attacker being in userspace.** An app-level "hash my own APK" check runs in a process the adversary controls and can be hooked; the fs-verity check runs in the read path itself. That is a real difference in kind, and it is the reason APK Signature Scheme v4 exists.
 - **It does not survive the attacker being in the kernel.** Root that can load a module, or a rooting stack that patched the kernel, is above this control entirely. fs-verity raises the bar from "hook a Java method" to "modify the kernel", which is a meaningful jump and not an absolute.
-- **It protects integrity, never confidentiality.** The bytes are readable; they simply cannot be changed. This is the same distinction as dm-verity and the same one people get wrong about app signing.
+- **It protects integrity, never confidentiality.** The bytes are readable; they cannot be changed. This is the same distinction as dm-verity and the same one people get wrong about app signing.
 
 The `deny_list` cases matter too. Because enabling verity makes the file immutable, Android only enables it where immutability is acceptable — installed APKs and their split/asset files, and APEX payloads. It is not used for app-writable data in `/data/data`, and no app API exposes it for arbitrary files.
 
@@ -518,7 +518,7 @@ su -c 'ls /proc/sys/fs/verity/' 2>/dev/null      # require_signatures, if the ke
 ls -la /data/app/~~*/com.example.app-*/ | grep idsig
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > If an APK carries a `.apk.idsig` and fs-verity is enabled on it, the classic repackaging workflow — pull `base.apk`, patch, push it back over the original — fails at the *filesystem* layer rather than at the signature-check layer, and the error you get (`EIO`, or a refusal to write at all) looks nothing like a signature failure. Recognise the symptom. The workaround is the ordinary one: uninstall and install your rebuilt APK as a new file, which loses the app's data and its v4 signature and is therefore *visible* to any server-side check the app performs. That visibility is exactly the point of the control.
 
 ### 3.4 File-Based Encryption, Direct Boot, and the credential chain
@@ -536,7 +536,7 @@ FDE had one architectural flaw that eventually killed it. Because there is exact
 | **DE** | Device Encrypted | From boot, before first unlock | Alarm clock data, telephony, accessibility services, the launcher's minimal state, anything Direct Boot aware | `/data/user_de/<userId>/<pkg>/` |
 | **CE** | Credential Encrypted | Only after the user has unlocked at least once since boot | Everything else — the app's real data directory | `/data/user/<userId>/<pkg>/` (symlinked from `/data/data/<pkg>` for user 0) |
 
-> **📖 Definition — Direct Boot**
+> **Definition — Direct Boot**
 > *Direct Boot* is the mode a device is in after booting but before the user has entered their credential for the first time. In this mode only device-encrypted storage is available. An app declares itself able to run in this state with `android:directBootAware="true"` on its components, and it must then confine itself to `Context.createDeviceProtectedStorageContext()` for any storage access.
 
 ```mermaid
@@ -601,15 +601,15 @@ The essential properties are:
 - **Weaver**, present on devices with a discrete secure element such as the Pixel's Titan M, goes further: it stores a high-entropy secret in the secure element, keyed by the credential, and the secure element enforces the throttling with its own independent timer and its own tamper-resistant storage. Weaver's throttling cannot be bypassed even by a full TEE compromise, which is why it exists.
 - **Metadata encryption** covers the parts of `/data` that FBE cannot: directory structure, file sizes, and everything outside per-file encryption. It is a dm-crypt layer under the whole partition using a key available at boot (device-bound, not credential-bound), so it protects against an offline attacker reading structure but does not protect against an attacker who can boot the device.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > The relevant AOSP paths are `system/vold/` (the volume daemon that owns encryption operations), `system/gatekeeper/` (the Gatekeeper reference implementation and HAL interface), `hardware/interfaces/gatekeeper/` and `hardware/interfaces/weaver/` (the HAL definitions), `frameworks/base/services/core/java/com/android/server/locksettings/` (LockSettingsService, the synthetic password implementation, and the SP-based key hierarchy), and `fs/crypto/` in the kernel for fscrypt itself. The *synthetic password* design — where the user credential protects a randomly generated synthetic password which in turn protects everything else — is what makes it possible to change the PIN without re-encrypting all data, and it is worth reading `LockSettingsService` and `SyntheticPasswordManager` to see it done properly.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > During an application test you will rarely attack FBE itself. What you *will* do is check whether the app's threat model assumes it. An app that stores a long-lived refresh token in `SharedPreferences` is relying entirely on FBE plus the sandbox. That is a defensible position on a locked, non-rooted device and an indefensible one if the device is rooted or the token has no server-side binding. Say so in those terms — cite the assumption, not just the storage location. See [33 — Storage](../33-Storage/README.md) and [46 — Tokens](../46-Tokens/README.md).
 
 ### 3.5 The Trusted Execution Environment, in outline
 
-> **📖 Definition — Trusted Execution Environment (TEE)**
+> **Definition — Trusted Execution Environment (TEE)**
 > A *TEE* is a second, isolated execution environment on the same physical processor, with its own memory that the main ("normal world") operating system cannot read or write, even from kernel mode. On ARM this is implemented by **TrustZone**, which adds an "NS" (non-secure) bit propagated through the bus fabric so that memory and peripherals can be partitioned in hardware. Code in the secure world runs a small trusted OS — Qualcomm's QSEE, Trusty (AOSP's own), Kinibi, and others.
 
 The TEE matters to this chapter for four reasons, each covered in depth in [50 — Hardware-Backed Security](../50-HardwareBackedSecurity/README.md):
@@ -647,7 +647,7 @@ The TEE is where the gap between what is documented and what is shipped is wides
 | `setMaxUsageCount` works at its documented API level | Threw `NoSuchMethodError` on an API 30 device at exactly its documented level, confirmed independently by Frida method enumeration |
 | A verifying attestation chain proves hardware backing | On an emulator, every key is `SOFTWARE`, `hardwareEnforced` is empty — **and the chain still verifies perfectly.** A valid chain proves the chain, not the hardware. You must read the security level out of the extension, not infer it from validity |
 
-> **🔬 Under the Hood — the measurement that anchors this whole chapter**
+> **Under the Hood — the measurement that anchors this whole chapter**
 > On the rooted Redmi this repository tests against, `ro.boot.verifiedbootstate` reads `green`. Seconds later, on the same device, a TEE-signed key attestation reported `verifiedBootState=Unverified`, `deviceLocked=false` and an all-zero `verifiedBootKey`.
 >
 > **The property lies; the hardware does not.** That is not an argument, it is two readings a minute apart, and it is the entire practical case for attestation over property inspection. Any integrity check reading `getprop` is reading attacker-controlled data — §4.5 shows exactly why, by tracing where the value physically lives at read time.
@@ -671,7 +671,7 @@ Play Integrity produces a token that, when decoded server-side, contains several
 
 | Verdict field | Values | Meaning |
 |---|---|---|
-| `deviceIntegrity.deviceRecognitionVerdict` | `MEETS_BASIC_INTEGRITY` | The device passes basic checks — it looks like an Android device and is not obviously tampered — but may be uncertified, unlocked, or emulated. |
+| `deviceIntegrity.deviceRecognitionVerdict` | `MEETS_BASIC_INTEGRITY` | The device passes basic checks — it looks like an Android device and is not visibly tampered — but may be uncertified, unlocked, or emulated. |
 | | `MEETS_DEVICE_INTEGRITY` | The app is running on a genuine Play-certified Android device that passes integrity checks. |
 | | `MEETS_STRONG_INTEGRITY` | As above, plus a strong hardware-backed guarantee and a recent boot, based on hardware attestation. |
 | | `MEETS_VIRTUAL_INTEGRITY` | Running on a Google-run Android emulator that passes integrity checks (opt-in, useful for testing). |
@@ -712,7 +712,7 @@ sequenceDiagram
     BE-->>APP: 10. allow or deny
 ```
 
-Every arrow that touches the app is attacker-controlled. The app cannot be trusted to *interpret* the token, to *check* it, or to *act* on the result. An attacker with Frida simply changes what step 10's response is treated as, or removes the call entirely.
+Every arrow that touches the app is attacker-controlled. The app cannot be trusted to *interpret* the token, to *check* it, or to *act* on the result. An attacker with Frida changes what step 10's response is treated as, or removes the call entirely.
 
 The three steps that carry actual security weight are 1, 7, and 9:
 
@@ -720,10 +720,10 @@ The three steps that carry actual security weight are 1, 7, and 9:
 - **Step 7 — decoding must happen server-side.** Google offers on-device "classic" decryption using keys you hold; do not use it for security decisions, because the decryption then happens inside the attacker's process.
 - **Step 9 — your server must check the bindings.** `requestPackageName` must equal your package. The nonce must be the one you issued. The timestamp must be recent (minutes, not hours). If you skip these, an attacker takes a valid token from *their own* legitimate installation and replays it into *your* flow.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > This produces one of the most reliable findings you will ever write. Test it in this order. (a) Hook the app's integrity code with Frida and force the "success" path — if the app proceeds, the check is client-side only, which is a high-severity finding. (b) Capture a valid token and replay it twice — if both succeed, the nonce is not single-use. (c) Capture a token from a *different* app that uses Play Integrity and submit it — if the backend accepts it, `requestPackageName` is unchecked, which is critical. (d) Wait an hour and replay — if it still works, there is no freshness window. Each of these is a separate, demonstrable finding with a clean remediation, and together they are worth more to a client than a hundred lines of "the app can be rooted".
 
-> **⚠️ Warning**
+> **Warning**
 > Do not write in a report that Play Integrity "cannot be bypassed". On devices with leaked or stolen TEE keyboxes, and through hardware attestation spoofing modules, `MEETS_DEVICE_INTEGRITY` has been produced on modified devices. Google revokes known-abused keyboxes, which turns it into a cat-and-mouse game. The accurate statement is: *Play Integrity substantially raises the cost of running on a modified device, and correctly implemented server-side verification makes casual bypass impractical; it is not a guarantee, and it must never be the only control protecting a security decision.*
 
 ### 3.7 Google Play Protect
@@ -764,7 +764,7 @@ getprop ro.build.version.sdk
 getprop ro.build.fingerprint
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Report the patch level as a *date delta*, not a date. "The device under test reports a security patch level of 2023-08-01, meaning it is missing approximately 24 months of published Android security fixes, including *n* critical-severity remote code execution issues" is a finding a client can act on. "Patch level 2023-08-01" is a fact nobody will read. When the target is a corporate-managed fleet, this single line often has more real-world impact than anything you find in the app.
 
 #### Project Mainline and APEX
@@ -790,7 +790,7 @@ cmd package list packages --apex-only
 pm list packages --apex-only -f
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > Because Mainline modules update independently, `ro.build.version.security_patch` no longer tells the whole story. A device may report an old vendor patch level while having a fully current media stack, or the reverse. When assessing a device, check both the property *and* the APEX module versions, and note in your report which components are covered by which update path.
 
 ### 3.9 Synthesis — what is actually attackable in a typical engagement
@@ -835,7 +835,7 @@ Concretely, in a typical two-week mobile application engagement:
 | Third-party SDK behaviour — data exfiltration, weak crypto, extra permissions | Often | The SDK runs with the app's UID and all of its permissions. |
 | Platform vulnerabilities | Rarely, and usually out of scope | Requires different skills and a different engagement type. See [70 — Vulnerability Research](../70-VulnerabilityResearch/README.md). |
 
-> **🧠 Mental Model**
+> **Mental Model**
 > The platform's job is to make sure that *the app's mistakes hurt only the app's users*. It succeeds at that. It was never designed to prevent the app from making mistakes. Your job on an application engagement is to find the mistakes; your job when you are asked "is Android secure" is to explain that the question has six different answers depending on which adversary from §1.4 is being asked about.
 
 ### 3.10 Establishing ground truth — verifying the boot chain from outside the app
@@ -887,7 +887,7 @@ Two details in that output are worth more than the headline.
 - **The forgery is targeted.** `vbmeta.digest` and `veritymode` came through untouched. Whoever built the module changed exactly the three fields detection code reads and left the rest, because every extra edit is another chance to be caught in an inconsistency. Expect this. Do not conclude that a device failing one check has failed them all.
 - **An ordinary app cannot perform this cross-check at all.** `/proc/cmdline` on this device is `-r--r----- root radio`, and an app is neither. So the seam is visible to *you* and invisible to the app that most needs to see it — which is a compact statement of why client-side integrity checking is structurally lost.
 
-> **⚠️ Common Confusion — there is a fifth value, and it is the empty string.**
+> **Common Confusion — there is a fifth value, and it is the empty string.**
 > The table in §3.1 lists `green`, `yellow`, `orange`, `red`. On an emulator there is a **fifth
 > case: no value at all.** Measured on `sdk_gphone16k_x86_64` (Android 15 / API 35), independently
 > re-verified:
@@ -960,7 +960,7 @@ actual   : c63c859f91ba6e8225bf14e4d48270f38e3ecc85fb2e91e436f3fe9e49ea44cb
 
 The boot partition is **not** the boot partition its own signed vbmeta describes — which is what a Magisk- or APatch-patched device has, because injecting the root daemon into the ramdisk is how that root was installed. Meanwhile the device reports `verifiedbootstate=green`.
 
-> **⚠️ Warning — a mismatch is not a finding until you have run the control.**
+> **Warning — a mismatch is not a finding until you have run the control.**
 > "Digest does not match" is equally consistent with *the image was modified* and with *you hashed it wrong*, and only one of those goes in a report. Repeat the identical procedure on a partition you have no reason to suspect. On the same device, `dtbo` (image size 6,384,882 — not a multiple of 4096, so read whole blocks and trim with `head -c`):
 >
 > ```text
@@ -1109,7 +1109,7 @@ Two consequences worth stating explicitly:
 | `external/avb/libavb/avb_kernel_cmdline_descriptor.h` | `AvbKernelCmdlineDescriptor` | `flags` + length + text. No reserved block |
 | `external/avb/libavb/avb_property_descriptor.h` | `AvbPropertyDescriptor` | Two `uint64` lengths, then `key\0value\0`. Where the signed build fingerprints and patch levels live |
 
-> **⚠️ Warning — the `reserved[N]` blocks are where every hand-written AVB parser goes wrong.**
+> **Warning — the `reserved[N]` blocks are where every hand-written AVB parser goes wrong.**
 > Two of the descriptor types put a fixed reserved block *between* their length fields and the variable-length data those lengths describe. Skip it and the partition name comes out empty, the salt comes out as the name's bytes, and nothing errors — the parser just prints a blank partition name and quietly continues. `parse-vbmeta.py` funnels all four variable-length descriptors through one helper for exactly this reason, with the trap recorded in a comment so it cannot be reintroduced. If your own parse produces a descriptor with a blank name, this is the bug, every time.
 
 ---
@@ -1155,7 +1155,7 @@ Attackers do not usually break these mechanisms; they find the seams between the
 - **Privileged system app confused-deputy issues.** A vendor system app holding `signature|privileged` permissions that exposes an unguarded component, letting an ordinary app inherit its privileges. This is the single most common OEM-introduced flaw class. See [23 — Permissions](../23-Permissions/README.md) §on re-delegation.
 - **Insufficient binding of encryption keys to the credential**, allowing data recovery from a locked device.
 
-> **⚠️ Warning**
+> **Warning**
 > When writing a report, cite CVEs only when you have verified the identifier against the Android Security Bulletin or the NVD entry. An invented or mis-remembered CVE number destroys a report's credibility faster than a missed finding. If you know the class but not the identifier, describe the class — that is what this section models.
 
 ### 5.4 OWASP MASVS and MASTG mapping
@@ -1213,7 +1213,7 @@ Android malware overwhelmingly does *not* attack the platform. It attacks the hu
 - **Notification listener abuse** to intercept one-time passcodes.
 - **Abusing device admin / device owner** to resist uninstallation.
 
-Note that every one of these operates entirely *within* the security model, using capabilities the user granted. The architecture is not bypassed; it is *used*. This is why Play Protect, `appAccessRiskVerdict`, and the increasing friction Android puts on sideloaded apps requesting accessibility exist. See [69 — Malware Analysis](../69-MalwareAnalysis/README.md).
+every one of these operates entirely *within* the security model, using capabilities the user granted. The architecture is not bypassed; it is *used*. This is why Play Protect, `appAccessRiskVerdict`, and the increasing friction Android puts on sideloaded apps requesting accessibility exist. See [69 — Malware Analysis](../69-MalwareAnalysis/README.md).
 
 ### 5.7 How forensic analysts investigate
 
@@ -1582,7 +1582,7 @@ aapt2 dump xmltree target.apk --file AndroidManifest.xml | \
 | `android:targetSdkVersion` | Determines which platform hardening applies — scoped storage, package visibility, `PendingIntent` mutability, and the SELinux `untrusted_app_<n>` domain the app runs in. |
 | `android:sharedUserId` | Deprecated; two apps sharing a UID share a sandbox entirely. |
 
-> **⚠️ Warning**
+> **Warning**
 > `targetSdkVersion` is a security control, not a compatibility knob. An app targeting API 28 on an Android 15 device runs in the `untrusted_app_27`-family SELinux domain and is exempted from scoped storage, package visibility restrictions, and several other hardening measures. A low `targetSdkVersion` on a current app is a finding in its own right. See [22 — SELinux](../22-SELinux/README.md).
 
 ### 8.3 Native libraries
@@ -1880,7 +1880,7 @@ object HardwareBoundStore {
 }
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > When you find code like this in a target, the interesting question is not whether the key is hardware-backed — it is what happens on the *failure* path. Many apps fall back to a software key, or to plaintext storage, when `setIsStrongBoxBacked(true)` throws `StrongBoxUnavailableException` or when key generation fails on an old device. Find the `catch` block. That is where the finding is.
 
 ### 9.5 Enterprise — a device attestation and posture gate
@@ -1985,7 +1985,7 @@ dm-verity protects the *contents of a partition* against modification, verifying
 On your server, after `decodeIntegrityToken`. If it is evaluated on the device, the evaluation happens in a process the adversary fully controls, so the branch can be inverted with a single Frida hook or a one-instruction patch. Even server-side evaluation is insufficient without three bindings: the nonce must have been issued by your server, be single-use, and be tied to the specific operation; `requestPackageName` must match your package, otherwise a token from any other application is accepted; and the timestamp must be recent, otherwise a token captured once from a clean device is replayable indefinitely.
 
 **Q. Why is `targetSdkVersion` a security control?**
-Android gates a large amount of hardening on the target SDK level in order to preserve compatibility: scoped storage, package visibility filtering, `PendingIntent` mutability requirements, background start restrictions, and — importantly — which `untrusted_app_<n>` SELinux domain the app's process is assigned by `seapp_contexts`. An application targeting an old API level therefore runs under materially weaker platform enforcement on a modern device, regardless of what device it is installed on.
+Android gates a large amount of hardening on the target SDK level to preserve compatibility: scoped storage, package visibility filtering, `PendingIntent` mutability requirements, background start restrictions, and — importantly — which `untrusted_app_<n>` SELinux domain the app's process is assigned by `seapp_contexts`. An application targeting an old API level therefore runs under materially weaker platform enforcement on a modern device, regardless of what device it is installed on.
 
 ### Staff Engineer
 

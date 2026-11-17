@@ -37,7 +37,7 @@ Five flags. Each is a string of the form `ARDENT{...}`.
 
 ---
 
-## ⚠ Rules
+## Rules
 
 1. **Build everything from source.** The challenge apps are manifests and Java in
    `ctf-the-borrowed-key/` (created by you, in Part 0 — see Setup). Nothing is shipped as an APK.
@@ -110,7 +110,7 @@ methods both use `checkCallingOrSelfPermission`, and have one of them post the w
 Provider and service implementations: keep them small. A `MatrixCursor` with three rows, one of
 which is a flag, is enough. The point of this CTF is the permission model, not the SQLite.
 
-> **🔍 If you would rather not author the challenge**
+> **If you would rather not author the challenge**
 > Every flag below can be earned against the shipped examples instead:
 > [`../examples/squat-pair/`](../examples/squat-pair/) covers flags 1–3 exactly, and
 > [`../examples/weak-permissions-AndroidManifest.xml`](../examples/weak-permissions-AndroidManifest.xml)
@@ -538,7 +538,7 @@ exercise it for you and return the result.
 2. **Attempt it directly from the probe.** It must fail with a `SecurityException` naming the
    permission. This is the negative control and without it the finding is unproven.
 3. **Resolve the permission's level** with `pm list permissions -f -g`. It must be
-   signature-anchored, or there is no escalation — you could simply have requested it.
+   signature-anchored, or there is no escalation — you could have requested it.
 4. **Confirm the helper holds it**, in a *grant* block of `dumpsys package com.ardent.helper`, not
    in the requested block.
 

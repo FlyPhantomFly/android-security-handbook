@@ -91,7 +91,7 @@ are cited freely above.
 | `aapt2 dump xmltree --file AndroidManifest.xml <apk>` | Resolving a class to a manifest entry, which is how "is it exported?" gets answered. |
 | `adb shell dumpsys activity <package>` | The live Fragment state: `Active Fragments`, `Added Fragments`, `mContainerId`, `mState`. This is the runtime evidence for a report. |
 | `uiautomator dump` | Reading the victim's screen. **Runs as `shell`, not as an app** — record it as instrumentation, not as an attack step. |
-| Frida | `scripts/fragment-trace.js`. Note that `frida-server` does **not** link on the API 35 AVD used here; see README §7.4. |
+| Frida | `scripts/fragment-trace.js`.`frida-server` does **not** link on the API 35 AVD used here; see README §7.4. |
 
 ---
 

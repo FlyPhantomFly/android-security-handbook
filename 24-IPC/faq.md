@@ -206,7 +206,7 @@ install with no user prompt. A component guarded by one is guarded by nothing.
 | Level | Granted to | Real control? |
 |---|---|---|
 | `normal` | Anyone who asks, silently | **No** |
-| `dangerous` | After a user prompt | Weak — a malicious app simply asks, and users tap Allow |
+| `dangerous` | After a user prompt | Weak — a malicious app asks, and users tap Allow |
 | `signature` | Only apps signed with the same certificate | **Yes** |
 
 When you see `android:permission="com.example.app.permission.INTERNAL"` on an exported component,
@@ -227,7 +227,7 @@ A program that holds authority is tricked by a less-privileged party into using 
 less-privileged party's behalf.
 
 The original 1988 example: a compiler on a shared system could write to a billing file. It also
-accepted an output filename from whoever ran it. A user who could not write the billing file simply
+accepted an output filename from whoever ran it. A user who could not write the billing file
 asked the compiler to write its output there. The compiler was not malicious and was not
 compromised. It was *confused* about whose authority it was exercising.
 

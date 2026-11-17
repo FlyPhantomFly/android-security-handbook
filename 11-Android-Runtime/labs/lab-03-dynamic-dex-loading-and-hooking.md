@@ -21,7 +21,7 @@ nowhere on disk in plaintext.
 `dalvik.system.InMemoryDexClassLoader.<init>`, copies the `ByteBuffer` argument to a file, and lets
 you recover the hidden class with [jadx](../../56-JADX/README.md) — without ever learning the AES key.
 
-> **📖 Definition — InMemoryDexClassLoader.** Added in API 26, this is a `BaseDexClassLoader` that
+> **Definition — InMemoryDexClassLoader.** Added in API 26, this is a `BaseDexClassLoader` that
 > takes a `java.nio.ByteBuffer` (or an array of them, from API 29) instead of a filesystem path. ART
 > parses the DEX container directly out of that buffer. No file is created, no `oat/` artefact is
 > written, and nothing appears in `/data/data` for a forensic tool to find. The container format is
@@ -186,7 +186,7 @@ public class MainActivity extends Activity {
 adb logcat -c && adb shell am start -n com.example.memlab/.MainActivity && adb logcat -s MemLab
 ```
 
-> **⚠️ Warning.** `Arrays.fill(dex, (byte) 0)` is theatre, not security. By the time it runs ART has
+> **Warning.** `Arrays.fill(dex, (byte) 0)` is theatre, not security. By the time it runs ART has
 > copied the DEX contents into its own native structures, and the garbage collector may have moved or
 > duplicated the array. Developers who write this line believe they mitigated memory dumping. They did
 > not. Never accept it as a compensating control in a report.
@@ -222,7 +222,7 @@ No `.dex` appears anywhere the app can write, and the only DEX-family mappings b
 and the boot image. Compare with [Lab 01, Step 7](lab-01-observing-the-runtime.md), where the mappings
 told you everything; here they tell you nothing, because the code never became a file.
 
-> **🔬 Under the Hood.** Given a `ByteBuffer`, `InMemoryDexClassLoader` reaches
+> **Under the Hood.** Given a `ByteBuffer`, `InMemoryDexClassLoader` reaches
 > `DexFile.openInMemoryDexFile` and then native code that constructs an `art::DexFile` over a copy of
 > the buffer contents in an anonymous, ART-owned region. Because there is no file, there is no
 > `dex2oat` invocation and no `.odex`: in-memory DEX is always interpreted or JIT-compiled, never
@@ -297,7 +297,7 @@ You now have the source of a class that never existed as a file, and you never l
 That asymmetry is the lesson: **the key was never the secret worth protecting, because the runtime is
 a mandatory decryption oracle.**
 
-> **🔍 Pentester's Note.** In a report, do not write "the app uses a hard-coded AES key". Write "the
+> **Pentester's Note.** In a report, do not write "the app uses a hard-coded AES key". Write "the
 > protected code is recoverable without recovering the key, because the runtime requires plaintext DEX
 > at a fixed, hookable API boundary". The first finding invites the developer to rotate the key, which
 > fixes nothing. The second correctly frames in-memory loading as obfuscation with a cost measured in

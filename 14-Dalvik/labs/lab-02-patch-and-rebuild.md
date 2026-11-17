@@ -239,7 +239,7 @@ cp -r baseline work
 `-r` skips resource decoding. It is much faster and it removes the single most common cause of an
 `apktool b` failure. `-f` overwrites.
 
-> **⚠️ Why a baseline.** A `baksmali` → `smali` round trip regenerates item ordering, debug info and
+> **Why a baseline.** A `baksmali` → `smali` round trip regenerates item ordering, debug info and
 > layout, so a rebuilt-but-unmodified APK is **not byte-identical** to the original and its hash is
 > different. Diffing your patched build against the untouched original drowns you in noise. Diff
 > against the baseline.

@@ -154,7 +154,7 @@ walks through it.
 
 ---
 
-**12. Why does my probe app get `ActivityNotFoundException` when the component clearly exists?**
+**12. Why does my probe app get `ActivityNotFoundException` when the component exists in the manifest?**
 
 Package visibility. From targetSdk 30, an app cannot see other packages unless it declares them:
 

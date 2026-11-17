@@ -72,7 +72,7 @@ Before shared libraries, every program that wanted to draw a JPEG carried its ow
 decoder. A phone with forty apps that each decode images would carry forty decoders, in forty files,
 occupying forty copies of physical memory. Fixing a bug in the decoder meant rebuilding all forty.
 
-> **📖 Definition — shared library**
+> **Definition — shared library**
 > A file of machine code and data that several running programs use *at the same time*, with the
 > operating system arranging for exactly one copy of the code to exist in physical memory no matter
 > how many processes are using it. On Linux and Android the file extension is `.so`, for **s**hared
@@ -103,7 +103,7 @@ comes the content those tables describe: machine code, constants, string literal
 addresses, and a list of names the file exports or needs. That is all. There is no compression, no
 encryption and no obfuscation in the format itself.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > An ELF file is a **shipping container with two manifests**. One manifest is for the crane operator
 > who has to move the container: it says which sections are heavy, which must stay upright, and
 > where each goes. The other manifest is for customs: it lists the contents by name and category.
@@ -129,7 +129,7 @@ outcome. Everything in the `.so` runs in the *app's own process*, on hardware yo
 decision it makes eventually has to be expressed as a value handed back across the JNI boundary,
 where it is plaintext again.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > "We moved the root check into native code" is a statement about *effort*, not about *possibility*.
 > The check still runs in a process you can attach to, in memory you can read and write, and its
 > answer still has to travel back to Java. [37-RootDetection](../37-RootDetection/README.md) has a
@@ -168,7 +168,7 @@ This is *why* the mitigation checklist in §3.14 exists. Every item on it is a m
 memory-safety bug harder to turn into code execution, invented precisely because C cannot be relied
 on not to have one.
 
-> **⚠️ Warning**
+> **Warning**
 > Do not over-rotate. A memory-corruption *attack surface* is not a memory-corruption
 > *vulnerability*, and a native library in an app is not a finding. Most Android native code
 > processes only data the app itself produced, is never reached by attacker-controlled bytes, and
@@ -202,7 +202,7 @@ decompiler, it belongs in 57. If it comes out of a running process, it belongs i
 4. What are PLT and GOT, why does that indirection exist, and why is it the classic hooking target?
 5. What is the complete set of hardening mitigations, how do I observe each one in a file, and what
    is each one actually protecting against?
-6. When is a missing mitigation a finding, and when is writing it up as one simply wrong?
+6. When is a missing mitigation a finding, and when is writing it up as one wrong?
 
 ---
 
@@ -445,7 +445,7 @@ pages into both address spaces. The read-write segment is different: it is mappe
 `MAP_PRIVATE`, so the first write to a page triggers copy-on-write and each process gets its own
 copy of just that page. Code is shared; data is not.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > This is why `.data` and `.got` being writable has a memory cost and `.text` does not, and it is
 > why full RELRO is nearly free: the RELRO region is written once during relocation, taking the
 > copy-on-write hit anyway, and then made read-only. The pages are already private by then.
@@ -500,7 +500,7 @@ the three offset/address fields change, which shifts everything after them by 12
 | 3 | `ET_DYN` | A shared object, or a position-independent executable. **Everything on Android** |
 | 4 | `ET_CORE` | A core dump |
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > `e_type == 3` for both a `.so` and a PIE executable is not sloppiness; it is the point. A PIE
 > executable *is* a shared object that happens to have an entry point. It is loaded at a randomised
 > base like any library, which is precisely what makes ASLR possible for the main program. The two
@@ -517,7 +517,7 @@ the three offset/address fields change, which shifts everything after them by 12
 | 183 | `0xB7` | `EM_AARCH64` | `lib/arm64-v8a/` |
 | 243 | `0xF3` | `EM_RISCV` | `lib/riscv64/` (Android 14 onwards, experimental) |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Check that `e_machine` agrees with the directory the file was stored in. A 64-bit library sitting
 > in `lib/armeabi-v7a/` is either never loaded — the device picks the directory by ABI, finds a
 > library it cannot use, and the load fails — or it is a deliberate hiding place for a payload that
@@ -547,7 +547,7 @@ reads a few hundred bytes and never touches the rest of the file's metadata.
 | `0x28` | `p_memsz` | 8 | Bytes to occupy in memory |
 | `0x30` | `p_align` | 8 | Required alignment |
 
-**ELF32 program header layout — 32 bytes. Note that `p_flags` MOVES:**
+**ELF32 program header layout — 32 bytes.`p_flags` MOVES:**
 
 | Offset | Field | Size |
 |---|---|---|
@@ -560,7 +560,7 @@ reads a few hundred bytes and never touches the rest of the file's metadata.
 | `0x18` | `p_flags` | 4 |
 | `0x1C` | `p_align` | 4 |
 
-> **⚠️ Warning**
+> **Warning**
 > That relocation of `p_flags` from offset 4 to offset 0x18 is the single most common bug in a
 > hand-written ELF parser. The symptom is nonsensical permissions on 32-bit files — a `PT_LOAD`
 > that appears to be `--X` or `-W-` with no read bit. If you see that, check this field before you
@@ -630,7 +630,7 @@ bug and wants to redirect execution to a useful piece of code, they need that co
 base is randomised on every process start, they have to leak it first. ASLR does not fix the bug; it
 adds a required step.
 
-> **📖 Definition — ASLR**
+> **Definition — ASLR**
 > Address Space Layout Randomisation: the kernel and linker place the executable, each shared
 > library, the heap, the stack and the thread stacks at addresses chosen randomly at process start,
 > so that no address is predictable between runs. Android has had ASLR since 4.0 and full PIE
@@ -663,7 +663,7 @@ grep -m1 libnative.so /proc/$(pidof com.example.app)/maps
 #  ^ the first r--p mapping of the file is the load base
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > Take the base from the **first** mapping of the file, the one with file offset `00000000`. A
 > library appears in `/proc/<pid>/maps` as several consecutive lines, one per `PT_LOAD`, and taking
 > the `r-xp` line instead gives you an address that is off by whatever `p_vaddr` the code segment
@@ -724,7 +724,7 @@ On ELF32 every field is 4 bytes and the header is 40 bytes; the order is identic
 | `.comment` | `PROGBITS` | not mapped | Compiler and linker banner | Exact NDK and clang version |
 | `.debug_*` | `PROGBITS` | not mapped | DWARF debug info | Jackpot when present; almost never is |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `.init_array` is the most under-examined region in an Android native library, and it takes ten
 > seconds to look at. Every pointer in it runs at load time. C++ static constructors land there
 > legitimately, so the count is rarely zero — but a C library with four `.init_array` entries and no
@@ -807,7 +807,7 @@ Which produces four consequences you must be able to recite:
 2. **Hidden visibility does break it.** A function compiled with
    `__attribute__((visibility("hidden")))`, or in a library built with `-fvisibility=hidden` (which
    is common, and good practice), is not in `.dynsym`. It is still in `.text`, still executes, and
-   simply has no name at run time. Frida cannot find it, `nm -D` cannot list it, and the only way to
+   has no name at run time. Frida cannot find it, `nm -D` cannot list it, and the only way to
    reach it is by offset from something that *is* exported.
 3. **C++ names are mangled.** `Crypto::decrypt(char const*)` is not the symbol `decrypt`; it is
    something like `_ZN6Crypto7decryptEPKc`. Searching for the source-level name finds nothing.
@@ -844,7 +844,7 @@ hidden; `public_checksum` is not:
 code is still at `0x4df8`, and `public_checksum` at `0x4e20` calls it, which is exactly how you find
 it: land on the export, follow the call.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > `.dynsym` is the **reception desk**: the list of people the building will admit visitors for.
 > `.symtab` is the **staff directory**: everyone who works there, including people who never meet
 > visitors. Stripping shreds the staff directory. The reception desk stays, because without it
@@ -881,7 +881,7 @@ functions in *other* libraries, whose addresses are not known until those librar
 `symbol = r_info >> 32` and `type = r_info & 0xFFFFFFFF`; on 32-bit, `symbol = r_info >> 8` and
 `type = r_info & 0xFF`.
 
-> **⚠️ Warning — the trap that will cost you an hour**
+> **Warning — the trap that will cost you an hour**
 > On AArch64, which uses `RELA`, the slot in the **file** is usually **zero**, and the real value
 > lives in the addend. Read `.init_array` straight out of an arm64 `.so` with a hex editor and you
 > get a list of zeros, and conclude — wrongly — that there are no constructors. On ARM32, which uses
@@ -940,7 +940,7 @@ addresses. Android has shipped two compressions:
 | **Packed relocations** | `DT_ANDROID_REL` `0x6000000F`, `DT_ANDROID_RELA` `0x60000011` | API 23 | A custom LEB128 group encoding. **binutils `readelf` cannot decode it**; `llvm-readelf` can |
 | **RELR** | `DT_RELR` 36 (standard), or Android's earlier `DT_ANDROID_RELR` `0x6FFFE000` | API 28 (Android tag), API 30 (standard tag) | Bitmap encoding of relative relocations only. Very compact |
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > These values are easy to misremember, and one of them is a genuine trap:
 > `DT_ANDROID_RELRENT` is **`0x6FFFE003`**, not `0x6FFFE002`. Every constant in this section was
 > checked against the NDK sysroot's own `usr/include/elf.h`, which ships with any NDK r21 or newer
@@ -968,11 +968,11 @@ patching every call site of `strcpy` individually is slow when there are two hun
 
 **The actual answer: two tables.**
 
-> **📖 Definition — GOT (Global Offset Table)**
+> **Definition — GOT (Global Offset Table)**
 > An array of pointers in a *writable* data section. Slot *n* holds the resolved runtime address of
 > some external symbol. Written by the linker at load time; read by the code.
 
-> **📖 Definition — PLT (Procedure Linkage Table)**
+> **Definition — PLT (Procedure Linkage Table)**
 > An array of tiny code stubs in the *executable* code section. Stub *n* loads the pointer from GOT
 > slot *n* and jumps to it. The code calls the stub instead of calling the function.
 
@@ -1024,7 +1024,7 @@ stops being a writable function-pointer table for the process's whole life.
 | **Partial RELRO** | `PT_GNU_RELRO` present, but no `BIND_NOW`. `.init_array`, `.data.rel.ro` and `.got` become read-only; **`.got.plt` stays writable** for lazy binding | `GNU_RELRO` present, no `DT_BIND_NOW` / `DF_BIND_NOW` / `DF_1_NOW` |
 | **Full RELRO** | `PT_GNU_RELRO` **and** eager binding. Everything resolved at load, then the whole region made read-only | `GNU_RELRO` present **and** one of `DT_BIND_NOW` (tag 24), `DT_FLAGS & DF_BIND_NOW` (0x8), or `DT_FLAGS_1 & DF_1_NOW` (0x1) |
 
-> **🔍 Pentester's Note — cuts both ways**
+> **Pentester's Note — cuts both ways**
 > Full RELRO is good hardening *and* an obstacle to your own tooling. When a GOT hook fails
 > silently, check the page permission first:
 >
@@ -1090,7 +1090,7 @@ Every fallback in `scripts/elf-harden-check.py` goes through `PT_DYNAMIC`.
 | `DT_ANDROID_REL` / `RELA` | `0x6000000F` / `0x60000011` | Address | Android packed relocations |
 | `DT_ANDROID_RELR` | `0x6FFFE000` | Address | Android's pre-standard RELR |
 
-> **🔍 Pentester's Note — `DT_SONAME` versus the file name**
+> **Pentester's Note — `DT_SONAME` versus the file name**
 > The linker records a loaded library under its `SONAME`, not its path. A file called
 > `libinnocent.so` whose `DT_SONAME` says `libssl.so.1.1` will appear in the module list as
 > `libssl.so.1.1`, and a `DT_NEEDED` for `libssl.so.1.1` in another library will be satisfied by it.
@@ -1144,7 +1144,7 @@ Two subtleties that catch people out:
 - **Step 9 runs dependencies first.** If `libA.so` needs `libB.so`, `libB`'s constructors run
   before `libA`'s. A packer can exploit this ordering.
 
-> **📖 Definition — linker namespace**
+> **Definition — linker namespace**
 > Android's mechanism for restricting which libraries a given caller may load. Introduced in Android
 > 7.0 to stop apps loading private platform libraries. An app's namespace can see its own
 > `lib/<abi>/` directory and the public system libraries listed in
@@ -1299,7 +1299,7 @@ differences are invisible; these four are not.
 | Difference | Consequence |
 |---|---|
 | **No `LD_PRELOAD` for app processes in practice** | The classic library-interposition trick is not the route in. Frida injects instead |
-| **Much smaller** | Many glibc extensions are simply absent, which is why some ported libraries statically link their own copies of things — and why `lib-fingerprint.py` exists |
+| **Much smaller** | Many glibc extensions are absent, which is why some ported libraries statically link their own copies of things — and why `lib-fingerprint.py` exists |
 | **Different `malloc`** | Scudo since Android 11, jemalloc before. Heap layout, and therefore heap-grooming technique, differs by version — 19-Memory |
 | **Namespaces and a restricted symbol set** | `dlopen` of a platform library fails even when the file is readable. `/system/etc/public.libraries.txt` is the allowlist |
 
@@ -1388,7 +1388,7 @@ symbol tables. Nothing more precise is available statically without disassembly.
 [MISS] Stack canaries                     no reference found
 ```
 
-> **⚠️ Warning — the false negative you will hit**
+> **Warning — the false negative you will hit**
 > "No `__stack_chk_fail`" has **three** possible causes and only one of them is "hardening is off":
 >
 > 1. Compiled without `-fstack-protector*`.
@@ -1420,7 +1420,7 @@ FORTIFY" can be shown not to be an answer to "is this safe".
 **How you observe it.** Imports named `__*_chk`: `__strcpy_chk`, `__memcpy_chk`, `__sprintf_chk`,
 `__vsprintf_chk`, `__snprintf_chk`, `__read_chk`.
 
-> **🔬 Under the Hood — the tell that surprises people**
+> **Under the Hood — the tell that surprises people**
 > Enabling FORTIFY makes the import list **shrink**, not grow. `strcpy` disappears and
 > `__strcpy_chk` appears in its place. On the chapter's fixtures the "imports worth reading" count
 > drops from 3 to 1 between the default and hardened builds, because two of the three flagged
@@ -1485,7 +1485,7 @@ actually name in a report.
 
 None of these is possible from pure Java or Kotlin. All of them are ordinary mistakes in C.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Managed code is a **road with guard rails**. Native code is the **same road with the rails
 > removed** — the road has not changed, and most journeys are fine, but nothing catches a mistake.
 > The mitigations in §3.14 are not rails. They are **crumple zones**: they change what a crash costs,
@@ -1506,7 +1506,7 @@ supported ABI for which a `lib/<abi>/` directory exists and uses only that. So a
 four ships four copies of everything and uses one — which is what App Bundles and split APKs exist
 to fix.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Analyse the ABI the *target device* uses, which is almost always `arm64-v8a`. Analysing the
 > `armeabi-v7a` copy because it is smaller is a real mistake people make: the 32-bit build can have
 > different code paths, different inlining, and in some apps genuinely different features. If the
@@ -1696,7 +1696,7 @@ their history:
 #define DT_ANDROID_RELA    0x60000011   /* DT_LOOS + 4 */
 ```
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > Note `DT_ANDROID_RELRENT` is `0x6fffe003`, breaking the run of consecutive values — the sort of
 > detail that is wrong in half the blog posts about this. If you have an NDK on disk you have this
 > header, and checking it takes ten seconds. Do that rather than trusting a table, including this
@@ -1853,7 +1853,7 @@ uint8_t *decode(const uint8_t *in, uint32_t count, uint32_t elem) {
 }
 ```
 
-**Why a developer writes it.** Because `count * elem` reads as obviously correct, and in Java it
+**Why a developer writes it.** Because `count * elem` reads as correct, and in Java it
 would be a `long` or would throw. In C, `0x10000 * 0x10000` on 32-bit unsigned arithmetic is `0`.
 `malloc(0)` succeeds and returns a small allocation, and the loop then writes 4 GB past it.
 
@@ -1909,7 +1909,7 @@ often caught immediately; under older allocators it may silently return stale da
 pointers, and validate the handle on every entry.
 
 **Honest severity.** **Medium to High** if reachable from a component another app can invoke;
-**Low** if the API is internal and single-threaded. Note that this class is *reachable from Java*,
+**Low** if the API is internal and single-threaded.this class is *reachable from Java*,
 which makes it far more interesting than a bug buried three parsers deep.
 
 #### 5.3.4 A secret in `.rodata`
@@ -1961,7 +1961,7 @@ invented.
 | SSL/TLS implementation bugs | Repeatedly in OpenSSL and its forks | Apps bundle their own copies and never update them |
 | App-specific JNI handle misuse | Not a named CVE class, but extremely common in bug bounty | The `jlong` handle pattern of §5.3.3 |
 
-> **⚠️ Warning**
+> **Warning**
 > Do not cite a CVE identifier you have not checked. A wrong CVE in a report destroys the reader's
 > trust in every other number in it. Where you are unsure, write "an integer-overflow class
 > vulnerability of the kind seen repeatedly in media parsers" — which is true, useful and
@@ -2046,7 +2046,7 @@ context inside a real finding**, not as a finding:
 Every mitigation in that paragraph earns its place by changing the impact of a bug that was
 demonstrated. That is the standard.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Automated tools — MobSF among them — report the whole checklist as findings, one per line, often
 > as Medium or High. That is why clients arrive with a list of forty "vulnerabilities" that are
 > forty missing mitigations in one library. Being the person who can explain, calmly and precisely,
@@ -2379,7 +2379,7 @@ su -c "grep -m1 libnative.so /proc/$PID/maps"
 su -c "grep 'rwx' /proc/$PID/maps"
 ```
 
-> **⚠️ Warning — a quoting trap this repository has been bitten by**
+> **Warning — a quoting trap this repository has been bitten by**
 > `adb shell` does **not** preserve quoting across the host shell. Writing
 > `adb shell su -c "grep x /proc/1/maps"` reaches the device as <!-- lint:allow SU-DASH-C SU-DASH-C-BARE -- the broken form, quoted as the counter-example this warning teaches -->
 > `su -c grep x /proc/1/maps`, and `su -c` then runs only `grep`. Quote for the device explicitly:
@@ -2475,7 +2475,7 @@ if (imp && imp.slot) {
 
 | Approach | Scope | Survives | Use when |
 |---|---|---|---|
-| `Interceptor.attach(addr)` | That one function, all callers | Everything | The default. Simpler and more robust |
+| `Interceptor.attach(addr)` | That one function, all callers | Everything | The default. Simpler and more reliable |
 | GOT slot rewrite | Calls **from one module only** | RELRO, after `mprotect` | You need per-module scoping — for instance, hooking `open` for the app's library but not for the runtime |
 | `Interceptor.replace` | All callers, original discarded | Everything | Neutralising a check entirely |
 
@@ -2514,7 +2514,7 @@ adb pull /data/local/tmp/dumped.so
 python3 scripts/elf-harden-check.py dumped.so
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > A dumped image is **not** the original file. Its GOT slots hold runtime addresses rather than
 > relocation placeholders, its RELRO region is already read-only, and its `p_vaddr` values no longer
 > match its file offsets — because in the file, segments are packed, and in memory they are
@@ -2587,7 +2587,7 @@ readelf -lW "$SO"         | awk '/LOAD/ {print $NF}' | sort -u     # 16 KiB alig
 readelf -n "$SO"          | grep -A1 'Build ID'                    # provenance
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Use `llvm-readelf` rather than binutils `readelf` on Android targets. Binutils cannot decode
 > Android's packed relocations and will report a library with `DT_ANDROID_RELA` as having no
 > relocations at all — which looks like a finding and is a tooling failure. `llvm-readelf` ships in
@@ -3019,7 +3019,7 @@ PY
       }
 ```
 
-> **⚠️ Warning — use `--strict` for regressions, never for severity**
+> **Warning — use `--strict` for regressions, never for severity**
 > A CI gate that fails on any `MISSING` will fail on the first build, because the 16 KiB alignment
 > and canary checks report `MISSING` for perfectly ordinary libraries. The useful gate is
 > **comparative**: compare today's JSON against the last release's and fail only on a check that
@@ -3304,7 +3304,7 @@ Python and a hex editor.
   item that comes close to standing alone is an executable stack.
 - The highest-value native findings in practice are, in order: **a secret in `.rodata`**, **an
   outdated bundled third-party library that is reachable**, and **a reachable memory-safety bug**.
-  Note that two of the three require no memory-corruption skill at all.
+  Two of the three require no memory-corruption skill at all.
 
 ### 13.2 Chapter mind map
 

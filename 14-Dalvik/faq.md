@@ -202,7 +202,7 @@ Practical consequence: if you patch a method to return a `String` you need `cons
 ### 10. Where is the `default` case of my `switch`?
 
 There isn't one, in the payload. **Neither `packed-switch` nor `sparse-switch` encodes a default
-target.** If the value matches no case, execution simply continues at the **next instruction after the
+target.** If the value matches no case, execution continues at the **next instruction after the
 switch**.
 
 That is why the default body appears immediately after the switch instruction, which reads oddly the

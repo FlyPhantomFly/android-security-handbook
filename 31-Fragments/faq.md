@@ -89,7 +89,7 @@ caller's uid onto the transaction, and that stamp is unforgeable
 ([25-Binder](../25-Binder/README.md)) — but that transaction ends inside `system_server`. The launch
 that reaches your Activity is a *second* transaction, from `system_server`, so by the time `onCreate`
 runs there is nothing to read. `getCallingActivity()` answers only when the caller used
-`startActivityForResult`, and an attacker simply will not.
+`startActivityForResult`, and an attacker will not.
 
 Check the *input*, not the caller.
 

@@ -70,7 +70,7 @@ M2101K6P
 30
 ```
 
-> **⚠️ If your API level is 33 or higher**, some observations below will differ — runtime
+> **If your API level is 33 or higher**, some observations below will differ — runtime
 > registrations may carry an export flag, and apps targeting 33+ must supply one. Note the
 > difference when you see it; it is a finding about your device, not a mistake in the lab.
 
@@ -188,7 +188,7 @@ echo "filters with a perm    : $(grep -c 'requiredPermission=' broadcasts.txt)"
 
 Reference: 1,306 filters, 275 with a permission — so roughly four in five had none.
 
-> **✅ Checkpoint 1.**
+> **Checkpoint 1.**
 > You can name the four sections of the dump, decode a `ReceiverList` line without help,
 > and state the two things the dump does not contain.
 
@@ -251,9 +251,9 @@ python3 -B receiver-surface.py --brief | grep "ReceiverList registrations"
 Reference: a snapshot taken minutes earlier on the same **idle** device read 1,151
 registrations against 1,281. Processes start and die; registrations go with them.
 
-> **⚠️ Warning**
+> **Warning**
 > This is why "the app has N receivers" is a claim with a timestamp on it. A receiver you
-> failed to find may simply not have been registered when you looked. Re-run while
+> failed to find may not have been registered when you looked. Re-run while
 > exercising the target — that is not optional thoroughness, it is the difference between
 > finding a receiver and not.
 
@@ -302,7 +302,7 @@ that only the app itself holds.
 unknown custom permission — the developer explicitly asked for a non-exported receiver and
 the library honoured it.
 
-> **✅ Checkpoint 2.**
+> **Checkpoint 2.**
 > You have your device's numbers, you have observed the surface change between two
 > snapshots of an idle device, and you can recognise the AndroidX backport permission.
 
@@ -411,7 +411,7 @@ that nothing listens for them, and would have been wrong 299 times.
 It is a statement about *tooling coverage*, not about the apps' intent. Framed that way it
 is defensible in any report; framed as "299 hidden receivers" it is not.
 
-> **✅ Checkpoint 3.**
+> **Checkpoint 3.**
 > You have a percentage, from your own device, for how much of the broadcast surface is
 > invisible to static analysis — and you can state precisely what that percentage means.
 
@@ -484,12 +484,12 @@ platform protection.
 
 If you cannot answer all three, you have a lead. Leads are not findings.
 
-> **⚠️ Warning — do not send forgeable broadcasts blindly on a device you care about.**
+> **Warning — do not send forgeable broadcasts blindly on a device you care about.**
 > Every "forgeable" action in your list has real listeners in real apps. Sending one
 > delivers it. On a personal phone that can clear caches, reset counters or trigger
 > uploads. Do the sending half on an emulator, or against a lab app you built.
 
-> **✅ Checkpoint 4.**
+> **Checkpoint 4.**
 > You closed at least one unguarded receiver as *not a finding* because its action is
 > protected, and you produced a shortlist of actions that genuinely are forgeable.
 
@@ -698,7 +698,7 @@ at all.
 permanent blind spots — class names and, below API 33, export state. Hooking fills both.
 
 **Three.** The surface is *live*. Any count is a timestamped observation, and any receiver
-you did not find may simply not have existed when you looked.
+you did not find may not have existed when you looked.
 
 **Four.** An unguarded receiver is a lead. A protected action closes it instantly. Learning
 to close leads fast is what makes the open ones credible.

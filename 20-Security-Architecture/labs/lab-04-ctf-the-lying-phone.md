@@ -66,7 +66,7 @@ believe those guarantees, and where the belief has to happen.
   forgery is what sets up the closing question.
 - **Solve stage 2 twice**, by two different mechanisms, and be able to say which one you would use on
   a real target and why.
-- You must be able to state, for each stage, *what you had to control* in order to defeat it. Write
+- You must be able to state, for each stage, *what you had to control* to defeat it. Write
   it down as you go. Stage 4 is that list, re-read.
 - No reading Stage 4 before you have all three fragments. It gives away the answer.
 
@@ -586,7 +586,7 @@ Java.perform(function () {
 });
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > That hook replaces the return of **every** `MessageDigest.digest()` in the process, including ones
 > the framework makes. It works for a five-second CTF and it is exactly the kind of shotgun that
 > [37's Lab 03](../../37-RootDetection/labs/lab-03-trace-and-neutralise.md) warns will break an app in
@@ -617,7 +617,7 @@ a file of your choosing over `/system/etc/security/otacerts.zip` *in the app's m
 Explain why that mechanism cannot help you here, and then describe the situation in which it would be
 the *only* mechanism that works.
 
-**Q11.** Same question as before, in the same words: *what did you have to control in order to defeat
+**Q11.** Same question as before, in the same words: *what did you have to control to defeat
 stage 2?*
 
 Fragment 2 is now on screen.
@@ -725,7 +725,7 @@ Write those as two separate findings, one sentence each, in the style of Lab 03'
 demonstrated that exactly one of the four checks in `verifyToken` is doing any work — and that the one
 doing the work is defended by a key you have a copy of.
 
-**Q17.** *What did you have to control in order to defeat stage 3?*
+**Q17.** *What did you have to control to defeat stage 3?*
 
 Fragment 3 is on screen. All three stages are defeated. Stop here and take a break before Stage 4;
 it is a different kind of work.
@@ -769,7 +769,7 @@ invariant survives?
 neither properties nor hashes. If your sentence names a *technique*, it is not general enough. Try
 again until it names a *location*.
 
-**Q21.** For stage 3: you forged a token. List the specific things you needed in order to do it. There
+**Q21.** For stage 3: you forged a token. List the specific things you needed to do it. There
 are exactly two. Now cross out any of them that a different implementation of the same design could
 have denied you.
 
@@ -784,7 +784,7 @@ do. Be honest about where the attack surface has moved to.
 
 ### Step 3 — The answer
 
-> **📖 Definition — locally evaluated**
+> **Definition — locally evaluated**
 > A check is *locally evaluated* when both the observation and the decision that consumes it occur
 > inside a process the adversary controls. The quality of the observation is irrelevant to this
 > definition, which is exactly why the definition is useful.
@@ -910,7 +910,7 @@ production, and it is the first thing to test on any client that has got the res
 Do not leave this lab believing you have found something unbreakable. Chapter §3.6's warning is
 explicit, and repeating it is part of the lesson:
 
-> **⚠️ Warning**
+> **Warning**
 > Server-side verification is not a guarantee. Attestation keyboxes have been extracted from devices
 > and reused in software to produce valid-looking attestations from modified hardware; Google revokes
 > the ones it learns about, which makes it an arms race rather than a proof. The defensible claim is

@@ -20,7 +20,7 @@
 
 ## 0. The claim you are about to test
 
-Here is code that looks obviously correct:
+Here is code that looks correct:
 
 ```java
 @Override
@@ -38,7 +38,7 @@ compiles, it passes review, and it is **completely inert**.
 This lab does not ask you to believe that. It asks you to measure it, from both
 processes, at the same time.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > A Binder caller's identity exists only *while their transaction is in flight*.
 > `onBind` does not run inside their transaction — it runs on your main thread,
 > from a message the system posted. By then there is no caller, so the framework
@@ -254,7 +254,7 @@ adb shell pidof com.example.notesvault
 frida -U -p <PID> -l <repo>/28-Services/scripts/trace-service-lifecycle.js --runtime=v8
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > **Always pass `--runtime=v8`.** On the reference setup (Frida 16.1.6, Windows
 > host, Android 11 arm64) the default QuickJS runtime did not run the agent's
 > timers at all: `setInterval` never fired, so the rescan for late-loaded

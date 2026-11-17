@@ -129,7 +129,7 @@ llvm-strings -a libguard.so | grep -i 'com/example'
 Take those two failures one at a time, because each teaches a different thing.
 
 **The signatures.** `(Z)V` is the `onVerdict` callback descriptor, passed as a plain literal to
-`GetMethodID`, so of course it is in `.rodata`. `(L%s/%s/String;)Z` is the *template* the file
+`GetMethodID`, so it is in `.rodata`. `(L%s/%s/String;)Z` is the *template* the file
 assembles with `snprintf` at runtime — the finished `(Ljava/lang/String;)Z` never exists in the
 file. So the honest statement is not "the signatures are assembled at runtime and therefore absent";
 it is **"a signature is absent only if every one of its call sites assembles it"**, and one
@@ -143,7 +143,7 @@ characters into `.rodata`, leaving the 25th (`'d'`) as an immediate operand. Reb
 `-O0`, `-O1`, `-Os` and `-Oz` and the string genuinely disappears at all four. Run
 `../examples/build.sh` and read step 3 of its output; it prints that table for you.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > A plaintext identifier that is exactly **one character short** — `com/example/jnidemo/Guar`,
 > `getRuntim`, `/system/xbin/s` — is a fingerprint, not a coincidence. It means a de-obfuscation
 > routine was constant-folded and the tail byte became an immediate. Find the cross-reference to

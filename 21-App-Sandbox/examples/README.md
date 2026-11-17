@@ -102,7 +102,7 @@ ps -A -o USER,PID,NAME | grep sandboxlab
 ps -A -Z              | grep sandboxlab
 ```
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > Watch `countLines()`. The isolated process cannot open *any* file, yet it reads one successfully.
 > The host called `ParcelFileDescriptor.open()` under the host's own UID, the kernel checked
 > permissions **once, at `open()`, in the opening process**, and the resulting descriptor travelled
@@ -131,7 +131,7 @@ Read [`attacker-app/README.md`](attacker-app/README.md) before running it — in
 
 ## Reachability discipline
 
-> **⚠️ Warning**
+> **Warning**
 > `adb shell` is UID 2000 in the SELinux domain `shell`, with no seccomp filter, a non-empty
 > capability bounding set, and supplementary groups no app holds. A thing you reached from a shell is
 > **not** proven reachable by an attacker.

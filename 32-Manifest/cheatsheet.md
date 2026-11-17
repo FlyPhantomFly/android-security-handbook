@@ -17,7 +17,7 @@ aapt2 dump xmltree app.apk --file AndroidManifest.xml
 adb shell dumpsys package com.example.target
 ```
 
-⚠️ If the three disagree, **the platform is right and the disagreement is the finding** — a crafted
+If the three disagree, **the platform is right and the disagreement is the finding** — a crafted
 AXML can make tools show one thing while `PackageManager` parses another.
 See [10-APK-Internals](../10-APK-Internals/README.md).
 
@@ -104,7 +104,7 @@ The same attribute means different things at different levels. Read `targetSdk` 
 | `android:resizeableActivity` | Multi-window |
 | `android:windowSoftInputMode` | — |
 
-⚠️ `<activity-alias>` has its **own** `exported` and `permission`. An alias can expose a
+`<activity-alias>` has its **own** `exported` and `permission`. An alias can expose a
 non-exported target activity. Audit aliases separately.
 
 ---
@@ -215,7 +215,7 @@ am start -a android.intent.action.VIEW -d "myapp://path?x=1"
 | `|role` | Role-based |
 | `|knownSigner` | Named signers |
 
-⚠️ **Custom permission squatting**: a malicious app installed *first* can define a custom permission
+**Custom permission squatting**: a malicious app installed *first* can define a custom permission
 with a weaker `protectionLevel`, and the first definition wins ([23](../23-Permissions/README.md)).
 
 ### Special permissions worth flagging
@@ -259,7 +259,7 @@ cat app/build/outputs/logs/manifest-merger-*-report.txt
 | `tools:replace="attr"` | Replace named attributes |
 | `tools:remove="attr"` | Remove named attributes |
 
-⚠️ **Audit the MERGED manifest, not the source.** They differ. See
+**Audit the MERGED manifest, not the source.** They differ. See
 [08-Build-System](../08-Build-System/README.md).
 
 ---
@@ -296,7 +296,7 @@ frida -U -f com.example.target -l scripts/frida-manifest-runtime.js
 
 ---
 
-## ⚠️ THE DISCIPLINE
+## THE DISCIPLINE
 
 **A component reachable from `adb shell` is NOT proven reachable by an attacker.**
 

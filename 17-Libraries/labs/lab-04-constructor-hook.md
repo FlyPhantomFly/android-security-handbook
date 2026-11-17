@@ -17,7 +17,7 @@ Defeat a native anti-analysis check that runs in `.init_array` — that is, **in
 
 You will do it in a specific order, and the order is the lab:
 
-1. **Fail three times, deliberately**, with the approaches that look obviously correct.
+1. **Fail three times, deliberately**, with the approaches that look correct.
 2. **Prove** the ordering that made them fail, with timestamps rather than belief.
 3. **Succeed five different ways**, and understand why each one works, where each one breaks, and
    which one you would actually reach for on an engagement.
@@ -105,7 +105,7 @@ python3 ../scripts/lib-fingerprint.py app/build/.../libguarded.so
 ```
 
 You should see `.init_array` with a non-zero size, `JNI_OnLoad`, and two `Java_com_liblab_guarded_*`
-exports. **Note that `early_guard` itself is not in the symbol table** — it is `static`, so its name
+exports. **`early_guard` itself is not in the symbol table** — it is `static`, so its name
 never leaves the compiler. You will need that fact in method 3.
 
 ### The clean baseline
@@ -277,7 +277,7 @@ important observation in the lab, and part 3 is built entirely on it.
 **Q9.** Chapter §9.1 makes the same point with two log lines. Why is the timestamped, externally
 observed version worth doing anyway?
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > `dlopen` on Android goes through `android_dlopen_ext` into the linker's loader, which maps the
 > segments, applies relocations, resolves symbols, applies RELRO protections, and then — as the last
 > step before returning — walks `DT_INIT` and `DT_INIT_ARRAY` and calls every function pointer it
@@ -395,7 +395,7 @@ of a check whose result poisons a *value* rather than setting a *flag*?
 **Q13.** Suppose the constructor had used the verdict immediately — say, as one input to a key
 derivation — and then zeroed it. Would method 2 still work? Would method 1?
 
-> **⚠️ Warning**
+> **Warning**
 > Method 2 is the one people reach for because it is concrete, and it is the one that fails silently
 > on real targets. Any check whose result is *consumed and discarded* inside the constructor is
 > immune to it. Method 1 is immune to that counter-move, because it lies to the check itself.
@@ -429,7 +429,7 @@ PY
 
 Then repackage and re-sign the APK — see [10-APK-Internals](../../10-APK-Internals/README.md).
 
-**Q14.** Why can you not simply zero the `.init_array` slot in the file and be done?
+**Q14.** Why can you not zero the `.init_array` slot in the file and be done?
 
 **Q15.** What does this method cost you that methods 1 and 2 do not? (Two things: one about the
 artifact, one about what any *other* integrity check in the app will now notice.)

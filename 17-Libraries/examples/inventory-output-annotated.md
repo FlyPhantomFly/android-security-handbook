@@ -12,7 +12,7 @@ The app is a composite: the shape is typical of a mid-size consumer retail app, 
 OpenSSL versions are real releases, and the analytics vendor is fictional so that nothing here reads
 as an allegation against a real company. Substitute your own target and the reasoning is unchanged.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > An inventory is a list of *claims about a file*. A finding is a claim about *behaviour*. Almost
 > every mistake in third-party assessment is made in the gap between those two sentences: a scanner
 > reads a file, prints a CVE, and calls it a finding. This document is the discipline of not doing
@@ -59,7 +59,7 @@ the authority.
 **Next.** If section 05 later shows classes referencing a feature module that has no code here, that
 absence is itself a finding candidate: code arriving after install is ring 3.
 
-> **⚠️ Warning**
+> **Warning**
 > The single most common way to produce a confidently wrong inventory is to analyse `base.apk`
 > alone. On a bundle build it contains **no native libraries at all** — they are in
 > `split_config.<abi>.apk`. Your report then says "no native code", which is not merely incomplete;
@@ -133,7 +133,7 @@ inventory row, not a finding.
 | `JNI_OnLoad present` | Natives may be registered dynamically | That there are no JNI entry points. `RegisterNatives` binds them without exporting `Java_*` symbols | Disassemble `JNI_OnLoad` and look for the `JNINativeMethod` table; the descriptor strings are in `.rodata` |
 | `OpenSSL 1.1.1k` | A string in this binary says that | That the code *is* 1.1.1k. A string is a string | Corroborate: does the symbol set match that era? Is there an `SSL_export_keying_material`? Report the version **with** the corroboration you actually did |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The three most valuable lines in that block are the ones nobody looks at: `NEEDED`, `.init_array`,
 > and the absence of `libcrypto.so` alongside the presence of `SSL_*`. Together they say "this app
 > carries its own TLS stack, which no update will ever reach, and it runs code before the app
@@ -188,7 +188,7 @@ they are a whole second dependency tree that no Android tool will show you. Seco
 the bundle can be replaced at runtime; if it can, that is ring 3 and it outranks everything else in
 this document.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > The managed class inventory of a framework app tells you the truth about the wrong layer. A React
 > Native or Flutter app can show you two hundred tidy Java classes while ninety percent of its logic
 > lives somewhere your DEX tooling cannot see.
@@ -259,7 +259,7 @@ declares no provider and does not appear here at all.
 an SDK's manifest fragment contribute them? The manifest merger silently unions permissions from
 every AAR, which is how apps end up requesting things their developers never asked for.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Count the providers and say the number out loud to the client. Four here; ten to thirty is normal
 > in a large consumer app. Each one is a vendor whose code runs *before the app's own code does*.
 > That sentence has restructured more third-party risk conversations than any CVE I have ever

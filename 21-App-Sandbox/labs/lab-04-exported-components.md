@@ -20,7 +20,7 @@ data left anyway, because the developer opened a door in it.
 
 ## Why this matters
 
-> **🧠 Mental Model**
+> **Mental Model**
 > The sandbox is a wall. Exported components are doors the developer cut into it deliberately, because
 > an app that cannot talk to anything is not useful. The wall does not have an opinion about the doors.
 > Every question you can ask about a door — who may open it, what is behind it, does it check who is
@@ -32,7 +32,7 @@ counter-intuitive the first time you meet it. An attacker who cannot open a file
 because a more privileged process opened it on their behalf and handed over a descriptor that the
 kernel will never recheck.
 
-> **📖 Definition — exported component**
+> **Definition — exported component**
 > An `<activity>`, `<service>`, `<receiver>` or `<provider>` that other applications may invoke. It is
 > exported if `android:exported="true"`, or — for apps targeting API < 31 — implicitly if it declares an
 > `<intent-filter>` and does not say otherwise. `<provider>` defaulted to `exported="true"` for apps
@@ -182,7 +182,7 @@ listOf(
 ).forEach { seg -> /* openInputStream(Uri.withAppendedPath(base, seg)) */ }
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > `Uri.withAppendedPath` and `Uri.parse` normalise some inputs. If a payload silently does nothing, log
 > `uri.lastPathSegment` and `uri.path` **inside the victim** to see exactly what arrived. Half the time
 > a "failed" traversal never left the attacker.
@@ -265,7 +265,7 @@ override fun openFile(uri: Uri, mode: String): ParcelFileDescriptor {
 }
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > When you review a fix, check the comparison happens **after** canonicalisation and that the separator
 > is included. `startsWith(root.path)` without the trailing separator is a real bug: `/data/.../exports`
 > is a prefix of `/data/.../exports-backup`. And a check performed on the *raw* string before resolving

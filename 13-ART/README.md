@@ -107,13 +107,13 @@ the chef a finished French cookbook. Cooking starts at full speed with zero tran
 somebody had to spend a long evening translating, and the printed book takes up shelf space even for
 the recipes the chef never cooks. This is **Ahead-Of-Time compilation**, or AOT.
 
-> **📖 Definition — runtime.** A *runtime* is the body of code that is present in a process to make a
+> **Definition — runtime.** A *runtime* is the body of code that is present in a process to make a
 > program's code actually run: it loads the program's code, allocates and frees its memory, resolves
 > the names of things the code refers to, and either interprets the code or arranges for compiled
 > machine code to be executed. It is not the operating system and it is not the application; it sits
 > between them.
 
-> **📖 Definition — ART.** *ART*, the Android Runtime, is the runtime that executes the managed
+> **Definition — ART.** *ART*, the Android Runtime, is the runtime that executes the managed
 > (Java/Kotlin) code of every Android application from Android 5.0 onward. It replaced
 > [Dalvik](../14-Dalvik/README.md). It is implemented mostly in C++ and lives in the AOSP source tree
 > under `art/`. Since Android 12 it ships as an updatable Mainline module named `com.android.art`.
@@ -151,7 +151,7 @@ next to the APK — an **OAT file** — that is an ELF shared object containing 
 instructions for some of the app's methods, plus references to the app's DEX and a great deal of
 bookkeeping.
 
-> **🧠 Mental Model.** Think of the APK as a book in a language the CPU cannot read, and the OAT file
+> **Mental Model.** Think of the APK as a book in a language the CPU cannot read, and the OAT file
 > as a translated edition kept in the same drawer. The runtime always keeps the original book
 > (because it needs the original for reflection, for debugging, and for methods that were never
 > translated), and consults the translation when one exists for the page it is on.
@@ -338,7 +338,7 @@ compiled code into the interpreter, because the interpreter reads the method's b
 structure you can modify, whereas compiled code has already baked its decisions into machine
 instructions.
 
-> **🔍 Pentester's Note.** When someone says "Frida hooked the method but the app still took the
+> **Pentester's Note.** When someone says "Frida hooked the method but the app still took the
 > other branch", nine times out of ten a compiled caller had *inlined* the callee, so the call the
 > hook was waiting for no longer exists as a call instruction. The fix is to force the whole thing
 > back to the interpreter or to hook the caller instead. Section 7 shows both.
@@ -371,7 +371,7 @@ hook Java methods at all. The *real* boundaries are the process/UID boundary enf
 and the SELinux domain, covered in [21 App Sandbox](../21-App-Sandbox/README.md) and
 [22 SELinux](../22-SELinux/README.md).
 
-> **⚠️ Warning.** A common misreading of this diagram is "ART's bytecode verifier is a sandbox".
+> **Warning.** A common misreading of this diagram is "ART's bytecode verifier is a sandbox".
 > It is not. The verifier guarantees *type safety of managed code within the runtime's own model* —
 > that a `getfield` reads a field that exists at a type the code expects, that the stack and register
 > types line up, that jumps land on instruction boundaries. It says nothing about what the app may
@@ -473,7 +473,7 @@ When ART replaced Dalvik in Android 5.0, the file *format* changed completely �
 ELF shared object containing real ARM64 machine code — but the *filename extension did not*. To this
 day the compiled artifact ART produces is named `base.odex`.
 
-> **⚠️ Warning.** This trips up everyone exactly once. A file called `base.odex` on a modern device is
+> **Warning.** This trips up everyone exactly once. A file called `base.odex` on a modern device is
 > an **OAT file**, not a Dalvik ODEX. Running a Dalvik-era "deodex" tool against it will fail or
 > produce nonsense. Check with `file base.odex` — it will report ELF — or `xxd -l 8` and look for the
 > ELF magic `7f 45 4c 46`.
@@ -545,7 +545,7 @@ recording how the file was produced.
 oatdump --oat-file=/data/app/~~*/com.example.target-*/oat/arm64/base.odex --header-only
 ```
 
-> **🔍 Pentester's Note.** The `compiler-filter` key answers "is this app's code compiled or not?"
+> **Pentester's Note.** The `compiler-filter` key answers "is this app's code compiled or not?"
 > without any guessing. If it reads `verify`, essentially nothing is compiled and almost everything
 > runs in the interpreter — which is the friendliest possible state for hooking. If it reads `speed`,
 > most methods are native code and inlining is aggressive, which is the state where hooks silently
@@ -562,7 +562,7 @@ discarded and execution falls back to the interpreter using the DEX from the VDE
 4. The APEX versions must match.
 5. The checksum of each covered DEX file must match the DEX actually present.
 
-> **🔬 Under the Hood.** Point 5 is why modifying `classes.dex` inside an installed APK does not
+> **Under the Hood.** Point 5 is why modifying `classes.dex` inside an installed APK does not
 > silently execute stale compiled code — the DEX checksum in the OAT will not match, the OAT is
 > rejected wholesale, and the runtime interprets your modified DEX. It is also why an ART Mainline
 > module update invalidates every app's compiled artifacts at once, triggering a device-wide
@@ -615,7 +615,7 @@ through. Compilation can pre-advance a class along it, saving runtime work.
 | `kInitialized` | `<clinit>` complete |
 | `kVisiblyInitialized` | Initialisation visible to all threads — the terminal state |
 
-> **📖 Definition — `kVisiblyInitialized`.** ART distinguishes "initialised" from "*visibly*
+> **Definition — `kVisiblyInitialized`.** ART distinguishes "initialised" from "*visibly*
 > initialised" because on weakly-ordered architectures such as ARM64, one thread finishing `<clinit>`
 > does not guarantee another thread sees the resulting writes. Compiled code may only skip the
 > initialisation check once a class is *visibly* initialised, which requires a memory barrier across
@@ -645,7 +645,7 @@ classpath is assignable to `C`", "method `D.e()` exists and is public". Rather t
 facts later, it records them as assertions. On the next run, ART checks only whether those recorded
 assumptions still hold. If they do, verification is skipped entirely.
 
-> **🔍 Pentester's Note.** **The VDEX is where the DEX bytecode physically lives on an installed
+> **Pentester's Note.** **The VDEX is where the DEX bytecode physically lives on an installed
 > app on Android 8+.** If you want the app's actual executing bytecode from the device rather than
 > from the APK — which matters when the app modifies or generates DEX at install time — you extract it
 > from the VDEX, not the OAT and not necessarily the APK. Section 7 gives the commands.
@@ -682,9 +682,9 @@ The good news: **quickening was removed.** With the arrival of `nterp` (Section 
 the new interpreter used inline caches instead, and quickening's benefit vanished. Modern VDEX files
 contain plain, standard DEX.
 
-> **🧠 Mental Model.** If you are testing a device on Android 8–10 and your extracted DEX contains
+> **Mental Model.** If you are testing a device on Android 8–10 and your extracted DEX contains
 > instructions `baksmali` refuses to parse, you have hit quickening and need an unquickening tool. On
-> Android 11+ this problem simply does not arise. Knowing which era you are in saves an hour.
+> Android 11+ this problem does not arise. Knowing which era you are in saves an hour.
 
 ### 3.6 ART image files: boot.art, app images, image spaces
 
@@ -726,7 +726,7 @@ absolute pointers, they must be loaded at a compatible address or *relocated*. A
 performed relocation with a random slide as an ASLR measure for the boot image; modern releases
 achieve the same effect through position-independent image layout.
 
-> **⚠️ Warning.** Objects living in an image space are **not** ordinary heap objects. Many are
+> **Warning.** Objects living in an image space are **not** ordinary heap objects. Many are
 > immutable and reside in read-only mappings shared across every process on the device. Attempting to
 > write to a boot-image `String` from Frida will fault, and if you did succeed you would be corrupting
 > memory shared by every app. When a memory write in a Frida script fails with a permission error and
@@ -758,7 +758,7 @@ Two related environment variables matter:
 | `BOOTCLASSPATH` | The runtime boot class path |
 | `DEX2OATBOOTCLASSPATH` | The BCP used when compiling, which may differ |
 
-> **🔬 Under the Hood.** The BCP string and the checksums of every jar in it are stored in the OAT
+> **Under the Hood.** The BCP string and the checksums of every jar in it are stored in the OAT
 > key-value store (Section 3.2). Any change — a Conscrypt module update, an ART module update, an OTA
 > touching `framework.jar` — changes those checksums, invalidates every app's OAT file, and forces
 > recompilation. This is the mechanism behind the "phone is slow and hot for an hour after an update"
@@ -803,7 +803,7 @@ sequenceDiagram
 | OTA / Mainline update | varies | Everything invalidated and recompiled |
 | `cmd package compile` | as specified | Manual override — your tool (Section 3.10) |
 
-> **🔍 Pentester's Note.** "Idle and charging" is a real, observable condition. If you leave a test
+> **Pentester's Note.** "Idle and charging" is a real, observable condition. If you leave a test
 > device plugged in overnight, background dexopt will run and your target's compilation state will
 > change from `verify` to `speed-profile`. Methods that were interpreted yesterday are native code
 > today, and hooks that worked may now miss because of inlining. **This is the single most common
@@ -836,7 +836,7 @@ everything is patchable.
 their callers, so a hook on `isRootedDevice()` may never fire because its body was inlined into the
 caller and there is no longer a call instruction to intercept.
 
-> **🧠 Mental Model.** The compiler filter is a slider between *observable* and *fast*. As a defender
+> **Mental Model.** The compiler filter is a slider between *observable* and *fast*. As a defender
 > you want fast. As an analyst you want observable. Section 3.10 is how you move the slider.
 
 ### 3.10 Forcing compilation with `cmd package compile`
@@ -872,7 +872,7 @@ dumpsys package dexopt | grep -A3 com.example.target
 | `--check-prof` | Control whether profile freshness is considered |
 | `--secondary-dex` | Operate on secondary (dynamically loaded) DEX files |
 
-> **🔍 Pentester's Note.** Make this your first move when a Java hook misbehaves:
+> **Pentester's Note.** Make this your first move when a Java hook misbehaves:
 > ```bash
 > adb shell cmd package compile -m verify -f com.example.target
 > adb shell am force-stop com.example.target
@@ -914,7 +914,7 @@ profman --dump-only \
   --dex-location=base.apk
 ```
 
-> **🔍 Pentester's Note.** A profile is a **behavioural record of what the app actually executed**.
+> **Pentester's Note.** A profile is a **behavioural record of what the app actually executed**.
 > Dumping it tells you which code paths ran on this device — which is genuinely useful for finding the
 > live code in a huge obfuscated app, and for confirming whether a suspicious method ever executes at
 > all. It is an underused triage technique.
@@ -928,7 +928,7 @@ an anonymised, merged profile alongside the APK in a `.dm` (DexMetadata) file.
 The result is that a freshly installed app can be compiled with `speed-profile` immediately, using
 real-world usage data, before the user has launched it once.
 
-> **⚠️ Warning.** This creates a difference between installation methods that will bite you.
+> **Warning.** This creates a difference between installation methods that will bite you.
 > `adb install` supplies no `.dm`, so a sideloaded app starts at `verify` — everything interpreted.
 > The same app installed from Play may arrive already compiled with a cloud profile. **Your test
 > device may therefore be in a materially different execution state from a real user's device**, which
@@ -949,7 +949,7 @@ The switch interpreter never went away. It is used whenever correctness or obser
 than speed: when a debugger is attached, when a method is being instrumented, when deoptimization has
 occurred, and when the runtime is in a state the fast interpreters do not support.
 
-> **🔬 Under the Hood.** This is why attaching a debugger or enabling instrumentation slows an app
+> **Under the Hood.** This is why attaching a debugger or enabling instrumentation slows an app
 > dramatically: the runtime switches from `nterp` (fast assembly) to the switch interpreter (portable
 > C++), which can be an order of magnitude slower. It is also why some timing-based anti-debug checks
 > work — they are not detecting the debugger directly, they are detecting the interpreter change. See
@@ -986,7 +986,7 @@ Compiled code goes into the JIT code cache — an anonymous memory mapping creat
 backed by any file. It is split into a code region and a data region, and because W^X is enforced, ART
 maintains a dual mapping: one writable view used to emit code, one executable view used to run it.
 
-> **🔍 Pentester's Note.** In `/proc/<pid>/maps` the JIT code cache appears as anonymous `r-xp`
+> **Pentester's Note.** In `/proc/<pid>/maps` the JIT code cache appears as anonymous `r-xp`
 > regions, often labelled `[anon:jit-code-cache]`. Finding executable anonymous memory that is not
 > backed by a file is exactly how anti-Frida checks look for injected code — and it is also where
 > legitimate JIT code lives, which is why naive "executable anonymous memory means injection"
@@ -1063,7 +1063,7 @@ class ArtMethod {
 | `data_` | Native pointer / profiling info | For a native method, this is the **JNI function pointer** — overwrite it and you have redirected a native method without touching its code |
 | `entry_point_from_quick_compiled_code_` | **Where calls actually go** | **The hook target. Everything else is detail.** |
 
-> **🧠 Mental Model.** An `ArtMethod` is a **function pointer with paperwork attached**. The paperwork
+> **Mental Model.** An `ArtMethod` is a **function pointer with paperwork attached**. The paperwork
 > tells the runtime what the method is; the function pointer tells the CPU where to go. Change the
 > pointer and you have changed what the method does, without touching a single byte of the app's DEX
 > or its compiled code.
@@ -1097,7 +1097,7 @@ flowchart TD
     style INS fill:#f9d0d0
 ```
 
-> **🔬 Under the Hood.** The `art_quick_resolution_trampoline` state is why the *first* call to a
+> **Under the Hood.** The `art_quick_resolution_trampoline` state is why the *first* call to a
 > method behaves differently from subsequent calls: the first call resolves, rewrites the entry point,
 > and then dispatches. A hook installed after that rewrite sees a different entry point value than one
 > installed before it. This is one reason `frida -f` (spawn) and `frida -n` (attach) can produce
@@ -1159,7 +1159,7 @@ This is the practical payoff of the whole chapter.
 | Hook fires but the app takes the old branch | A compiled caller baked in the old result | Force interpretation |
 | `ClassNotFoundException` in the hook | The class is loaded by a non-default `ClassLoader` | Enumerate class loaders — see [53-Frida](../53-Frida/README.md) |
 
-> **🔍 Pentester's Note.** Notice that three of the four fixes are the same action: **force the target
+> **Pentester's Note.** Notice that three of the four fixes are the same action: **force the target
 > back to the interpreter**. That is why `cmd package compile -m verify -f <pkg>` is the highest-value
 > single command in Android dynamic analysis, and why it belongs in your muscle memory alongside
 > `frida -U -f`.
@@ -1204,7 +1204,7 @@ The `monitor_` word is genuinely multi-purpose: it holds the identity hash code,
 or a pointer to a fat monitor, or — during a copying GC — the **forwarding address** the object is
 being moved to.
 
-> **⚠️ Warning.** That last use is why an object's address is not stable. During a concurrent copying
+> **Warning.** That last use is why an object's address is not stable. During a concurrent copying
 > collection an object may be moved and its header repurposed to point at its new location. Caching a
 > raw object address across a GC and dereferencing it later is a reliable way to crash the app. This
 > is exactly why Frida hands you *handles* rather than raw pointers for Java objects.
@@ -1238,7 +1238,7 @@ If exactly one interface method hashes to a slot, dispatch is as cheap as a vtab
 more collide, the slot instead points at `art_quick_imt_conflict_trampoline`, which performs a full
 lookup through the class's `IfTable`.
 
-> **🔍 Pentester's Note.** When you hook an interface method and the hook does not fire, check whether
+> **Pentester's Note.** When you hook an interface method and the hook does not fire, check whether
 > the app calls it through the concrete class rather than the interface. `invoke-virtual` on the
 > implementing class and `invoke-interface` on the interface reach the same `ArtMethod`, but if you
 > hooked the *interface's* declaration rather than the *implementation's*, you patched the wrong
@@ -1270,7 +1270,7 @@ The `Instrumentation` class (`art/runtime/instrumentation.h`) is the framework's
 the mechanism JVMTI agents, the debugger, and method tracing all use. It supports listeners for method
 entry, method exit, field read, field write, exception throw, and branch events.
 
-> **🔬 Under the Hood.** When Frida hooks a Java method it typically also requests deoptimization for
+> **Under the Hood.** When Frida hooks a Java method it typically also requests deoptimization for
 > that method, precisely so that inlined copies in already-compiled callers stop being used. This is
 > why hooking one method can measurably slow an app — you have forced a region of it back into the
 > interpreter. It is also why an app can *detect* hooking by timing itself; see
@@ -1315,7 +1315,7 @@ the collector need not scan the whole heap to find references into the collected
 | `char[]`/`byte[]` can be zeroed | Which is why sensitive material should use them and clear them |
 | Image space objects never move | Stable targets, but read-only |
 
-> **🔍 Pentester's Note.** This is the technical reason `String` is the wrong type for a password or
+> **Pentester's Note.** This is the technical reason `String` is the wrong type for a password or
 > key: it is immutable, so it cannot be zeroed, and it may be interned, so it may live for the process
 > lifetime in a place your heap search will find. `char[]` with explicit clearing is the correct
 > pattern, and its absence is a legitimate (if usually Low-severity) finding.
@@ -1333,7 +1333,7 @@ the collector need not scan the whole heap to find references into the collected
 ART processes these in a defined order during collection and enqueues cleared references onto their
 `ReferenceQueue`.
 
-> **⚠️ Warning.** Objects awaiting finalization stay alive longer than intuition suggests, sometimes
+> **Warning.** Objects awaiting finalization stay alive longer than intuition suggests, sometimes
 > across several collections. A sensitive object referenced only by a finalizer queue is still in
 > memory and still findable. Do not rely on "it went out of scope" as a security property.
 
@@ -1350,7 +1350,7 @@ objects. Instead, JNI hands out **indirect references**: opaque handles that ind
 
 A `jobject` is therefore a tagged index, not an address. The low bits encode which table it belongs
 to; the rest index into it. Dereferencing requires a table lookup, which is exactly what allows the GC
-to move the underlying object and simply update the table entry.
+to move the underlying object and update the table entry.
 
 | Limit | Value |
 |---|---|
@@ -1358,7 +1358,7 @@ to move the underlying object and simply update the table entry.
 | Local reference table capacity | 512 entries per frame historically; exceeding it aborts the process |
 | Global references | Large but bounded; leaks are a real crash cause |
 
-> **🔍 Pentester's Note.** `local reference table overflow` in logcat is a native-code bug — a loop
+> **Pentester's Note.** `local reference table overflow` in logcat is a native-code bug — a loop
 > creating local references without deleting them or using `PushLocalFrame`/`PopLocalFrame`. It is
 > worth reporting as a robustness finding, and occasionally it is a denial-of-service primitive if an
 > attacker controls the loop count. See [16-JNI](../16-JNI/README.md).
@@ -1388,7 +1388,7 @@ What it catches:
 | UTF-8 validity | Malformed modified UTF-8 in strings |
 | Array bounds | Out-of-range indices in `Get/SetArrayRegion` |
 
-> **🔍 Pentester's Note.** Turning on CheckJNI against a target with substantial native code is a
+> **Pentester's Note.** Turning on CheckJNI against a target with substantial native code is a
 > cheap way to surface latent memory-safety bugs. The abort messages name the exact JNI call and
 > argument, which is often enough to locate the vulnerable function in Ghidra. Treat any CheckJNI
 > abort as a lead worth pulling.
@@ -1419,7 +1419,7 @@ ART is configured through system properties whose names still carry the Dalvik p
 getprop | grep -E "dalvik\.vm|ro\.dalvik"
 ```
 
-> **🔍 Pentester's Note.** `dalvik.vm.usejit false` disables the JIT entirely, forcing everything not
+> **Pentester's Note.** `dalvik.vm.usejit false` disables the JIT entirely, forcing everything not
 > already AOT-compiled into the interpreter. Combined with `cmd package compile -m verify -f`, this
 > gives you a device where essentially all app code is interpreted — the maximally observable
 > configuration. It costs performance, which is exactly the right trade for an analysis device.
@@ -1459,7 +1459,7 @@ flowchart LR
     H --> I["Background dexopt recompiles apps<br/>over the following hours"]
 ```
 
-> **⚠️ Warning.** Three consequences matter for an engagement. First, **your target's compilation
+> **Warning.** Three consequences matter for an engagement. First, **your target's compilation
 > state can change without you doing anything**, if a Mainline update lands mid-test. Second, **ART
 > internals can change between devices on the same Android release**, because one may have a newer ART
 > module — so a Frida script depending on `ArtMethod` field offsets may work on one device and fail on
@@ -1574,7 +1574,7 @@ entry point *is* the dispatch decision.
 entry point is replaced with `art_quick_instrumentation_entry` or the interpreter bridge, and the
 original is stashed so it can be restored.
 
-> **🧠 Mental Model.** Steps 4 and 5 are the runtime doing to itself exactly what a hooking framework
+> **Mental Model.** Steps 4 and 5 are the runtime doing to itself exactly what a hooking framework
 > does to it. Frida and LSPosed are not subverting ART; they are using the same mutation the runtime
 > uses on itself every second. That is why the technique is so reliable — the field is *designed* to
 > be rewritten at arbitrary times.
@@ -1612,7 +1612,7 @@ verifier dependencies, compiles the selected methods, and writes the OAT and opt
 
 **Step 6.** The old artifacts are replaced. The next launch of the app maps the new OAT.
 
-> **🔬 Under the Hood.** `dex2oat` runs in its own SELinux domain and writes to a directory the app
+> **Under the Hood.** `dex2oat` runs in its own SELinux domain and writes to a directory the app
 > cannot write to. This matters: an app **cannot** forge its own compiled code, and a compromised app
 > cannot persist by writing malicious native code into its OAT file. The compiled artifact is produced
 > by a more-privileged component from inputs the app supplies, which is a meaningfully different trust
@@ -1669,7 +1669,7 @@ issues in these categories. Described as classes, since specific identifiers cha
 | GC and reference handling | Use-after-free through mishandled references or races in concurrent collection |
 | JNI boundary | Missing checks allowing native code to corrupt runtime structures |
 
-> **⚠️ Warning.** Do not invent CVE identifiers for these. When reporting, cite the class of issue and,
+> **Warning.** Do not invent CVE identifiers for these. When reporting, cite the class of issue and,
 > if you have one, the specific bulletin entry from
 > [source.android.com/docs/security/bulletin](https://source.android.com/docs/security/bulletin).
 
@@ -1712,7 +1712,7 @@ The artifacts ART leaves on disk are evidence:
 | OAT file timestamps | When compilation last occurred, bounding when the app was used |
 | Secondary DEX artifacts under the app's data dir | Evidence of dynamic code loading |
 
-> **🔍 Pentester's Note.** The profile is the most underrated forensic artifact on Android. It is a
+> **Pentester's Note.** The profile is the most underrated forensic artifact on Android. It is a
 > record of executed code that survives across reboots, is not controlled by the app, and can
 > distinguish "this malicious method exists in the APK" from "this malicious method actually ran on
 > this device". Preserve it before doing anything that triggers recompilation.
@@ -1756,7 +1756,7 @@ adb pull /data/local/tmp/dex_out ./
 jadx -d decompiled ./dex_out/*.dex
 ```
 
-> **🔍 Pentester's Note.** Use this rather than the APK's DEX when you suspect the installed bytecode
+> **Pentester's Note.** Use this rather than the APK's DEX when you suspect the installed bytecode
 > differs from what you downloaded — after an in-place patch, with a packer that rewrites DEX at
 > install, or when analysing a preinstalled system app whose APK you cannot obtain cleanly.
 
@@ -1904,7 +1904,7 @@ if (sym.length > 0) {
 }
 ```
 
-> **⚠️ Warning.** ART is a Mainline module (Section 3.26), so exported symbol names and structure
+> **Warning.** ART is a Mainline module (Section 3.26), so exported symbol names and structure
 > offsets differ between builds *within the same Android release*. Any script that depends on them
 > must check before it acts and fall back gracefully. Scripts in this repository do; many scripts you
 > find online do not, which is why they crash target apps.
@@ -2005,7 +2005,7 @@ hprof-conv heap.hprof heap-std.hprof     # convert Android format to standard
 | `android:debuggable="true"` | Enables JDWP, CheckJNI, and forces interpretation in many paths |
 | `android:extractNativeLibs="false"` | Native libraries mapped from the APK rather than extracted |
 
-> **🔍 Pentester's Note.** `android:vmSafeMode="true"` in a production app is unusual and worth a
+> **Pentester's Note.** `android:vmSafeMode="true"` in a production app is unusual and worth a
 > question. It was designed as a workaround for JIT bugs. Its practical effect is that the app runs
 > entirely interpreted — which is slower for users, and *much* friendlier for you. Occasionally it is
 > set deliberately by developers who found that it made their own timing-based checks consistent.
@@ -2028,7 +2028,7 @@ from memory once the packer has decrypted it.
 
 ## 9. Examples
 
-> **✅ Verified against a compiler.** `examples/art_method_reference.cpp` compiles **clean** with
+> **Verified against a compiler.** `examples/art_method_reference.cpp` compiles **clean** with
 > `-Wall -Wextra` using `aarch64-linux-android21-clang++` from **NDK 25.2.9519653**, and links as a
 > shared library. It is a *reference transcription* of ART's own structures for reading alongside
 > AOSP, not a drop-in header — it does not include ART's private headers and is not ABI-compatible
@@ -2096,7 +2096,7 @@ am force-stop com.example.target
 
 The hook now fires and `describe()` returns `"insecure"`.
 
-> **🧠 Mental Model.** This experiment is worth actually running, once. It converts "inlining breaks
+> **Mental Model.** This experiment is worth actually running, once. It converts "inlining breaks
 > hooks" from something you read into something you have seen, and after that you will reach for
 > `-m verify` reflexively.
 
@@ -2166,7 +2166,7 @@ a bypass that survives compilation, hook at a different level — the native Bor
 function, which is not subject to Java inlining. See
 [36-CertificatePinning](../36-CertificatePinning/README.md).
 
-**4. Record it.** The report should note that the finding reproduces regardless of compilation state,
+**4. Record it.** The report should state that the finding reproduces regardless of compilation state,
 and that `-m verify` was used only to make instrumentation reliable — not to create the vulnerability.
 
 ### 9.5 Enterprise — a reproducible ART-aware analysis harness
@@ -2281,7 +2281,7 @@ the callee away.
 **Q: An app deletes its own OAT file at startup. What is it trying to achieve and does it work?**
 The intent is usually to defeat static analysis of compiled code or to force a known execution state
 for timing checks. It does not meaningfully impede analysis — the DEX is still in the VDEX and the
-APK, and the runtime simply interprets. It does make the app measurably slower for every user, and it
+APK, and the runtime interprets. It does make the app measurably slower for every user, and it
 arguably makes analysis *easier* by guaranteeing interpretation. It is a poor trade.
 
 ### Staff Engineer
@@ -2315,7 +2315,7 @@ charging so the user never pays. The costs are real: execution state becomes non
 time-varying, which complicates debugging, performance measurement, reproducibility and security
 tooling; and profiles are a new data flow with privacy implications, addressed by anonymised
 aggregation in Cloud Profiles. The decision is sound given Android's constraints — the alternative
-was a permanent trade between install time and battery — but a candidate should note that the
+was a permanent trade between install time and battery — but a candidate should state that the
 non-determinism is a genuine and under-acknowledged tax paid by everyone who debugs Android.
 
 **Q: The managed/native boundary inside a process is not a security boundary. What follows?**

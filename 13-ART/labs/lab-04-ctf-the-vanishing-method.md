@@ -14,7 +14,7 @@ entered is correct.
 
 Your usual reflex — hook the validation method and force it to return `true` — does not work. Neither
 does hooking `String.equals`. The app does not appear to have any anti-Frida protection: there is no
-`/proc/self/maps` scanning, no `TracerPid` check, no thread-name enumeration. It simply does not
+`/proc/self/maps` scanning, no `TracerPid` check, no thread-name enumeration. It does not
 respond to your hooks.
 
 **Recover the flag.**

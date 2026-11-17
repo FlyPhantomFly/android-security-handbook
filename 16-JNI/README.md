@@ -33,10 +33,10 @@ the split is explicit:
 | [13 — ART](../13-ART/README.md) | `ArtMethod`, the runtime's representation of a method, entry points, the GC that moves objects | The *engine* on the Java side of the bridge. When this chapter says "a `jmethodID` is an `ArtMethod*`", chapter 13 is where `ArtMethod` is defined field by field. |
 | [17 — Libraries](../17-Libraries/README.md) | Library packaging, ABI splits, `jniLibs`, linker namespaces, third-party SDK inventory | *Which* `.so` files exist and how they got into the APK. |
 | [53 — Frida](../53-Frida/README.md) | Frida as a tool: `Interceptor`, `Java.perform`, the agent lifecycle | The *instrument*. This chapter supplies the model that makes a native hook readable; 53 supplies the API. |
-| [57 — Ghidra](../57-Ghidra/README.md) | The decompiler workflow, type archives, scripting Ghidra | Consumes this chapter's `JNIEnv` layout in order to retype `param_1`. Its §3.8 says to read this chapter first, and it means it. |
+| [57 — Ghidra](../57-Ghidra/README.md) | The decompiler workflow, type archives, scripting Ghidra | Consumes this chapter's `JNIEnv` layout to retype `param_1`. Its §3.8 says to read this chapter first, and it means it. |
 | [37 — RootDetection](../37-RootDetection/README.md) | Root detection logic | Already ships a working `RegisterNatives` example in `examples/native_root_check.c`. This chapter cross-references it rather than restaging it. |
 
-> **🧠 Mental Model.** Chapter 15 teaches you to read the shipping container. Chapter 16 — this one —
+> **Mental Model.** Chapter 15 teaches you to read the shipping container. Chapter 16 — this one —
 > teaches you to read the *customs declaration*: what is being handed across the border, in which
 > direction, under whose responsibility, and what happens when the paperwork lies.
 
@@ -161,13 +161,13 @@ shelf on a rack of ten, your hand closes on whatever happens to be mounted there
 a window, the next room. Nobody stops you, and *nothing tells you it went wrong*. That difference is
 not a detail. It is the entire security content of this chapter.
 
-> **📖 Definition — native code.** *Native code* is machine code compiled ahead of time for a specific
+> **Definition — native code.** *Native code* is machine code compiled ahead of time for a specific
 > processor architecture — ARM64, ARM32, x86-64 — that the CPU executes directly. It is contrasted with
 > *managed code* (Java, Kotlin), which is compiled to DEX bytecode and executed by a runtime
 > ([ART](../13-ART/README.md)) that supervises it. On Android, native code arrives inside an APK as
 > shared object files, `lib*.so`, under `lib/<abi>/`.
 
-> **📖 Definition — JNI.** The *Java Native Interface* is a specification, first published by Sun in
+> **Definition — JNI.** The *Java Native Interface* is a specification, first published by Sun in
 > 1997 and part of the Java platform ever since, that defines exactly how compiled native code and
 > Java code call each other, exchange data, and share objects. It defines a naming scheme, a type
 > encoding, a table of about 230 functions the native side may call, and a set of rules about object
@@ -177,7 +177,7 @@ not a detail. It is the entire security content of this chapter.
 
 ### 1.2 What would break if JNI did not exist
 
-Strip JNI out of Android and the following simply stops working:
+Strip JNI out of Android and the following stops working:
 
 | Capability | Why it needs native code |
 |---|---|
@@ -224,7 +224,7 @@ frustration, so here they are separated:
    `JNIEnv`, that let native code do everything Java code can do: create objects, call methods, read
    fields, throw exceptions, take locks. §3.10 to §3.20.
 
-> **🧠 Mental Model.** JNI is not "a way to call C from Java". It is a **two-way, fully symmetric
+> **Mental Model.** JNI is not "a way to call C from Java". It is a **two-way, fully symmetric
 > interoperability layer** that happens to be used mostly in one direction. Native code calling *back*
 > into Java through `JNIEnv` is not an exotic case — it is how every callback, every `onProgress`,
 > every result delivery works, and it is where the most interesting bugs live.
@@ -334,7 +334,7 @@ reverse, and — critically — it checks whether the native code left an except
 
 On the **native** side there is a function. If the app used static registration it has a name, and
 that name is in the ELF dynamic symbol table where `nm -D` will show it. If the app used dynamic
-registration it may have no name at all: it is simply an address that appeared in a table passed to
+registration it may have no name at all: it is an address that appeared in a table passed to
 `RegisterNatives`. Once inside, the code can `malloc`, write to the stack, `mmap` an executable page,
 open a socket, or read `/proc/self/maps` — and ART neither knows nor cares. The two red-tinted boxes
 are drawn that way because everything inside them is outside the runtime's guarantees.
@@ -562,7 +562,7 @@ static {
 | Typical source | The APK's `lib/<abi>/` directory, extracted or mapped in place | A file the app wrote at runtime |
 | Security signal | Normal | **High interest.** An app loading a `.so` from its own writable data directory is loading code that was not in the APK, was not signed with the APK, and was probably downloaded |
 
-> **🔍 Pentester's Note.** `System.load` with a path under `/data/data/<pkg>/` or the external storage
+> **Pentester's Note.** `System.load` with a path under `/data/data/<pkg>/` or the external storage
 > is one of the highest-signal single lines in an APK. It means the code that will run was not
 > reviewed by the store, not covered by the APK signature, and may differ per user or per session.
 > Hook `dlopen` (§7.7) and you will see it arrive. Chapter [40 Obfuscation](../40-Obfuscation/README.md)
@@ -649,7 +649,7 @@ app libraries in practice. Treat its presence as a curiosity, not a hook point.
 | `JNI_EEXIST` | `-5` | VM already created |
 | `JNI_EINVAL` | `-6` | Invalid argument |
 
-> **🔍 Pentester's Note.** If a library is doing anti-analysis, `JNI_OnLoad` is where it starts. Set
+> **Pentester's Note.** If a library is doing anti-analysis, `JNI_OnLoad` is where it starts. Set
 > your Frida hooks *before* the library loads, not after. The standard technique is to hook `dlopen`
 > (or `android_dlopen_ext`) and install your `JNI_OnLoad`-relative hooks in its `onLeave`, which fires
 > after the library is mapped but — for `dlopen` — before ART has called `JNI_OnLoad`. §7.2 gives the
@@ -687,7 +687,7 @@ minutes and pays for the rest of your career.
 Three details that trip people up, every time:
 
 1. **The package separator is a forward slash, not a dot.** `Ljava/lang/String;` is correct;
-   `Ljava.lang.String;` is not, and ART will simply fail to find the method.
+   `Ljava.lang.String;` is not, and ART will fail to find the method.
 2. **The trailing semicolon is part of the descriptor**, not punctuation you can omit. `[Ljava/lang/String;`
    ends in a semicolon even though it is an array.
 3. **Nested classes use `$`, and `$` stays a `$` in a descriptor.** `Outer.Inner` is
@@ -737,7 +737,7 @@ character, an object type ends at its `;`, and `[` binds to whatever follows it.
 | a constructor | `(...)V` with the name `<init>` |
 | a static initialiser | `()V` with the name `<clinit>` |
 
-> **⚠️ Warning — the return type is not part of overload resolution in Java, but it *is* part of a JNI
+> **Warning — the return type is not part of overload resolution in Java, but it *is* part of a JNI
 > signature.** `GetMethodID(env, cls, "f", "()I")` will not find a method declared `void f()`. The
 > signature you pass must match the declared return type exactly, or `GetMethodID` returns `NULL` and
 > raises `NoSuchMethodError`.
@@ -800,7 +800,7 @@ Java_<mangled fully qualified class name>_<mangled method name>[__<mangled argum
 The escapes `_2` and `_3` exist only because argument signatures contain `;` and `[`. They never
 appear from a class or method name alone, since Java identifiers cannot contain `;` or `[`.
 
-> **⚠️ Warning — `$` is `_00024`, not `_0024`.** The escape is `_0` followed by *four* hex digits, and
+> **Warning — `$` is `_00024`, not `_0024`.** The escape is `_0` followed by *four* hex digits, and
 > `$` is U+0024, so the four digits are `0024` and the whole escape is six characters: `_00024`. This
 > is the single most frequently mis-remembered rule in JNI, and getting it wrong means your `grep` for
 > an inner class's native method finds nothing. Verify it yourself the moment you have a real APK: any
@@ -1019,7 +1019,7 @@ java.lang.UnsatisfiedLinkError: No implementation found for
   (tried Java_com_example_Hasher_sha256 and Java_com_example_Hasher_sha256__Ljava_lang_String_2)
 ```
 
-> **🔍 Pentester's Note.** That message is a gift. Delete or rename a symbol in a copy of the library,
+> **Pentester's Note.** That message is a gift. Delete or rename a symbol in a copy of the library,
 > call the method, and logcat prints the exact two strings ART wanted. You never have to guess a
 > mangling — you can make the runtime tell you. Lab 01 uses this deliberately.
 
@@ -1056,7 +1056,7 @@ This is present in the default `proguard-android.txt` that ships with the Androi
 applies to the overwhelming majority of obfuscated apps *whether or not the developer thought about
 it*.
 
-> **🔍 Pentester's Note — the anchor.** In a fully obfuscated app where every class is `a.b.c` and
+> **Pentester's Note — the anchor.** In a fully obfuscated app where every class is `a.b.c` and
 > every method is `a()`, the classes with native methods keep **real, meaningful names**. That is a
 > free foothold: it tells you what the app considered important enough to move into native code, and
 > it gives you a starting class name to trace outward from. Chapter
@@ -1145,11 +1145,11 @@ send readers here:
 | Typical user | Ordinary apps, NDK samples, most open-source libraries | Packers, DRM, commercial obfuscators, anti-tamper SDKs, and anyone who read this chapter |
 | Cost to the analyst | Minutes | Hours, if you do not know the technique; minutes if you do |
 
-> **🧠 Mental Model.** Static registration publishes a phone book. Dynamic registration makes the calls
+> **Mental Model.** Static registration publishes a phone book. Dynamic registration makes the calls
 > unlisted and hands out the numbers privately at start-up. You cannot read the book — but you can tap
 > the line while the numbers are being handed out. That is what §7.2's script does.
 
-> **🔍 Pentester's Note.** A library that exports **only** `JNI_OnLoad` and no `Java_*` symbols at all
+> **Pentester's Note.** A library that exports **only** `JNI_OnLoad` and no `Java_*` symbols at all
 > is telling you something loud: everything is registered dynamically, deliberately. Treat it as an
 > indicator that the developer expected analysis. It is also, in practice, correlated with the code
 > being worth reading. In [37-RootDetection](../37-RootDetection/README.md), `examples/native_root_check.c`
@@ -1220,7 +1220,7 @@ Interceptor.attach(target, {
 });
 ```
 
-> **⚠️ Warning — the most common single mistake in native Android instrumentation.** Reading `args[0]`
+> **Warning — the most common single mistake in native Android instrumentation.** Reading `args[0]`
 > as "the first argument" gives you a `JNIEnv*`. It is a valid pointer, it prints as a plausible
 > address, and `args[0].readCString()` will either return garbage or crash the process. If your
 > arguments look like nonsense, count again from `args[2]`.
@@ -1232,7 +1232,7 @@ in at once — `JNIEnv` is *per thread* and encodes which thread is calling. Pas
 only design that is both thread-correct and free of global state. §3.10 and the FAQ expand on this.
 
 **Why is `thiz` there?** Because a native method is still a method. In Java, `this` is an implicit
-argument passed in a register; JNI simply makes it explicit. For a static method there is no receiver,
+argument passed in a register; JNI makes it explicit. For a static method there is no receiver,
 so JNI passes the class instead — which is genuinely useful, because static native methods routinely
 need their own `jclass` to look up static fields and would otherwise have to call `FindClass`.
 
@@ -1301,7 +1301,7 @@ static void worker(void) {
 The `JNI_EDETACHED` branch is the whole reason this idiom exists, and §3.19 explains what happens if
 you skip it: not an exception, an immediate process abort.
 
-> **🔬 Under the Hood.** In ART, the `JNIEnv*` a native method receives is a pointer to a
+> **Under the Hood.** In ART, the `JNIEnv*` a native method receives is a pointer to a
 > `JNIEnvExt` (`art/runtime/jni/jni_env_ext.h`), which begins with the function-table pointer so that
 > it is layout-compatible with the specification's `JNIEnv`, and then carries ART's own per-thread
 > state: the owning `Thread*`, the local reference table, and the flags CheckJNI uses. That is why
@@ -1367,7 +1367,7 @@ real targets:
 | `ExceptionCheck` | 228 | `0x720` | `0x390` | Correct exception discipline |
 | `GetObjectRefType` | 232 | `0x740` | `0x3a0` | Debugging reference lifetime |
 
-> **⚠️ Warning.** Chapter [57 Ghidra](../57-Ghidra/README.md) §3.8 reproduces the most-used rows of
+> **Warning.** Chapter [57 Ghidra](../57-Ghidra/README.md) §3.8 reproduces the most-used rows of
 > this table and tells you to verify against the NDK `jni.h` you believe the target was built with
 > before putting an offset in a report. That advice applies here too. The order is specified and
 > stable, but a report that states an offset without saying which word size it assumes is a report
@@ -1436,7 +1436,7 @@ loaded: as long as you keep a reference (ideally a global one) to the `jclass`, 
 Caching them in `static` variables is the standard, correct optimisation — and is why §3.17 says to
 cache the `jclass` as a global reference at the same time.
 
-> **🔬 Under the Hood.** In ART, with the default configuration, a `jmethodID` **is** an `ArtMethod*`
+> **Under the Hood.** In ART, with the default configuration, a `jmethodID` **is** an `ArtMethod*`
 > and a `jfieldID` **is** an `ArtField*` — the decode is a cast, not a table lookup. That is why
 > chapter [13 ART](../13-ART/README.md) §3.15 matters here: a `jmethodID` you print in a Frida hook is
 > an address you can inspect as an `ArtMethod`. ART also supports indirect `jmethodID` encodings for
@@ -1508,7 +1508,7 @@ someone else's library:
 | 2 | `JNIGlobalRefType` |
 | 3 | `JNIWeakGlobalRefType` |
 
-> **🔬 Under the Hood.** ART implements these as *indirect reference tables* — see
+> **Under the Hood.** ART implements these as *indirect reference tables* — see
 > `art/runtime/indirect_reference_table.h`, and, on recent releases, `art/runtime/jni/local_reference_table.h`
 > for the local table specifically. The handle encodes which table it belongs to in its low bits plus
 > an index and a serial number used to detect use-after-delete. Chapter
@@ -1577,7 +1577,7 @@ if ((*env)->EnsureLocalCapacity(env, n) != JNI_OK) return;   /* throws OutOfMemo
 object as `result`, or `NULL` if you pass `NULL`. That is how you get one value out of a frame you are
 discarding.
 
-> **🔍 Pentester's Note — this is a genuine denial-of-service surface, not just a robustness nit.**
+> **Pentester's Note — this is a genuine denial-of-service surface, not just a robustness nit.**
 > If the loop count comes from data you control — the number of elements in a JSON array, the number
 > of certificates in a chain, the number of entries in a ZIP — then you can drive the local reference
 > table to overflow and **abort the process**. It is an unconditional `abort()`, not a catchable
@@ -1586,7 +1586,7 @@ discarding.
 > runtime side. Lab 02 has you build and trigger it.
 
 **Reading the table state at runtime.** ART dumps reference table contents on overflow, and you can
-force a dump from a debug build. The most practical live check is simply to instrument
+force a dump from a debug build. The most practical live check is to instrument
 `GetObjectArrayElement`/`NewStringUTF` counts against `DeleteLocalRef` counts in a Frida script; a
 monotonically growing difference inside one native call is the signature.
 
@@ -1603,7 +1603,7 @@ wrongly is a classic bug.
 | `GetStringUTFRegion` | copies into your `char` buffer | Modified UTF-8 | nothing |
 | `GetStringCritical` | `const jchar *`, possibly unpinned direct pointer | UTF-16 | `ReleaseStringCritical`, immediately |
 
-> **📖 Definition — modified UTF-8 (MUTF-8).** A variant of UTF-8 used by the JVM and by DEX. It differs
+> **Definition — modified UTF-8 (MUTF-8).** A variant of UTF-8 used by the JVM and by DEX. It differs
 > from standard UTF-8 in two ways: the code point U+0000 is encoded as the two bytes `0xC0 0x80`
 > instead of a single zero byte, and characters outside the Basic Multilingual Plane are encoded as a
 > **pair** of three-byte sequences representing their UTF-16 surrogates, rather than as a single
@@ -1646,7 +1646,7 @@ if (buf == NULL) { /* throw OutOfMemoryError and return */ }
 buf[bytes] = '\0';
 ```
 
-Note that `GetStringUTFRegion` takes a *start and length in UTF-16 units* but writes *bytes*. That
+`GetStringUTFRegion` takes a *start and length in UTF-16 units* but writes *bytes*. That
 mismatch is the whole trap. The `…Region` functions do bounds-check their start/length against the
 string and throw `StringIndexOutOfBoundsException` if wrong — but, as always, they cannot check your
 destination buffer.
@@ -1688,7 +1688,7 @@ mode means.
 | `JNI_COMMIT` | 1 | Yes | No | You want intermediate results visible to Java but will keep writing. |
 | `JNI_ABORT` | 2 | **No** | Yes | Read-only access, or you want to discard your changes. |
 
-> **⚠️ Warning.** `JNI_ABORT` on a *pinned* (non-copied) array cannot undo your writes — you were
+> **Warning.** `JNI_ABORT` on a *pinned* (non-copied) array cannot undo your writes — you were
 > writing into the real array the whole time. Code that relies on `JNI_ABORT` to discard changes is
 > correct only when a copy was made, which is not under its control. Never treat `JNI_ABORT` as a
 > rollback.
@@ -1775,7 +1775,7 @@ why JNI code is so bug-prone, and why §3.18 exists.
 `<Type>` is one of `Void`, `Object`, `Boolean`, `Byte`, `Char`, `Short`, `Int`, `Long`, `Float`,
 `Double` — the return type, not the argument types.
 
-> **⚠️ Warning — varargs promotion.** The varargs forms are not type-checked by the compiler against
+> **Warning — varargs promotion.** The varargs forms are not type-checked by the compiler against
 > the signature. Passing a C `int` where the signature says `J` (long) reads the wrong number of bytes
 > off the argument list and produces silent garbage; passing a `float` literal promotes it to `double`
 > and corrupts every subsequent argument. Always cast explicitly: `(jint)x`, `(jlong)y`. The `…A`
@@ -1817,7 +1817,7 @@ static int cache_ids(JNIEnv *env) {
 Caching the `jmethodID` while letting the `jclass` be collected is a use-after-free waiting to happen:
 the ID's validity is tied to the class staying loaded, and the global reference is what guarantees it.
 
-> **🔍 Pentester's Note.** `GetMethodID` and `GetFieldID` calls are the loudest possible signal in a
+> **Pentester's Note.** `GetMethodID` and `GetFieldID` calls are the loudest possible signal in a
 > decompilation, because the name and signature are string constants sitting right next to the call.
 > A single `strings libfoo.so | grep '^(' ` pass over a library recovers most of the signatures, and
 > `grep 'Ljava/'` recovers the classes it touches. You often learn what a stripped library does from
@@ -1905,7 +1905,7 @@ most: `FindClass`, `GetMethodID`, `GetFieldID`, `GetStaticMethodID`, `NewObject`
 `New<Type>Array`, every `Get/Set<Type>ArrayRegion` (bounds), every `Call…Method` (whatever the Java
 code threw), `GetStringUTFChars` (OOM), `EnsureLocalCapacity`, `RegisterNatives`.
 
-> **🔍 Pentester's Note — how to find this bug class from the outside.** Missing exception checks are
+> **Pentester's Note — how to find this bug class from the outside.** Missing exception checks are
 > *reachable* precisely when you can make a JNI call fail. Feed the app inputs that cause allocation
 > failure (huge arrays), or that make a callback throw (a listener whose Java method you have hooked to
 > throw), and watch for a native crash rather than a clean Java exception. CheckJNI (§3.23) turns most
@@ -1948,7 +1948,7 @@ Three points that are not optional:
    other thread's local reference table. With CheckJNI on you get an immediate abort naming the
    thread; without it you get a crash somewhere else, later, that looks unrelated.
 2. **A thread that attached must detach before it exits.** ART aborts the process if an attached thread
-   dies without detaching. The idiomatic robust solution is a `pthread_key_create` destructor that
+   dies without detaching. The idiomatic solution is a `pthread_key_create` destructor that
    calls `DetachCurrentThread`.
 3. **`AttachCurrentThreadAsDaemon`** attaches without preventing VM shutdown, and is what you want for
    background workers. The `JavaVMAttachArgs.name` field sets the thread name visible in `ps -T` and in
@@ -1975,7 +1975,7 @@ see with no copying. JNI exposes it:
 This is the fastest possible Java-to-native data path and it is used heavily in media, graphics and
 networking code.
 
-> **⚠️ Warning — this is a memory-safety hole by construction.** `NewDirectByteBuffer` hands Java a
+> **Warning — this is a memory-safety hole by construction.** `NewDirectByteBuffer` hands Java a
 > window onto arbitrary native memory, with a capacity that *you* asserted. If the capacity is wrong,
 > or the underlying allocation is freed while the buffer object is alive, Java code can now read and
 > write freed or unrelated memory **using ordinary, memory-safe-looking Java**. There is no lifetime
@@ -2097,7 +2097,7 @@ observe comes from:
   it in the managed caller. This is the *only* point at which an exception raised in C becomes a real
   Java exception — which is precisely why C code keeps running after `ThrowNew`.
 
-> **🔬 Under the Hood.** The trampoline is
+> **Under the Hood.** The trampoline is
 > `art/runtime/entrypoints/quick/quick_trampoline_entrypoints.cc`, the resolution is
 > `JavaVMExt::FindCodeForNativeMethod` in `art/runtime/jni/java_vm_ext.cc`, and the two name forms come
 > from `ArtMethod::JniShortName()` and `ArtMethod::JniLongName()` in `art/runtime/art_method.cc`.
@@ -2138,7 +2138,7 @@ What it catches — see chapter [13 ART](../13-ART/README.md) §3.24 for the run
 | `NULL` where an object is required | `null jclass` |
 | Static/instance method confusion | calling a static method with `CallVoidMethod` |
 
-> **🔍 Pentester's Note — this is one of the highest yield-per-minute techniques in the whole
+> **Pentester's Note — this is one of the highest yield-per-minute techniques in the whole
 > repository.** Take a target with substantial native code, make it debuggable (or run it on a
 > `userdebug` build), turn CheckJNI on, and exercise it. Every abort is a labelled, located bug with a
 > stack trace naming the exact JNI call and argument. You are borrowing the runtime's own conformance
@@ -2187,7 +2187,7 @@ mapped directly out of the APK, and `/proc/<pid>/maps` shows the APK path with a
 | `libnativehelper/include/nativehelper/JNIHelp.h` | The AOSP-internal helper API: `jniThrowException`, `jniRegisterNativeMethods`, and the `ScopedLocalRef` / `ScopedUtfChars` RAII wrappers every framework native uses. |
 | `libnativehelper/include_jni/jni.h` | AOSP's copy of the JNI header — the authoritative `JNINativeInterface` field order. |
 
-> **⚠️ Warning.** Cite these paths, never line numbers. The paths have been stable for years; the line
+> **Warning.** Cite these paths, never line numbers. The paths have been stable for years; the line
 > numbers change every release, and a report that quotes one is a report that ages badly. Read them on
 > [cs.android.com](https://cs.android.com/) — chapter [07 AOSP](../07-AOSP/README.md) explains the
 > navigation.
@@ -2241,7 +2241,7 @@ relocations, and runs `DT_INIT` / `DT_INIT_ARRAY` constructors. Chapter 15 (`15-
 this half; the security-relevant point for us is that **constructors run before `JNI_OnLoad`**, so a
 library that wants to act even earlier puts its code in `__attribute__((constructor))`.
 
-> **🔍 Pentester's Note.** That last sentence is the answer to "I hooked `JNI_OnLoad` and the
+> **Pentester's Note.** That last sentence is the answer to "I hooked `JNI_OnLoad` and the
 > anti-debug check had already run." Hook `android_dlopen_ext`'s return, or `dlopen`'s, and act there —
 > or use Frida's spawn-gating so you are attached before the process runs any app code at all. Chapter
 > [53 Frida](../53-Frida/README.md) covers the timing problem in general.
@@ -2296,7 +2296,7 @@ Two observations that matter operationally:
   find. If you are re-registering a native to hook it, your signature string must match to the
   character.
 - **Nothing validates `fnPtr`.** ART stores whatever you give it. That is what makes re-registration a
-  complete, robust hooking primitive: no code patching, no instruction cache flush, no inline
+  complete, reliable hooking primitive: no code patching, no instruction cache flush, no inline
   trampoline — one pointer store, and the runtime cooperates fully. Chapter
   [62 Magisk](../62-Magisk/README.md) §on Zygisk uses exactly this for framework natives.
 
@@ -2315,7 +2315,7 @@ Two independent implementations of the same rules exist in the Android world, an
    `art/runtime/utils.cc`, and in more recent trees under `art/libartbase/base/`. Whichever tree you
    are reading, search for `MangleForJni`.
 
-> **🔍 Pentester's Note.** If you ever doubt a mangling, do not argue with the rules — make the runtime
+> **Pentester's Note.** If you ever doubt a mangling, do not argue with the rules — make the runtime
 > tell you. Declare the native method, call it without providing an implementation, and read the
 > `UnsatisfiedLinkError` message. It prints exactly the two strings ART searched for. This chapter's
 > `scripts/jni_mangle.py` implements the same rules so you can do it offline, and Lab 01 has you check
@@ -2674,7 +2674,7 @@ Java.perform(function () {
 If the process crashes at `0x4141414141414141`, you have proved arbitrary-pointer control. That is a
 finding you can write up with confidence, and the crash address in the tombstone is the evidence.
 
-**The fix, as code.** The robust approaches, in increasing order of safety:
+**The fix, as code.** The reliable approaches, in increasing order of safety:
 
 ```java
 // Java — 1. make the handle inaccessible and the lifetime explicit
@@ -2835,7 +2835,7 @@ What is accurate and useful:
 - **The classes in §5.2 to §5.7** are what you will actually find in app code, and they rarely receive
   CVEs at all because they are in a single vendor's app.
 
-> **🔍 Pentester's Note.** In a report, prefer "an out-of-bounds write in
+> **Pentester's Note.** In a report, prefer "an out-of-bounds write in
 > `Java_com_x_Codec_nativeDecode`, reachable by reflection, demonstrated with a 4 KB input against a
 > 256-byte stack buffer" over any CVE reference. The first is verifiable by the client in ten minutes;
 > the second invites an argument about applicability.
@@ -3024,7 +3024,7 @@ names to `strings` unless the author went further and encrypted them.
 | **Packers** | The real library is decrypted and loaded at runtime, often with `dlopen` on a `memfd` or a temp file | Hook `dlopen`/`android_dlopen_ext`; dump the mapped library from memory. Chapter [40 Obfuscation](../40-Obfuscation/README.md) Lab 04 |
 | **Control-flow flattening in the native code** | Does not touch the bridge at all | The JNI calls are still identifiable by their table offsets |
 
-> **🧠 Mental Model.** Obfuscation can hide *where* the code is and *what it is called*. It cannot hide
+> **Mental Model.** Obfuscation can hide *where* the code is and *what it is called*. It cannot hide
 > *the moment it talks to the runtime*, because at that moment it must present plaintext class names,
 > method names and signatures to ART. The bridge is a mandatory chokepoint, and that is why it is such
 > a productive place to instrument.
@@ -3150,7 +3150,7 @@ Every line of that output is directly actionable: the class tells you where to l
 signature tells you what each `args[n]` is, and `module+offset` is what you type into Ghidra's *Go To*
 after setting the image base.
 
-> **⚠️ Warning — you must be attached before `JNI_OnLoad` runs.** `RegisterNatives` is normally called
+> **Warning — you must be attached before `JNI_OnLoad` runs.** `RegisterNatives` is normally called
 > during `System.loadLibrary`, which for most apps is in a `static` initialiser that runs very early.
 > Use `-f` (spawn) rather than `-n` (attach), or you will hook a function that has already done its
 > work. If the library is loaded later — on a button press, or after a download — attaching is fine.
@@ -3592,7 +3592,7 @@ exception check from §5.3 — each marked with a `VULN:` comment explaining the
 The Java side deliberately includes both a "safe" wrapper that validates and a package-private native
 method that does not, so that the reflection bypass in §5.2 can be demonstrated exactly as written.
 
-> **⚠️ Warning.** `examples/unsafe_jni.c` is intentionally vulnerable. Build it only inside a test
+> **Warning.** `examples/unsafe_jni.c` is intentionally vulnerable. Build it only inside a test
 > app on a device you control. Do not copy any function from it into real code — copy from
 > `fixed_jni.c` instead.
 

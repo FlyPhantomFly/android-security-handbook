@@ -314,7 +314,7 @@ the symbol table at all.
 
 **Flag 3: `CTF{hidden_signRequest_verifyLicense}`**
 
-Note that flag 1 was sitting in that same dump in plaintext, and the section header's `sh_size = 0`
+flag 1 was sitting in that same dump in plaintext, and the section header's `sh_size = 0`
 was the only thing stopping a section-based tool from finding it.
 
 **The lesson.** A `Java_*` export count of zero — or of "fewer than the Java side declares" — does
@@ -332,7 +332,7 @@ Recovering the function **pointers** from that table does need a decompiler; tha
 
 **Format:** the decoded string, which is itself `CTF{...}`.
 
-Somewhere in the read-only region there is a run of bytes that is clearly *structured* — no NULs,
+Somewhere in the read-only region there is a run of bytes that is visibly *structured* — no NULs,
 consistent byte range — but is not printable. It is a single-byte XOR.
 
 **The key is one of the values you read in the very first minute of this lab.**

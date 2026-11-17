@@ -31,7 +31,7 @@ in the chapter:
   query/insert/update/delete — which in practice means `getAuthToken`, `execSql`, `setServerUrl`,
   `enableDebug`, `wipe`. It is a back-channel built for internal use, and internal use is privileged.
 
-> **📖 Definition**
+> **Definition**
 > **`ContentProvider.call(method, arg, extras)`** is a schema-less, type-unsafe, unauthenticated (by
 > default) RPC. The caller names a method and passes a string and a `Bundle`; the provider does whatever
 > that name means and returns a `Bundle`. Neither Drozer nor MobSF enumerates it — discovering the
@@ -54,7 +54,7 @@ adb shell dumpsys package com.example.vuln | grep -A6 "Provider{"
 content call --uri content://com.example.vuln.notes.provider --method thisDoesNotExist
 ```
 
-Note that the provider gives you *nothing* to go on: the manifest names no methods, and an unknown
+the provider gives you *nothing* to go on: the manifest names no methods, and an unknown
 method returns `null` rather than an error. Discovery is the work.
 
 ---

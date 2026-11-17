@@ -22,15 +22,15 @@ adb shell am force-stop <pkg>
 
 | Property | Enforced by | Security boundary? |
 |---|---|---|
-| Type safety of managed code | Bytecode verifier | ❌ correctness only |
-| Array bounds checks | Runtime | ❌ correctness only |
-| `private` / `internal` | Compiler only | ❌ reflection ignores it |
-| Hidden API restrictions | ART, in-process | ❌ in-process bypass |
-| Class shadowing | ClassLoader delegation | ⚠️ platform classes only |
-| Memory isolation | **Kernel** (UID, page tables) | ✅ |
-| Syscall restriction | **Kernel** (seccomp-bpf) | ✅ |
-| File access between apps | **Kernel** DAC + **SELinux** MAC | ✅ |
-| Permission checks | **system_server**, vs calling UID | ✅ |
+| Type safety of managed code | Bytecode verifier | correctness only |
+| Array bounds checks | Runtime | correctness only |
+| `private` / `internal` | Compiler only | reflection ignores it |
+| Hidden API restrictions | ART, in-process | in-process bypass |
+| Class shadowing | ClassLoader delegation | platform classes only |
+| Memory isolation | **Kernel** (UID, page tables) | |
+| Syscall restriction | **Kernel** (seccomp-bpf) | |
+| File access between apps | **Kernel** DAC + **SELinux** MAC | |
+| Permission checks | **system_server**, vs calling UID | |
 
 > The runtime executes the app's intentions; the kernel constrains the app's reach.
 
@@ -45,7 +45,7 @@ BootClassLoader                    framework: java.*, android.*
   └── PathClassLoader              the app's own APK + splits
         └── DexClassLoader         DEX from an arbitrary file path
         └── InMemoryDexClassLoader DEX from a ByteBuffer — no file on disk
-        └── DelegateLastClassLoader ⚠️ INVERTS delegation (self before parent)
+        └── DelegateLastClassLoader INVERTS delegation (self before parent)
 ```
 
 ### Parent delegation
@@ -122,7 +122,7 @@ frida -U -f <pkg> -l ../13-ART/scripts/dump-loaded-dex.js
 | DEX app-private but unverified | Medium — needs root or a write primitive |
 | DEX app-private **and** signature-verified vs pinned key | Informational — correct design |
 
-⚠️ A stored **hash** is not enough. Whoever can replace the DEX can replace the hash. Verify a
+A stored **hash** is not enough. Whoever can replace the DEX can replace the hash. Verify a
 **signature** against a public key pinned in the app.
 
 ---

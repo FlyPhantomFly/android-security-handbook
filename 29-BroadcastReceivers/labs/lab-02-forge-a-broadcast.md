@@ -154,7 +154,7 @@ adb shell "cmd package query-receivers --brief -a com.example.vault.ACTION_WIPE_
 No receivers found
 ```
 
-> **✅ Checkpoint 1.**
+> **Checkpoint 1.**
 > You produced a receiver count from the manifest, then produced a different one from the
 > device, and can explain the difference in one sentence.
 
@@ -203,7 +203,7 @@ android.intent.action.BOOT_COMPLETED from pid=NNNN, uid=2000
 **Note the `uid=2000`.** That is `adb shell`, which is *more* privileged than an app. If
 shell cannot send it, no app can. A refusal here is a reliable "protected".
 
-> **⚠️ Warning**
+> **Warning**
 > Do not conclude the reverse from `adb shell` alone. Shell being *allowed* to send an
 > action does not automatically mean everything about your attack works from an app — the
 > protected-broadcast check is uid-based, so that specific conclusion does transfer, but
@@ -277,7 +277,7 @@ In the Frida output:
 The receiver ran with your data. **That is still not a finding.** A receiver running is not
 a consequence.
 
-> **✅ Checkpoint 3.**
+> **Checkpoint 3.**
 > You have the class names of two receivers that appear in no manifest, and you have watched
 > a forged broadcast reach `onReceive` with attacker-controlled extras.
 
@@ -333,7 +333,7 @@ does not test the action still ran.
 This is why "check the action as the first statement of `onReceive`" is not paranoia. See
 [26-Intent §3.2](../../26-Intent/README.md) for the resolution rules this sidesteps.
 
-> **✅ Checkpoint 4.**
+> **Checkpoint 4.**
 > You have a persisted, attacker-controlled value in the victim's private storage, produced
 > two different ways — through the filter and around it.
 
@@ -405,7 +405,7 @@ If you can do neither, **say so in the report**. "Reproduced from `adb shell` on
 app-context reproduction not possible on the test device due to an OEM install restriction"
 is honest and useful. Claiming an app-level attack you did not run is not.
 
-> **✅ Checkpoint 5.**
+> **Checkpoint 5.**
 > The state change was produced by a process holding zero permissions.
 
 ---
@@ -488,7 +488,7 @@ On API 33+ the registration reports `NOT_EXPORTED`. Below 33 it appears as a
 `requiredPermission=` ending in `DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION` — the AndroidX
 backport, and a **positive** finding.
 
-> **✅ Checkpoint 6.**
+> **Checkpoint 6.**
 > Every attack from Parts 3–5 fails, and you verified it against the live device rather
 > than against the source diff.
 

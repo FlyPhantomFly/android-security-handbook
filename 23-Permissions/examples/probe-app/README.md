@@ -35,7 +35,7 @@ export ANDROID_SDK_ROOT="$HOME/Android/Sdk"
 adb install -r out/probe-app.apk
 ```
 
-> **⚠️ Edit `<queries>` first.**
+> **Edit `<queries>` first.**
 > From `targetSdkVersion` 30 an app cannot see a package it has not declared an interest in. A
 > probe that cannot see the target fails in ways that look exactly like a permission denial —
 > `ActivityNotFoundException`, a null resolver result, an empty package list. Add your target to

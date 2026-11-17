@@ -30,7 +30,7 @@ deadline is a one-command remote crash against an exported, startable service
 `NullPointerException` that fires only in the field.
 
 **One of them will waste your afternoon if you do not know about it.** On many
-OEM ROMs the restart the documentation promises simply does not happen, and every
+OEM ROMs the restart the documentation promises does not happen, and every
 lab step that depends on it silently fails.
 
 ---
@@ -160,7 +160,7 @@ adb install -r lifecycle.apk
 adb shell "dumpsys package com.example.lifecycle | grep userId="
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > This service is `android:exported="true"` **on purpose**, so you can drive it
 > from `adb shell` and so §4 can demonstrate the promotion-deadline denial of
 > service. Uninstall it when you are done; on a device you care about, an
@@ -528,7 +528,7 @@ adb logcat -d -s CH28LIFE
 target's manifest, on a service with no user-visible purpose, is worth a line in
 a report.
 
-Note that a **foreground** service with a notification generally survives the
+a **foreground** service with a notification generally survives the
 swipe regardless, which is the whole point of foreground status.
 </details>
 

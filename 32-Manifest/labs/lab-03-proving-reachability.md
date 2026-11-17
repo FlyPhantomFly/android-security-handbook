@@ -22,7 +22,7 @@ You will finish with a side-by-side reachability table and, more importantly, a 
 **This is the discipline lab.** It exists because the single most common reason a manifest finding is
 rejected is that it was proven from `adb shell`.
 
-> **📖 Definition**
+> **Definition**
 > `adb shell` executes as the Unix user `shell`, **UID 2000**. That user is not root, but it is not an
 > app either: it holds a set of privileges — notably around starting components, reading providers
 > and querying package state — that an ordinary third-party application does not have. It also has
@@ -32,7 +32,7 @@ So `am start -n com.victim/.InternalActivity` succeeding tells you that **UID 20
 component. It does not tell you that an attacker's app can. Those are different claims, with
 different severities, and conflating them is the fastest way to have a report dismissed — correctly.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The sentence that separates a finding from an observation is: *"Reproduced from an unprivileged
 > third-party application holding no permissions."* If you cannot write that sentence, you have a
 > lead, not a finding. Say so explicitly in the report — a report that states what it did **not**
@@ -71,7 +71,7 @@ effective `exported` value, and guarding permission with its resolved `protectio
 
 ### Step 1 — Establish the shell baseline
 
-Do this first, and label every result clearly as **shell evidence**.
+Do this first, and label every result as **shell evidence**.
 
 ```bash
 # adb shell — activities
@@ -405,7 +405,7 @@ visibility?
 ### Step 4 — Acquire the "protecting" permissions
 
 Your Lab 02 audit found components guarded by custom permissions. If any of those resolved to
-`normal`, an attacker simply asks for them. Prove it.
+`normal`, an attacker asks for them. Prove it.
 
 Add to the probe app's manifest:
 
@@ -428,7 +428,7 @@ prompt? Which components became reachable as a result?
 **Question 8.** This is the finding that developers dispute hardest. Write the two sentences you would
 say in the debrief meeting, and attach the four lines of attacker manifest that make it undeniable.
 
-> **⚠️ Warning — the `development` flag false positive**
+> **Warning — the `development` flag false positive**
 > A permission whose `protectionLevel` includes `development` can be granted from the shell with
 > `pm grant`, **even though a real attacker could not obtain it**. If you granted anything by hand,
 > that result does not count. Re-run with a freshly installed probe and no manual grants.
@@ -530,7 +530,7 @@ repeat. What changes, and why?
 **Question 13.** Try the same on a device running Android 11 or later with the victim targeting API
 30+. Does it still work? What does that mean for the severity you report?
 
-> **⚠️ Warning**
+> **Warning**
 > Test task hijacking only against an app you own or are explicitly authorised to test, on a device
 > you own, with no real credentials present. The demonstration is a *screenshot of the wrong Activity
 > in the foreground*, not a credential capture.
@@ -569,7 +569,7 @@ In order of likelihood:
 <summary>Hint 2 — `sendBroadcast` never throws, so I cannot tell</summary>
 
 Use `sendOrderedBroadcast` with a result receiver, as the probe does. Even then, "no result" is not
-"did not run" — the receiver may simply not set one. The authoritative confirmation is always the
+"did not run" — the receiver may not set one. The authoritative confirmation is always the
 **target's** own log:
 
 ```bash
@@ -597,7 +597,7 @@ Check, in order: the attacker's `taskAffinity` exactly equals the victim's **pac
 `applicationId` if they differ); the attacker Activity really launched once before you launched the
 victim; you launched the victim **from the launcher** (`monkey -c LAUNCHER`), not with
 `am start -n`, because the launcher path is what triggers task reuse; and the victim does not already
-declare `taskAffinity=""`. Also note that Android 11 and later tightened the rules considerably, so a
+declare `taskAffinity=""`. Android 11 and later tightened the rules considerably, so a
 negative result on a modern device is a legitimate outcome — report it as such.
 </details>
 

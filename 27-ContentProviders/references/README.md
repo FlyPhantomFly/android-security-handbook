@@ -13,7 +13,7 @@ The chapter's own claims are traceable to these sources. When you need to defend
 Read these on [cs.android.com](https://cs.android.com/), which gives you cross-references, blame and
 per-release history. The navigation technique is in [07-AOSP](../../07-AOSP/README.md).
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Always pin the branch to the release you are testing. `ContentProvider.java` on `main` and on
 > `android13-release` differ in ways that matter — `getTypeAnonymous()` does not exist before API 33,
 > and the `AttributionSource` parameter threading through `Transport` arrived in Android 12. A
@@ -63,9 +63,9 @@ per-release history. The navigation technique is in [07-AOSP](../../07-AOSP/READ
 
 | Path | Open it when |
 |---|---|
-| `frameworks/base/cmds/content/src/com/android/commands/content/Content.java` | You want to know exactly what `content query --projection` does with your string, which flags exist on the release you are testing, and which operations the CLI simply cannot express. Reading this file once saves you from concluding "the provider rejected it" when the truth is "the CLI never sent it". |
+| `frameworks/base/cmds/content/src/com/android/commands/content/Content.java` | You want to know exactly what `content query --projection` does with your string, which flags exist on the release you are testing, and which operations the CLI cannot express. Reading this file once saves you from concluding "the provider rejected it" when the truth is "the CLI never sent it". |
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > `content` is a Java program launched by a shell wrapper (`/system/bin/content`) that runs under the
 > `shell` UID with `app_process`. It builds a real `ContentResolver` against the shell's own identity.
 > That is precisely why it is *not* an attacker simulation — the identity it uses is UID 2000, which
@@ -129,7 +129,7 @@ per-release history. The navigation technique is in [07-AOSP](../../07-AOSP/READ
 | MASTG test apps and the UnCrackable series | Practice targets. See [80-Appendix](../../80-Appendix/README.md). |
 | [71-OWASP-Mobile](../../71-OWASP-Mobile/README.md) | This repository's full treatment of the mapping. |
 
-> **⚠️ Warning — on citing vulnerability identifiers**
+> **Warning — on citing vulnerability identifiers**
 > This chapter deliberately describes vulnerability **classes** rather than naming CVE IDs or linking
 > bug bounty reports. Provider bugs are numerous, version-specific and frequently reported under
 > vendor-internal identifiers, and a misattributed CVE in a client report costs you more credibility

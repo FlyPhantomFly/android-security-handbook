@@ -35,11 +35,11 @@ Think about a shared office building in the 1990s. There is one filing cabinet i
 
 That is a precise description of how a desktop operating system treated applications for the first thirty years of personal computing, and it is what the first generation of smartphones inherited. When you double-clicked a program on Windows XP or on a Mac of that era, the program ran **as you**. It carried your identity. Every file you could read, it could read. Every file you could delete, it could delete. The operating system had no way to express the sentence "this program may open my photographs but not my tax return", because from the kernel's point of view there was no *program* — there was only *you*, doing things.
 
-For a desktop with five installed applications, all bought in shrink-wrapped boxes from named companies, this was survivable. For a phone, it is catastrophic, and the reason is simply arithmetic. A typical phone has between sixty and a hundred and twenty applications installed. Their authors are mostly strangers. Many of them are free, which means the user paid with something other than money. Every one of them sits a couple of centimetres away from the owner's messages, their photographs, their location history, their banking session, and a microphone. If any single one of those hundred applications is malicious — or merely compromised, or merely careless with a third-party advertising SDK it embedded without reading — the "everything runs as you" model hands that application the entire contents of the owner's life.
+For a desktop with five installed applications, all bought in shrink-wrapped boxes from named companies, this was survivable. For a phone, it is catastrophic, and the reason is arithmetic. A typical phone has between sixty and a hundred and twenty applications installed. Their authors are mostly strangers. Many of them are free, which means the user paid with something other than money. Every one of them sits a couple of centimetres away from the owner's messages, their photographs, their location history, their banking session, and a microphone. If any single one of those hundred applications is malicious — or merely compromised, or merely careless with a third-party advertising SDK it embedded without reading — the "everything runs as you" model hands that application the entire contents of the owner's life.
 
 So Android's designers made a decision that looks obvious in hindsight and was genuinely radical in 2007:
 
-> **🧠 Mental Model**
+> **Mental Model**
 > **Every application is a different *user* of the operating system.** Not a different program run by the same user — a different *user*, in the full Unix sense, with its own numeric user ID, its own home directory, and no more right to read another app's files than your colleague has to read yours on a shared Linux server. The phone has one human owner and a hundred operating-system users, and the human owner is not any of them.
 
 Everything else in this chapter is either an implementation detail of that sentence or a patch over a place where that sentence turned out not to be enough.
@@ -58,7 +58,7 @@ If the sandbox did not exist, a free torch application — one of the genuinely 
 
 None of that is hypothetical. Each is a documented behaviour of desktop malware, and each is exactly what mobile banking trojans attempt today. The reason they instead resort to elaborate social-engineering campaigns to get the user to enable an accessibility service is that the direct approach — just read the other app's files — does not work. The sandbox is why.
 
-> **📖 Definition — sandbox**
+> **Definition — sandbox**
 > A *sandbox* is an enforced restriction on what a piece of running code can reach, applied by a component that the code itself cannot modify. The two halves of that definition both matter. "Restriction" without enforcement is a coding convention. Enforcement by something the code *can* modify — for example, a check inside the app's own process — is not a sandbox, it is a speed bump. Android's app sandbox is enforced entirely by the Linux kernel, which application code cannot modify, and that is what makes it real.
 
 ### 1.3 The sandbox is not one mechanism
@@ -91,7 +91,7 @@ The torch app learns nothing. It cannot even confirm the file exists — on mode
 
 That is the whole sandbox, in its original 2008 form, and it is still the load-bearing 80% of it today. Everything since has been about closing the gaps: what about `root`? (SELinux.) What about the kernel itself? (seccomp.) What about data the app deliberately shares? (IPC and permissions.) What about places outside `/data/data`? (scoped storage.) What about *knowing* the bank is installed at all? (package visibility.)
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The single most useful sentence you can carry into an engagement is this: **the sandbox protects app data from other apps, and nothing else.** It does not protect app data from the user. It does not protect app data from root. It does not protect data the app hands out over IPC. It does not protect data the app writes to shared storage. Most "insecure data storage" findings you will ever write are not sandbox failures — they are cases where the developer relied on the sandbox against an adversary the sandbox was never designed to stop, usually adversary #4 from [20 §1.4](../20-Security-Architecture/README.md#14-the-adversaries): the device's own user.
 
 ### 1.5 What this chapter will let you do
@@ -164,7 +164,7 @@ The funnel narrows three times. First, `seccomp-bpf` asks *"is this app allowed 
 
 The `binder` driver is drawn deliberately at the same level as the other kernel objects, because it is the one legitimate, designed-in hole through the wall. Everything an app is *allowed* to do that touches the rest of the system — start an activity, query a content provider, ask for the location, request a permission — travels through Binder to `system_server` or to another app. That makes Binder both the reason Android is usable and the richest attack surface inside the device. See [25 — Binder](../25-Binder/README.md).
 
-Finally, note that `system_server` sits *outside* the kernel box. It is a normal Linux process running as UID 1000 (`AID_SYSTEM`). It is enormously privileged, but it is privileged because the kernel gives its UID privileges — not because it is magic. A memory-corruption bug in `system_server` gives an attacker UID 1000 and the `system_server` SELinux domain, which is very nearly game over, and that is precisely why so much hardening effort goes into it.
+Finally,`system_server` sits *outside* the kernel box. It is a normal Linux process running as UID 1000 (`AID_SYSTEM`). It is enormously privileged, but it is privileged because the kernel gives its UID privileges — not because it is magic. A memory-corruption bug in `system_server` gives an attacker UID 1000 and the `system_server` SELinux domain, which is very nearly game over, and that is precisely why so much hardening effort goes into it.
 
 ### 2.2 The trust boundaries, named
 
@@ -285,7 +285,7 @@ The ordering in steps 5 through 11 is not arbitrary and getting it wrong has his
 - Capabilities must be dropped *after* the UID change, because on Linux a UID transition away from 0 already clears most capabilities, and the explicit `capset` then clears the bounding set so they can never be regained.
 - `PR_SET_NO_NEW_PRIVS` must be set before the seccomp filter, because an unprivileged process is only permitted to install a seccomp filter if `no_new_privs` is set — otherwise a filter could be used to trick a setuid binary.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > The `fork()` at step 2 is a plain `fork()`, not `clone()` with new namespaces, and that is intentional: the child inherits the Zygote's already-warmed, already-JIT-touched framework classes through copy-on-write shared memory, which is why Android app startup is fast. The security consequence is that **every app process on the device starts life as a memory-identical copy of the same parent**, which is excellent for memory usage and unhelpful for ASLR — the same library is at the same address in every app. Android mitigates this partially by re-randomising some regions per fork, but Zygote-inherited layout remains a known weakening of ASLR and is a documented consideration in exploit development. See [19 — Memory](../19-Memory/README.md).
 
 ### 2.5 The filesystem, drawn
@@ -321,7 +321,7 @@ Four regions, four completely different security stories, and confusing them is 
 
 #### What a UID actually is
 
-> **📖 Definition — UID (user ID)**
+> **Definition — UID (user ID)**
 > A *UID* is a 32-bit unsigned integer that the Linux kernel stores in the credential structure (`struct cred`) attached to every process. It is not a name; names live only in userspace configuration files. Every access check the kernel performs on a file, a process, or a SysV/POSIX IPC object compares numbers from this structure against numbers stored in the object's metadata. When we say "the app runs as its own user", we mean literally that the `uid` field in that process's `struct cred` contains a number no other app has.
 
 Android does not use `/etc/passwd`. There is no such file in the traditional sense. Instead, the numeric ranges are compiled into the platform and documented in a header.
@@ -358,7 +358,7 @@ appId  = uid % 100000
 
 So UID `1010388` is app ID `10388` running as Android user `10` — which on a corporate device is almost always the work profile. UID `10388` is the same package for the primary user. They are different Unix users, they have different data directories (`/data/user/10/com.torch` versus `/data/user/0/com.torch`), and they are encrypted with different keys.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > These constants live in two places that must agree. The native side is `system/core/libcutils/include/private/android_filesystem_config.h`, which defines the `AID_*` macros and is consumed by `init`, `installd`, and the whole native stack. The Java side is `frameworks/base/core/java/android/os/Process.java`, which declares `FIRST_APPLICATION_UID`, `LAST_APPLICATION_UID`, `FIRST_ISOLATED_UID`, `LAST_ISOLATED_UID`, `FIRST_APP_ZYGOTE_ISOLATED_UID`, `LAST_APP_ZYGOTE_ISOLATED_UID`, `FIRST_SDK_SANDBOX_UID`, `LAST_SDK_SANDBOX_UID`, `SHELL_UID`, `SYSTEM_UID`, and the helper `UserHandle.getAppId()`/`getUserId()`. The generated list of names is also emitted into `/system/etc/passwd`-style data consumed by Bionic's `getpwnam` implementation in `bionic/libc/bionic/grp_pwd.cpp`, which is why `id` prints `u0_a288` rather than a raw number.
 
 #### Reading the UID map on a live device
@@ -410,7 +410,7 @@ The place where it *is* a live concern is **files the old app wrote outside its 
 
 ### 3.2 DAC — what discretionary access control actually enforces
 
-> **📖 Definition — DAC (Discretionary Access Control)**
+> **Definition — DAC (Discretionary Access Control)**
 > *Discretionary* access control means the **owner of an object decides who may access it**. Classic Unix permissions are DAC: the owner of a file may `chmod 777` it and hand it to the world, and the system will allow that, because the policy is at the owner's discretion. The contrast is *Mandatory* Access Control (MAC), where a system-wide policy decides and the owner cannot override it — which is SELinux, and is [chapter 22](../22-SELinux/README.md).
 
 DAC on Android is ordinary Linux DAC, with no Android-specific modifications to the algorithm. The checks the kernel performs are:
@@ -453,7 +453,7 @@ Three separate facts are visible in that output and each is load-bearing:
 | 10 (API 29) onwards | `0700`, plus hardened `/proc` | `hidepid=2`-equivalent behaviour: an app can no longer see other apps' processes in `/proc`. |
 | 11 (API 30) onwards | `0700`, plus FUSE-mediated external storage | Direct filesystem access to another app's `Android/data` blocked. |
 
-> **⚠️ Warning**
+> **Warning**
 > `Context.MODE_WORLD_READABLE` and `MODE_WORLD_WRITEABLE` are deprecated and throw `SecurityException` for apps targeting API 24 or above — but the constants still exist and the JADX output of an old app will still contain them. If you find `openFileOutput(name, 1)` (the numeric value of `MODE_WORLD_READABLE`) in a decompiled app, check the `targetSdkVersion` before writing the finding: on a modern target it is dead code that would crash, not an exploitable hole. Reporting it without that check is exactly the kind of false positive that damages a report's credibility.
 
 #### `sharedUserId` — deliberately merging two sandboxes
@@ -469,8 +469,8 @@ This was designed for suites of apps by the same vendor, and it is now strongly 
 | 32 (Android 12L) | `android:sharedUserMaxSdkVersion` added, letting an app "graduate" out of a shared UID for new installs while preserving it for upgrades |
 | Current | Strongly discouraged; Play policy pressure against it |
 
-> **🔍 Pentester's Note**
-> `sharedUserId` is worth checking on every engagement and is routinely missed. Grep the manifest. If present, your sandbox analysis must be done at the granularity of the *shared UID group*, not the individual app — because the weakest app in the group defines the security of all of them. A concrete finding shape: "the main banking app shares a UID with `com.vendor.updater`, a rarely-updated helper with an exported, unprotected `ContentProvider`; compromise of the helper yields full read access to the banking app's credential store, because the two are the same Unix user." That is a much stronger finding than the exported provider on its own. Also note that removing `sharedUserId` from an already-shipped app **changes its UID**, which orphans its data — which is exactly why `sharedUserMaxSdkVersion` exists, and why you will see it stuck in place in legacy apps.
+> **Pentester's Note**
+> `sharedUserId` is worth checking on every engagement and is routinely missed. Grep the manifest. If present, your sandbox analysis must be done at the granularity of the *shared UID group*, not the individual app — because the weakest app in the group defines the security of all of them. A concrete finding shape: "the main banking app shares a UID with `com.vendor.updater`, a rarely-updated helper with an exported, unprotected `ContentProvider`; compromise of the helper yields full read access to the banking app's credential store, because the two are the same Unix user." That is a much stronger finding than the exported provider on its own. Removing `sharedUserId` from an already-shipped app **changes its UID**, which orphans its data — which is exactly why `sharedUserMaxSdkVersion` exists, and why you will see it stuck in place in legacy apps.
 
 ### 3.3 Filesystem isolation in depth
 
@@ -494,7 +494,7 @@ Inside the CE directory the layout is fixed by the framework:
 └── shared_prefs/    # SharedPreferences XML
 ```
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Think of the app's data directory as a house with exactly one door, and the door's lock is the execute bit on the directory. DAC checks the lock once, at the door. Everything inside is then governed by the file's own bits — but nobody who cannot get through the door ever gets to ask. This is why "the file inside was mode 666" is usually not exploitable *by another app*, and always exploitable *by root or by the user with a backup*.
 
 #### What `installd` actually does
@@ -510,7 +510,7 @@ Inside the CE directory the layout is fixed by the framework:
 
 At uninstall it does the reverse, and crucially it *recursively deletes* the tree so a recycled appId cannot inherit files.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > `frameworks/native/cmds/installd/` contains `InstalldNativeService.cpp` (the Binder interface implementation), `utils.cpp` (path construction — read `create_data_user_ce_package_path` and friends to see exactly how the paths above are built), and `dexopt.cpp` (the AOT/JIT compilation entry points). The Binder interface itself is declared in `frameworks/native/cmds/installd/binder/android/os/IInstalld.aidl`. Reading `IInstalld.aidl` is the fastest way to see the complete list of privileged filesystem operations the platform is willing to perform on an app's behalf.
 
 #### The APK is world-readable, and that is deliberate
@@ -561,7 +561,7 @@ flowchart LR
 
 The critical property is that **both checks must pass**. They are not alternatives; they are serial. DAC runs first (in the VFS), SELinux second (in the LSM hook). A bug that defeats one still leaves the other standing. That is the entire argument for defence in depth, made concrete.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > On a rooted device, `su` gives you `uid 0`, which defeats DAC. It does *not* automatically give you a permissive SELinux domain. Magisk's `su` deliberately transitions you into a context (historically `u:r:magisk:s0`, and configurable) that policy has been patched to allow almost everything, precisely because `uid 0` alone is no longer sufficient on Android. When your root shell gets "Permission denied" reading something and `id` says `uid=0`, the answer is virtually always SELinux, and `dmesg | grep avc` will tell you exactly which rule was missing. This confusion costs beginners hours; recognising it instantly is a small but real mark of experience.
 
 ### 3.5 seccomp-bpf — shrinking the kernel attack surface
@@ -572,7 +572,7 @@ The UID and SELinux both answer the question *"may this process touch that objec
 
 The Linux kernel exposes roughly 350 to 400 system calls on a 64-bit ARM Android device. A normal Android app uses perhaps 60 of them. The other 300 are attack surface: each is thousands of lines of kernel C, much of it rarely exercised, some of it maintained by nobody in particular. Historically a substantial fraction of Android local privilege escalation came from bugs in syscalls no app had any legitimate reason to call.
 
-> **📖 Definition — seccomp-bpf**
+> **Definition — seccomp-bpf**
 > *seccomp* ("secure computing mode") is a Linux facility that attaches a filter program to a process. On every system call the kernel runs the filter, which is written in a restricted BPF (Berkeley Packet Filter) bytecode, over a structure containing the syscall number, the instruction pointer, the architecture, and the first six arguments. The filter returns a verdict: `SECCOMP_RET_ALLOW`, `SECCOMP_RET_ERRNO` (fail with a chosen errno), `SECCOMP_RET_KILL_PROCESS`, `SECCOMP_RET_TRAP`, `SECCOMP_RET_TRACE`, or `SECCOMP_RET_LOG`. The filter is **inherited across `fork()` and preserved across `execve()`**, and once installed it can never be removed or loosened — only further restricted.
 
 That last property is what makes it usable here: Zygote installs the filter *before* forking off the app, and no amount of subsequent app code can undo it.
@@ -610,7 +610,7 @@ The precise contents of the blocklist change between releases; read `bionic/libc
 | **Accounting and misc admin** | `acct`, `quotactl`, `reboot`, `kexec_load`, `init_module`, `delete_module`, `finit_module` | Administrative operations with no app relevance; module loading is an obvious total compromise. |
 | **Obsolete or exotic ABI** | `uselib`, `personality` (restricted values), various legacy 32-bit compat entries | Rarely-tested code paths. |
 
-> **⚠️ Warning**
+> **Warning**
 > Do not write in a report that "seccomp blocks `ptrace`". It does not, and the reason is instructive: an app is permitted to `ptrace` its own processes and threads, which is what makes in-process debugging, crash handlers, and — inconveniently for defenders — some anti-debugging and self-hooking techniques work. What stops *cross-app* `ptrace` is the combination of DAC (different UID), SELinux (`untrusted_app` has no `ptrace` allow rule to another app domain), and the Yama LSM's `ptrace_scope`. Naming the wrong mechanism in a finding is the fastest way to have a developer dismiss it.
 
 #### Observing the filter on a live process
@@ -640,7 +640,7 @@ dmesg -w | grep -i seccomp
 
 ### 3.6 Capabilities — the empty set
 
-> **📖 Definition — Linux capabilities**
+> **Definition — Linux capabilities**
 > Historically, Linux had a binary distinction: you were root (UID 0), and could do everything, or you were not, and could do almost nothing security-relevant. *Capabilities* split root's power into around 40 independent bits — `CAP_NET_RAW` (open raw sockets), `CAP_SYS_ADMIN` (a grab-bag of very powerful operations), `CAP_DAC_OVERRIDE` (ignore file permission bits), `CAP_KILL` (signal any process), `CAP_SETUID`, and so on. A process has four capability sets: *permitted*, *effective*, *inheritable*, and *bounding*, plus an *ambient* set on modern kernels.
 
 Android app processes hold **no capabilities at all**. Not a reduced set — an empty one, including an empty *bounding* set, which means they cannot ever acquire one.
@@ -671,7 +671,7 @@ mount | grep -E ' /data | /storage '
 # /dev/block/dm-5 on /data type f2fs (rw,...,nosuid,nodev,noatime,...)
 ```
 
-> **🧠 Mental Model**
+> **Mental Model**
 > There are three independent reasons an app cannot become root by dropping a setuid binary somewhere and running it: `/data` and `/storage` are mounted `nosuid` so the bit is ignored; the capability bounding set is empty so UID 0 would be toothless; and `PR_SET_NO_NEW_PRIVS` is set so the kernel refuses privilege-raising `execve` outright. Any one of the three would suffice. All three are present. This is what "defence in depth" looks like when it is done properly, and it is a good example to give in an interview.
 
 ### 3.7 `isolatedProcess` — the strongest sandbox available to a developer
@@ -760,7 +760,7 @@ Forking every isolated process from the main Zygote means each one starts with o
 
 With `useAppZygote="true"`, the platform creates a per-app Zygote (which itself runs isolated), lets the app preload shared state into it by implementing `android.app.ZygotePreload`, and then forks all of that app's isolated processes from it. They then share the preloaded pages copy-on-write. Those processes take UIDs from the 90000–98999 range rather than 99000–99999, which is how you tell them apart in `ps`.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `android:isolatedProcess="true"` in a target's manifest is a **positive** finding, and you should say so. Reports that only ever list problems train clients to treat the report as an adversarial document. When you see an app that parses untrusted input in an isolated process, write it up in a "controls observed" section: it demonstrates the developer understood the threat model, and it makes your negative findings land harder. The inverse is a genuine finding: an app that runs a bundled native parser for user-supplied files directly in the main process, where a memory-safety bug yields the app's full identity, when the platform offered a one-attribute mitigation.
 
 ### 3.8 The SDK Runtime — Privacy Sandbox on Android
@@ -809,7 +809,7 @@ flowchart TD
 
 The API surface is `android.app.sdksandbox.SdkSandboxManager`, with `loadSdk()`, `requestSurfacePackage()`, and `unloadSdk()`; SDKs implement `SandboxedSdkProvider`. The `<uses-sdk-library>` manifest element declares the dependency, which is resolved at install time much like a shared library.
 
-> **⚠️ Warning**
+> **Warning**
 > The SDK Runtime is opt-in and adoption is partial. Do not assume a target app's advertising SDKs are sandboxed. Check for `<uses-sdk-library>` in the manifest and for a `com.android.sdksandbox` process at runtime. If they are absent — which is the common case today — every third-party SDK in the APK runs with the app's full identity, and that fact belongs in your report's discussion of third-party risk. Conversely, if the app *does* use the SDK Runtime, your analysis has to cover an extra process and an extra IPC surface.
 
 ### 3.9 Network isolation — `INTERNET` as a group membership
@@ -869,10 +869,10 @@ Socket s = new Socket("example.com", 80);
 
 The exception surfaces from the `socket()` syscall itself with `EACCES`, *before* any DNS lookup or connection attempt. It is not a framework check that could be hooked away inside the app's own process.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > This is the one permission you genuinely cannot bypass with Frida from inside the app's own process, because the check is in the kernel against the process's group list, and the group list was fixed at fork time by a privileged parent. You can hook `Socket`'s constructor all you like; the syscall will still fail. What you *can* do — and this is the actual attack path, covered in §5 — is get another app that *does* have `INTERNET` to send the data for you. That is permission re-delegation, and it is why the platform's answer to it is not "block the syscall harder" but "audit exported components". See [23 — Permissions §3.9](../23-Permissions/README.md).
 
-> **🧠 Mental Model**
+> **Mental Model**
 > `INTERNET` is a *normal*-protection-level permission, granted automatically at install with no prompt, which people take to mean it is unimportant. Invert that. It is the permission with the strongest enforcement mechanism in the entire system — kernel-level, unhookable, un-revocable at runtime — and it is granted to essentially every app without the user ever seeing it. The strength of the mechanism and the strength of the *policy* are completely independent variables. Keep them separate in your head, and in your reports.
 
 ### 3.10 Package visibility — the metadata sandbox
@@ -933,7 +933,7 @@ The enforcement lives in `system_server`, in `AppsFilter`, which is consulted on
 | 30+, app targets ≤ 29 | No filtering (legacy compatibility). |
 | 30+, app targets 30+ | Filtered unless `<queries>` or `QUERY_ALL_PACKAGES` says otherwise. |
 
-> **⚠️ Warning**
+> **Warning**
 > Package visibility filtering is a *privacy* control, not a security boundary, and the distinction matters when you write it up. There have been repeated demonstrations that the filtered view leaks through side channels — timing differences, error-message differences between "not installed" and "not visible", `Intent` resolution behaviour, and observable side effects of `bindService`. Do not tell a client that an app is *unable* to determine what else is installed. Tell them it is *not permitted to enumerate*, that enumeration is now visible in the manifest and therefore auditable, and that determined fingerprinting remains feasible. The honest framing is "raises the cost and creates an audit trail", exactly as with most privacy controls. Full treatment in [23 — Permissions §3.11](../23-Permissions/README.md).
 
 ### 3.11 Scoped storage — the sandbox extended to shared files
@@ -971,7 +971,7 @@ flowchart TD
 
 The essential architectural point is that a *userspace* process now sits in the path of every file operation on shared storage and can apply arbitrarily rich policy — "is this file one you created?", "do you hold `READ_MEDIA_IMAGES`?", "is this another app's `Android/data`?" — which a plain Unix permission bit could never express. The cost is performance, which is why Android added FUSE passthrough to shortcut the data path once a file has been authorised.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Scoped storage changed what "insecure data storage on external storage" means, and your testing must reflect the target's `targetSdkVersion`. On a target below 30 with legacy storage, a file in `/sdcard/Download/token.txt` is readable by every app with storage permission — a straightforward finding. On a target at 30+, the same file is in a shared collection and reachable through `MediaStore` by an app with the right media permission, or by anything with `MANAGE_EXTERNAL_STORAGE`, or by the user with a file manager, or over ADB — still a finding, but a differently-scoped one. Meanwhile a file in `Android/data/<pkg>/` is now genuinely protected from other apps but remains fully accessible to the user and to root. Write the finding with the right adversary named. See [33 — Storage](../33-Storage/README.md).
 
 ### 3.12 `android:process` — the thing that looks like a boundary and is not
@@ -1004,7 +1004,7 @@ What this **does not** give you, and this is the part that gets written up wrong
 | Different permissions | Permission checks are per-UID, not per-process. Both hold every granted permission. |
 | Protection from each other | Either can `ptrace` the other (same UID, `ptrace_scope` permitting), read `/proc/<pid>/mem`, connect to its abstract sockets, and open its files. |
 
-> **⚠️ Warning**
+> **Warning**
 > Never write "the app isolates its parsing code in a separate process" as a mitigating control when the manifest says `android:process` and not `android:isolatedProcess`. They are one word apart in XML and an entire security boundary apart in effect. An attacker with code execution in a `:sync` process is, from the kernel's point of view, the app. The correct sentence is: "the app splits into multiple processes, which limits crash blast radius but provides no security isolation, because all processes share the UID and SELinux context; `android:isolatedProcess` would provide isolation and is not used."
 
 ### 3.13 `run-as` — and exactly why it only works on debuggable apps
@@ -1064,7 +1064,7 @@ sequenceDiagram
 
 Without it, anybody with ADB access — which includes anybody who can get the user to enable USB debugging and tap "allow", and anybody who steals an already-authorised device — could read every app's private data on any device. The debuggable flag is the app developer's explicit statement that this particular build is a development artefact whose data is not real. Release builds set `android:debuggable="false"` (which is also the default, and which the Play build pipeline enforces), so `run-as` refuses.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Three practical consequences you will use constantly.
 > **First**, if `run-as` works on a production app you downloaded from Play, that is a finding in itself: the developer shipped a debuggable build. It means the app is also attachable with `jdb` and the Android Studio debugger, which is a far bigger problem than the file access. Check with `aapt dump badging base.apk | grep debuggable` or by reading the manifest.
 > **Second**, on a `userdebug` emulator image, `ro.debuggable=1`, so `run-as` works on *every* app. That is why your emulator experiments succeed and the same command fails on the client's Pixel. Do not build a methodology around emulator behaviour without checking it on a `user` build.
@@ -1132,7 +1132,7 @@ Concretely, without any root at all, a user can:
 - Run the app in an emulator they fully control.
 - Intercept every network request with a proxy and a user-installed CA (subject to the Network Security Config — see [44 — NetworkSecurityConfig](../44-NetworkSecurityConfig/README.md)).
 
-> **🧠 Mental Model**
+> **Mental Model**
 > The correct question is never "can the user get at this data?" — the answer is always yes, given enough motivation. The correct question is "**what does the user gain by getting at it, and does that gain come at anyone else's expense?**" If a user extracts their own session token, they have learned their own secret, which costs nobody anything. If a user extracts a *global* API key that lets them query other users' records, or a client-side price calculation they can rewrite, or a feature flag that unlocks a paid tier, the sandbox's irrelevance suddenly matters enormously. That distinction — *whose* secret is it — is the single most useful triage question in mobile security.
 
 #### 3.14.2 Root
@@ -1149,7 +1149,7 @@ Root is not one thing; it is a *set* of powers, and it is worth being precise be
 
 The reason root *effectively* sees everything on a Magisk-rooted device is that Magisk uses `magiskpolicy` to inject `allow` rules into the loaded policy at boot, creating a domain (`magisk`) that policy permits to do essentially anything, and then transitions `su` sessions into it. Without that step, `su` would give you UID 0 in a domain that could not read `app_data_file`. See [22 §5.4](../22-SELinux/README.md) and [62 — Magisk](../62-Magisk/README.md).
 
-> **⚠️ Warning**
+> **Warning**
 > An app cannot reliably detect root, and a report that says "add root detection" as the remediation for an insecure-storage finding is a bad report. Root detection is a *signal*, evaluated server-side, that raises the cost of automated abuse. It is not a control. The remediation for "the session token is readable from the data directory" is not "detect root"; it is "bind the token to a hardware-backed key requiring user authentication, shorten its lifetime, and enforce the real authorisation decision on the server". See [37 — Root Detection](../37-RootDetection/README.md).
 
 #### 3.14.3 IPC you voluntarily exposed
@@ -1166,7 +1166,7 @@ The sandbox has exactly the holes the developer punched in it. An exported `Acti
 
 The file `/data/data/com.example/databases/notes.db` is still mode `0600`, still owned by UID 10388, still labelled with per-app MCS categories. No other app can `open()` it. And it does not matter at all, because any app can call `content://com.example.notes.provider/notes` and be handed the rows over Binder by the app itself.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Think of Binder IPC as a *courier service*. The sandbox is a locked room; the courier is allowed in and out. The kernel checks that the courier is a legitimate courier. It has no opinion whatsoever about what is in the parcel, or whether the person who handed it over should have. That check is entirely the app's responsibility, expressed through `android:exported`, `android:permission`, and explicit `checkCallingPermission()` calls. This is why chapters [24](../24-IPC/README.md) through [29](../29-BroadcastReceivers/README.md) exist and why they are where most real findings come from.
 
 An easily-missed sub-case: a `ContentProvider` with `android:exported="false"` but `android:grantUriPermissions="true"` can still hand out *temporary* access to specific URIs via `Intent.FLAG_GRANT_READ_URI_PERMISSION`. That is a deliberate, scoped hole, and it is the correct pattern — but a badly-configured `<grant-uri-permission android:pathPattern=".*" />` turns a scoped hole into an open one. See [27 — ContentProviders](../27-ContentProviders/README.md).
@@ -1206,7 +1206,7 @@ clip.description.extras = PersistableBundle().apply {
 clipboardManager.setPrimaryClip(clip)
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Password managers copying credentials to the clipboard is still a real finding, but on Android 12+ you must test it rather than assume it. Write a probe app that tries to read the clipboard from the background and confirm it gets `null`; then test with the probe app in the foreground; then test with the probe app installed as the default IME, which is the case that still works and is precisely why malicious keyboards are a category. Report what you actually observed on the target's minimum supported API level, not the historical behaviour.
 
 #### 3.14.6 Screen capture, overlays, and MediaProjection
@@ -1231,7 +1231,7 @@ window.setFlags(
 
 It also prevents the window from being placed in the recent-apps thumbnail, which is a related and frequently-missed leak: the system screenshots your app when it goes to the background, and that thumbnail is stored on disk.
 
-> **⚠️ Warning**
+> **Warning**
 > `FLAG_SECURE` is a real control against screenshots and `MediaProjection`, and it is **not** a control against accessibility services, which read the view hierarchy rather than the pixels, nor against an overlay drawn on top of your window, nor against root, nor against someone with a second phone and a camera. It is worth recommending; it is not worth describing as protection against a determined attacker. From Android 15 there is also additional platform hardening around apps detecting when they are being recorded, but that is detection, not prevention.
 
 #### 3.14.7 Accessibility services — the sanctioned bypass
@@ -1265,7 +1265,7 @@ The sandbox is a **direct access** control. It has nothing to say about side cha
 | Shared memory and CPU cache | Cross-process microarchitectural attacks | Fundamentally hard; largely out of scope for app testing |
 | Storage usage (`StorageStatsManager`) | Per-app disk usage can reveal user behaviour | Requires `PACKAGE_USAGE_STATS`, a special permission |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Side channels are usually low-severity in an app engagement and are usually the wrong place to spend your time — but there is one genre worth checking every single time: **does the app leak sensitive data into a globally-observable place?** Logcat (see [51 — Dynamic Analysis](../51-DynamicAnalysis/README.md)), which was globally readable before Android 4.1 and is still readable by any app holding `READ_LOGS` on some builds and by anyone with ADB; crash reports sent to a third party; the recents thumbnail; and the notification shade. Those are not exotic microarchitectural channels — they are ordinary carelessness, and they are findable in an afternoon.
 
 #### 3.14.9 Backup
@@ -1313,7 +1313,7 @@ cat app/build/intermediates/merged_manifests/release/AndroidManifest.xml
 apktool d target.apk -o out && grep -n 'provider\|receiver\|service' out/AndroidManifest.xml
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > A `ContentProvider` you did not write, contributed by an SDK, running at app startup with your app's UID, is one of the most reliably interesting things in a modern APK. Many SDKs use a no-op `ContentProvider` purely as an initialisation hook (because providers are created before `Application.onCreate`). Enumerate every provider in the merged manifest and identify which are yours and which are not. Anything unexpected is worth ten minutes.
 
 ### 3.15 Sandbox escape — the six classes
@@ -1356,7 +1356,7 @@ The attack pattern is: find a service the app is allowed to talk to (SELinux pol
 
 This is exactly why the platform split `mediaserver` into several minimally-privileged pieces: the value of compromising `mediaextractor` is now much lower than the value of compromising the old monolithic `mediaserver` was.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > If you are doing vulnerability research rather than app testing, the highest-yield version of this class is **vendor** services, not AOSP ones. Enumerate them with `service list` and `dumpsys -l` on the target device, diff against a Pixel running the same Android version, and investigate the difference. Vendor-added services are written under the same deadline pressure as apps, reviewed by far fewer eyes, and often reachable from `untrusted_app` because the vendor's policy was written permissively to make things work. See [70 — Vulnerability Research](../70-VulnerabilityResearch/README.md).
 
 #### Class 3 — SELinux policy misconfiguration
@@ -1375,7 +1375,7 @@ These are found by dumping the device's policy and analysing it, which is covere
 
 #### Class 4 — Confused deputy via a system app
 
-> **📖 Definition — confused deputy**
+> **Definition — confused deputy**
 > A *confused deputy* is a program that holds a privilege and can be tricked, by a less-privileged caller, into using that privilege on the caller's behalf. The deputy is not compromised; it is merely obedient. The classic example is a compiler with write access to a billing file being asked to write its output there.
 
 On Android the deputy is typically a preinstalled system or privileged app holding `signature` or `signatureOrSystem` permissions. If such an app exposes an unprotected component that performs a privileged action based on caller-supplied data, any app can invoke it:
@@ -1389,7 +1389,7 @@ This is the single most common OEM-introduced vulnerability class on Android, an
 
 #### Class 5 — File-descriptor leaks across the boundary
 
-> **📖 Definition — file descriptor passing**
+> **Definition — file descriptor passing**
 > A Unix file descriptor is a per-process integer handle to a kernel object. A descriptor may be *passed* to another process — over a Unix domain socket with `SCM_RIGHTS`, or over Binder as a `ParcelFileDescriptor`. The receiving process gets a working handle to the same kernel object. **Crucially, the permission check happened at `open()` time, in the sending process. The receiver never has to pass a check.**
 
 That last sentence is the vulnerability. If a privileged process opens a sensitive file and passes the descriptor to an app — deliberately or accidentally, for example by not closing it before `fork`/`exec`, or by handing over a descriptor to a directory rather than a file — the app now has access it could never have obtained itself.
@@ -1402,7 +1402,7 @@ Classic shapes:
 - A descriptor is left open across `exec` because `FD_CLOEXEC` was not set, and a child process inherits it. This is why Zygote explicitly closes its server socket in the child (§2.4 step 11).
 - An `ashmem`/`memfd` region shared read-write when read-only was intended, letting the receiver modify data the sender is still using — a time-of-check-to-time-of-use primitive against the privileged process.
 
-> **⚠️ Warning**
+> **Warning**
 > When you review an app's `ContentProvider` that implements `openFile()` or `openAssetFile()`, this is *the* thing to look for. `openFile()` returns a `ParcelFileDescriptor`, and the provider is the one performing the `open()`. If the URI's path segment is concatenated into a filesystem path without canonicalisation, a caller supplying `content://authority/../../databases/secrets.db` gets a descriptor to a file the provider never meant to share, opened with the provider's identity. Use `File.getCanonicalPath()` and verify the result is inside the intended directory, or better, use `FileProvider` with a declared `<paths>` configuration. See [27 — ContentProviders](../27-ContentProviders/README.md).
 
 #### Class 6 — Binder transaction handling bugs
@@ -1813,7 +1813,7 @@ Java.perform(function () {
 });
 ```
 
-**Exploit:** On a target below API 30, another app with `READ_EXTERNAL_STORAGE` simply opens the file. On a modern target, the file is in a shared media collection reachable via `MediaStore`, or reachable by anything with `MANAGE_EXTERNAL_STORAGE`, or by the user with a file manager, or over ADB with no root at all:
+**Exploit:** On a target below API 30, another app with `READ_EXTERNAL_STORAGE` opens the file. On a modern target, the file is in a shared media collection reachable via `MediaStore`, or reachable by anything with `MANAGE_EXTERNAL_STORAGE`, or by the user with a file manager, or over ADB with no root at all:
 
 ```bash
 # host — no root, no debuggable flag needed
@@ -1861,7 +1861,7 @@ plus a ProGuard/R8 rule that removes verbose and debug logging from release buil
     android:label="@string/app_name">
 ```
 
-(or simply the absence of the attribute on an app targeting below API 31.)
+(or the absence of the attribute on an app targeting below API 31.)
 
 **Why developers do it:** It is the default, and the benefit — users keep their data when they change phones — is real and user-visible. Turning it off is a product decision with a support cost, so nobody turns it off.
 
@@ -2112,7 +2112,7 @@ The sandbox's structure is what makes Android forensics tractable, because it me
 | Shared storage | `/data/media/<id>` | Photos, downloads, exported documents |
 | APKs | `/data/app/~~*/<pkg>-*/` | Recovering the exact binary for analysis |
 
-The multi-user offset matters here too: an examiner who forgets that work-profile data lives under `/data/user/10/` and is encrypted with a different key will simply miss half the device.
+The multi-user offset matters here too: an examiner who forgets that work-profile data lives under `/data/user/10/` and is encrypted with a different key will miss half the device.
 
 ### 5.11 OWASP MASVS / MASTG mapping
 
@@ -3089,7 +3089,7 @@ The expected shape of the result on a modern device:
 | 5. `/proc` | Only your own processes visible | A side channel that was closed |
 | 6. Package visibility | A short list on API 30+ targets, a very long one on legacy targets | The metadata sandbox |
 
-> **⚠️ Warning**
+> **Warning**
 > Build and install this app only on a device you own or are explicitly authorised to test. Running code that enumerates other applications' data on someone else's device is, depending on jurisdiction, a criminal offence regardless of your intent. Keep it off the Play Store; it will be flagged, correctly, as a Potentially Harmful Application.
 
 ### 9.4 Real application — a secure file-sharing provider
@@ -3312,7 +3312,7 @@ class DocumentRenderClient(private val ctx: Context) {
 
 The threat model this design defends, stated plainly: an attacker sends the user a malicious document; the bundled native parser has a heap overflow; the attacker gets code execution. **In the isolated process, that code execution is worth almost nothing** — no app data, no permissions, no network, no persistent storage, and a read-only input descriptor. To monetise it the attacker must chain a second bug in the host's handling of `RenderResult`, in Binder, or in the kernel. That is the difference between a one-bug compromise and a three-bug chain, and it is achieved with two manifest attributes and a disciplined interface.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > When you review a design like this, the interface is the attack surface. Ask: is the returned type a plain struct or a `Parcelable` with a custom `writeToParcel`? (Custom parcelling is where mismatch bugs live — §3.15 Class 6.) Does the host validate every field of the result before use, or does it trust `pages` and index an array with it? Are descriptors passed read-only? Is the shared memory sealed? Is anything other than the one input descriptor handed across? Those five questions find real bugs in real code.
 
 ---
@@ -3429,7 +3429,7 @@ By refusing the question as posed and reframing it. "Sufficient" is only meaning
 | Testing on a `userdebug` emulator and generalising | `ro.debuggable=1` makes `run-as` work on everything and changes several other behaviours | Confirm every finding on a `user` build, ideally on the target's real hardware |
 | Reporting an exported component without demonstrating impact | Half of them are inert | Actually invoke it; paste the output; if it returns nothing useful, report it as hygiene |
 | Assuming pre-Android-11 storage semantics | Scoped storage changed who can read what | Check `targetSdkVersion` first, then test on a device at the app's minimum and target API levels |
-| Claiming an app "cannot detect what else is installed" because of package visibility | Visibility filtering is a privacy control with known side channels | Say "not permitted to enumerate", and note that fingerprinting remains feasible |
+| Claiming an app "cannot detect what else is installed" because of package visibility | Visibility filtering is a privacy control with known side channels | Say "not permitted to enumerate", and confirm that fingerprinting remains feasible |
 | Blaming SELinux for a DAC denial, or vice versa | They produce different evidence | `dmesg \| grep avc` distinguishes them in one command. Get it right; it is a credibility marker |
 | Ignoring the work profile | Different UID, different data directory, different key | Enumerate all users with `pm list users` and test each relevant one |
 | Reporting `sharedUserId` alone as High | It is a design weakness, not an exploit | Chain it to a demonstrated compromise of a sibling, then report the chain |

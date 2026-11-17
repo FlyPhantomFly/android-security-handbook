@@ -26,10 +26,10 @@ But it leaves a question that chapter 21 explicitly defers here: **what happens 
 
 The answer is MCS. This lab is where you verify it rather than believe it.
 
-> **📖 Definition — MCS (Multi-Category Security)**
+> **Definition — MCS (Multi-Category Security)**
 > The degenerate case of MLS in which there is exactly one sensitivity level and only the *categories* are used. Android uses `s0` as its only sensitivity and up to 1024 categories, `c0` through `c1023`, assigned arithmetically from the process's UID.
 
-> **📖 Definition — dominance**
+> **Definition — dominance**
 > Level A *dominates* level B (written `dom l1 l2` in constraint syntax) when A's sensitivity is at least B's **and** A's category set is a **superset** of B's. With one sensitivity, dominance reduces entirely to set containment.
 
 ---
@@ -43,7 +43,7 @@ adb shell getenforce                    # must be Enforcing
 adb shell 'cat /sys/fs/selinux/mls'     # must be 1
 ```
 
-> **⚠️ If `/sys/fs/selinux/mls` returns `0`, this lab measures nothing.** MLS is not compiled into that kernel, there are no categories anywhere, and app-vs-app MAC isolation does not exist on that device. That is itself a serious platform finding — write it up and use a different device for the lab.
+> **If `/sys/fs/selinux/mls` returns `0`, this lab measures nothing.** MLS is not compiled into that kernel, there are no categories anywhere, and app-vs-app MAC isolation does not exist on that device. That is itself a serious platform finding — write it up and use a different device for the lab.
 
 Have at least three third-party apps installed and running. You will need their UIDs.
 
@@ -526,7 +526,7 @@ adb logcat -d -b all | grep -a 'avc:'
 
 **Question 16.** Record whether the read succeeded, and whether an `avc` record was produced. If a record appeared, decode it with `scripts/avc-decode.py` and confirm which constraint refused it. If the read *succeeded*, that is a much more interesting result — check `getenforce` and `mls` before concluding anything.
 
-> **⚠️ Note on `setReadable(true, false)`**
+> **Note on `setReadable(true, false)`**
 > On modern Android this may not have the effect you expect: `/data/data` is `0711` and the app's own directory is `0700`, and an app may not be able to loosen the mode on its own data directory in the way it expects. If the DAC part does not open, you have not tested the MAC part. Verify the modes with `run-as com.example.b ls -l` before concluding.
 
 ### Step 14 — Read the labels from inside the app

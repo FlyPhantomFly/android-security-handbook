@@ -41,7 +41,7 @@ mindmap
           rw-p data and bss
         load base
           lowest mapping at file offset ZERO
-          not simply the lowest
+          not the lowest
           wrong by one segment, silently
         anon names are the fingerprint
           scudo primary and secondary

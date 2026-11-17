@@ -18,7 +18,7 @@ no malicious app at all, and demonstrate the **DNS-rebinding** variant that defe
 
 ## Why this matters
 
-> **📖 Definition**
+> **Definition**
 > **Loopback.** The virtual network interface `lo`, addresses `127.0.0.1` and `::1`. Traffic to it
 > never leaves the device. It is a *network* interface, so a process needs the `INTERNET` permission
 > to create a socket on it at all.
@@ -274,7 +274,7 @@ what would the server have to send for it to succeed? Check whether NanoHTTPD's 
 
 The obvious defence is to check the `Host` header. Show why that is not enough on its own.
 
-> **📖 Definition**
+> **Definition**
 > **DNS rebinding.** An attacker controls a domain. On the first lookup it resolves to the attacker's
 > server, which serves the page. Shortly afterwards, with a very low TTL, the same name resolves to
 > `127.0.0.1`. The browser now believes `http://evil.example/` and `http://127.0.0.1:8081/` are the
@@ -295,7 +295,7 @@ the request arrives with `Host: yourhost` rather than `Host: 127.0.0.1`.
 `Host: 127.0.0.1` stop it, and why is it wrong to rely on that check alone?
 
 **Q13.** Which of the four fix elements in Step 7 would have stopped rebinding even with no `Host`
-check at all? Why is that the more robust control?
+check at all? Why is that the stronger control?
 
 ### Step 7 — The fix, in four independent parts
 
@@ -388,7 +388,7 @@ it from the code:
 grep -rnE "new ServerSocket\(|NanoHTTPD|InetSocketAddress\(" out/sources/
 ```
 
-Note that a well-fixed app uses an **ephemeral** port — `super("127.0.0.1", 0)` — so the port changes
+a well-fixed app uses an **ephemeral** port — `super("127.0.0.1", 0)` — so the port changes
 every launch and cannot be scanned for reliably. That is the point of fix element (2), and it is why
 it is worth measuring how much it actually buys.
 </details>
@@ -482,7 +482,7 @@ exactly why the `Host` check works. But it is a *string* check on an attacker-in
 breaks if the app ever needs another hostname, and it is one refactor away from being removed. The
 **per-launch bearer secret** (element 3) stops rebinding regardless: the page has no way to learn the
 secret, so it cannot produce an acceptable request whatever the `Host` says. Authentication is the
-robust control; the `Host` check is defence in depth.
+primary control; the `Host` check is defence in depth.
 
 **Q14.** Measured results should show: (1) kills all off-device access, nothing else; (2) raises the
 cost of discovery but stops nothing determined, since an app can read `/proc/net/tcp` and find the

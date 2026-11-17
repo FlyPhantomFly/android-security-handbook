@@ -14,7 +14,7 @@ No, and they are not even about the same subject.
 
 **Root** (UID 0) is a *DAC* concept — Discretionary Access Control. It is an identity, and the kernel's file-permission code has a special case that lets that identity ignore permission bits.
 
-**SELinux** is *MAC* — Mandatory Access Control. It labels every process with a **domain** and every object with a **type**, and permits an operation only when a system-wide policy contains a rule for that pair. **It never looks at the UID.** Not to be strict with root, not to be lenient with apps. The UID is simply not an input.
+**SELinux** is *MAC* — Mandatory Access Control. It labels every process with a **domain** and every object with a **type**, and permits an operation only when a system-wide policy contains a rule for that pair. **It never looks at the UID.** Not to be strict with root, not to be lenient with apps. The UID is not an input.
 
 So they are orthogonal. A UID 0 process in a domain with no matching rule is refused. A UID 10156 process in a domain with a matching rule is permitted. And because both DAC and MAC run on the same system call, **both must say yes** for anything to happen.
 

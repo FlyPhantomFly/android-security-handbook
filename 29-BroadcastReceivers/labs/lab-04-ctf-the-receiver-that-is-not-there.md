@@ -26,7 +26,7 @@ That is a lie of omission, and finding the rest of the truth is the exercise.
 You have the APK and a device. You do **not** have the source. Everything you need is
 reachable through the platform's own bookkeeping and through broadcasts you send yourself.
 
-> **⚠️ Do not read [`examples/CtfVaultReceivers.java`](../examples/CtfVaultReceivers.java)
+> **Do not read [`examples/CtfVaultReceivers.java`](../examples/CtfVaultReceivers.java)
 > until you are finished.** It contains all five flags in plain text and is the answer key
 > as much as the target. If someone is running this for you, they should hand you the APK
 > and keep the source.
@@ -43,7 +43,7 @@ reachable through the platform's own bookkeeping and through broadcasts you send
 2. **`adb shell` is not an attacker.** Flags 3 and 4 are not solvable from a shell, on
    purpose. You need an app.
 3. **Do not brute-force strings.** Every flag has a deterministic path.
-4. **Authorised testing only.** This app is deliberately vulnerable. Uninstall it afterwards.
+4. **Cleanup.** This app is deliberately vulnerable. Uninstall it afterwards.
 
 ---
 
@@ -136,7 +136,7 @@ process. If `receiver-surface.py` shows nothing, launch the app first:
 adb shell "am start -n com.example.vaultctf/.MainActivity"
 ```
 
-Note that `MainActivity` calls `finish()` immediately — but the *process* stays alive, and
+`MainActivity` calls `finish()` immediately — but the *process* stays alive, and
 the registrations were made in `Application.onCreate`, which runs before any Activity.
 </details>
 

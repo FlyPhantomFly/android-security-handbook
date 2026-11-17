@@ -35,9 +35,9 @@ There is also one **deliberate dead end**. It looks like the intended route, it 
 people take first, and it will crash the target. Recognising *why* it crashes is worth as much as
 the flag.
 
-> **⚠️ Authorised testing only**
 > Everything here targets `../examples/victim-app/` on a device you own. The attacker app requests
-> zero permissions and hard-codes the victim's package.
+> zero permissions and hard-codes the victim's package. See [SECURITY.md](../../SECURITY.md) for
+> the handling rules.
 
 ---
 
@@ -138,7 +138,7 @@ W CH31: ADMIN-FRAGMENT-REACHED secret=CH31{fragment_injection_skipped_the_login_
 
 ## Stage 2 — The deliberate dead end
 
-Before continuing, try the route that looks obviously better.
+Before continuing, try the route that looks better.
 
 `SettingsHardenedActivity` is exported, has almost the same name, and — if you decompiled it — has a
 real allowlist. It is natural to try it, if only to confirm the control.
@@ -299,7 +299,7 @@ text="ADMIN PANEL&#10;&#10;secret: CH31{fragment_injection_skipped_the_login_scr
 
 </details>
 
-> **⚠️ Warning — be honest about the vantage of this step**
+> **Warning — be honest about the vantage of this step**
 > `uiautomator dump` runs as `shell` (uid 2000). **An ordinary application cannot do it.** An app
 > could get the same value with an accessibility service (a permission the user must grant through
 > Settings), a screen-capture projection (a consent dialog), or by being a human looking at the

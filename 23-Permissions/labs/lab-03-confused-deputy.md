@@ -13,7 +13,7 @@
 Labs 01 and 02 were about *obtaining* a permission. This one is about the more valuable case:
 never obtaining it, and using it anyway.
 
-> **📖 Definition — confused deputy**
+> **Definition — confused deputy**
 > A *deputy* is a program that holds authority and acts on requests. It becomes *confused* when it
 > uses **its own** authority to perform an action requested by someone who does not have that
 > authority, without checking whether the requester should be allowed to ask.
@@ -46,7 +46,7 @@ went through no review, it is often written by a contractor, and it is not remov
 
 ---
 
-## ⚠ Scope and honesty
+## Scope and honesty
 
 This lab operates on **your own device's pre-installed apps**. That is legal on hardware you own
 and is the standard research workflow for OEM findings.
@@ -364,7 +364,7 @@ The script flags every `OrSelf` call with a stack trace and prints
 `callingUid=… myUid=…  <-- NO BINDER TRANSACTION IN PROGRESS` when the two match. That line is the
 finding, live.
 
-> **⚠️ Attaching to a system app**
+> **Attaching to a system app**
 > Frida needs root or a debuggable build to attach to a privileged process. If you cannot attach,
 > the static reading in step 3.1 still stands — say in the report that the threading was
 > established statically and not confirmed at runtime.
@@ -521,7 +521,7 @@ A model opening paragraph:
 > UID 10146) reached the activity and caused the write; the same write attempted directly by the
 > probe failed with `SecurityException ... requires android.permission.WRITE_SECURE_SETTINGS`.
 
-> **✅ Success criterion for the lab**
+> **Success criterion for the lab**
 > Either a finding with all six parts, or a written negative result naming the apps you audited,
 > the borrowable permissions each held, and why each exposed component did not yield. A rigorous
 > negative is a legitimate deliverable and is far more useful to a client than a padded positive.

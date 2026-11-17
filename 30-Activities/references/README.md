@@ -62,7 +62,7 @@ part of the tree was reorganised in Android 10 (`ActivityTaskManagerService` spl
 
 | Tool | Annotation |
 |---|---|
-| `dumpsys activity activities` | The primary source for everything in this chapter. Note that it prints the whole graph **twice** — once per display, once in a summary — so key by task id. |
+| `dumpsys activity activities` | The primary source for everything in this chapter.it prints the whole graph **twice** — once per display, once in a summary — so key by task id. |
 | `dumpsys activity recents` | Tasks that outlived their processes, with `affinity`, `realActivity` and `baseIntent`. The state a parked hijack task sits in. |
 | `dumpsys window windows` | Window z-order and `mOwnerUid` — the only way to answer "whose overlay was that". |
 | `cmd appops query-op SYSTEM_ALERT_WINDOW allow` | Who holds the overlay permission. On an OEM device this legitimately returns twenty-odd system packages; seeing that once stops you reporting it as a finding. |

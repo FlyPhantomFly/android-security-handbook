@@ -35,7 +35,7 @@ Matrix tables throughout.
 
 ### The problem that existed before the manifest
 
-Imagine an operating system where a program can simply *start running* and then announce what it
+Imagine an operating system where a program can *start running* and then announce what it
 would like to do. It launches, and only afterwards asks the system "may I read the address book?",
 "may I run when the phone boots?", "may other programs talk to me?". The operating system would have
 to answer those questions at the worst possible moment: while untrusted code is already executing
@@ -50,7 +50,7 @@ Android took a different position, and the whole security model of the platform 
 application must declare, in a fixed, machine-readable document, everything it intends to do, before
 a single line of its code executes.** That document is `AndroidManifest.xml`.
 
-> **📖 Definition**
+> **Definition**
 > **AndroidManifest.xml** is a mandatory XML document at the root of every APK. It declares the
 > application's identity, its components (the entry points other software can reach), the
 > permissions it requests, the permissions it defines, the hardware and software it needs, and
@@ -111,7 +111,7 @@ That fourth category is why so many junior testers miss real findings. They grep
 `<intent-filter>` blocks are exported by default with no attribute written anywhere. The absence of
 text is the finding.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Read a manifest the way an immigration officer reads a passport: not looking for what is written,
 > but for what the combination of what is written and what is missing *permits*. Every attribute has
 > a default. The default is a function of `targetSdkVersion`. You are auditing the **effective**
@@ -303,7 +303,7 @@ finding.**
 
 ### 3.1 Android Binary XML (AXML) — the on-disk format
 
-> **📖 Definition**
+> **Definition**
 > **AXML** (Android Binary XML) is a binary serialisation of an XML document used for
 > `AndroidManifest.xml` and every compiled file under `res/`. It exists so that the platform can read
 > XML without running a text parser: parsing is a walk over fixed-size records, and string comparison
@@ -340,7 +340,7 @@ its **resource ID**, `0x01010010` for `android:exported`. The resource map chunk
 Nth entry gives the resource ID for the string at index N in the string pool. The platform matches
 attributes **by resource ID, not by name**.
 
-> **⚠️ Warning**
+> **Warning**
 > That last sentence is the root of an entire family of evasion tricks. If an attribute's name string
 > says `exported` but its resource ID slot maps to something else, a text-oriented decoder that keys
 > off the name will print one thing and the platform will do another. Conversely, an attribute with
@@ -372,7 +372,7 @@ The types that matter for a manifest audit:
 | `TYPE_INT_HEX` | `0x11` | Hex integer, e.g. `configChanges` flags |
 | `TYPE_INT_BOOLEAN` | `0x12` | `0` is false, **anything non-zero is true** |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `TYPE_INT_BOOLEAN` is not "0 or 1". The platform's `getAttributeBooleanValue` returns
 > `data != 0`. A crafted APK can store `0xFFFFFFFF` for `android:exported`. Some third-party
 > decoders print `false` or a raw number; the platform reads `true`. Always confirm booleans with
@@ -430,7 +430,7 @@ This class of trick has been used in the wild by Android malware specifically to
 (and by extension automated app-store scanners) report a benign manifest while the device installs a
 malicious one. You should treat "my tool printed a clean manifest" as an unverified claim.
 
-> **🔍 Pentester's Note — the three-way cross-check**
+> **Pentester's Note — the three-way cross-check**
 > Run all three, every time, on any APK you did not build yourself:
 >
 > ```bash
@@ -486,14 +486,14 @@ aapt2 dump badging target.apk
 
 #### `sharedUserId` — the attribute that dissolves the sandbox
 
-> **📖 Definition**
+> **Definition**
 > **`sharedUserId`** requests that this application be assigned the *same Linux UID* as every other
 > installed application declaring the same `sharedUserId` value **and signed by the same key**. Apps
 > sharing a UID share a data directory namespace, can read each other's files directly, run in the
 > same process if they ask to, and hold the union of each other's granted permissions.
 
 The security consequence is total: the app sandbox, which is a UID boundary
-([21-App-Sandbox](../21-App-Sandbox/README.md)), simply does not exist between members of a shared
+([21-App-Sandbox](../21-App-Sandbox/README.md)), does not exist between members of a shared
 UID group. If any one member of the group has a vulnerability that yields file read, the attacker
 gets the private data of every member.
 
@@ -503,7 +503,7 @@ gets the private data of every member.
 | `sharedUserId="android.uid.system"` on a third-party app | **Critical if it installs** | Only possible if signed with the platform key. If you find this in an APK you can install, the platform key has leaked or the device is a permissive vendor build. |
 | `sharedUserId` present with no `sharedUserMaxSdkVersion` on a modern app | Medium | Deprecated since API 29; the app has no migration path. Changing or removing `sharedUserId` on an installed app is not possible without an uninstall, so this is technical debt with a security dimension. |
 
-> **⚠️ Warning**
+> **Warning**
 > `sharedUserId` is deprecated as of API 29 and cannot be added to an app that is already published
 > without breaking updates, because changing an installed app's UID is not supported. If you
 > recommend removing it, you must also say that removal requires a data-migration plan and an
@@ -531,7 +531,7 @@ android {
 }
 ```
 
-> **📖 Definition**
+> **Definition**
 > **`minSdkVersion`** is the lowest API level on which the app will install. **`targetSdkVersion`**
 > is the API level the app declares it was *tested against*; the platform uses it to decide whether
 > to apply new default behaviours or preserve old ones for compatibility. **`compileSdkVersion`** is
@@ -571,7 +571,7 @@ the app declares:
 | Android 14 (API 34) | API 23 |
 | Android 15 (API 35) | API 24 |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > When you report "the app targets API 28", do not stop there. Write the *consequences*: "…therefore
 > cleartext HTTP is permitted by default, components with intent filters are exported by default,
 > scoped storage does not apply, package visibility filtering does not apply, and `PendingIntent`
@@ -619,7 +619,7 @@ concentration of security-relevant switches in the file.
 | `android:appComponentFactory` | 28 | framework default | Names a class whose methods are called to **instantiate every Activity, Service, Receiver, Provider, Application and ClassLoader**. It is the earliest possible app-controlled hook point. Malware and packers use it; so can you. If present on an app that has no obvious reason for it, read that class first. | Investigate |
 | `android:enableOnBackInvokedCallback` | 33 | `false` | Opts into predictive back. Behavioural, not a security control — but note it, because apps sometimes rely on `onBackPressed` for a security-relevant lock screen and the migration breaks it. | Info |
 | `android:manageSpaceActivity` | 3 | none | Replaces the "Clear data" button with an app-provided Activity. That Activity is worth auditing: it runs with the app's identity and is reachable from Settings. | Investigate |
-| `android:permission` | 1 | none | A permission required to interact with **any** component of the app, unless overridden per component. Rarely used; when present, note that a per-component `android:permission` **overrides** it rather than adding to it. | Important nuance |
+| `android:permission` | 1 | none | A permission required to interact with **any** component of the app, unless overridden per component. Rarely used; when present,a per-component `android:permission` **overrides** it rather than adding to it. | Important nuance |
 | `android:taskAffinity` | 1 | `<package>` | Default affinity for all Activities. See §3.6 — this is the StrandHogg / task-hijacking surface. | See §3.6 |
 | `android:allowTaskReparenting` | 1 | `false` | Default for all Activities. See §3.6. | See §3.6 |
 | `android:vmSafeMode` | 8 | `false` | Disables the JIT. Occasionally used by packers. | Info |
@@ -629,7 +629,7 @@ concentration of security-relevant switches in the file.
 | `android:allowNativeHeapPointerTagging` | 30 | `true` | Disabling it (`false`) weakens a MTE-adjacent mitigation. Rare; usually a workaround for a broken third-party `.so`. | Low |
 | `android:supportsRtl`, `android:theme`, `android:icon`, `android:label`, `android:banner`, `android:description`, `android:logo`, `android:uiOptions`, `android:isGame` | various | — | Cosmetic. Ignore, except that `android:theme` can reference a style enabling `windowIsTranslucent`, which matters for overlay attacks. | Info |
 
-> **⚠️ Warning — the `debuggable` false negative**
+> **Warning — the `debuggable` false negative**
 > `android:debuggable` is frequently **absent** from the manifest and set to `true` by the *build
 > type*, not by the manifest source. Gradle's `debug` build type sets it during the merge. So the
 > source manifest is clean and the shipped APK is debuggable. Never audit the source manifest for
@@ -663,7 +663,7 @@ severity; the data does. That work happens in [33-Storage](../33-Storage/README.
 
 ### 3.6 `<activity>` and `<activity-alias>`
 
-> **📖 Definition**
+> **Definition**
 > An **Activity** is a single screen with a user interface, and it is the most commonly exported
 > component type. Starting an Activity is an IPC operation: your app asks
 > `ActivityManagerService`/`ActivityTaskManagerService` to start a component in another process, and
@@ -694,9 +694,9 @@ severity; the data does. That work happens in [33-Storage](../33-Storage/README.
 
 | Attribute | API | Default | Auditor's conclusion |
 |---|---|---|---|
-| `android:name` | 1 | required | Fully-qualified class name; a leading `.` is relative to the manifest `package`. Note that with Gradle `namespace` vs `applicationId` split, the relative base is the **namespace**, not the `applicationId` — a frequent source of "class not found" confusion during testing. |
+| `android:name` | 1 | required | Fully-qualified class name; a leading `.` is relative to the manifest `package`.with Gradle `namespace` vs `applicationId` split, the relative base is the **namespace**, not the `applicationId` — a frequent source of "class not found" confusion during testing. |
 | `android:exported` | 1 | `true` if any `<intent-filter>`, else `false`; **mandatory from targetSdk 31** | The single most important attribute. `true` means any app on the device may `startActivity()` this component with an attacker-controlled `Intent`. |
-| `android:permission` | 1 | inherits `<application android:permission>` | A permission the **caller** must hold. If the required permission's `protectionLevel` is `normal`, any app can obtain it by simply declaring it, and the control is worthless. **Always resolve the protectionLevel; never accept "it's permission-protected" at face value.** |
+| `android:permission` | 1 | inherits `<application android:permission>` | A permission the **caller** must hold. If the required permission's `protectionLevel` is `normal`, any app can obtain it by declaring it, and the control is worthless. **Always resolve the protectionLevel; never accept "it's permission-protected" at face value.** |
 | `android:enabled` | 1 | `true` | `false` disables the component. Can be flipped at runtime by the app itself via `PackageManager.setComponentEnabledSetting`, so a disabled component is not permanently unreachable — check the code for enable calls. |
 | `android:launchMode` | 1 | `standard` | `standard`, `singleTop`, `singleTask`, `singleInstance`, and (API 31+) `singleInstancePerTask`. `singleTask`/`singleInstance` combined with a default `taskAffinity` is the classic task-hijacking configuration. |
 | `android:taskAffinity` | 1 | the `<application>` affinity, which defaults to the package name | Names the task this Activity prefers. **An empty string (`""`) means "no affinity"**, which is the hardening value. A non-default affinity string that matches another app's package name is a red flag. |
@@ -726,7 +726,7 @@ severity; the data does. That work happens in [33-Storage](../33-Storage/README.
 
 #### Task hijacking, precisely
 
-> **📖 Definition**
+> **Definition**
 > A **task** is a stack of Activities that the user perceives as one application. **`taskAffinity`**
 > is a string naming the task an Activity prefers to belong to. By default it is the package name, so
 > every Activity in an app shares a task.
@@ -763,7 +763,7 @@ The mitigations, and how you check them in the manifest:
 | `onResume` checks that the task's base Activity belongs to the app | code | Detective, not preventive. |
 | Targeting API 30+ | `targetSdkVersion` | Android 11 tightened the rules considerably; a modern `targetSdk` substantially reduces but does not fully eliminate the class. |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > To test for this you need a real second app. Build a minimal APK with a single Activity whose
 > `taskAffinity` equals the victim's package name and `launchMode="singleTask"`, install both, launch
 > yours once, then launch the victim from the launcher and observe which UI appears. A manifest read
@@ -789,7 +789,7 @@ An `<activity-alias>` is a **second, independently-configured entry point to an 
 Its `exported` and `permission` attributes are its own; they do **not** inherit from the target
 Activity.
 
-> **⚠️ Warning**
+> **Warning**
 > This is a real and frequently-missed bypass. An Activity declared `exported="false"` and
 > `permission="com.example.ADMIN"` can be fully reachable by any app through an alias declared
 > `exported="true"` with no permission. Auditors who grep only for `<activity` miss aliases entirely.
@@ -805,7 +805,7 @@ Activity.
 
 ### 3.7 `<service>`
 
-> **📖 Definition**
+> **Definition**
 > A **Service** is a component with no user interface that performs work in the background or exposes
 > a Binder interface to other components. Two interaction modes matter: *started* (via
 > `startService`/`startForegroundService`, fire-and-forget) and *bound* (via `bindService`, which
@@ -837,7 +837,7 @@ Activity.
 | `android:singleUser` | 17 | `false` | Only one instance across all users; requires a system permission. On a third-party app it will not take effect. |
 | `android:description`, `android:icon`, `android:label` | — | — | Cosmetic. |
 
-> **🔍 Pentester's Note — the AIDL enumeration step**
+> **Pentester's Note — the AIDL enumeration step**
 > When you find an exported Service, do not stop at "it is exported". Find its `onBind` and the
 > `Stub` class it returns. In JADX, look for a class extending `android.os.Binder` and implementing
 > an interface with a `DESCRIPTOR` string and `TRANSACTION_*` constants. Each `TRANSACTION_foo = N`
@@ -846,7 +846,7 @@ Activity.
 
 ### 3.8 `<receiver>`
 
-> **📖 Definition**
+> **Definition**
 > A **BroadcastReceiver** handles `Intent` broadcasts. Manifest-declared ("static") receivers can be
 > started even when the app is not running; code-registered ("dynamic") receivers exist only while
 > the registering context does.
@@ -873,7 +873,7 @@ Activity.
 | `android:singleUser` | 17 | `false` | System apps only. |
 | `<intent-filter android:priority>` | 1 | 0 | For **ordered** broadcasts, higher priority receives first and may call `abortBroadcast()`. The historical SMS-interception pattern is a high-priority receiver for `SMS_RECEIVED` that aborts the broadcast so the real SMS app never sees the message. On modern Android the SMS path is restricted to the default SMS app, but the *pattern* — high priority plus `abortBroadcast` on a custom ordered broadcast — is still exploitable between apps. Values above 1000 are documented as reserved for the system. |
 
-> **⚠️ Warning — the targetSdk 33 receiver rule**
+> **Warning — the targetSdk 33 receiver rule**
 > From `targetSdk` 33, `Context.registerReceiver` for a non-system broadcast **must** pass
 > `RECEIVER_EXPORTED` or `RECEIVER_NOT_EXPORTED`. Below 33, a dynamically registered receiver is
 > effectively exported and is invisible in the manifest. This means **a manifest audit alone cannot
@@ -882,7 +882,7 @@ Activity.
 
 ### 3.9 `<provider>` — the richest and most dangerous element
 
-> **📖 Definition**
+> **Definition**
 > A **ContentProvider** exposes structured data through `content://` URIs and a fixed CRUD interface
 > (`query`, `insert`, `update`, `delete`, `call`, `openFile`). Unlike other components, a provider is
 > not started by an `Intent`; it is addressed by *authority*, and callers use `ContentResolver`. It
@@ -998,7 +998,7 @@ matches a `pathPrefix="/public/"` rule — while a provider implementation that 
 `FileProvider`-style implementations must call `File.getCanonicalPath()` and verify the result is
 still inside the intended directory.
 
-> **⚠️ Warning**
+> **Warning**
 > Do not report `<path-permission>` findings from the manifest alone. Read the provider's Java to see
 > how it turns a URI into a file or a query, then prove the traversal with an actual
 > `content read --uri`. A manifest-only claim will be disputed and you will be right but unpersuasive.
@@ -1041,7 +1041,7 @@ Chapter [27-ContentProviders](../27-ContentProviders/README.md) covers those in 
 
 ### 3.10 `<intent-filter>` and its children
 
-> **📖 Definition**
+> **Definition**
 > An **intent filter** declares the kinds of implicit `Intent` a component is willing to receive. It
 > is matched on three axes: **action** (a string naming the operation), **category** (extra
 > qualifiers, all of which must be satisfied), and **data** (scheme/host/port/path and MIME type).
@@ -1086,7 +1086,7 @@ Chapter [27-ContentProviders](../27-ContentProviders/README.md) covers those in 
 | `android:mimeType` | 1 | Supports `type/*` and `*/*`. **`android:mimeType="*/*"` on an exported component means it will accept any content the attacker offers** — a common way to become a sink for hostile files. |
 | `android:mimeGroup` | 30 | A named group whose MIME types the app can change at runtime via `PackageManager.setMimeGroup`. The manifest under-states the true surface; check the code. |
 
-> **🔍 Pentester's Note — the deep link audit**
+> **Pentester's Note — the deep link audit**
 > For every `<intent-filter>` containing `BROWSABLE`, ask three questions.
 > **(1) Is it verifiable?** `https` scheme with `autoVerify="true"` and a live `assetlinks.json`
 > means only this app opens the link. Anything else — custom scheme, `http`, missing `autoVerify`,
@@ -1142,7 +1142,7 @@ means the developer is being careful about install-time grants on old devices.
 | Which are actually used by the code? | Search the DEX for the corresponding APIs. A requested-but-unused permission is over-privilege — a real finding under MASVS-PLATFORM and a Play policy issue. |
 | Which are *granted* right now? | `adb shell dumpsys package <pkg> | sed -n '/requested permissions/,/install permissions/p'` |
 | Which are custom (not `android.permission.*`)? | Those are declared by *some* app on the device. Find out which, and what its `protectionLevel` is. |
-| Which are `signature`-level platform permissions? | If a third-party app requests `android.permission.INSTALL_PACKAGES` or similar, it will simply not be granted — but its presence tells you what the developer wished for, which is useful on a malware assessment. |
+| Which are `signature`-level platform permissions? | If a third-party app requests `android.permission.INSTALL_PACKAGES` or similar, it will not be granted — but its presence tells you what the developer wished for, which is useful on a malware assessment. |
 
 High-signal permissions to flag on sight:
 
@@ -1171,7 +1171,7 @@ High-signal permissions to flag on sight:
     android:protectionLevel="signature"/>
 ```
 
-> **📖 Definition**
+> **Definition**
 > **`protectionLevel`** determines who can be granted a permission. It is a base level, optionally
 > combined with one or more flags using `|`.
 
@@ -1194,7 +1194,7 @@ High-signal permissions to flag on sight:
 | `runtime` | Upgraded from install-time to runtime for apps targeting a newer SDK. |
 | `knownSigner` (API 31) | Grantable to apps signed by any certificate listed in the declaring app's `android:knownCerts` resource. Lets a vendor share a permission across two signing identities without a shared key — a genuinely useful modern feature. |
 
-> **⚠️ Warning — the custom-permission race**
+> **Warning — the custom-permission race**
 > If two apps declare the same custom permission name, the **first one installed** wins, and its
 > `protectionLevel` is the one that applies. A malicious app installed *before* the victim can define
 > `com.example.permission.SYNC` as `normal`, then have that weaker definition govern the victim's
@@ -1250,7 +1250,7 @@ app that lists a competitor's package, a rooting tool's package, or a long list 
 `<queries>` is telling you what it looks for. This is a standard reconnaissance step on malware and
 on aggressive anti-fraud SDKs.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `QUERY_ALL_PACKAGES` is a Play-restricted permission. Finding it in a store app that has no
 > file-manager, launcher, antivirus or device-management function is worth reporting as both a
 > privacy issue and a policy risk. Also read `<queries>` for root-detection targets — a list
@@ -1291,7 +1291,7 @@ on aggressive anti-fraud SDKs.
 </application>
 ```
 
-> **📖 Definition**
+> **Definition**
 > **`<meta-data>`** attaches an arbitrary name/value pair to the application or to a component. The
 > value is readable at runtime through `PackageManager.getApplicationInfo(pkg,
 > PackageManager.GET_META_DATA).metaData`. SDKs use it as a configuration channel so that an
@@ -1312,7 +1312,7 @@ copy of the APK, in plaintext, in a file that is trivially readable by anyone wh
 | `android.support.FILE_PROVIDER_PATHS` | `FileProvider` path config | Not a secret, but **always read the referenced XML**: a `<root-path name="root" path="/"/>` entry exposes the entire filesystem the app can read. |
 | `android.app.searchable`, `android.appwidget.provider`, `android.accounts.AccountAuthenticator` | Component configuration XML | Read them; the account authenticator XML in particular describes an inter-app credential surface. |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The correct workflow is: extract every `<meta-data>` value; extract every value that is
 > `android:resource="@xml/…"` and read the referenced file; then classify. A `value` that looks like a
 > key is a *candidate*, not a finding. Validate it — a Google Maps key restricted to a package and
@@ -1363,7 +1363,7 @@ informative than the manifest entry.
 | `<attribution>` | 31 | Names a sub-identity within the app for permission attribution, so the platform can tell the user *which part* of the app used a permission. | Positive hygiene signal. |
 | `<property>` | 31 | Typed application/component properties readable via `PackageManager.getProperty`. Used for platform opt-ins and for `specialUse` foreground service justifications. | Read them; `PROPERTY_SPECIAL_USE_FGS_SUBTYPE` contains the developer's own explanation of what their background service does. |
 
-> **⚠️ Warning**
+> **Warning**
 > An `<instrumentation>` element in a production APK is one of the highest-signal single findings in
 > a manifest, and it is missed constantly because auditors stop reading after `<application>`.
 > `<instrumentation>` is a **sibling** of `<application>`, not a child, so it sits at the bottom of
@@ -1384,7 +1384,7 @@ informative than the manifest entry.
 
 ### 3.17 Manifest merging — how components you never wrote appear in your APK
 
-> **📖 Definition**
+> **Definition**
 > The **manifest merger** is a Gradle/AGP task that combines the application's own manifest with the
 > manifest of every library (AAR) it depends on, plus build-type and product-flavour manifests, into
 > a single merged manifest that is then compiled into the APK.
@@ -1484,7 +1484,7 @@ A component whose `android:name` begins with `com.google.`, `com.facebook.`, `io
 dependency. Match the package prefix against the `.dex` class list to identify the SDK and its
 version, then check whether that version has known issues.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > When you report an injected component as a finding, name the SDK. "Your app exports
 > `com.example.MainActivity`" is actionable. "Your app exports a receiver at
 > `com.somesdk.PushReceiver`, contributed by the SomeSDK dependency, and here is the `tools:node`
@@ -1516,7 +1516,7 @@ attacker's `Intent` reaches your Activity.
 | `frameworks/base/core/res/res/values/attrs_manifest.xml` | **The definitive list of every manifest attribute the platform understands, with its resource ID.** If an attribute is not in this file, the platform ignores it. |
 | `frameworks/base/core/res/AndroidManifest.xml` | The platform's own manifest: every `android.permission.*` definition with its real `protectionLevel`. |
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > `frameworks/base/core/res/AndroidManifest.xml` is worth an hour of your time on its own. It is
 > where you look up the true `protectionLevel` of any platform permission, rather than trusting the
 > developer documentation, which occasionally lags. When you need to answer "could a third-party app
@@ -1612,7 +1612,7 @@ The `ApplicationInfo` flag constants you will meet when reading `dumpsys` output
 | `FLAG_HARDWARE_ACCELERATED` | `0x20000000` | `android:hardwareAccelerated` |
 | `PRIVATE_FLAG_DIRECT_BOOT_AWARE` | private flags | `android:directBootAware` |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > This table is how you read `dumpsys` output that shows raw hex. When you see
 > `flags=[ HAS_CODE ALLOW_CLEAR_USER_DATA ALLOW_BACKUP DEBUGGABLE ]`, you have just confirmed a
 > critical finding from the device rather than from a decoder that might be wrong. On builds where
@@ -1678,7 +1678,7 @@ if (sInfo.permission != null
 }
 ```
 
-Note that the check happens **once, at bind time**. After a successful `bindService`, the caller holds
+the check happens **once, at bind time**. After a successful `bindService`, the caller holds
 an `IBinder` and every subsequent `transact()` on it is *not* re-checked by the framework. Any
 per-method authorisation must be implemented by the service itself, typically via
 `Binder.getCallingUid()` and `checkCallingPermission`. **A service that checks permissions only in
@@ -1717,7 +1717,7 @@ Worth following once, because it shows how far a manifest attribute travels.
 7. **Not enforced at all:** raw sockets. An app that opens a `Socket` and writes HTTP by hand is not
    stopped by any of this.
 
-> **⚠️ Warning**
+> **Warning**
 > Step 7 is why `usesCleartextTraffic="false"` is not proof that the app has no cleartext traffic.
 > The policy is advisory to cooperating libraries. Always confirm with a packet capture. See
 > [44-NetworkSecurityConfig](../44-NetworkSecurityConfig/README.md).
@@ -1771,7 +1771,7 @@ The mistakes are remarkably consistent across organisations:
 
 ### 5.3 Real vulnerability classes and CVE-worthy patterns
 
-> **⚠️ Warning on identifiers**
+> **Warning on identifiers**
 > This repository does not invent CVE numbers. Where a specific identifier is given below it is one
 > the author is confident about. Where a class of issue is well documented but the specific
 > identifier is uncertain, the class is described without an identifier. When you write a report,
@@ -1807,7 +1807,7 @@ acceptable rather than "informational":
 | Task hijacking | Accepted by some programmes, rejected by others as "requires a malicious app installed". Include the two-app PoC and let the programme decide. |
 | Injected SDK component | Accepted when the SDK component itself is exploitable; report to both the app and the SDK vendor. |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The difference between an informational note and a paid finding is almost never a different
 > manifest attribute. It is a working proof of concept. Budget your time accordingly: five minutes
 > reading the manifest, then hours building the PoC app that proves the reachable component does
@@ -2068,7 +2068,7 @@ A component enabling or disabling itself, which changes the effective manifest a
     invoke-virtual {v0, v1, v4, v5}, Landroid/content/pm/PackageManager;->setComponentEnabledSetting(Landroid/content/ComponentName;II)V
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `setComponentEnabledSetting` means the manifest is not the final word on which components are
 > active. A component declared `android:enabled="false"` may be turned on by the app, and the enabled
 > state persists in `/data/system/users/0/package-restrictions.xml`. Always cross-check the manifest
@@ -2094,7 +2094,7 @@ renames, but in practice:
 | `<intent-filter>` data (scheme/host/path) | Never obfuscated. |
 | Everything inside the referenced `res/xml/*.xml` | Never obfuscated. |
 
-> **🧠 Mental Model**
+> **Mental Model**
 > The manifest is the **unobfuscatable index** to an obfuscated app. However thoroughly the code is
 > mangled, every externally-reachable entry point must still be listed in plaintext, with its real
 > class name, because a different process has to find it. When an app is a wall of `a.b.c` classes,
@@ -2130,7 +2130,7 @@ apksigner verify -v --print-certs signed.apk
 adb install -r signed.apk
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > Repackaging changes the signing certificate. Any app that checks its own signature
 > ([38-TamperDetection](../38-TamperDetection/README.md)), uses signature-level permissions with a
 > sibling app, uses Play Integrity, or pins its own certificate will behave differently after
@@ -2165,7 +2165,7 @@ The three edits worth memorising:
 <activity android:name=".InternalActivity" android:exported="true"/>
 ```
 
-Note that edit 3 changes the thing you are testing. Use it to *explore* the component's behaviour,
+edit 3 changes the thing you are testing. Use it to *explore* the component's behaviour,
 then reason carefully about whether a real attacker could reach it in the unmodified app. Reporting
 "I exported it and then it was exported" is not a finding.
 
@@ -2217,7 +2217,7 @@ adb shell dumpsys package com.example.target | grep -E '^\s+(flags|pkgFlags|priv
 adb shell pm list permissions -f | grep -A6 'com.example.permission.SYNC'
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `pm list permissions -f` prints the full record for every permission on the device, including
 > `protectionLevel`. This is how you settle the "is this custom permission actually protecting
 > anything?" question in three seconds, from the device, with no decompilation.
@@ -2284,7 +2284,7 @@ The `am` extras type table, because you will need it constantly:
 | `-f` | flags (hex) | `-f 0x10000000` |
 | `--grant-read-uri-permission` | grant flag | — |
 
-> **⚠️ Warning — the single most important caveat in this chapter**
+> **Warning — the single most important caveat in this chapter**
 > `adb shell` runs as UID 2000 with privileges no third-party app has. A successful
 > `am start -n com.victim/.NonExportedActivity` **does not prove the component is attacker
 > reachable.** The only reliable proof is a second, unprivileged app. Build one:
@@ -2494,7 +2494,7 @@ adb logcat | grep -Ei 'Permission Denial|SecurityException|not exported|requires
 | `Attempt to invoke virtual method ... on a null object reference` right after your intent | The component **is** reachable and crashed on your input — often the start of a better finding. |
 | `Unable to start service Intent { ... }: not found` | The component name is wrong, or the class was renamed by R8 and you used the pre-obfuscation name. |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > A crash caused by your intent is not a dead end. It means the component accepted the intent and
 > dereferenced an attacker-controlled value. Chase it: add the extra it wanted, and see how far you
 > get. Many high-severity findings begin as a `NullPointerException` in logcat.
@@ -2633,7 +2633,7 @@ source.
 | **jadx** | Code behind the manifest entries | Decompilation errors on heavily obfuscated code |
 | **This chapter's `manifest-audit.py`** | The §5.6 checklist applied mechanically, with severities and reasoning | Still cannot judge impact — that is your job |
 
-> **⚠️ Warning**
+> **Warning**
 > No tool can tell you whether an exported component is a vulnerability, because that depends
 > entirely on what the component does. Every automated manifest finding is a **lead**. The value you
 > add as a human is triage and proof.
@@ -2883,7 +2883,7 @@ What to audit here that you would not on a consumer app:
 | `android:networkSecurityConfig` | Enterprise apps often pin; check whether the pin set has an expiry date, and whether `<debug-overrides>` shipped. |
 | Work-profile behaviour | Test in a work profile (`adb shell pm create-user --profileOf 0 --managed Work`). Cross-profile intent behaviour differs and is frequently untested by the developer. |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `android:permission="android.permission.BIND_*"` on an exported component is the *correct*
 > configuration for system-bound components: `BIND_DEVICE_ADMIN`, `BIND_ACCESSIBILITY_SERVICE`,
 > `BIND_NOTIFICATION_LISTENER_SERVICE`, `BIND_JOB_SERVICE`, `BIND_INPUT_METHOD`,

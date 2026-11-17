@@ -58,7 +58,7 @@ Binder is Android's answer to both halves of that problem at once. It is the cor
 also the receptionist who walks with every message and states, truthfully and unalterably, who sent
 it. The sender does not get to write that part of the note.
 
-> **📖 Definition — Binder**
+> **Definition — Binder**
 > The kernel driver, and the user-space libraries around it, that Android uses for almost all
 > inter-process communication. A driver is a piece of code inside the operating system kernel that
 > presents itself to programs as a file; Binder's file is `/dev/binder`. Programs do not read or
@@ -105,7 +105,7 @@ process has been duplicated into yours by the kernel. No path, no permission re-
 next time you write. Binder tells you *proactively*, through a mechanism called death notification,
 and it reference-counts the objects on both sides so that neither leaks nor dangles.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > A socket is a **hosepipe**: it carries bytes, and bytes are all it knows about. Binder is a
 > **courier service**: it carries typed objects, it will hand over keys as well as letters, it
 > records who sent each parcel in a ledger the sender cannot edit, and it phones you if the
@@ -153,7 +153,7 @@ by calling `clearCallingIdentity()` at the wrong moment, is worse than open, bec
 turned into a weapon pointed at itself. Both failures are examined in detail in section 5, and the
 mechanism that makes them possible is section 3.12.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Chapter [24 — IPC](../24-IPC/README.md) is about **what is reachable**: which components are
 > exported, which sockets are listening, which providers answer. This chapter is about **the
 > transport itself**: what a transaction is made of, what the kernel guarantees, and what it
@@ -314,7 +314,7 @@ bytes, transaction code, even the interface token string — all of it is chosen
 the call, and a hostile caller will choose values you did not anticipate.
 
 `sender_euid` is red **and** dotted, because that is the trap. The field is right there in the
-structure the caller fills in. It is writable. A caller can absolutely put a zero in it. It simply
+structure the caller fills in. It is writable. A caller can absolutely put a zero in it. It
 never arrives — the driver overwrites it from `K3`, the kernel's own record of the calling task's
 credentials, before the receiving side is woken. Section 3.11 measures this rather than asserting it.
 
@@ -452,7 +452,7 @@ This is the long section. It goes from the device node up to the Java API, and e
 
 ### 3.1 What `/dev/binder` actually *is*
 
-> **📖 Definition — character device**
+> **Definition — character device**
 > A file in `/dev` that is not a file. Reading and writing it does not touch storage; instead the
 > kernel runs driver code. A *character* device transfers data as a stream of bytes with no block
 > structure, as opposed to a *block* device like a disk partition.
@@ -461,7 +461,7 @@ This is the long section. It goes from the device node up to the Java API, and e
 Unusually for a device, almost nothing is done with `read()` or `write()`. Everything goes through
 `ioctl()`.
 
-> **📖 Definition — `ioctl`**
+> **Definition — `ioctl`**
 > "Input/output control": the system call for operations that do not fit read-and-write. It takes a
 > file descriptor, a command number, and a pointer to a structure. `ioctl(fd, CMD, &arg)` means
 > roughly "driver, do CMD, and here is where the arguments and the results live." Because the
@@ -537,7 +537,7 @@ An unprivileged app is more restricted still. When you enumerate a device's atta
 `vndbinder` namespace is normally out of reach entirely, and `hwbinder` is reachable in principle but
 speaks a different serialisation — `lshal` is the tool for it, not `service`.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `service list` shows you **only `/dev/binder`**. It is not "all the Binder services on the
 > device". `lshal` lists the `hwbinder` ones. There is no equally convenient tool for `vndbinder`,
 > and from an app context it does not matter, because you cannot open the node.
@@ -599,7 +599,7 @@ Five things about this region:
 | Backing | `MAP_NORESERVE` | Pages are faulted in as used, so an idle process does not really cost 1 MiB |
 | Async share | **half** of it | One-way transactions may occupy at most `buffer_size / 2` — see 3.14 |
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > The kernel side is `binder_alloc_mmap_handler()` in `drivers/android/binder_alloc.c`. It records
 > the mapping, builds a free-list of buffers inside it, and sets `free_async_space` to half the
 > region. Allocation for an incoming transaction is `binder_alloc_new_buf()`, which is a best-fit
@@ -773,7 +773,7 @@ modify the buffer, so it cannot corrupt the driver's bookkeeping, and it cannot 
 that is reading the same buffer. If the receiver wants a mutable copy it must make one, which is
 exactly what `Parcel::ipcSetDataReference` arranges at the Java layer.
 
-> **⚠️ Warning**
+> **Warning**
 > "Single copy" is often misremembered as "zero copy" or "shared memory". It is neither. The bytes
 > *are* copied, once, and the two processes never share writable pages. Genuine shared memory in
 > Android is `ashmem`/`memfd`, which Binder can carry a descriptor *to* — but that is a different
@@ -782,7 +782,7 @@ exactly what `Parcel::ipcSetDataReference` arranges at the Java layer.
 
 ### 3.7 Parcels — the serialisation format
 
-> **📖 Definition — Parcel**
+> **Definition — Parcel**
 > A flat, self-contained byte buffer with 4-byte alignment, plus a side array recording where any
 > embedded kernel objects live. It is **not** a general-purpose serialisation format. There are no
 > type tags, no field names, no length prefix on the whole message, and no versioning. It is fast
@@ -811,7 +811,7 @@ agree, and nothing in the data enforces the agreement.
 | file descriptor | a `flat_binder_object` with `type = BINDER_TYPE_FD` | 24 (+8 in offsets) |
 | `Parcelable` | whatever the class's `writeToParcel` wrote — no framing at all | varies |
 
-> **⚠️ Warning**
+> **Warning**
 > An **empty** string and a **null** string are different on the wire: `0` versus `-1`. Hand-rolled
 > parcel builders get this wrong constantly, and the failure mode is not an error — it is the reader
 > consuming the next field as a string length and everything after it being garbage.
@@ -897,7 +897,7 @@ The four object types you will meet:
 
 The `0x85` low byte is `B_TYPE_LARGE`, marking the 64-bit structure layout.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > The parcel is the letter. The offsets array is a list saying "there is a *key* taped to page 3,
 > and a *door pass* taped to page 7". The postal service (the driver) has to re-cut the key so it
 > works in the recipient's building, because your key is meaningless in their locks. That re-cutting
@@ -927,7 +927,7 @@ crossed, the receiver holds an open file. Revoking a `content://` URI permission
 descriptor already handed out. Deleting the file does not either. This is the mechanism behind a
 recurring finding class:
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > When a provider hands you a `ParcelFileDescriptor`, check what it actually opened. A provider that
 > resolves `content://…/file?name=../../databases/secrets.db` and then opens the result is handing
 > you a live descriptor to a file you could never open yourself, and no amount of later revocation
@@ -975,7 +975,7 @@ enabled. 996 is the header size — `4 + 4 + (493 × 2) + 2` — and 493 is the 
 trace itself. The arithmetic closes exactly, which is a good way to confirm you have understood the
 format.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > That stack trace is free reconnaissance. The measured reply above named
 > `NotificationManagerService.checkCallerIsSystem(NotificationManagerService.java:8683)` and
 > `INotificationManager$Stub.onTransact(INotificationManager.java:1132)`. You now know the class, the
@@ -1057,7 +1057,7 @@ dumpsys notification --noredact   # some services accept flags that reduce redac
 **Measured** — `dumpsys -l` reported 211 entries against `service list`'s 217. The difference is
 services that do not implement `dump()`.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `dumpsys` output is the fastest reconnaissance on any Android device, and it is available to
 > `shell` without root. It is *not* generally available to an app: `android.permission.DUMP` is
 > `signature|privileged`. If you find a third-party app whose exported service forwards a
@@ -1121,7 +1121,7 @@ test device with an empty descriptor, including `DockObserver`, `SchedBoostServi
 `app_binding`, `cacheinfo` and the AIDL HALs. Most are native services that never had an AIDL
 interface in the first place; that is normal, not a bug. But it is exactly the set worth reading.
 
-> **⚠️ Warning**
+> **Warning**
 > Do not "test" a raw-`onTransact` service by sweeping transaction codes on a device you care about.
 > A service with no token check and no argument validation will read whatever is at the current
 > parcel position, and a native service doing that with a length field it did not check will
@@ -1211,7 +1211,7 @@ t->sender_euid = task_euid(proc->tsk);
 
 `proc->tsk` is the `task_struct` of the process that made the `ioctl`. `task_euid()` reads the
 effective UID out of that task's credentials — kernel memory, in the kernel's own bookkeeping, which
-no user-space process can write. The value the caller put in `tr.sender_euid` is simply never read on
+no user-space process can write. The value the caller put in `tr.sender_euid` is never read on
 the way in. The field exists in the structure only because the **same structure** is used for
 delivery, where the kernel fills it in for the receiver's benefit.
 
@@ -1240,7 +1240,7 @@ Java: Binder.getCallingUid()
 
 At no point does a parcel byte enter that chain.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Think of a company post room where the franking machine prints the sender's department on every
 > envelope automatically, from the machine's own record of who swiped in to use it. You can write
 > "From: The CEO" on the envelope in marker pen as well. Everyone reads the franking, and the franking
@@ -1266,7 +1266,7 @@ chapter). It exists so that a service doing work on behalf of an app can bill th
 app. It is **written by the caller**, into the parcel, and is therefore exactly as trustworthy as any
 other parcel field: not at all.
 
-> **⚠️ Warning**
+> **Warning**
 > `getCallingWorkSourceUid()` and `getCallingUid()` differ by one word and by the entire security
 > model. One is kernel-stamped metadata; the other is caller-authored payload. Code that reaches for
 > the wrong one compiles, runs, and is trivially bypassed.
@@ -1380,7 +1380,7 @@ have been separate transactions.
 
 #### 3.12.3 The confused deputy, stated precisely
 
-> **📖 Definition — confused deputy**
+> **Definition — confused deputy**
 > A program with authority that is tricked by a less-privileged caller into using that authority on
 > the caller's behalf. The deputy is not compromised; it does exactly what it was told, with its own
 > permissions, on a target the attacker chose.
@@ -1416,7 +1416,7 @@ public void deleteUserFile(String name) {
 compilable pair implementing exactly this contrast, with the AIDL in
 `examples/IVaultService.aidl`.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > When you find `clearCallingIdentity` in decompiled code, ask three questions in this order.
 > **(1)** Was the caller checked *before* the clear, or after? **(2)** How many statements are inside
 > the cleared window, and does any of them touch caller-supplied data — a path, a URI, a package
@@ -1438,7 +1438,7 @@ garbage collection — it is a distributed refcount that the driver arbitrates.
 There is one rule you will fall over if you write raw Binder code, and it is worth stating because it
 looks exactly like a security failure when you get it wrong:
 
-> **⚠️ Warning**
+> **Warning**
 > A `BINDER_TYPE_HANDLE` arriving in a parcel carries a reference **owned by that received buffer**.
 > The moment you send `BC_FREE_BUFFER`, that reference is dropped. If nothing else holds one, the
 > handle becomes invalid and every subsequent transaction on it returns `BR_FAILED_REPLY` — which is
@@ -1511,7 +1511,7 @@ the cases apart. That comment is the whole story.
 this is normally automatic, but a few paths are notorious: a `Cursor` that is never closed holds a
 window; a large `Bundle` retained in a static field; `onSaveInstanceState` returning megabytes.
 
-> **🔍 Pentester's Note — this is an availability finding, not just a bug**
+> **Pentester's Note — this is an availability finding, not just a bug**
 > Because the budget is per-process and shared, **anyone who can send transactions to a service can
 > consume that service's buffer.** An app that can reach an exported service and sends large one-way
 > transactions in a loop can push the target's async space to exhaustion, at which point *other
@@ -1920,7 +1920,7 @@ little-endian), then the descriptor.
 returns false on mismatch. The caller — the generated stub — turns that false into the
 `SecurityException` measured in 3.9.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > `kHeader` was added to catch a specific class of confusion: a parcel that was never a Binder
 > transaction at all being fed to `enforceInterface`. Without it, three arbitrary int32s followed by
 > a coincidentally-matching string would pass. It is a magic number in the classic file-format
@@ -2089,7 +2089,7 @@ The direct attack fails, as measured in 3.11. Three indirect ones do not:
 | **Confused deputy** | Do not impersonate; persuade a privileged service to act for you | 5.2.4, and [24 §3.20](../24-IPC/README.md#320-the-confused-deputy-problem--worked-properly) |
 | **UID reuse after uninstall** | UIDs are recycled. A service that persists an authorisation keyed on a bare UID can grant it to an unrelated app installed later | 5.2.6 |
 
-> **⚠️ Warning**
+> **Warning**
 > `getCallingUid()` identifies an *installation*, not a *package*. `getPackagesForUid()` can return
 > several names for one UID. A service that does `getPackagesForUid(uid)[0]` and compares it to an
 > allow-list is checking an arbitrary member of a set. Compare the **UID**, or check that the
@@ -2274,7 +2274,7 @@ the AOSP commit log rather than a number quoted here.
 | **Kernel driver bugs** | `binder.c` itself | Use-after-free on node or buffer lifetime, races in ref counting | Historically the highest-value Android kernel target. Reachable from an app because every app may open `/dev/binder` |
 | **Buffer/thread exhaustion** | Any reachable service | See 5.2.7 | Load test with `oneway` |
 
-> **⚠️ Warning — the driver itself is attack surface**
+> **Warning — the driver itself is attack surface**
 > `/dev/binder` is openable by **every app**, which makes `binder.c` one of the very few kernel
 > drivers directly reachable from an unprivileged, untrusted app sandbox with no permission at all.
 > That is why binder use-after-free bugs have historically been so valuable: they are a direct route
@@ -2528,7 +2528,7 @@ llvm-strings libvictim.so | grep -E '^[a-z]+(\.[a-zA-Z0-9_]+){2,}$' | sort -u
 llvm-nm -DC libvictim.so | grep -i "onTransact\|BnInterface\|BpInterface"
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > A native `onTransact` that reads a length from the parcel and uses it without validation is a
 > memory-corruption primitive reachable from an app, and it is the classic shape:
 > `int32_t n = data.readInt32(); const void* p = data.readInplace(n * sizeof(T));` with no check that
@@ -2553,7 +2553,7 @@ So obfuscation removes the *meaning* and leaves the *protocol* completely intact
 every method, with correct arguments, in the correct order — you just do not know what they are
 called. Recovering meaning is then a matter of calling them and watching, which is section 7.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > R8 scrambles the labels on the buttons. It does not move the buttons, rewire them, or lock the
 > panel. And the panel has its own name printed on it in permanent ink, because the remote control
 > checks the name before it will work at all.
@@ -2848,7 +2848,7 @@ Java.perform(function () {
 | **Logcat** | `SecurityException` traces from refused calls, naming the guard | Only when something throws |
 | **MobSF** | Flags exported components; will not decode a parcel | Static only |
 
-> **⚠️ Warning — test from an app, not from `adb shell`**
+> **Warning — test from an app, not from `adb shell`**
 > `shell` (uid 2000) holds a large set of permissions and SELinux rules that no app has. A service
 > that answers you happily from `adb shell` may be completely unreachable from an app. Confirm every
 > finding from a real, unprivileged app context before you report it. This is 11.2, and it is the
@@ -2952,7 +2952,7 @@ The interface descriptor is a plain string in `.rodata` and is the fastest way i
 ---
 ## 9. Examples
 
-> **✅ Verified against a compiler.** `examples/binder-probe.c` compiles **clean** with
+> **Verified against a compiler.** `examples/binder-probe.c` compiles **clean** with
 > `-Wall -Wextra` using `aarch64-linux-android21-clang` from **NDK 25.2.9519653** and links as a
 > standalone executable — which matters more here than in most chapters, because the probe's evidence
 > value depends on it building without warnings on a reader's machine and producing the same three
@@ -3549,7 +3549,7 @@ vocabulary the others assume.
 - **Binder is a character device driven entirely by `ioctl`.** Open `/dev/binder`, agree a version,
   map a receive buffer, then `BINDER_WRITE_READ` forever. Eight syscalls is the whole interface.
 - **The kernel stamps the sender's UID and it cannot be forged.** The field exists in the caller's
-  own struct and is simply never read on the way in — measured three times in this chapter with
+  own struct and is never read on the way in — measured three times in this chapter with
   claimed UIDs of 0, 1000 and nothing at all, all producing the same real UID in the reply.
 - **`getCallingPid()` is a different story.** Recyclable, racy, and **0** for one-way transactions.
   Log it; never decide on it.

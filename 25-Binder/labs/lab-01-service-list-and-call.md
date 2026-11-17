@@ -135,7 +135,7 @@ without guessing. (Hint: `dumpsys` is transaction `'_DMP'`. What must a service 
 **Question.** Is `lshal` on your device? Run it. Those services are on `/dev/hwbinder` and none of
 them appear in `service list`. How many are there?
 
-> **⚠️ The trap**
+> **The trap**
 > "I ran `service list`, so I have enumerated the Binder surface" is wrong in three ways. It misses
 > `hwbinder`, it misses `vndbinder`, and — most importantly for app assessment — it misses every
 > service published by an ordinary app through `onBind()`, because those are never registered with
@@ -269,7 +269,7 @@ with a string, which almost always means it is a raw `BBinder`/`Binder` subclass
 Most of these are perfectly ordinary native services that never had an AIDL interface. That is
 normal, not a bug. It is still the set worth reading.
 
-> **⚠️ Do not sweep transaction codes against these on a device you need.** A malformed parcel to a
+> **Do not sweep transaction codes against these on a device you need.** A malformed parcel to a
 > native `onTransact` can crash the service, and crashing `system_server` reboots the phone. Lab 04
 > and Lab 05 do this responsibly.
 
@@ -380,7 +380,7 @@ REACHING IT IS TWO SEPARATE MAC DECISIONS (see 22-SELinux 3.15):
 Your domain, as `shell`, has rules that `untrusted_app` does not. Confirming which is
 [22 — SELinux](../../22-SELinux/README.md)'s job; the practical rule for this chapter is absolute:
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > **A finding that only reproduces from `adb shell` is not a finding.** Reproduce it from an
 > unprivileged APK — uid 10xxx, domain `untrusted_app` — before you write a word.
 > [`../examples/RawBinderClient.java`](../examples/RawBinderClient.java) is the code to drop into

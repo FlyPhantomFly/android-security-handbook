@@ -80,7 +80,7 @@ put onto a back stack — but it does not need an Activity of its own, and two o
 
 That is a Fragment.
 
-> **📖 Definition**
+> **Definition**
 > A **Fragment** is a reusable portion of an application's user interface, together with the code
 > that runs while that portion exists. It is a Java or Kotlin class extending `android.app.Fragment`
 > (the platform version, deprecated since API 28) or `androidx.fragment.app.Fragment` (the library
@@ -108,7 +108,7 @@ its own life, and none of that is on the building plan, because furniture is not
 
 Now the break, and it is the sentence to hold on to:
 
-> **⚠️ Warning**
+> **Warning**
 > **Nobody checks what furniture you carry through an unlocked door.** The lock on the door decides
 > who gets into the room. It does not decide what ends up in the room once they are inside. If the
 > room has a hatch that accepts a written request — *"please bring me the cabinet labelled X"* — then
@@ -309,14 +309,14 @@ starting it is permitted. `ActivityStarter` has answered its question correctly 
 
 Arrows 3 and 4 are the interesting part, and **nothing is exploited there**. There is no memory
 corruption, no race, no confused deputy in the [30 §5.3](../30-Activities/README.md) sense of one app
-borrowing another's privilege to reach a third party. The victim app simply does what its own code
+borrowing another's privilege to reach a third party. The victim app does what its own code
 says: it reads a string and constructs the class the string names.
 
 The dotted line is the whole tragedy. `LoginActivity` is not exported and its PIN check is real. The
 developer's security argument — *"AdminFragment is only reachable after authentication"* — is a true
 statement about the route they thought about, and says nothing about the route the platform provides.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > An exported Activity is a **door**. A reflective Fragment loader inside it is a **vending machine
 > in the lobby that dispenses any room in the building**. The door's lock is fine. The vending
 > machine is the finding.
@@ -421,7 +421,7 @@ callback at all. It reads `getActivity().getIntent()` whenever it likes, and get
 `getIntent()` currently returns** — which, if the host forgot `setIntent()`, is the *first* Intent
 forever, no matter how many later ones arrived.
 
-> **⚠️ Warning — the two-Intent confusion, in its Fragment form**
+> **Warning — the two-Intent confusion, in its Fragment form**
 > A host Activity validates `getIntent()` in `onCreate`, decides the caller is authorised, and later
 > adds a Fragment that reads `getActivity().getIntent()` for its parameters. If the host has a
 > reusing launch mode (`singleTop`, `singleTask`, or a caller setting `FLAG_ACTIVITY_SINGLE_TOP`),
@@ -444,7 +444,7 @@ host is a mistake (§5.3).
 
 ### 3.2 `FragmentManager` and the back stack that is not the back stack
 
-> **📖 Definition**
+> **Definition**
 > A **`FragmentManager`** is a per-host object that owns a set of Fragments, an ordered **back
 > stack** of committed transactions, and the machinery to save and restore all of it. An Activity has
 > one (`getSupportFragmentManager()`); every Fragment also has one for its children
@@ -500,7 +500,7 @@ among other things, the Fragment's **class name as a String**, its tag, its cont
 arguments `Bundle`. On restore, the `FragmentManager` reads that class name and asks the
 `FragmentFactory` to instantiate it.
 
-> **⚠️ Warning**
+> **Warning**
 > **Restoration is the same reflective primitive as injection.** The class name is a string, the
 > loader is reflective, and the only difference is where the string came from — the app's own saved
 > state rather than an Intent extra. Any attacker who can influence saved state can influence which
@@ -542,7 +542,7 @@ W CH31   : ADMIN-FRAGMENT-NOTE attacker-supplied argument
 The Fragment is not merely constructed. It is constructed **with attacker-chosen inputs**, which is
 what turns "an internal screen was shown" into "an internal screen was driven".
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > `Bundle.keySet()` returns an `android.util.MapCollections$KeySet`, whose `toString()` is
 > `Object`'s. Logging it directly prints `android.util.MapCollections$KeySet@1325cbe1` and tells you
 > nothing. Copy it (`new ArrayList<>(b.keySet())`) first. This cost a re-run while writing this
@@ -602,7 +602,7 @@ the screen.
 | Result API | `setTargetFragment` / `getTargetFragment` | `setFragmentResult` / `setFragmentResultListener` |
 | Survives R8 renaming | the class name does; **your** subclasses do not | same |
 
-> **⚠️ Warning**
+> **Warning**
 > "Deprecated" is not "removed", and a security assessment that treats them as the same word will
 > miss this chapter's entire subject. `android.preference.PreferenceActivity` was deprecated in API
 > 29 and `android.app.Fragment` in API 28. Both are **present, exported to apps, and fully functional
@@ -699,7 +699,7 @@ Three consequences for this chapter:
   and it does **not** need `SYSTEM_ALERT_WINDOW`, which is the permission
   [30 §5.5](../30-Activities/README.md)'s tapjacking requires.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > When you triage a Fragment-heavy app, sort the Fragment classes by whether they extend
 > `DialogFragment` first. It is a two-line filter in the scanner and it puts the highest-value
 > injection targets at the top of the list, because dialogs are where apps put decisions.
@@ -741,9 +741,9 @@ That is the 2013 fix, byte for byte, twelve years later. Nothing has been added.
 
 | State | What happens when `:android:show_fragment` arrives | Measured on API 35 |
 |---|---|---|
-| **A.** No override, `targetSdk < 19` | gate returns `true`; **any** Fragment loads | ✅ **reproduced** — `ADMIN-FRAGMENT-REACHED` |
-| **B.** No override, `targetSdk >= 19` | `RuntimeException`, the host **crashes** | ✅ **reproduced** — see below |
-| **C.** Override present | whatever the override says | ✅ **both outcomes reproduced** |
+| **A.** No override, `targetSdk < 19` | gate returns `true`; **any** Fragment loads | **reproduced** — `ADMIN-FRAGMENT-REACHED` |
+| **B.** No override, `targetSdk >= 19` | `RuntimeException`, the host **crashes** | **reproduced** — see below |
+| **C.** Override present | whatever the override says | **both outcomes reproduced** |
 
 State C is where every real app lives, and it is not a state — it is a blank cheque. The platform
 demanded that the developer write a method. It did not, and cannot, demand that the method check
@@ -778,14 +778,14 @@ $ adb shell "dumpsys package com.pentest.ch31.victim | grep -m1 targetSdk"
 ```
 
 And with that APK installed, state A reproduces exactly as described in 2013, on Android 15, with **no
-developer mistake anywhere in the app** — the subclass simply does not override the method:
+developer mistake anywhere in the app** — the subclass does not override the method:
 
 ```
 I CH31   : LegacySettingsActivity.onCreate targetSdk=17 showFragment=com.pentest.ch31.victim.AdminFragment
 W CH31   : ADMIN-FRAGMENT-REACHED secret=CH31{fragment_injection_skipped_the_login_screen}
 ```
 
-> **⚠️ Warning — vantage**
+> **Warning — vantage**
 > `pm install --bypass-low-target-sdk-block` is a **shell** capability. An application cannot install
 > anything, and Play will not distribute a targetSdk 17 APK. The honest reading of the two blocks
 > above is therefore: *the code path is alive and reproducible, and the population that can reach it
@@ -834,7 +834,7 @@ mechanism is not obvious:
    clears its sensitive fields in `onDestroyView` clears them too late; the snapshot has already been
    taken.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Test `FLAG_SECURE` at the **window**, not at the screen. Two Activities in one app can differ, and
 > a `DialogFragment` can differ from the Activity underneath it. The one-line check is
 > `adb shell "dumpsys window | grep -A2 <package>" | grep -i flags`, but the reliable test is to try
@@ -962,7 +962,7 @@ Four things are worth stopping on.
   platform delegates the decision to the app, and cannot do otherwise, because only the app knows
   which of its own Fragments belong on this screen.
 - **`commitAllowingStateLoss()`, not `commit()`.** The platform deliberately does not throw if the
-  host has already saved state, which makes the path robust — for the developer and for the attacker
+  host has already saved state, which makes the path reliable — for the developer and for the attacker
   equally.
 - **The failure mode is `IllegalArgumentException`, thrown from `onCreate` and not caught.** §5.4 is
   built on that line.
@@ -1037,7 +1037,7 @@ E CH31: instantiate failed: android.app.Fragment$InstantiationException:
 
 `NotAFragment` logs from both its static initialiser and its constructor. **Neither line appears.**
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > `sClassMap` is a `static` cache keyed by class name and never evicted. It is a small
 > information-disclosure channel of its own: the set of Fragment names an app has ever instantiated
 > is readable from the process with one Frida line, and it includes names reached by paths you have
@@ -1130,7 +1130,7 @@ E CH31: instantiate failed: java.lang.ClassCastException:
         com.pentest.ch31.victim.NotAFragment cannot be cast to android.app.Fragment
 ```
 
-> **⚠️ Warning — what this measurement is, precisely**
+> **Warning — what this measurement is, precisely**
 > The runtime lines above come from a hand-written replica of the AndroidX ordering, not from
 > AndroidX itself. Building an AndroidX app without Gradle for this one comparison was not worth the
 > ten transitive AARs, and inventing the output would have been worse than saying so. The claim about
@@ -1258,7 +1258,7 @@ I CH31   : FragmentHostActivity: name came from the deep link: ch31victim://scre
 W CH31   : ADMIN-FRAGMENT-REACHED secret=CH31{fragment_injection_skipped_the_login_screen}
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Report the deep-link variant separately from the Intent-extra variant even when they reach the same
 > sink, because their preconditions differ by an order of magnitude. "Any installed app" and "any web
 > page the user visits" are different findings with different severities, and a triager who sees only
@@ -1399,7 +1399,7 @@ Denylists lose. They lose to a rename, to a new Fragment, to a class in a librar
 presence in a codebase is itself a finding, because it tells you the developer knew the input was
 dangerous and chose the weaker control.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Every failed allowlist above is a **predicate over an attacker-controlled string**. Every working
 > control is a **lookup of an attacker-controlled string in a set the attacker cannot extend**. If
 > the check would still compile after somebody adds a new Fragment to the app, it is a predicate, and
@@ -1533,7 +1533,7 @@ Getting this right is what separates a credible report from an inflated one.
   ([30 §5.6](../30-Activities/README.md)), a screenshot, or shoulder-surfing by a human.
 - it cannot defeat a key bound to user authentication, or a server-side check.
 
-> **⚠️ Warning — the exfiltration gap is the most over-claimed part of this bug class**
+> **Warning — the exfiltration gap is the most over-claimed part of this bug class**
 > "Fragment injection lets an attacker read the victim's data" is usually **not** what has been
 > demonstrated. What has been demonstrated is that the attacker can make the victim *display*
 > something the victim would not otherwise display. That is a genuine authentication bypass and it is
@@ -1565,7 +1565,7 @@ user-authentication-bound keys still hold.
 **attacker-controlled arguments Bundle** turns a viewing primitive into a driving primitive. Either
 one should move the rating up, and both should be in the finding title.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Write the reachable set into the finding, not the primitive. *"Exported `SettingsActivity` loads
 > any Fragment named in `:android:show_fragment`; 14 of the app's 61 Fragments are reachable this
 > way, of which `AccountDetailFragment` renders the full card number without an auth check"* is a
@@ -1679,7 +1679,7 @@ is two instructions:
 0035: return v0
 ```
 
-> **🧠 Mental Model**
+> **Mental Model**
 > **Does the method read its own parameter?** That single question separates a real gate from a
 > rubber stamp, and it survives every rename R8 can perform. `SettingsActivity` never touches `v3`
 > except to concatenate it into a log message; `SettingsHardenedActivity` passes `v4` to
@@ -1722,7 +1722,7 @@ grep -rn "Landroid/app/Fragment;->instantiate" out/                  # platform 
 grep -rn ':android:show_fragment' out/                               # the extra
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > `jadx 1.5.3` on this machine produces **no output for a bare `classes.dex`, exits 0, and hangs on a
 > `.jar`**. Use `baksmali`, which ships inside `apktool`'s jar. This is a recorded, reproduced
 > property of the tooling here, not a general statement about jadx.
@@ -1756,7 +1756,7 @@ string but does not model `getDeclaredField`, and fails silently** in the second
 modelling gap applies here: a constant-string `Fragment.instantiate` is understood, and a name built
 at runtime is not.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Open the release APK and look at whether Fragment class names are human-readable while everything
 > else is `a`, `b`, `ab`. That asymmetry takes ten seconds to see and points straight at the
 > reflective loader. Chapter 42's corpus work found the inverse case worth remembering too: **Kotlin
@@ -1829,7 +1829,7 @@ visibility in [39](../39-EmulatorDetection/README.md), file permissions in
 [48](../48-Biometrics/README.md) and [60](../60-ADB/README.md). For this chapter it bites in a
 specific and easily-missed way:
 
-> **⚠️ Warning**
+> **Warning**
 > **`adb shell am start` can start a non-exported Activity.** The shell holds
 > `START_ANY_ACTIVITY`-class privilege that no application has. So `am start -n
 > com.target/.SomeInternalActivity --es ":android:show_fragment" X` succeeding proves **nothing**
@@ -1903,7 +1903,7 @@ frida -U -f com.pentest.ch31.victim -l scripts/fragment-trace.js
 rpc.exports.block(true)
 ```
 
-> **⚠️ Warning — this script is REVIEWED AND UNRUN, and that is stated rather than implied**
+> **Warning — this script is REVIEWED AND UNRUN, and that is stated rather than implied**
 > The API 35 AVD used for this chapter carries a `frida-server` its own linker refuses:
 >
 > ```
@@ -2074,7 +2074,7 @@ java -cp apktool.jar com.android.tools.smali.baksmali.Main d classes.dex -o out/
 python3 -B scripts/fragment-injection-scan.py base.apk --verbose
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > **A single `base.apk` is not the app.** [38-TamperDetection](../38-TamperDetection/README.md)
 > recorded a large application showing *zero* security controls in `base.apk` because its code ships
 > in splits. The same trap applies here: a Fragment host can live in a feature split. Pull every path
@@ -2229,7 +2229,7 @@ Four mechanisms, all of which you will meet:
   high-confidence tier.** Every signature in `fragment-injection-scan.py` is either a full class
   descriptor or a full method name; none is a substring.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > When a scanner hands you "fragment injection" as a finding, the three questions that resolve it are
 > always the same and take about five minutes: **Is the host exported? Does the gate read its
 > parameter? Which Fragments does the reachable set actually contain?** If you cannot answer all
@@ -2597,11 +2597,10 @@ which you build and install with one command.
 cd examples && ./build.sh --install
 ```
 
-> **⚠️ Warning — authorised testing only**
 > The apps in `examples/` are deliberately vulnerable. Install them on a device you own. The attacker
 > app hard-codes `com.pentest.ch31.victim` as its only target and requests zero permissions, so it
 > cannot be pointed at anything else without editing and rebuilding it. Uninstall both when you are
-> finished:
+> finished — see [SECURITY.md](../SECURITY.md) for the handling rules:
 >
 > ```bash
 > cd examples && ./build.sh --uninstall
@@ -2609,7 +2608,7 @@ cd examples && ./build.sh --install
 >
 > Labs 02 and 04 touch preinstalled applications on your own device in read-only ways (a corpus pull
 > and a static scan). Lab 02 has an optional step that crashes a preinstalled component on an
-> emulator; it is optional, it is clearly marked, and it should not be run on a device you rely on.
+> emulator; it is optional, it is marked as such, and it should not be run on a device you rely on.
 
 | Lab | Objective | Difficulty | Needs |
 |---|---|---|---|

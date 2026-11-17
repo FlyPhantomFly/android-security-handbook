@@ -55,7 +55,7 @@ Android component that owns a screen — is the counter. It exists to talk to a 
 at it. The moment the person navigates away, the system is entitled to destroy it, because screens
 that nobody is looking at are wasted memory on a phone.
 
-> **📖 Definition**
+> **Definition**
 > A **component** in Android is one of four declared entry points into an app: an `Activity` (a
 > screen), a `Service` (work with no screen), a `BroadcastReceiver` (a handler for system-wide
 > announcements), and a `ContentProvider` (a structured data door). All four are declared in the
@@ -93,7 +93,7 @@ the screen.
 
 This is the single most common misunderstanding, and it is worth killing on page one.
 
-> **⚠️ Warning**
+> **Warning**
 > A `Service` runs **on the main thread of its process**, exactly like an Activity. Creating a
 > service does not create a thread. Creating a service does not create a process. If you do
 > network I/O in `onStartCommand`, you block the main thread and the app freezes, and after five
@@ -104,7 +104,7 @@ keep alive — and whose *process* the system will treat as more important — a
 reason for it to exist. The service is a **claim on the process's lifetime**, plus an **entry point
 other code can address**.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > An Activity says to the system: "a human is looking at me, do not kill me." A service says: "work
 > that a human cares about is happening in here, do not kill me." Both are statements about
 > **process priority**, made in different vocabularies. Everything else — the callbacks, the
@@ -242,7 +242,7 @@ involvement at all**. Once `onServiceConnected` has handed the client a Binder h
 subsequent call goes client process → kernel → target process. `system_server` sees none of it and
 checks none of it. There is no per-call permission gate unless the service writes one.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > That asymmetry is the whole game. The platform checks *the act of binding*, once. It does not
 > check *what you do with the binding*, ever. A service that gates access at `onBind` and then hands
 > out an omnipotent interface has been checked exactly once, at the least useful moment.
@@ -291,7 +291,7 @@ measurement.
 
 **Step 16: `Binder.getCallingUid()` inside an AIDL method returns the real caller.** That call *is* a
 live transaction, and the kernel stamped it. [25 — Binder](../25-Binder/README.md) §3.11 demonstrates
-that the stamp is unforgeable; this chapter simply relies on it.
+that the stamp is unforgeable; this chapter relies on it.
 
 ### 2.3 The lifecycle, as a state machine
 
@@ -435,7 +435,7 @@ the framework.
 | `android:enabled` | Whether the component exists at all | Can be flipped at runtime by `PackageManager.setComponentEnabledSetting` — so a manifest read can be wrong |
 | `android:stopWithTask` | Destroy the service when the user swipes the task away | Absence of it is how "unkillable" background services are built |
 
-> **⚠️ Warning**
+> **Warning**
 > The `exported` default is a trap that has bitten every Android developer at least once. Adding an
 > `<intent-filter>` to a service — often just to give it a nice action string for the app's own
 > use — flips the default from `false` to `true`. The developer wrote no `exported` attribute and
@@ -478,11 +478,11 @@ changes what happens after a crash — which is exactly when nobody is watching.
 | Return constant | Value | If the process is killed while the service is running | `Intent` on redelivery |
 |---|---|---|---|
 | `START_STICKY` | 1 | The system **recreates** the service and calls `onStartCommand` again | **`null`** — the original Intent is not retained |
-| `START_NOT_STICKY` | 2 | The system does **not** recreate it. The work is simply lost | n/a |
+| `START_NOT_STICKY` | 2 | The system does **not** recreate it. The work is lost | n/a |
 | `START_REDELIVER_INTENT` | 3 | The system recreates it and redelivers **the last Intent**, with `START_FLAG_REDELIVERY` set in `flags` | The original Intent |
 | `START_STICKY_COMPATIBILITY` | 0 | Sticky, but the system does not guarantee `onStartCommand` is called again. The pre-API-5 behaviour | n/a |
 
-> **⚠️ Warning**
+> **Warning**
 > `START_STICKY` plus `intent.getStringExtra(...)` on the first line of `onStartCommand` is a
 > `NullPointerException` that only ever fires after a low-memory kill. It will not reproduce on a
 > developer's desk and it will fire on a two-year-old phone with forty apps installed. Whenever you
@@ -533,7 +533,7 @@ This is the single biggest behavioural change in the history of services, and it
 | 31 (Android 12) | Apps targeting 31+ **cannot start a foreground service from the background at all**, with a documented exemption list. `ForegroundServiceStartNotAllowedException` |
 | 34 (Android 14) | `foregroundServiceType` is **mandatory** for `targetSdk` 34+, each type requires its own permission, and `dataSync`/`mediaProcessing` gain runtime timeouts |
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > The five-second promotion deadline is not folklore; it is a timeout message posted by
 > `ActiveServices` when a service is started via `startForegroundService`. If `startForeground` has
 > not been called when it fires, `system_server` crashes the app deliberately. On API 30 the
@@ -572,7 +572,7 @@ i.setComponent(new ComponentName("com.example.notesvault",
 boolean accepted = bindService(i, conn, Context.BIND_AUTO_CREATE);
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > `bindService` returning `true` does **not** mean you are connected. It means the request was
 > accepted for processing: the component resolved, you passed the permission check, and the system
 > will try. `onServiceConnected` may never fire. This was measured — see §3.6 — and it is the most
@@ -597,7 +597,7 @@ The ones that matter:
 | `BIND_INCLUDE_CAPABILITIES` | `0x1000` | API 29+. **Pass the client's while-in-use capabilities (location, camera, microphone) through to the service.** Security-relevant: this is capability delegation |
 | `BIND_EXTERNAL_SERVICE` | `0x80000000` | Bind an `android:externalService` service so it runs **under the client's UID and is charged to the client**. §3.14.3 |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `BIND_INCLUDE_CAPABILITIES` is worth grepping for. It means "while I have permission to use the
 > microphone because I am in the foreground, so does the process I am binding". If the bound service
 > belongs to a *different* app, the client has just lent a while-in-use capability across a UID
@@ -621,7 +621,7 @@ Consequences:
 - `onUnbind` is called when the **last** client for a given `IntentBindRecord` disconnects. If it
   returns `true`, the framework will call `onRebind` instead of `onBind` next time.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > This is why a service that tries to hand out a *per-caller* capability object from `onBind` is
 > always wrong. Client A binds with `action=OPEN`, gets a capability scoped to A. Client B binds with
 > `action=OPEN`, and the framework hands B **A's object**, without calling your code at all. The
@@ -685,7 +685,7 @@ Three properties follow directly from "it is a Handler":
    runs (API 21+), and `msg.sendingPid` from API 29. These are the correct fields to check, and
    almost nobody checks them.
 
-> **⚠️ Warning**
+> **Warning**
 > `msg.replyTo` is an **attacker-supplied `Messenger`**. It is a Binder handle that the caller chose.
 > A service that answers a query by sending the result to `msg.replyTo` is sending data to whoever
 > the caller nominated — which need not be the caller. That is a delegated-capability leak of exactly
@@ -767,7 +767,7 @@ one. In a security context, the classic form of this is a **rate limiter or a no
 be raced, or an "is this caller authorised" flag that is set on one thread and read on another. That
 is a genuine vulnerability class and it is invisible to a static reading that assumes one caller.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > **AIDL is also reentrant, and this is the subtler half.** If your service, while handling a call
 > from client A, makes an outgoing Binder call — to `system_server`, or to a callback A registered —
 > the thread blocks waiting for a reply. If the remote side calls **back into your service** on that
@@ -856,7 +856,7 @@ From API 30, an app whose `targetSdk` is 30 or higher cannot see most other apps
 declares `<queries>` or holds `QUERY_ALL_PACKAGES`. A filtered package behaves as if it does not
 exist: `bindService` returns `false`, throws nothing, and logs nothing.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > If your attacker app's `bindService` returns `false` with no exception, **that is very probably
 > package visibility, not a security control**, and you are about to write "not reachable" in a
 > report about a service that is wide open. Give your test harness `QUERY_ALL_PACKAGES`, or a
@@ -902,7 +902,7 @@ flight at that moment. `IPCThreadState`'s calling identity has already been clea
 `Binder.getCallingUid()` falls back to `Process.myUid()`. See [25 §3.11](../25-Binder/README.md) for
 the mechanism; the consequence is local to services.
 
-> **⚠️ Warning**
+> **Warning**
 > The same applies to `onStartCommand`, `onCreate`, `onUnbind`, `onRebind` and `onDestroy`. **None
 > of the `Service` lifecycle callbacks run inside the caller's Binder transaction.** Any identity
 > check in any of them is checking the app against itself. The only place `Binder.getCallingUid()`
@@ -1051,7 +1051,7 @@ And the honest caveats, because a recommendation with no cost is not a recommend
   more than one or two methods, when arguments are structured, or when the client set is not fully
   under the developer's control.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > When you write this up, put the migration cost in the report. "Replace `call()` with AIDL" is a
 > two-day task for a real app, and a finding that does not acknowledge that gets deprioritised. A
 > finding that says "here is the 12-line `.aidl`, here are the three call sites, here is the
@@ -1116,7 +1116,7 @@ From API 34, each type also requires its own permission — `FOREGROUND_SERVICE_
 `FOREGROUND_SERVICE_CAMERA`, and so on — and starting a service with a type the app has not declared
 throws.
 
-> **⚠️ Warning — measured, and it contradicts what a tester might expect**
+> **Warning — measured, and it contradicts what a tester might expect**
 > **On API 30, `dumpsys activity services` does not print `foregroundServiceType` at all.** A grep of
 > the full dump on the test device returned zero occurrences of the string, while foreground services
 > were plainly running:
@@ -1214,7 +1214,7 @@ Security reading, in both directions:
   isolated, so it has none of *your* privileges either. This is safe by design, and the design is the
   point.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `externalService="true"` on a service that is **not** `isolatedProcess="true"` is a genuine finding
 > worth chasing. The combination is unusual; the platform intends them together. Read the service's
 > code and ask what it does with client-controlled input while running under a UID that is not the
@@ -1232,9 +1232,9 @@ one.
 | Background execution limits | API 26+: an app in the background for a while has its background services stopped | `ActivityManager` log "Stopping service due to app idle" |
 | OEM battery manager | Vendor-specific. On the MIUI test device, "battery saver" policy terminates background processes aggressively and independently of AOSP rules | Vendor logs; often nothing at all |
 | It stopped itself | `stopSelf()` with an outstanding second `startId` — §3.2 | `onDestroy` runs while work is queued |
-| Crash | An uncaught exception in `onStartCommand` on the main thread | The stack trace, obviously |
+| Crash | An uncaught exception in `onStartCommand` on the main thread | The stack trace |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The OEM row is not a footnote. On the MIUI device used here, vendor power management is a genuine
 > confound during dynamic testing: a service you started can vanish for reasons unrelated to
 > anything you did. When a lab step says "the service should still be running", and it is not,
@@ -1247,7 +1247,7 @@ what it legitimately is, and what it becomes.
 
 #### What it is
 
-An `AccessibilityService` is an app component the **system** binds in order to describe the screen to
+An `AccessibilityService` is an app component the **system** binds to describe the screen to
 a user who cannot see it, and to act on that user's behalf. It is the mechanism behind screen
 readers, switch access, and voice control. It is not a hack; it is how Android is usable by people
 with disabilities, and any discussion that treats it purely as malware infrastructure is wrong.
@@ -1312,7 +1312,7 @@ This is the mechanism behind the on-device-fraud pattern that displaced credenti
 banking fraud: the transaction originates from the victim's own device, with the victim's own
 session, which defeats device fingerprinting and most behavioural fraud rules.
 
-> **⚠️ Warning**
+> **Warning**
 > Do not attach a CVE identifier to "accessibility abuse". It is not a vulnerability; it is a
 > platform capability used as intended by an app the user was tricked into enabling. Writing it up
 > as a CVE is wrong and will be rejected. Write it up as a **threat model item** and, for an app you
@@ -1450,7 +1450,7 @@ exhibit it.
 | 34 | 14 | **`foregroundServiceType` mandatory** for `targetSdk` 34+; per-type permissions; `shortService` with a ~3-minute cap; `dataSync` time-limited | D |
 | 35 | 15 | Further `dataSync`/`mediaProcessing` timeout tightening; `FOREGROUND_SERVICE_TYPE_SPECIAL_USE` justification enforced at review | D |
 
-> **⚠️ Warning**
+> **Warning**
 > Do not repeat the API 31 or API 34 rows as though you verified them. This chapter's device is API
 > 30 and physically cannot demonstrate them. If a client's estate is on Android 14, re-measure on
 > Android 14. This repository has itself carried a version-gated claim forward from a device that
@@ -1640,7 +1640,7 @@ Two `IntentBindRecord`s for one service, because the two clients used different 
 `filterEquals` therefore said they were different Intents — the caching rule from §3.3, visible on a
 real device. `onBind` was called twice and returned two different `BinderProxy` objects.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `binder=android.os.BinderProxy@…` in that dump tells you `onBind` returned **non-null** for that
 > Intent. If a service shows `IntentBindRecord` entries with `binder=null`, `onBind` refused — which
 > is a much stronger signal than any manifest attribute. It is also a way to discover the *exact
@@ -1787,7 +1787,7 @@ CH28VAULT: getAuthToken() called by uid=10291 pid=19831
 Total attacker code: about twenty lines, no AIDL file, no knowledge of the victim beyond a component
 name and a descriptor string the victim handed over on request.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > The interface token is a **name tag, not a lock**. Its job is to stop a client accidentally calling
 > transaction code 3 on the wrong object and corrupting memory. It is not a secret and it was never
 > designed to be one — [25 §3.9](../25-Binder/README.md) makes the same point about Binder generally.
@@ -1879,7 +1879,7 @@ Plus the manifest, because defence in depth here costs one line:
 | Business impact | Account takeover from any installed app, including one that asks for zero permissions and therefore raises no flags at install |
 | Detection difficulty | Low for a tester who binds; **high for a reviewer**, because the manifest looks like a hundred other manifests |
 
-> **⚠️ Warning**
+> **Warning**
 > Severity is a property of the **method set**, not of the export. Grade each service by what its
 > most dangerous reachable method does, and say so in the report. "Exported service — Critical" with
 > no method named is the sort of finding that gets a whole report discounted.
@@ -2311,7 +2311,7 @@ aapt2 dump xmltree --file AndroidManifest.xml target.apk \
   | grep -E "E: service|A: android:name|A: android:exported|A: android:permission|A: android:process|A: android:foregroundServiceType"
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > `apktool`'s XML output is a *reconstruction*. If `android:exported` is absent
 > from the reconstructed XML, that does not mean it was absent from the original
 > — it means the reconstruction did not emit it, or the original relied on the
@@ -2392,7 +2392,7 @@ public interface IVaultService extends IInterface {
                 case 1: reply.writeNoException(); reply.writeString(getAuthToken()); return true;
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > **Reconstruct the `.aidl` from the `Stub` and you have the whole remote API.**
 > The `TRANSACTION_*` constants give you name-to-code; the `case` bodies give
 > you the parcel layout (`readString`, `readInt`, `readTypedObject`) in exactly
@@ -2611,7 +2611,7 @@ am start-foreground-service -n com.example.app/.SyncService
 am stop-service           -n com.example.app/.SyncService
 ```
 
-> **⚠️ Warning — measured**
+> **Warning — measured**
 > `am start-service` from `adb shell` on API 30 frequently fails with
 > `Error: app is in background uid UidRecord{...}`. That is the **API 26
 > background-start restriction**, applied to the shell's request on behalf of a
@@ -2657,7 +2657,7 @@ SUMMARY
 The full capture, including the whole `WEAK-PERM` set, is in
 [`examples/measured-service-recon.txt`](examples/measured-service-recon.txt).
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > 325 open services on a stock consumer phone is not 325 vulnerabilities, and a
 > report that implies it is will be dismissed. It is a work queue. The 16
 > `WEAK-PERM` rows are worth far more of your time than the 325 `OPEN` ones,
@@ -2708,7 +2708,7 @@ CH28:   TOKEN-TX code=1 ok=true replyBytes=92 exception=(none)
         string='eyJhbGciOiJIUzI1NiJ9.SECRET-SESSION-TOKEN'
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > Give the prober `QUERY_ALL_PACKAGES` or a `<queries>` block. Without it, on
 > API 30+, `bindService` returns `false` for most third-party targets with no
 > exception and no log, and you will record a false negative. This was measured
@@ -2734,7 +2734,7 @@ If the app crashes with a `NullPointerException` in `onStartCommand` on the way
 back, you have demonstrated the `START_STICKY` null-Intent bug from §3.2 in one
 command.
 
-> **🔍 Pentester's Note — measured, and it will waste your afternoon**
+> **Pentester's Note — measured, and it will waste your afternoon**
 > On the MIUI test device, the restart was **refused by the vendor**, not by
 > AOSP:
 >
@@ -2744,7 +2744,7 @@ command.
 > ```
 >
 > `AutoStartManagerService` is a Xiaomi component with no AOSP equivalent. On
-> this device a `START_STICKY` service simply does not come back unless the app
+> this device a `START_STICKY` service does not come back unless the app
 > is on the vendor's autostart allow-list. Any lab step that depends on sticky
 > restart has to account for this, and any *finding* that depends on it must say
 > which device it was measured on. This is the clearest example in the chapter
@@ -3327,7 +3327,7 @@ The properties that make this defensible, each mapped to a section:
 | Gateway in `:gateway`, parser isolated | A crash in either does not take the app down | §3.12 |
 | No `clearCallingIdentity` anywhere | Nothing here needs to act with more privilege than the caller has | §5.3.5 |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > When you meet this design in the field, **say so in the report, by name**.
 > `android:isolatedProcess="true"` on a parser is a deliberate, informed
 > engineering decision that most teams never make, and
@@ -3476,7 +3476,7 @@ code re-enters while holding whatever locks it took. This produces deadlocks and
 inconsistent state in code that reads as single-threaded. It bit this chapter's
 own Frida script: resolving a UID to a package name from inside an
 `execTransact` hook made a Binder call to `system_server` from a Binder pool
-thread, and the target simply stopped answering.
+thread, and the target stopped answering.
 
 ### Principal Engineer
 
@@ -3773,7 +3773,7 @@ MASVS-STORAGE-2, and the MASTG platform-interaction chapter. Mapped in §5.4.
 | [53 — Frida](../53-Frida/README.md) | The instrumentation in §7.5 |
 | [22 — SELinux](../22-SELinux/README.md) | The `binder:call` decision that precedes everything here |
 
-> **⚠️ Warning**
+> **Warning**
 > No CVE identifiers are quoted anywhere in this chapter. Real service-related
 > vulnerabilities exist in quantity, but a wrong identifier is worse than none,
 > and the authoritative source is the monthly Android Security Bulletin index —

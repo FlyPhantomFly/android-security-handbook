@@ -148,7 +148,7 @@ therefore ships **no MTE fixture**, and says so, rather than shipping one that s
 [`fixture-app-maps.txt`](fixture-app-maps.txt) is **constructed**, not captured, and its header says
 so in detail. The reason is in the table above: an unprivileged `adb shell` on Android 13 is denied
 read access to another process's `/proc` entries, so a lab that says "now read the target app's
-maps" cannot be done by a reader without root. A clearly-labelled synthetic fixture is the honest
+maps" cannot be done by a reader without root. A synthetic fixture labelled as such is the honest
 alternative to pretending otherwise.
 
 Its *structure* is faithful — segment counts, permission patterns, ART space names, Scudo region

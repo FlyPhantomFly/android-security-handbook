@@ -66,7 +66,7 @@ Thumb vs ARM -- st_value for the same three functions:
   pat_boolean_check        0x00001d8c   0x00001cad
 ```
 
-> **⚠️ The output directory must be outside this repository.** Compiled binaries are build artefacts
+> **The output directory must be outside this repository.** Compiled binaries are build artefacts
 > and this repository commits none.
 
 Set up a shortcut for the toolchain, because you will type it a lot:

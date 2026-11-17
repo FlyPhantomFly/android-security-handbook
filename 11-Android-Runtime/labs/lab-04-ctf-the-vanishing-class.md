@@ -13,7 +13,7 @@ Recover the flag. It has the form `FLAG{...}`. You are finished when the app pri
 when you can explain which of the three independent solution paths you took and why the other two
 also work.
 
-> **🧠 Mental Model.** A deleted file on Linux is not erased; its *name* is erased. `unlink()` removes
+> **Mental Model.** A deleted file on Linux is not erased; its *name* is erased. `unlink()` removes
 > a directory entry. The inode, and every byte it points at, survives as long as one reference remains
 > — an open file descriptor, or a memory mapping. ART maps the DEX it is executing. The "vanished"
 > file is therefore still fully present and still readable, provided you know where the kernel keeps
@@ -219,7 +219,7 @@ adb logcat -c && adb shell am start -n com.vanishing.chal/.MainActivity && adb l
 Logcat must print `guard ready: guard-v1 (file exists? false)`. If it prints `guard unavailable`, the
 key is wrong, a tamper check tripped, or the asset was not rebuilt.
 
-> **⚠️ Warning.** The all-zero IV is a genuine cryptographic defect, used here only to keep the
+> **Warning.** The all-zero IV is a genuine cryptographic defect, used here only to keep the
 > `openssl` invocation on one line. A fixed IV under a fixed key makes CBC deterministic and leaks
 > equality of plaintext prefixes. Never accept this pattern in real code; see
 > [34 — Cryptography](../../34-Cryptography/README.md).
@@ -408,7 +408,7 @@ underlying inode rather than to a pathname. Opening it reads the whole original 
 mapped page range, which is why the recovered file has the correct size even though the mapping shown
 covers one page. Access requires `CAP_SYS_ADMIN`, which is why this route needs root.
 
-> **🔬 Under the Hood.** ART opens the DEX and `mmap`s it so class data can be read lazily and shared.
+> **Under the Hood.** ART opens the DEX and `mmap`s it so class data can be read lazily and shared.
 > That mapping is a reference on the inode, so `unlink()` drops the link count to zero but the kernel
 > defers reclamation until the last reference goes away. The `(deleted)` marker in `/proc/<pid>/maps`
 > is the kernel telling you exactly this. The same technique recovers unlinked native libraries,

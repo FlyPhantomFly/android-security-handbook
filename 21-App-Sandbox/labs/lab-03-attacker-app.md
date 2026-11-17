@@ -24,12 +24,12 @@ placed outside it, or in the doors the developer opened.
 This is the lab that establishes what the sandbox actually does, because it is the only experiment in
 the chapter conducted from the correct vantage point.
 
-> **📖 Definition — `adb shell`**
+> **Definition — `adb shell`**
 > The interactive shell `adbd` provides. It runs as the Linux user `shell`, **UID 2000**, in the
 > SELinux domain `shell`, with no seccomp filter, a non-empty capability bounding set, and a
 > supplementary group list that includes privileges no application holds. It is **not** an app.
 
-> **⚠️ Warning**
+> **Warning**
 > A component you reached with `am start`, `content query`, `service call` or `run-as` is **not**
 > thereby proven reachable by an attacker. Reproducing the same operation from an ordinary installed
 > app is a *different experiment* with a *different answer*, and only that second answer supports the
@@ -40,7 +40,7 @@ that the tester demonstrated shell privilege rather than app reachability. The p
 never have that conversation again — and it doubles as evidence a client engineer can install and run
 themselves, which ends arguments about whether a finding is real.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > The shell is a maintenance engineer with a master key. The probe APK is a member of the public. Both
 > can walk up to the same door. Only one of them tells you whether the door is locked.
 
@@ -61,7 +61,7 @@ Use `com.example.victim` and `com.attacker.sandboxprobe` as application IDs. Tar
 that scoped storage and package visibility filtering are in force — testing against a legacy target
 would flatter your results.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Build the victim at `targetSdk 34` **and** at `targetSdk 28`, and run the attacker against both. Half
 > the platform's mitigations are `targetSdk`-gated. A leak that is wide open against API 28 may be
 > completely closed against API 34 with byte-identical source, and knowing which of your findings are
@@ -200,7 +200,7 @@ and which do you expect it to be entirely irrelevant to? Write your prediction d
 
 This is the step that silently ruins the experiment if you skip it.
 
-> **📖 Definition — package visibility filtering**
+> **Definition — package visibility filtering**
 > From `targetSdk` 30 (Android 11), an app can no longer see the full list of installed packages. It
 > sees itself, a small set of always-visible system packages, packages it interacts with through
 > certain APIs, and whatever it declares in a `<queries>` element.
@@ -666,7 +666,7 @@ third-party app" — a false negative produced by your own manifest, and a genui
 error.
 
 Package visibility filtering is **not** a security boundary. It is a privacy control. It never makes an
-exported component unreachable; a real attacker simply declares the target in `<queries>`, or holds
+exported component unreachable; a real attacker declares the target in `<queries>`, or holds
 `QUERY_ALL_PACKAGES`. It only hides things from apps that did not ask.
 
 **3.** The rows that differ are typically `/data/data/com.example.victim` (the shell may list it with

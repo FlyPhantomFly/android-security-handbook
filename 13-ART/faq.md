@@ -227,7 +227,7 @@ You are on Android 8, 9 or 10 and you have hit **quickening**. Instructions like
 standalone DEX — the information needed to interpret them lives in the OAT metadata.
 
 You need an unquickening step (`vdexExtractor` was written for exactly this). On Android 11 and later
-the problem simply does not exist, because `nterp` made quickening unnecessary and it was removed.
+the problem does not exist, because `nterp` made quickening unnecessary and it was removed.
 
 ---
 
@@ -258,7 +258,7 @@ planting malicious native code in its compiled artifacts.
 Usually attempting to defeat analysis of its compiled code, or to force a predictable execution state
 for timing-based checks.
 
-It does not achieve much. The DEX is still in the VDEX and the APK, and the runtime simply interprets
+It does not achieve much. The DEX is still in the VDEX and the APK, and the runtime interprets
 the app instead. It makes the app measurably slower for every real user, and it arguably makes your job
 *easier* by guaranteeing interpretation. It is a poor trade, and worth noting in a report as a
 performance concern.

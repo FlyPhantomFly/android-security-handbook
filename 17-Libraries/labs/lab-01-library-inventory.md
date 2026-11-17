@@ -39,7 +39,7 @@ There are six places code hides in an APK and most people check two.
 
 ## Choosing a target
 
-> **⚠️ Warning**
+> **Warning**
 > Only analyse applications you have written permission to test, or that are licensed to permit it.
 > The safest targets for practice are your own builds and open-source applications.
 

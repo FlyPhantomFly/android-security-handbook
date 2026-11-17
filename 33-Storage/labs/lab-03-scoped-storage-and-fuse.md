@@ -41,7 +41,7 @@ surface, the volume model, the permission changes — and this lab does not rest
 adds is the measurement: which of the mechanism's edges are sharp, which are soft, and which are
 enforced somewhere other than where people look for them.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Scoped storage is not one rule. It is at least four independent mechanisms wearing one name: a
 > **FUSE daemon** that refuses some `open` calls, a **permission** that gates the shared collections,
 > a **content provider** (MediaStore) that mediates access and records ownership, and a **package
@@ -96,7 +96,7 @@ uid=2000(shell) gid=2000(shell) groups=1004(input),1007(log),1011(adb),1015(sdca
 | The probe app | 10314 | none — no storage permission is declared in its manifest |
 | root via `su` | 0 | everything, subject to SELinux |
 
-> **⚠️ Warning**
+> **Warning**
 > `adb shell` is **not** a proxy for "an app on the device". It is a privileged, platform-signed
 > vantage point that Android deliberately gives more storage reach than any third-party app. Testing
 > from `adb shell` and reporting the result as what an attacking app can do is the single most common
@@ -119,7 +119,7 @@ The `scoped storage state` block reports:
   getExternalStorageState()      mounted
 ```
 
-> **📖 Definition — `isExternalStorageLegacy()`**
+> **Definition — `isExternalStorageLegacy()`**
 > A static call on `android.os.Environment` that answers a single question: *is this process still
 > seeing the pre-Android-10 filesystem view of external storage?* `true` means the app has the legacy
 > view — broad file access with the storage permission. `false` means scoped storage is in force for
@@ -182,7 +182,7 @@ in it. And it **can still confirm that a named package's external data directory
 
 Existence leaks. Contents do not.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > That is a package-detection primitive that survives the `QUERY_ALL_PACKAGES` restrictions
 > introduced in the same release. If an app can test `exists()` on
 > `Android/data/<pkg>/files` for a list of candidate packages, it can build an installed-app
@@ -203,10 +203,10 @@ Now the same question about another app's *private* directory:
   /data/data/com.android.chrome              exists=false read=false
 ```
 
-The directory obviously exists — you listed it as root in
+The directory does exist — you listed it as root in
 [Lab 01](lab-01-map-the-eight-roots.md). What the app measured is not absence; it is refusal.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > `File.exists()` is implemented as a `stat(2)` on the path, returning `true` if the syscall
 > succeeds. `stat(2)` on a path whose parent directory the caller cannot traverse fails with
 > `EACCES` — permission denied — and `File.exists()` reports any failure as `false`. The Java API
@@ -312,7 +312,7 @@ options say so (`fsuid=1023`, `fsgid=1023`, `user_id=0`). **The owner shown is a
 mount, not a record of who wrote the bytes.** You cannot attribute a file on shared storage by
 looking at its owner. Ever.
 
-> **📖 Definition — sdcardfs**
+> **Definition — sdcardfs**
 > A kernel-side stacking filesystem that presents `/data/media` under a synthetic ownership and
 > permission model, deriving each file's apparent uid/gid from mount options rather than from the
 > writer. It exists because emulated external storage must present FAT-like semantics (no real
@@ -350,7 +350,7 @@ _data=/storage/emulated/0/s1.png,                     owner_package_name=com.and
 Two things are happening at once and it is worth separating them.
 
 First, **MediaStore is doing its job**: an app with no media permission sees only rows it owns, and
-this app owns none, so it gets zero rows rather than a `SecurityException`. Note that an empty
+this app owns none, so it gets zero rows rather than a `SecurityException`.an empty
 cursor and a refusal are different outcomes with the same practical effect and very different
 diagnostic meaning; the probe reports which one it got.
 
@@ -367,7 +367,7 @@ Now look at `IS_PENDING`:
 content query --uri content://media/external/file --projection _id:_display_name:is_pending --where "is_pending=1"
 ```
 
-> **📖 Definition — `IS_PENDING`**
+> **Definition — `IS_PENDING`**
 > A MediaStore column an app sets to `1` when it inserts a row before writing the file's bytes, and
 > clears to `0` when the write is complete. While it is `1`, MediaStore hides the row from every
 > other app. It exists to close the window in which a half-written file is visible and readable by
@@ -422,7 +422,7 @@ the user must enable "All files access" in Settings **and** Google Play policy m
 its distribution. When it is fully granted, the holder gets a legacy-like view: broad read/write to
 the shared volume including other apps' `Android/data`, subject to a short list of exceptions.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > When you find an app holding `MANAGE_EXTERNAL_STORAGE`, the finding is almost never "it holds a
 > dangerous permission". It is either (a) the app does not need it and a narrower API would do — a
 > real, fixable finding with a code-level remediation — or (b) the app genuinely is a file manager

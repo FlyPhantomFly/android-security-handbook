@@ -58,7 +58,7 @@ adb shell pm list packages | grep -i chrome
 #   package:com.android.chrome
 ```
 
-> **⚠️ If your device has no Chrome**
+> **If your device has no Chrome**
 > Substitute any package from `adb shell pm list packages -3` (third-party) or
 > `adb shell pm list packages -s` (system). The numbers in this lab will differ; the *structure*
 > will not, and the structure is the lesson. Record your own numbers as you go.
@@ -151,7 +151,7 @@ sed -n '2981,3014p' chrome.txt | head -10
 **The difference is one token.** Lines in the requested block have no `granted=` suffix. Lines in
 the other two blocks do.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > If a line has no `granted=`, you are looking at intent, not fact. That single character of
 > punctuation is the difference between a finding and a fabrication.
 
@@ -262,7 +262,7 @@ python3 -B .../scripts/grant-state.py chrome.txt --unaccounted-only
 python3 -B .../scripts/grant-state.py chrome.txt --markdown > chrome-grants.md
 ```
 
-> **✅ Success criterion for Part 1**
+> **Success criterion for Part 1**
 > You can state, for your chosen app, the four counts, and you can name at least three permissions
 > in the unaccounted set and explain why each one is there.
 
@@ -426,7 +426,7 @@ you read the descriptions and not just the verdict column.
 
 </details>
 
-> **✅ Success criterion for Part 2**
+> **Success criterion for Part 2**
 > You can resolve any permission's owner and level from a device in under ten seconds, and you can
 > explain why `signature|privileged` is weaker than `signature`.
 
@@ -635,7 +635,7 @@ A model paragraph for the reference device:
 > ability to trigger package installation is therefore governed by the op rather than by the
 > permission, and both states are recorded here because either alone is misleading.
 
-> **✅ Success criterion for the lab**
+> **Success criterion for the lab**
 > You have produced a permission section that contains no sentence that could be disproved in ten
 > seconds by whoever receives it.
 

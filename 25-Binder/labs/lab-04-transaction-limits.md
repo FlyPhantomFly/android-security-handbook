@@ -234,7 +234,7 @@ Fill this in from your own measurements. It is the deliverable of Part B.
 
 # Part C — The availability finding
 
-> **⚠️ Read this before running anything in Part C**
+> **Read this before running anything in Part C**
 > You are about to deliberately exhaust another process's Binder budget. Against `system_server`
 > that is a device-wide denial of service and the device may reboot or need a factory reset. **Point
 > this at your own `SizeTestService` and at nothing else** unless you have written authorisation and
@@ -358,7 +358,7 @@ Draft the finding. It should contain:
 - **Severity.** Availability. Argue it honestly — if the service is non-essential, say so.
 - **Remediation.** The code above.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The reason this gets filed as "the app crashes sometimes" and closed is that the reporter never
 > demonstrated the bystander. One caller failing looks like the caller's problem. A *third party*
 > failing is unambiguous, and it is one extra app to write.

@@ -17,7 +17,7 @@ means a lot of documented invocations, not quality.
 | Tool | Sheets | Invocations | Top sheets |
 |---|---:|---:|---|
 | `aapt2` | 19 | 36 | [08](../../08-Build-System/cheatsheet.md) (6), [10](../../10-APK-Internals/cheatsheet.md) (4), [32](../../32-Manifest/cheatsheet.md) (3), [66](../../66-Instrumentation/cheatsheet.md) (3), [09](../../09-Android-App-Internals/cheatsheet.md) (2) |
-| `adb` | 68 | 718 | [09](../../09-Android-App-Internals/cheatsheet.md) (63), [00](../../00-Introduction/cheatsheet.md) (48), [26](../../26-Intent/cheatsheet.md) (36), [19](../../19-Memory/cheatsheet.md) (35), [02](../../02-Linux-Basics/cheatsheet.md) (25) |
+| `adb` | 68 | 719 | [09](../../09-Android-App-Internals/cheatsheet.md) (63), [00](../../00-Introduction/cheatsheet.md) (48), [26](../../26-Intent/cheatsheet.md) (36), [19](../../19-Memory/cheatsheet.md) (35), [02](../../02-Linux-Basics/cheatsheet.md) (25) |
 | `apksigner` | 16 | 28 | [10](../../10-APK-Internals/cheatsheet.md) (7), [00](../../00-Introduction/cheatsheet.md) (2), [08](../../08-Build-System/cheatsheet.md) (2), [12](../../12-DEX-Internals/cheatsheet.md) (2), [14](../../14-Dalvik/cheatsheet.md) (2) |
 | `apktool` | 26 | 43 | [00](../../00-Introduction/cheatsheet.md) (5), [04](../../04-Java/cheatsheet.md) (4), [10](../../10-APK-Internals/cheatsheet.md) (4), [14](../../14-Dalvik/cheatsheet.md) (3), [53](../../53-Frida/cheatsheet.md) (3) |
 | `baksmali` | 4 | 7 | [14](../../14-Dalvik/cheatsheet.md) (3), [04](../../04-Java/cheatsheet.md) (2), [05](../../05-Kotlin/cheatsheet.md) (1), [17](../../17-Libraries/cheatsheet.md) (1) |
@@ -104,7 +104,7 @@ means a lot of documented invocations, not quality.
 | [50 — HardwareBackedSecurity](../../50-HardwareBackedSecurity/cheatsheet.md) | `adb`×1, `apktool`×1, `dumpsys`×1 |
 | [51 — DynamicAnalysis](../../51-DynamicAnalysis/cheatsheet.md) | `adb`×6, `logcat`×1 |
 | [52 — StaticAnalysis](../../52-StaticAnalysis/cheatsheet.md) | `adb`×5, `dumpsys`×3, `aapt2`×2, `apksigner`×1, `frida`×1, `service`×1 |
-| [53 — Frida](../../53-Frida/cheatsheet.md) | `adb`×17, `frida`×16, `frida-trace`×6, `apktool`×3, `apksigner`×1, `strings`×1, `zipalign`×1, `getprop`×1, `pidof`×1, `settings`×1 |
+| [53 — Frida](../../53-Frida/cheatsheet.md) | `adb`×18, `frida`×16, `frida-trace`×6, `apktool`×3, `apksigner`×1, `strings`×1, `zipalign`×1, `getprop`×1, `pidof`×1, `settings`×1 |
 | [54 — Objection](../../54-Objection/cheatsheet.md) | `adb`×4, `objection`×3, `frida-ps`×1, `getprop`×1 |
 | [55 — MobSF](../../55-MobSF/cheatsheet.md) | `jadx`×2, `aapt2`×1, `apksigner`×1 |
 | [56 — JADX](../../56-JADX/cheatsheet.md) | `jadx`×3, `magisk`×1 |

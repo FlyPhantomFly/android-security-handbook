@@ -29,7 +29,7 @@ be argued down by a competent developer:
 | 3 | The **UID evidence**: both apps' UIDs, and the `not exported from uid N` line naming them | That the boundary crossed is a real one |
 | 4 | The **fix control**: the identical payload refused by the fixed router | That your remediation is tested, not asserted |
 
-> **⚠️ Warning — scope**
+> **Warning — scope**
 > Both apps in this lab are shipped by this repository, are installed on a device
 > you own, and attack only each other. Do not point the attacker app at somebody
 > else's application. The exploit is fifteen lines and the fact that it is easy is
@@ -130,7 +130,7 @@ Expected tail:
 [+] .../out/attacker.apk
 ```
 
-> **⚠️ Some devices refuse `adb install`, and this was measured**
+> **Some devices refuse `adb install`, and this was measured**
 > On the Redmi / MIUI 12.5 / Android 11 device used to write this chapter:
 >
 > ```text
@@ -183,7 +183,7 @@ told about it.
 python3 ../scripts/intent-surface-map.py --package com.pentest.deputy --components --verify
 ```
 
-**Q2.** Which components are exported? Which are not? Note that
+**Q2.** Which components are exported? Which are not?
 `SecretActivity`, `DetailActivity` and `SettingsActivity` do **not** appear in the
 resolver-table output at all — they have no `<intent-filter>`, so they are not in
 any resolver bucket.
@@ -419,7 +419,7 @@ flags still there?
 
 **Q20.** Variant (d) is the interesting one. `resolveActivity` is called on an
 Intent with no component. What does it return, and why does that make the fix
-*more* robust rather than less? Compare with the half-fix
+*more* reliable rather than less? Compare with the half-fix
 `if (next.getComponent().getPackageName().equals(getPackageName()))`, which is what
 most developers write first — what happens to *that* code on variant (d)?
 

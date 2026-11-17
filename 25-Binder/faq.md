@@ -303,7 +303,7 @@ why the tool works against AIDL services without you telling it anything.
 
 It also explains a measured result in the README: calling `notification` code 2 from `adb shell`
 produced *"Disallowed call for uid 2000"* — an identity refusal — rather than *"Binder invocation to
-an incorrect interface"*. The token was right; we simply were not allowed.
+an incorrect interface"*. The token was right; we were not allowed.
 
 What `service call` **cannot** write: booleans (use `i32 1`), byte arrays, `Parcelable`s, `Bundle`s,
 `List`s, `Map`s, or a `String8`. This is where it runs out of road on most interesting methods and
@@ -365,7 +365,7 @@ before SELinux is even consulted — and then asks SELinux for `service_manager:
 type as well.
 
 What an app *can* do is publish a `Service` with `onBind()`, which hands an `IBinder` to whoever
-binds it. That object is a perfectly real Binder object; it simply is not in the global name
+binds it. That object is a perfectly real Binder object; it is not in the global name
 registry. Reaching it requires an `Intent` and `bindService()`, which is
 [24 — IPC](../24-IPC/README.md)'s and [26 — Intent](../26-Intent/README.md)'s territory.
 

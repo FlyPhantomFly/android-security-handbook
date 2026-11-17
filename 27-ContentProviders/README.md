@@ -67,7 +67,7 @@ whole database, including the columns you wanted to hide, and lets it corrupt yo
 Android's answer is the **content provider**: a mediated, permission-checked, row-and-column-level
 data interface that other applications reach through a URI, without ever seeing the storage behind it.
 
-> **📖 Definition**
+> **Definition**
 > A **content provider** is a component of an Android application that exposes a set of data
 > operations — query, insert, update, delete, type lookup, file opening, and a generic remote
 > procedure call — to other applications, addressed by a `content://` URI, mediated by the framework,
@@ -106,7 +106,7 @@ third-party app's shared data. `Settings.Global.getString()` is a content provid
 is content providers. The `FileProvider` that every modern app uses to share a file with the camera
 or a mail client is a content provider.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > A content provider is **a public API surface written in SQL-shaped verbs, reachable by any app on
 > the device that satisfies its permission requirements, running inside the target app's process with
 > the target app's UID and all its privileges**. Read that sentence again with the words "public API"
@@ -257,7 +257,7 @@ Content providers differ from the other three components in ways that matter ope
 | Return value to caller | `setResult` / `onBind` / result data | A `Cursor`, `Uri`, `int`, `Bundle`, or `ParcelFileDescriptor` |
 | Granular access control | Per-component permission | Per-provider, per-path, and per-URI grants |
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > `ContentProvider.onCreate()` runs *before* `Application.onCreate()`. `ActivityThread.handleBindApplication()`
 > instantiates the `Application` object, then calls `installContentProviders()`, and only afterwards
 > calls `Application.onCreate()`. This ordering is why libraries like WorkManager and Firebase use a
@@ -267,7 +267,7 @@ Content providers differ from the other three components in ways that matter ope
 > tester it means that touching a provider authority runs a meaningful amount of the target's
 > initialisation code, including any initialisers piggybacking on other stub providers.
 
-> **⚠️ Warning**
+> **Warning**
 > Because provider methods run on Binder thread-pool threads, **several calls can execute
 > concurrently**. A provider that keeps mutable state in a field without synchronisation has a race
 > condition reachable by any app that can call it. This is a real, if less common, vulnerability class:
@@ -327,7 +327,7 @@ every Android security interview.
 | ≥ 17 (Android 4.2, JELLY_BEAN_MR1) | **`false`** | The default flipped. Providers became private unless explicitly exported. |
 | ≥ 31 (Android 12) | Still `false`, **but** if the component declares an `<intent-filter>`, `android:exported` must be stated explicitly or the app fails to install | Applies to activities, services and receivers. Providers rarely have intent filters, so the rule mostly does not bite here — but the install-time enforcement is a useful mental anchor for the era. |
 
-> **⚠️ Warning**
+> **Warning**
 > Do not conclude "modern app, therefore not exported". Three things override the default:
 > 1. The developer wrote `android:exported="true"` deliberately, usually because "it didn't work
 >    otherwise" during development and they never came back.
@@ -348,7 +348,7 @@ The third point deserves a table, because it is where most junior testers stop t
 | `signatureOrSystem` / `signature|privileged` | Same-signature or privileged system apps | Strong on a stock device. |
 | Undeclared permission name | Nobody, but see note | If the app references a permission it never `<permission>`-declares, and no other installed app declares it, the permission cannot be granted, so access is denied. But if a *different* app declares that permission name first, that app controls its protection level — the classic **permission squatting** issue. |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Permission squatting on custom permissions is worth checking on every engagement where the target
 > is part of a suite of apps. If `com.example.suite.permission.READ_DATA` is declared by App B and
 > used by App A, and App B is not installed, then whichever app is installed *first* and declares that
@@ -378,7 +378,7 @@ surface.
 Two rows in that table are the source of a disproportionate share of findings.
 
 **`getType()` is intentionally unprotected.** The framework must be able to ask "what kind of data is
-at this URI?" in order to route intents, and asking that question would be impossible if it required
+at this URI?" to route intents, and asking that question would be impossible if it required
 a permission. So `getType()` bypasses read/write permission checks entirely. A provider that computes
 its MIME type by querying the database — a pattern that appears in real code — turns an unprotected
 call into a database read. In modern Android there is a hardened variant, `getTypeAnonymous()`
@@ -391,7 +391,7 @@ permission declared" configuration, `call()` is a completely open RPC entry poin
 app's process. Developers use it for exactly the things you would hope they did not: "getAuthToken",
 "setDebugMode", "wipeAll", "execSql".
 
-> **📖 Definition**
+> **Definition**
 > **`ContentProvider.call()`** is a general-purpose remote procedure call: the caller supplies a method
 > name string, an argument string, and an arbitrary `Bundle`, and receives an arbitrary `Bundle` back.
 > It has no schema, no type safety, no automatic authorisation and no discoverability. It is a
@@ -432,7 +432,7 @@ in providers is so common:
 | `sortOrder` | The `ORDER BY <...>` clause | **No.** Same problem as projection. |
 | `uri` path segments | Usually a `WHERE _id = ?` or a table name | Depends entirely on the provider's parsing. |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Almost every tutorial, checklist and automated scanner tests **selection** for SQL injection and
 > stops. `projection` and `sortOrder` are injected into the statement as raw SQL text with no possible
 > binding, and defensive developers who carefully used `selectionArgs` for the `WHERE` clause routinely
@@ -458,7 +458,7 @@ Other useful `ContentResolver` methods:
 | `acquireContentProviderClient(uri)` | Long-lived handle, avoids repeated lookup | Faster fuzzing |
 | `acquireUnstableContentProviderClient(uri)` | Same, but the caller is not killed if the provider's process dies | **Use this when fuzzing**, or you will crash your own tool |
 
-> **⚠️ Warning**
+> **Warning**
 > If you fuzz a provider with `acquireContentProviderClient` (the stable variant) and your input
 > crashes the target process, **your own process is killed too**. This is deliberate framework
 > behaviour: a stable provider reference means "I cannot function without this provider". Always fuzz
@@ -491,7 +491,7 @@ static {
 `UriMatcher` returns `NO_MATCH` (`-1`) for anything unrecognised, and the conventional provider
 response is `throw new IllegalArgumentException("Unknown URI: " + uri)`.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > That exception is a **discovery oracle**. If `content query --uri content://x/foo` returns
 > `IllegalArgumentException: Unknown URI` and `content query --uri content://x/notes` returns a
 > permission error or an empty cursor, you have distinguished a valid path from an invalid one without
@@ -511,7 +511,7 @@ to build a file path is still traversable, because `getLastPathSegment()` on
 This is the mechanism that lets you attach a photo to an email without giving the mail app permission
 to read your entire gallery, and it is a rich source of bugs.
 
-> **📖 Definition**
+> **Definition**
 > A **URI permission grant** is a temporary, per-URI, per-package authorisation recorded inside
 > `ActivityManagerService` that allows a specific application to perform read and/or write operations
 > on one specific `content://` URI, regardless of whether that application holds the provider's
@@ -567,7 +567,7 @@ provider may be granted. If `false` (the default), only URIs matching a nested
 | `android:pathSuffix` | The path must end with this string (API 31+) | |
 | `android:pathAdvancedPattern` | A genuine, if limited, regex (API 31+) | |
 
-> **⚠️ Warning**
+> **Warning**
 > `android:pathPattern="/files/*"` does **not** mean "anything under `/files/`". In Android's
 > simplified glob syntax, `*` repeats the preceding character, so `/files/*` means "`/file`, then zero
 > or more `s`, then `/`" — which is almost certainly not what the developer meant. To match anything,
@@ -604,7 +604,7 @@ dumpsys activity permissions
 dumpsys activity providers | sed -n '/Granted Uri Permissions/,/^$/p'
 ```
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > A grant is stored in `ActivityManagerService` as a `UriPermission` object keyed by
 > `(sourceUid, targetUid, GrantUri)`. When `ContentProviderHelper.checkContentProviderPermission()`
 > denies access based on the declared permission, it falls through to
@@ -704,7 +704,7 @@ Each element declares a **root directory** and a **name**. The generated URI is
 | `<external-media-path>` | `Context.getExternalMediaDirs()[0]` | `/storage/emulated/0/Android/media/<pkg>` |
 | `<root-path>` | The filesystem root, `/` | `/` |
 
-> **⚠️ Warning — the classic `root-path` misconfiguration**
+> **Warning — the classic `root-path` misconfiguration**
 > ```xml
 > <!-- res/xml/file_paths.xml — DO NOT DO THIS -->
 > <paths>
@@ -751,7 +751,7 @@ The `mode` string maps to open flags:
 | `"rw"` | `MODE_READ_WRITE \| MODE_CREATE` | Read and write |
 | `"rwt"` | `MODE_READ_WRITE \| MODE_CREATE \| MODE_TRUNCATE` | Read and write, truncated |
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > `ParcelFileDescriptor` is a genuine Linux file descriptor passed across Binder using
 > `SCM_RIGHTS`-style FD duplication in the binder driver. Once the receiving process has the FD, the
 > sending process's permission checks are irrelevant — the kernel has already granted access to the
@@ -834,7 +834,7 @@ there is a performance bug the framework will complain about, but more relevantl
 the code in `onCreate()` runs before you can attach a debugger to a normally-launched app. Use
 `frida -U -f <pkg>` to spawn-and-inject, not `-n` to attach.
 
-There is no `onDestroy()`. A provider's process simply dies. `shutdown()` exists but is only invoked
+There is no `onDestroy()`. A provider's process dies. `shutdown()` exists but is only invoked
 by test frameworks. Any cleanup a provider "does on shutdown" does not happen in practice, so
 temporary files created by a provider tend to accumulate — a small but real information-disclosure
 source when the temp directory is world-accessible.
@@ -856,13 +856,13 @@ source when the temp directory is world-accessible.
 | 13 T | 33 | `getTypeAnonymous()` — the platform routes MIME-type queries from untrusted callers here, hardening the `getType` leak |
 | 14 U | 34 | Tightened implicit-intent and `PendingIntent` rules that affect grant-laundering chains |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The Android 11 package-visibility change is the one that most often confuses testers writing their
 > own enumeration app. Your test app calls `PackageManager.getInstalledPackages()` and sees almost
 > nothing, so you conclude the device is clean. Add
 > `<uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />` to your test harness's
 > manifest — it is a normal-protection permission for this purpose on a test device — or enumerate
-> from `adb shell`, which is unaffected. Note that Play Store policy restricts `QUERY_ALL_PACKAGES` for
+> from `adb shell`, which is unaffected.Play Store policy restricts `QUERY_ALL_PACKAGES` for
 > published apps; that restriction does not apply to a local test harness you sideload.
 
 ---
@@ -994,7 +994,7 @@ private String checkContentProviderPermission(ProviderInfo cpi, int callingPid, 
   regardless of what permissions the caller holds — *unless* the caller holds
   `android.permission.INTERACT_ACROSS_USERS_FULL`-class system privileges, or is root/system.
 
-> **⚠️ Warning**
+> **Warning**
 > Note the last point carefully. `adb shell` runs as UID 2000 with a privileged permission set. A
 > `content query` from `adb shell` succeeding does **not** prove the provider is reachable by a normal
 > third-party app. This is exactly the same false-positive trap as `am start` against a non-exported
@@ -1031,7 +1031,7 @@ from an attacking app.
 13. In the caller, `CursorWrapperInner`/`BulkCursorToCursorAdaptor` maps the shared memory and the
     caller iterates rows without further IPC.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > Step 13 is why `Cursor.moveToNext()` is cheap. The window holds up to `CursorWindow`'s capacity
 > (2 MB by default, 20 MB for some system providers) of rows; only when you move past the end of the
 > window does the framework issue another Binder call to fetch the next window. A provider returning
@@ -1232,7 +1232,7 @@ dz> run scanner.provider.injection -a com.example.notes
 dz> run scanner.provider.sqltables -a com.example.notes
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `scanner.provider.injection` tests selection and projection. It historically did **not** test sort
 > order. Run the sort-order test by hand. When you find injection only in `sortOrder`, expect the
 > developer to argue it is not exploitable because "you can't see the output" — the
@@ -1390,7 +1390,7 @@ File f = new File(getContext().getFilesDir(), path);
 
 #### Why a competent developer wrote this
 
-The first version reads as obviously correct: `getLastPathSegment()` returns "the last segment", so
+The first version reads as correct: `getLastPathSegment()` returns "the last segment", so
 surely it cannot contain a slash. It can — `Uri` does not enforce that, and a URI-encoded `%2F`
 survives into the decoded segment. And a provider whose `UriMatcher` pattern is `docs/*` will
 `NO_MATCH` on multiple segments, so the developer reasons that traversal cannot reach the code — but
@@ -1444,7 +1444,7 @@ High-value targets, in rough priority order:
 | `../../../../proc/self/maps` | Confirms traversal reaches outside the sandbox at all |
 | `/data/misc/keystore/` | Not readable even by the app UID, but worth one attempt to confirm the boundary |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Always try `*.db-wal` and `*.db-journal` alongside `*.db`. SQLite in WAL mode writes new pages to the
 > `-wal` file and does not necessarily checkpoint them into the main database. A `DELETE FROM` executed
 > minutes ago may still be fully recoverable from the WAL. This is also why you should copy all three
@@ -1578,7 +1578,7 @@ which does the canonicalisation for you and has been reviewed by many more eyes.
 
 ### 5.3 Exported providers leaking data with no injection required
 
-Not every provider finding needs a payload. The most common finding of all is simply that the
+Not every provider finding needs a payload. The most common finding of all is that the
 provider works exactly as designed and should never have been reachable.
 
 #### The vulnerable code
@@ -1723,7 +1723,7 @@ private void enforceTrustedCaller() {
 }
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > `getCallingPackage()` returns non-null only during a Binder transaction and only when the caller
 > could be identified. It returns the *first* package name for the calling UID, which is ambiguous when
 > apps share a UID. For a hard security decision, prefer
@@ -1745,7 +1745,7 @@ private void enforceTrustedCaller() {
 This is the subtlest class in the chapter and the one that distinguishes a senior report from a
 scanner's output. It is a *confused deputy* problem.
 
-> **📖 Definition**
+> **Definition**
 > A **confused deputy** attack occurs when a privileged component is tricked into using its privileges
 > on behalf of a less-privileged caller. The deputy is not compromised; it does exactly what it is
 > designed to do, but for the wrong principal.
@@ -1879,7 +1879,7 @@ am start -n com.victim.app/.FilePickerActivity \
   -e next_intent_uri "intent:#Intent;component=com.privileged.app/.ExportActivity;S.path=/secret/1;end"
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The `FLAG_GRANT_PREFIX_URI_PERMISSION` in the payload above is the detail that turns a
 > single-document leak into a bulk one. If the victim's grant machinery honours it, a grant on
 > `content://provider/secret/1` becomes a grant on everything beneath `content://provider/secret/`.
@@ -2490,10 +2490,10 @@ awk '/\.method public call\(/,/\.end method/' work/smali/com/example/app/NotesPr
 | Control flow | Partially | R8 inlines and merges; commercial obfuscators add flattening. |
 | String constants | Only with a string-encryption obfuscator | DexGuard and similar tools encrypt strings, in which case you must hook `String` decryption at runtime or find the decryptor. |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > When the strings *are* encrypted, do not fight the decompiler. Hook `UriMatcher.addURI` with Frida
 > and launch the app; every route registers itself in plain text at startup. The same trick works for
-> `call()`: hook `String.equals` and filter by the receiving object, or simply hook the provider's own
+> `call()`: hook `String.equals` and filter by the receiving object, or hook the provider's own
 > `call` and log the method argument, which is a plain string by the time it is compared.
 > ```javascript
 > // frida -U -f com.example.app -l addurl-dump.js
@@ -2606,7 +2606,7 @@ Bind types for `--bind` and `--extra`:
 | `b` | boolean |
 | `n` | null |
 
-> **⚠️ Warning**
+> **Warning**
 > Everything you run through `content` runs as `shell`, UID 2000, which holds privileges an ordinary
 > app does not. A successful `content query` against a provider is **not** proof that a third-party app
 > can read it. Confirm every finding with Drozer or a purpose-built test app before it goes in a
@@ -2625,7 +2625,7 @@ The response to a probe tells you a great deal. Learn these five:
 | `Unable to resolve content provider` / `Could not find provider` | The authority does not exist, or package-visibility rules hide it from you. |
 | An empty result with column headers | You reached the data and there are no matching rows. Try a different `--where`. |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The third row is the one to internalise. `IllegalArgumentException: Unknown URI` means **you got
 > through the permission check** — the provider's own code ran and rejected your path. That single
 > message converts "is this provider reachable?" into "which paths does it accept?", and turns your
@@ -2859,7 +2859,7 @@ which is an authority-hijacking issue if a malicious app can register the same a
 | `apkleaks` | URIs and endpoints in strings | Everything semantic |
 | Drozer scanners | Live injection and traversal against reachable providers | `call()`, sort order, anything needing a specific path |
 
-> **⚠️ Warning**
+> **Warning**
 > Every one of these tools will report "exported content provider" as a finding on a provider that is
 > exported with a `signature` permission and is perfectly safe. Verifying and downgrading those is part
 > of your job. A report full of unvalidated tool output is worse than no report, because the client
@@ -2949,7 +2949,7 @@ public class NotesProvider extends ContentProvider {
     android:exported="false" />
 ```
 
-This is safe **because it is not exported**. Note that the `query()` method still passes `sel` and
+This is safe **because it is not exported**.the `query()` method still passes `sel` and
 `sort` straight through to `SQLiteDatabase.query()`, which is injectable — it just is not reachable.
 This is the most common real configuration: internally-vulnerable code protected only by the export
 flag. If a later refactor exports the provider, the vulnerability appears with no change to the Java.

@@ -31,11 +31,10 @@ The rule that came out of them is the one this lab teaches:
 **a signature is not evidence until every hit is accounted for**, and *if a detector agrees with you
 about a lot of samples, suspect the detector*.
 
-> **⚠️ Authorised testing only**
 > This lab pulls APKs off a device you own and analyses them **statically**, on the host. Nothing is
 > installed, modified, executed or sent anywhere. Do not do this to a device you do not own, and
 > delete the corpus afterwards — it is several gigabytes of other people's code and none of it
-> belongs in a repository.
+> belongs in a repository. See [SECURITY.md](../../SECURITY.md) for the handling rules.
 
 ---
 
@@ -97,7 +96,7 @@ On the reference device: 247 installed, 241 pulled, 6 failures — all six runti
 which contain **no DEX at all** and therefore cost a DEX sweep nothing. Of the 241, two were this
 chapter's lab apps and two belonged to another chapter's in-flight work, leaving 237.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > "We scanned every app on the device" is a claim that is almost never true and is trivially
 > checkable. Naming the failures costs one line and is the difference between a measurement and an
 > impression. A failure that carries no DEX costs you nothing; a failure that is a real application

@@ -24,7 +24,7 @@ numbers quoted in `README.md` can be checked rather than believed.
 | Capturing identity | `adb shell`, uid 2000, SELinux context `u:r:shell:s0` |
 | Root | **no** — every file here is world-readable to the `shell` domain |
 
-> **⚠️ Warning**
+> **Warning**
 > This is **not** a stock AOSP build. It is MIUI, and it registers services that AOSP does
 > not (`MiuiBackup`, `MiuiInit`, `ProcessManager`, `xiaomi.joyose`, `SlaveWifiService`).
 > That is the point — a real device is not the emulator, and OEM services are where a

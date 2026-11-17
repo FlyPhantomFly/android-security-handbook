@@ -83,14 +83,14 @@ app A read the address book?", "can app A take a photograph?". Those resources a
 any app. They are owned by the *device*, and they are reached by asking the operating system.
 
 Before Android, the mobile answer to this was one of two extremes. On a feature phone, the
-platform simply did not let third-party code near the camera or the address book at all. On a
+platform did not let third-party code near the camera or the address book at all. On a
 desktop operating system of the same era, any program you ran had every privilege you had, which
 is why a single bad download could read every document you owned. Android's designers wanted the
 third answer: let a program declare *in advance* the small set of device-owned resources it
 intends to touch, refuse it everything else, and — for the resources a reasonable person would
 care about — ask the person.
 
-> **📖 Definition — permission**
+> **Definition — permission**
 > A **permission** in Android is a *string*. That is not a simplification; it is the literal
 > truth. `android.permission.CAMERA` is a name. The platform maintains, for every installed
 > application, a set of permission strings that application has been *granted*. Every guarded
@@ -137,7 +137,7 @@ signature relationship, and no user involvement of any kind. The measurement is 
 
 ### 1.4 Why this chapter is separate from the manifest chapter
 
-Permissions appear in `AndroidManifest.xml`, so it is fair to ask why they are not simply part of
+Permissions appear in `AndroidManifest.xml`, so it is fair to ask why they are not part of
 [32-Manifest](../32-Manifest/README.md). The split is deliberate and it maps onto a real
 distinction that costs testers findings when they blur it.
 
@@ -157,15 +157,15 @@ chapter teaches.
 Three words get used interchangeably in conversation and must never be used interchangeably in a
 report.
 
-> **📖 Definition — requested**
+> **Definition — requested**
 > The app's manifest contains `<uses-permission android:name="X" />`. This is a statement of
 > intent by the developer. It has no effect on what the app can do.
 
-> **📖 Definition — granted**
+> **Definition — granted**
 > The platform's permission state for this package, on this device, for this Android user,
 > contains `X`. This is what determines whether a call succeeds.
 
-> **📖 Definition — declared (or defined)**
+> **Definition — declared (or defined)**
 > The app's manifest contains `<permission android:name="X" android:protectionLevel="…" />`. The
 > app is the *author* of the permission — it is bringing a new string into existence on the device
 > and stating the rule by which other apps may obtain it.
@@ -173,7 +173,7 @@ report.
 A single app can do all three with the same string, and in [§3.6](#36-permission-squatting--the-first-installer-race)
 that is exactly what the attacker does.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > A permission is a **claim about the caller**, checked at the **callee's** boundary, using an
 > identity the **kernel** vouched for. Every part of that sentence matters. The claim is a string.
 > The boundary is inside `system_server` or inside the target app's process, never inside the
@@ -294,7 +294,7 @@ A tester who reads only the `requested permissions:` block reports a browser hol
 provider access. That report is wrong, it is checkable in ten seconds by whoever receives it, and
 it costs you the rest of the engagement's credibility.
 
-> **⚠️ Warning**
+> **Warning**
 > `dumpsys package` prints the three blocks one after another with almost no visual separation.
 > The `requested permissions:` block has no `granted=` suffix on its lines; the other two do. If a
 > line has no `granted=`, you are looking at intent, not fact. This single character of
@@ -449,7 +449,7 @@ Four things to take from it, in ascending order of how often they are missed.
 4. **The runtime block is nested one level deeper than the other two**, under `User 0:`. Runtime
    permissions are per Android user. Install permissions are not.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The honest severity ladder for a permission observation, from nothing to something:
 > **requested only** — not a finding, it is a line of XML;
 > **requested and in a grant block with `granted=false`** — not a finding, and worth a sentence in
@@ -532,7 +532,7 @@ That is not a theoretical claim; it is
 [labs/lab-01-grant-state.md](labs/lab-01-grant-state.md), and the measurement is in
 [§3.6](#36-permission-squatting--the-first-installer-race).
 
-> **⚠️ Warning**
+> **Warning**
 > **The default is `normal`.** Omitting `android:protectionLevel` does not mean "undefined" or
 > "most restrictive". It means the weakest possible value. A developer who writes
 > `<permission android:name="com.example.permission.ADMIN" />` and stops has written access
@@ -560,7 +560,7 @@ cannot correctly state what a permission they just granted allows. Treat a custo
 permission as a control that raises effort, produces an audit trail, and stops nobody who is
 trying.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Grade a protection level by asking: **what does the attacker have to obtain that they do not
 > already have?** `normal`: nothing. `dangerous`: one tap from a user who wants your app to work.
 > `signature`: the victim's private key. Only the third answer describes something outside the
@@ -612,7 +612,7 @@ permission**. This is the single most misread fact about protection levels: flag
 the base level, they widen it. `signature|privileged` is grantable to same-signature apps **or**
 to privileged apps. It is weaker than plain `signature`, not stronger.
 
-> **⚠️ Warning**
+> **Warning**
 > Every `|` in a `protectionLevel` is an OR that adds a population. When you see a long
 > `protectionLevel`, count the populations, not the words. `signature|privileged|appop` names
 > three routes in.
@@ -644,7 +644,7 @@ to privileged apps. It is weaker than plain `signature`, not stronger.
 | `documenter` | `PROTECTION_FLAG_DOCUMENTER` | Grantable to the documenter | |
 | `configurator` | `PROTECTION_FLAG_CONFIGURATOR` | Grantable to the device configurator | |
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > The numeric values live in `PermissionInfo.java` as `PROTECTION_FLAG_*` constants. Read them
 > from the AOSP branch you are testing against rather than memorising them — the flag set has
 > grown at almost every release, and a hard-coded table in a tool is how a scanner starts
@@ -692,7 +692,7 @@ state on a *clean* install before writing a finding.
 
 #### The rule nobody states plainly
 
-> **📖 Definition — permission ownership**
+> **Definition — permission ownership**
 > A permission string on a device has exactly **one** owning package at a time — its
 > *source package*. That package's declaration is the one the platform enforces. Every other app
 > that mentions the string is merely *using* it. `adb shell dumpsys package permission <name>`
@@ -792,9 +792,9 @@ Rules the platform enforces on `addPermission`:
 - `removePermission()` exists, and a permission added dynamically is not durable in the way a
   manifest one is.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `<permission-tree>` in a manifest is a prompt to go looking in the DEX, not a finding on its own.
-> `grep -rn "addPermission" out/sources/` after decompiling. If you find one, note that the level
+> `grep -rn "addPermission" out/sources/` after decompiling. If you find one,the level
 > can only be `normal` or `dangerous`, so anything it protects is by definition reachable — and
 > then find out what it protects. This is a small class of bug but it is invisible to every
 > manifest-only scanner, including [32-Manifest](../32-Manifest/README.md)'s
@@ -817,14 +817,14 @@ first place: you cannot take a photograph without going through the camera servi
 
 Networking is not like that. `socket(AF_INET, SOCK_STREAM, 0)` is a raw syscall. There is no
 Binder call, no `system_server`, no Java, and therefore nowhere to put a framework check that
-native code, JNI, or a forked `Runtime.exec()` child could not simply skip.
+native code, JNI, or a forked `Runtime.exec()` child could not skip.
 
 So Android reused a mechanism the kernel already had. Unix has always let a process belong to
 supplementary groups, and the kernel already consults them on every permission decision. Android
 made "holding `android.permission.INTERNET`" mean "being in group `inet`", and let the kernel do
 the enforcing.
 
-> **📖 Definition — supplementary group**
+> **Definition — supplementary group**
 > Beyond its primary group, a Unix process carries a list of additional group IDs. The kernel
 > checks the whole list when deciding file, device and — with Android's networking hooks — socket
 > access. The list is set with `setgroups()`, which requires `CAP_SETGID`, and is inherited across
@@ -927,7 +927,7 @@ knew to request. An app targeting API 28 that asks for `ACCESS_FINE_LOCATION` is
 A split with **no** `targetSdk` applies always: any app requesting `ACCESS_FINE_LOCATION` also
 receives `ACCESS_COARSE_LOCATION`, on every version.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > This file is the answer to "why does this app hold a permission its manifest never asked for?".
 > Before you write that up as a platform bug, `adb pull /system/etc/permissions/platform.xml` and
 > grep for the permission in a `<new-permission>` element. On the test device, sixteen distinct
@@ -1040,7 +1040,7 @@ The permission-to-GID computation happens at install and on permission-state cha
 result is written into the package record; the *process* only picks it up at fork. An app whose
 GID set changes must be restarted for the change to take effect.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > This is why `dumpsys package` and `/proc/<pid>/status` can legitimately disagree, and why you
 > should read both. `dumpsys` shows the *stored* list computed from the current grant state.
 > `/proc/<pid>/status` shows the *live* list this process was forked with. If they differ, the
@@ -1077,7 +1077,7 @@ against a different build.
 
 The practical rule:
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `dumpsys package … | grep gids=` answers "which permissions produced groups?".
 > `grep Groups /proc/<pid>/status` answers "what is this process actually able to do?". They are
 > different questions and the second one is the one that decides whether a socket opens. For the
@@ -1094,13 +1094,13 @@ because of a naming *convention*, and a convention is not a check.
 
 The rule the platform actually applies is:
 
-> **📖 Definition — permission squatting**
+> **Definition — permission squatting**
 > If two installed packages declare the same permission name, the package installed **first** owns
 > the definition, and its `protectionLevel` is the one the platform enforces. An attacker who
 > defines a victim's permission name at `normal` before the victim's own definition exists has
 > made that permission grantable to any app on the device.
 
-#### Why this is not obviously a problem, and then obviously is
+#### Why this does not look like a problem, and then is one
 
 The naive objection is: surely if App A declares `com.victim.permission.X` at `normal` and App B
 declares it at `signature`, the platform notices the conflict? It does — and what it does about
@@ -1179,7 +1179,7 @@ Failure [INSTALL_FAILED_DUPLICATE_PERMISSION: Package com.squat.first attempting
 redeclare permission com.victim.notes.permission.READ_NOTES already owned by com.victim.notes]
 ```
 
-> **⚠️ Warning — this measurement corrects a widely repeated claim**
+> **Warning — this measurement corrects a widely repeated claim**
 > The textbook version of permission squatting says the squatter's weaker definition silently
 > *governs* the victim's component. **On Android 13 that is not what happens when both apps declare
 > the name.** The second installer is refused outright with
@@ -1276,7 +1276,7 @@ The squatter's own record, measured:
 ```
 
 An app can declare a permission and request it in the same manifest, and it will be granted at
-install. There is nothing clever about it — the app is simply an app that requested a `normal`
+install. There is nothing clever about it — the app is an app that requested a `normal`
 permission — but seeing all three blocks agree on one string in one package record makes the model
 concrete.
 
@@ -1290,7 +1290,7 @@ concrete.
 | Squatting an *undeclared* name that another app merely uses | **Still fully effective on API 33.** Measured |
 | Uninstalling the definer removes the permission and all its grants | **Measured on API 33** |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The mitigation advice that follows from this is not "namespace your permission properly" — the
 > attacker can type your namespace too. It is two things. First,
 > **every app in a suite that *uses* a custom permission should also *declare* it**, identically
@@ -1365,7 +1365,7 @@ the truth.
 | `onRequestPermissionsResult(int, String[], int[])` | `Activity` | — | The callback. **The `int[]` is the truth; nothing else is** |
 | `shouldShowRequestPermissionRationale(String)` | `Activity` | boolean | Has the user refused before *without* selecting "don't ask again"? |
 
-> **⚠️ Warning**
+> **Warning**
 > `shouldShowRequestPermissionRationale` is not "should I show a rationale". It is a
 > three-state variable compressed into a boolean, and the compression is lossy. It returns
 > `false` both when the user has **never** been asked and when the user has **permanently
@@ -1433,7 +1433,7 @@ RESTRICTION_UPGRADE_EXEMPT|AUTO_REVOKED]
 | `POLICY_FIXED` | A device policy controller (MDM) fixed this state; the user cannot change it |
 | `REVOKE_WHEN_REQUESTED` | Marked for revocation on next request |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `USER_FIXED` and `POLICY_FIXED` are the two flags that change your test plan. `USER_FIXED` means
 > the app cannot prompt again, so any behaviour that requires the permission is unreachable through
 > the UI until the user goes to Settings. `POLICY_FIXED` means an MDM is in play and your findings
@@ -1470,7 +1470,7 @@ subject of each question carefully.
 | `checkSelfPermission(perm)` | `Context` | Do **I** hold it? | Not an authorisation check at all — it is the app asking about itself |
 | `PackageManager.checkPermission(perm, pkg)` | `PackageManager` | Does that *package* hold it? | Only for reporting. A package name is a weaker identity than a UID |
 
-> **⚠️ Warning — the `OrSelf` family is a vulnerability pattern**
+> **Warning — the `OrSelf` family is a vulnerability pattern**
 > `checkCallingOrSelfPermission` falls back to checking **the caller's own process** when there is
 > no incoming Binder transaction. That sounds harmless until you notice how easily a service can
 > end up with no Binder transaction in progress: post the work to a `Handler`, hand it to an
@@ -1532,7 +1532,7 @@ lies to you.
   when the caller's UID equals the component's owner UID. Two apps sharing `sharedUserId` are one
   app for this purpose.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `adb shell` is UID 2000 with a permission set assigned by `platform.xml`'s
 > `<assign-permission>` blocks. It is neither root nor system, so it does not hit the first short
 > circuit — but it holds permissions no app can request. Every `am start`, `content query` and
@@ -1547,7 +1547,7 @@ and it is the attack pattern this chapter owns.
 
 #### The idea
 
-> **📖 Definition — confused deputy**
+> **Definition — confused deputy**
 > A *deputy* is a program that holds authority and acts on requests. It becomes *confused* when it
 > uses **its own** authority to perform an action requested by someone who does not have that
 > authority, without checking whether the requester should be allowed to ask.
@@ -1744,7 +1744,7 @@ adb shell pm grant  com.android.chrome android.permission.CAMERA
 #   android.permission.CAMERA: granted=true,  flags=[ ... ]
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > `pm revoke` on a permission the app is currently using will usually kill the app's process, by
 > design — see the one-time-permission discussion in [§3.7](#37-the-runtime-permission-model-api-23).
 > If you are mid-way through a dynamic test and the app vanishes, that is why. Restore the state
@@ -1784,9 +1784,9 @@ From `targetSdkVersion` 30, an app sees only:
 
 That second row is the operational point. A filtered package does not produce an error; it produces
 an *empty list*. Code that asks "is the root manager installed?" gets "no" whether the answer is
-genuinely no or the app simply did not declare an interest.
+genuinely no or the app did not declare an interest.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > This bites *you*, not just the target. A probe app you write to test something — including the
 > ones in [examples/](examples/) — cannot see the victim package unless you mirror the victim's
 > package name into your own `<queries>` block, or set `targetSdkVersion` below 30, or hold
@@ -1814,7 +1814,7 @@ The two grant models covered so far — install-time and runtime — do not cove
 a third class, reached through Settings under headings like "Special app access", and implemented
 by pairing a permission with an **App Op**.
 
-> **📖 Definition — App Op**
+> **Definition — App Op**
 > An *App Op* is a per-application, per-operation mode value held by `AppOpsService` in
 > `system_server`. Each op has a mode: `allow`, `ignore`, `deny`, `default`, or `foreground`.
 > App Ops are a completely separate state machine from permissions. They can be changed at
@@ -1847,7 +1847,7 @@ Permission: not granted. Op: allow. Those are not contradictory outputs; they ar
 answer, and reading only the first gives you the wrong conclusion about whether this browser can
 launch a package installer.
 
-> **⚠️ Warning**
+> **Warning**
 > For any permission whose level contains `appop`, **`dumpsys package` is not sufficient**. You
 > must also read `cmd appops get <pkg> <OP>`. This is the single most reliable way to produce a
 > confidently wrong finding in this chapter, in either direction: reporting a capability the app
@@ -1902,7 +1902,7 @@ meaningfully different threat model: the user must be led into Settings and talk
 multi-step flow. Malware does this by drawing an overlay that narrates the steps, which is why
 `SYSTEM_ALERT_WINDOW` plus `BIND_ACCESSIBILITY_SERVICE` is the combination to look for.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > An app requesting `BIND_ACCESSIBILITY_SERVICE` is not a finding by itself — accessibility
 > services are a legitimate and important feature. The finding is the combination: an app whose
 > stated function has nothing to do with accessibility, which also requests overlay, and whose
@@ -1941,7 +1941,7 @@ narrower, permission-specific one: **how the grant model itself changed**. Where
 | 34 | 14 | Partial media access ("Select photos") via `READ_MEDIA_VISUAL_USER_SELECTED` | A granted media permission no longer implies access to all media |
 | 35 | 15 | Minimum installable `targetSdk` raised; further background restrictions | Very old targets stop installing at all |
 
-> **⚠️ Warning**
+> **Warning**
 > Every `<split-permission>` row above means **an app can hold a permission its manifest never
 > names**. Do not diff the manifest's `<uses-permission>` list against the granted list and treat
 > the difference as an anomaly. Check `platform.xml` first. This is the single most common
@@ -2013,7 +2013,7 @@ cannot make that mistake, which is why
 [scripts/permission-audit.py](scripts/permission-audit.py) works on the keyword *set* rather than
 on the string.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > `PROTECTION_MASK_FLAGS = 0xfff0` is only sixteen bits wide, but the flag constants have long
 > since grown past `0x10000`. Read that as a historical artefact rather than a bound: use
 > `~PROTECTION_MASK_BASE` if you are writing your own extractor, and read the constant list from
@@ -2319,7 +2319,7 @@ that requests `RECORD_AUDIO` and never calls `AudioRecord` is worth reading care
 | Over-privilege | Granted permission with no corresponding API call | Cross-reference the granted list against DEX API usage | None — this is not exploitable | Remove the request | **Low** |
 | Dynamic permission surface | `<permission-tree>` plus `addPermission` at runtime | grep the DEX | Whatever the added permission guards; it can only be `normal` or `dangerous` | Do not add permissions at runtime | **Medium** |
 
-> **⚠️ Warning — the two findings that should never appear in a report**
+> **Warning — the two findings that should never appear in a report**
 > **"The app requests `READ_CONTACTS`."** That is a manifest line. Unless you have shown it
 > granted, shown code that uses it, and shown why that use is inappropriate, there is no finding.
 > **"An exported component is protected by a permission."** Resolve the level first. If it is
@@ -2382,7 +2382,7 @@ the component from that probe app. Two of those three are output from
 See [71-OWASP-Mobile](../71-OWASP-Mobile/README.md) for the full MASVS structure and how to cite
 it in a report without overstating what a control ID means.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > MASVS-PRIVACY-1 is the control most often failed and least often *reported*, because failing it
 > is boring — an app with three unused permissions is not a story. Report it anyway, with the
 > evidence, in a low-severity section. It is the finding a privacy-conscious client acts on
@@ -2484,7 +2484,7 @@ something in that app *asked*, was refused, and the platform recorded when.
 | `res/xml/device_admin.xml` | The device-admin policies requested | Read it whenever `BIND_DEVICE_ADMIN` appears |
 | Native libraries | Rarely anything — permission checks are a Java-layer concept | The exception is a library that shells out and relies on the process's GIDs |
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > Permission name strings **cannot be obfuscated**. They are matched by exact string against the
 > platform's table, so ProGuard and R8 must leave them intact. That makes them one of the most
 > reliable anchors in a stripped, heavily-obfuscated DEX: find
@@ -2713,7 +2713,7 @@ adb shell pm list permissions -f -g | grep -B1 -A4 'package:com\.' | grep -v 'pa
 | `-u` | Only permissions users will see |
 | `-s` | Short summary form |
 
-> **⚠️ Warning**
+> **Warning**
 > Without `-f` you get names only, and names tell you nothing. A tester who runs
 > `pm list permissions | grep VENDOR` and reports "the app uses a custom permission" has learned
 > that a string exists. `-f` is the flag that turns the command into evidence.
@@ -2792,7 +2792,7 @@ permissions the app cares about (including any that string-encryption hid from s
 the exact moment each request fires, and — flagged loudly — every use of the `OrSelf` variant with
 a stack trace showing which thread it ran on.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > This script observes. It deliberately does **not** force `GRANTED`, because forcing it produces
 > a misleading transcript: the app proceeds, the underlying API throws, and you spend an hour
 > debugging your own hook. If you want to explore a gated code path, force the return in a
@@ -2914,7 +2914,7 @@ the device.
 | Accessibility service capabilities | `cat out/res/xml/accessibility_service_config.xml` |
 | Device admin policies | `cat out/res/xml/device_admin*.xml` |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The single highest-value line in that table is the third one — permissions declared with no
 > `protectionLevel`. It is one grep, it produces zero false positives (the attribute is either
 > there or it is not), and every hit is a permission that grants itself. Run it first.
@@ -3032,7 +3032,7 @@ The fix is one attribute, plus the recognition that the fix is not sufficient on
     android:description="@string/perm_read_notes_desc" />
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > `signature` closes the grant route. It does **not** close the squatting route for a permission
 > the app *uses* but does not *declare*, and it does not verify the caller inside the component.
 > The complete answer is §9.3.
@@ -3204,7 +3204,7 @@ alone.
 ```
 
 Every one is `signature` or `signature|privileged`. **This is a controls-observed section, not a
-findings section**, and saying so is what makes the rest of the report credible. Note that the
+findings section**, and saying so is what makes the rest of the report credible.the
 three `signature|privileged` entries name two populations rather than one — same-key apps *or*
 privileged apps — which on a vendor build with a large privileged app set is a materially wider
 population than plain `signature`.

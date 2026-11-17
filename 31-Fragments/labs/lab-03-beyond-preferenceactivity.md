@@ -17,15 +17,15 @@ class is dead in modern code — deprecated at API 29, replaced by `androidx.pre
 from anything written in the last five years.
 
 **The bug is not `PreferenceActivity`. The bug is a type name crossing a trust boundary.**
-`PreferenceActivity` was simply the first place the platform shipped that pattern for you.
+`PreferenceActivity` was the first place the platform shipped that pattern for you.
 
 This lab is about the shape you will actually meet: one exported Activity, a single-Activity
 architecture, and a router keyed on an extra called `screen`, `page`, `route` or `fragment`. You will
 reach it three ways, drive it with attacker-chosen arguments, and measure something about the
 reflective loaders that decides whether "it casts to Fragment" is a security control.
 
-> **⚠️ Authorised testing only**
-> Everything here targets `../examples/victim-app/`, on a device you own.
+> Everything here targets `../examples/victim-app/`, on a device you own. See
+> [SECURITY.md](../../SECURITY.md) for the handling rules.
 
 ---
 
@@ -103,7 +103,7 @@ grep -rn "Landroid/app/Fragment;->instantiate" out/
 grep -rn "getStringExtra" out/ | head
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > `jadx 1.5.3` on this machine **produces no output for a bare `classes.dex`, exits 0, and hangs on a
 > `.jar`**. Use `baksmali`, which ships inside `apktool`'s jar. This is a measured property of the
 > tooling here, not a general claim about jadx.
@@ -142,7 +142,7 @@ Bundle args = getIntent().getBundleExtra("args");
 Fragment f = Fragment.instantiate(this, name, args);
 ```
 
-> **🧠 Mental Model**
+> **Mental Model**
 > If you had been told "this app does not use `PreferenceActivity`", you would have been told the
 > truth and learned nothing. **Ask what the app does with its extras, not what it extends.**
 
@@ -252,7 +252,7 @@ Then look for these in a real app, in this order ([README §5.5](../README.md)):
 | `args.getParcelable("config")` without the API 33 `Class` overload | arbitrary `Parcelable`; [24 §3.18](../../24-IPC/README.md) |
 | `args.getString("title")` in a `DialogFragment` | phishing text inside the victim's own window |
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > If you instrument this yourself, do not log `bundle.keySet()` directly. It returns an
 > `android.util.MapCollections$KeySet` whose `toString()` is `Object`'s, so you get
 > `android.util.MapCollections$KeySet@1325cbe1` and no information. Wrap it:
@@ -448,7 +448,7 @@ do?** Sort by that, not by count. A useful order:
 | 4 | reads `getArguments()` and branches on it (part 4) |
 | 5 | everything else — usually informational |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Do this before you write the finding, not after. The difference between "fragment injection
 > (High)" and "fragment injection; 3 of 61 Fragments are reachable and all three are static
 > about-screens (Low)" is twenty minutes of work, and it is the difference between a report that is

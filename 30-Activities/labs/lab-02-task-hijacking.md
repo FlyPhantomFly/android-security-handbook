@@ -26,11 +26,10 @@ security patch 2021-12-01 — the attack **failed**, for a reason that is visibl
 device may differ. Either outcome is a complete, correct lab result, provided you can show the
 evidence.
 
-> **⚠️ Authorised testing only**
 > The attacker app in `../examples/hijacker-app/` deliberately declares a `taskAffinity` naming
 > another package. Install it only on a device you own, only alongside the victim app that ships with
 > it, and **never** point a `taskAffinity` at an application you do not own. Uninstall both when you
-> are done.
+> are done. See [SECURITY.md](../../SECURITY.md) for the handling rules.
 
 ---
 

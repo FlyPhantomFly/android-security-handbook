@@ -59,7 +59,7 @@ finding exists only for someone who asks a different question: not *is this encr
 did the plaintext go on the way here, and what else has a copy*. Once you have done that once, "the
 data is encrypted at rest" stops functioning as an answer and becomes a claim about one file.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Encryption is a property of a **byte sequence at a location**, not of a value. A secret that passes
 > through five locations is protected at exactly those locations where somebody chose to protect it,
 > and the security of the whole is the security of the **weakest copy**, not the strongest. Your job
@@ -224,7 +224,7 @@ adb shell "am start -n com.pentest.ch33.vault/.ChallengeActivity"
 Now **stop looking at your source**. Close the editor. From here you are a tester who has been handed
 a device and a package name.
 
-> **⚠️ Warning**
+> **Warning**
 > The leaky app writes a file into the shared Downloads collection that survives its own uninstall,
 > and this challenge leaves a file in `Android/media/<pkg>/`. Clean up with `./build.sh --uninstall`
 > from `~/ch33-ctf` when you are finished, and delete `~/ch33-ctf` itself — it contains your flags in
@@ -353,7 +353,7 @@ In your CTF run, the stage 2 flag takes the place of one of those values. Note *
 in `notes.db`, which is where a tester who pulls "the database" would look, and not in `-shm`. It is
 in the write-ahead log.
 
-> **📖 Definition — WAL (write-ahead log)**
+> **Definition — WAL (write-ahead log)**
 > SQLite's default journal mode on Android since API 16. Instead of modifying the main database file
 > on every write, SQLite **appends the new version of each changed page** to a companion file
 > `<db>-wal`; readers consult the WAL first, and only at a **checkpoint** are those pages folded
@@ -388,7 +388,7 @@ adb logcat -d -s CH33Fixed | grep -i logout
 Measured on the reference device: `notes.db 20480`, `notes.db-shm 32768`, `notes.db-wal` **0**, and
 the log line `logout: deleted 2 rows; wal now 0 bytes`.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > The fixed implementation does `VACUUM` **first**, then `wal_checkpoint(TRUNCATE)`. The first version
 > did it the other way round and measured `wal now 20632 bytes`, because `VACUUM` rewrites the whole
 > database and generates a fresh WAL full of pages after the truncate. The log line prints the size
@@ -457,7 +457,7 @@ adb logcat -d -s CH33Vault | grep -c 'CH33{'      # the obvious filter
 adb logcat -d | grep -o 'CH33{[^}]*}' | sort -u   # the whole buffer
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Logcat is storage. It is a ring buffer, but it is written, it is readable by root, by anything
 > holding `READ_LOGS`, by `adb logcat` from any host the user has ever authorised, and by any crash
 > reporter that uploads the buffer. On a debuggable build the app's own uid can read it back, which
@@ -548,7 +548,7 @@ adb shell "am start -n com.pentest.ch33.vault/.ChallengeActivity"
 adb shell ls -R /storage/emulated/0/Android/data/com.pentest.ch33.vault/
 ```
 
-Note that `adb shell` can list `Android/data` on Android 11 because it holds `ext_data_rw` (gid
+`adb shell` can list `Android/data` on Android 11 because it holds `ext_data_rw` (gid
 1078). An ordinary app cannot — which is exactly the asymmetry
 [Lab 03](lab-03-scoped-storage-and-fuse.md) measured, and it matters for naming the adversary.
 </details>
