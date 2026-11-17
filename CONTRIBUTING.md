@@ -155,7 +155,7 @@ counter-examples that teach the trap. Mark them, and name the rule:
 adb shell su -c 'id'          # lint:allow SU-DASH-C -- counter-example
 ```
 
-> **⚠️ A bare `lint:allow` suppresses *every* rule on that line.** One did exactly that here and
+> **A bare `lint:allow` suppresses *every* rule on that line.** One did exactly that here and
 > silenced nine unrelated live warnings. Always name the rule ids. `--show-suppressed` lists
 > suppressions anyway, so a marker cannot hide a defect from an audit.
 
@@ -220,7 +220,7 @@ an honest omission because it buries the useful part. They follow the contract i
 > **This is a different standard, not a lower one.** The exemption from `labs/`, `examples/`,
 > `scripts/`, `cheatsheet.md`, `mindmap.md` and `faq.md` is **conditional on the equivalent material
 > being present inline**. A reference chapter with no confusions section and no inline mind map does
-> not qualify for the exemption — it is simply unfinished.
+> not qualify for the exemption — it is unfinished.
 
 ### 2.3 Writing rules, in brief
 
@@ -228,8 +228,8 @@ Complete sentences in prose (no arrow-chains — that is what diagrams are for).
 enumerable. Jargon defined on first use. No filler openers. Cross-links relative
 (`[Binder](25-Binder/README.md)`). Code fences labelled on the first line with **where the command
 runs** — host, `adb shell`, device root, or Frida REPL. The five callout types are
-`> **📖 Definition**`, `> **⚠️ Warning**`, `> **🔍 Pentester's Note**`, `> **🧠 Mental Model**` and
-`> **🔬 Under the Hood**`.
+`> **Definition**`, `> **Warning**`, `> **Pentester's Note**`, `> **Mental Model**` and
+`> **Under the Hood**`.
 
 ---
 
@@ -336,7 +336,7 @@ find . -newer ./NN-Chapter/examples/build.sh -type f
 1. **One topic per change.** A chapter rewrite and a lint fix are two changes.
 2. **Say what you measured, and on what.** Include the device, API level, and the command output.
    A change to a measured claim without a new measurement will be rejected on principle, however
-   obviously right it looks.
+   right it looks.
 3. **Run every check in §3** and say so.
 4. **Note any new third-party material** so it can be added to [`LICENSE`](LICENSE) §3. Device
    captures and vendor policy files are third-party material even when they look like plain text.

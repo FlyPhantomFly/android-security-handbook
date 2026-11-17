@@ -1,4 +1,4 @@
-# Style Guide — how every chapter in this repository is written
+# Style guide — how every chapter in this repository is written
 
 This file is the contract. Every `README.md` under a numbered chapter folder follows it exactly.
 If you are extending the repository, read this first.
@@ -23,7 +23,7 @@ consequence.**
 
 ---
 
-## 2. WHY before HOW — always
+## 2. Why before how — always
 
 Every concept is introduced by answering, in this order:
 
@@ -188,7 +188,7 @@ second one that condenses it is duplication. The mind map and quick-revision blo
 Summary section for the same reason.
 
 The exemption is conditional. A reference chapter with no confusions section and no inline mind map
-does not qualify for it — it is simply unfinished.
+does not qualify for it — it is unfinished.
 
 ---
 
@@ -197,11 +197,11 @@ does not qualify for it — it is simply unfinished.
 - **Complete sentences.** No arrow-chain shorthand (`A → B → fails`) in prose. Diagrams are for that.
 - **Tables** for anything enumerable: flags, constants, API levels, comparisons.
 - **Callouts** using the repository's five blockquote types:
-  - `> **📖 Definition**`
-  - `> **⚠️ Warning**`
-  - `> **🔍 Pentester's Note**`
-  - `> **🧠 Mental Model**`
-  - `> **🔬 Under the Hood**`
+  - `> **Definition**`
+  - `> **Warning**`
+  - `> **Pentester's Note**`
+  - `> **Mental Model**`
+  - `> **Under the Hood**`
 - **Version awareness.** When behaviour differs across API levels, use a Version Matrix table.
 - **Jargon is explained on first use**, in the same paragraph, in parentheses or a Definition callout.
 - **No filler.** Do not write "In this section we will discuss…". Just discuss it.
