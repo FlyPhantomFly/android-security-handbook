@@ -40,7 +40,10 @@ exclude_docs: |
 
 theme:
   name: material
-  font: false
+  # Vercel's typefaces (served from Google Fonts).
+  font:
+    text: Geist
+    code: Geist Mono
   features:
     - navigation.sections
     - navigation.top
@@ -52,14 +55,22 @@ theme:
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
+      # Vercel look: white header on white page, hairline separated.
+      primary: white
       toggle:
         icon: material/weather-night
         name: Switch to dark mode
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
+      # Vercel dark: pure black chrome on pure black page.
+      primary: black
       toggle:
         icon: material/weather-sunny
         name: Switch to light mode
+
+extra:
+  # Drop the "Made with Material for MkDocs" notice for a quieter footer.
+  generator: false
 
 extra_css:
   - stylesheets/site.css

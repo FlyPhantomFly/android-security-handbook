@@ -1,36 +1,287 @@
 /*
- * stylesheets/site.css — site-wide overrides for the handbook.
+ * stylesheets/site.css — the handbook's visual design system.
  *
- * WHY: Material sizes table wrappers with `display: inline-block`, so a wide
- * table keeps its natural (unwrapped) width and the right-hand column is
- * clipped mid-word at the screen edge on phones; the table scrolls, but the
- * clipped first view reads as text running past the boundary. Two fixes:
+ * Direction: Vercel's design language — near-black text on white (pure
+ * black in dark mode), one blue accent (#0070F3) doing all the work,
+ * hairline #EAEAEA borders, Geist type, translucent blurred chrome, crisp
+ * 8px radii. No decoration that doesn't carry information.
  *
- * 1. The wrapper becomes a block, so a fitting table always spans the
- *    article's full width.
- * 2. On phone-width screens the table font drops from .64rem to .6rem and
- *    cell padding tightens, which brings the three-column chapter index
- *    (and every other bare table) under the article width so its cells wrap
- *    instead of clipping. Verified in a 360px-wide mobile viewport: all
- *    tables on the opening page then fit (scrollWidth <= clientWidth).
- *
- * Tables whose content genuinely cannot wrap (long command tokens) still
- * scroll horizontally via Material's `.md-typeset__scrollwrap`.
+ * Tokens are prefixed `--ph-` (Pages handbook) and feed Material's own
+ * CSS variables, so Material's components pick the palette up natively.
  */
+
+:root {
+  --ph-blue: #0070f3;
+  --ph-blue-bright: #3291ff;
+  --ph-blue-deep: #005cc8;
+  --ph-blue-tint: rgba(0, 112, 243, .1);
+
+  --ph-border: #eaeaea;
+  --ph-bg: #ffffff;
+  --ph-bg-subtle: #fafafa;
+  --ph-fg: #171717;
+  --ph-fg-muted: #666666;
+  --ph-code-bg: #fafafa;
+
+  --ph-radius: 8px;
+}
+
+[data-md-color-scheme="slate"] {
+  --ph-border: #262626;
+  --ph-bg: #0a0a0a;
+  --ph-bg-subtle: #111111;
+  --ph-fg: #ededed;
+  --ph-fg-muted: #888888;
+  --ph-code-bg: #111111;
+}
+
+/* Feed Material's variables so every component follows the palette. */
+[data-md-color-scheme="default"] {
+  --md-default-fg-color: var(--ph-fg);
+  --md-default-bg-color: var(--ph-bg);
+  --md-default-fg-color--light: var(--ph-fg-muted);
+  --md-primary-fg-color: var(--ph-bg);
+  --md-primary-bg-color: var(--ph-fg);
+  --md-accent-fg-color: var(--ph-blue);
+  --md-accent-fg-color--transparent: var(--ph-blue-tint);
+  --md-typeset-a-color: var(--ph-blue);
+  --md-typeset-table-color: var(--ph-border);
+  --md-code-bg-color: var(--ph-code-bg);
+  --md-footer-bg-color: var(--ph-bg-subtle);
+  --md-footer-fg-color: var(--ph-fg-muted);
+}
+
+[data-md-color-scheme="slate"] {
+  --md-default-fg-color: var(--ph-fg);
+  --md-default-bg-color: var(--ph-bg);
+  --md-default-fg-color--light: var(--ph-fg-muted);
+  --md-primary-fg-color: var(--ph-bg);
+  --md-primary-bg-color: var(--ph-fg);
+  --md-accent-fg-color: var(--ph-blue-bright);
+  --md-accent-fg-color--transparent: rgba(50, 145, 255, .12);
+  --md-typeset-a-color: var(--ph-blue-bright);
+  --md-typeset-table-color: var(--ph-border);
+  --md-code-bg-color: var(--ph-code-bg);
+  --md-footer-bg-color: var(--ph-bg);
+  --md-footer-fg-color: var(--ph-fg-muted);
+  color-scheme: dark;
+}
+
+/* ---------------------------------------------------------------- base */
+
+html {
+  scroll-behavior: smooth;
+}
+
+.md-typeset {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.md-typeset h1,
+.md-typeset h2,
+.md-typeset h3,
+.md-typeset h4 {
+  font-weight: 700;
+  letter-spacing: -.02em;
+  color: var(--ph-fg);
+}
+
+.md-typeset h1 {
+  font-size: 1.4em;
+  letter-spacing: -.03em;
+  line-height: 1.2;
+  margin-bottom: .8em;
+}
+
+.md-typeset h2 {
+  font-size: 1.18em;
+  margin-top: 2em;
+}
+
+.md-typeset h3 {
+  font-size: 1.05em;
+}
+
+/* Links: single blue, hairline underline only on hover. */
+.md-typeset a:hover,
+.md-typeset a:focus-visible {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+/* ------------------------------------------------------------ header */
+
+.md-header {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: none;
+  border-bottom: 1px solid var(--ph-border);
+}
+
+[data-md-color-scheme="default"] .md-header {
+  background: rgba(255, 255, 255, .82);
+}
+
+[data-md-color-scheme="slate"] .md-header {
+  background: rgba(10, 10, 10, .72);
+}
+
+/* Material intensifies a shadow once the page is scrolled; the hairline
+   border above is the whole treatment. */
+.md-header--shadow {
+  box-shadow: none;
+}
+
+.md-header__title {
+  font-weight: 600;
+  letter-spacing: -.02em;
+}
+
+/* --------------------------------------------------------------- nav */
+
+/* Section groups read as small caps labels, like Vercel docs sidebars. */
+.md-nav__item--section > .md-nav__link {
+  font-size: .68rem;
+  font-weight: 600;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  color: var(--ph-fg-muted);
+}
+
+/* Right-hand "On this page" column: restyle Material's own label. */
+.md-nav--secondary > .md-nav__title {
+  font-size: .64rem;
+  font-weight: 600;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  color: var(--ph-fg-muted);
+  background: transparent;
+  pointer-events: none;
+}
+
+/* ------------------------------------------------------------ content */
+
+/* Page action icons (edit / view source): Material hardcodes a
+   black-alpha that disappears on the black dark scheme. */
+.md-typeset .md-content__button {
+  color: var(--ph-fg-muted);
+}
+
+.md-typeset .md-content__button:hover {
+  color: var(--md-accent-fg-color);
+}
+
+/* Header search: give the dark scheme a visible field. */
+[data-md-color-scheme="slate"] .md-search__form {
+  background-color: #1a1a1a;
+  border: 1px solid var(--ph-border);
+  border-radius: 6px;
+}
+
+[data-md-color-scheme="slate"] .md-search__input::placeholder {
+  color: var(--ph-fg-muted);
+}
+
+/* Code blocks: subtle surface, hairline border, crisp radius. */
+.md-typeset pre {
+  border: 1px solid var(--ph-border);
+  border-radius: var(--ph-radius);
+}
+
+.md-typeset code {
+  border-radius: 5px;
+}
+
+/* Tables: hairline grid, quiet header row, gentle row hover. */
+.md-typeset table:not([class]) th {
+  background: var(--ph-bg-subtle);
+  color: var(--ph-fg);
+  font-weight: 600;
+}
+
+.md-typeset table:not([class]) tbody tr {
+  transition: background .15s ease;
+}
+
+.md-typeset table:not([class]) tbody tr:hover {
+  background: rgba(127, 127, 127, .05);
+}
+
+/* Mermaid: rendered inside a CLOSED shadow root on div.mermaid, so
+   document CSS can neither see nor style the diagram itself — no card
+   frame here (it could never key on the rendered state, and the empty
+   pre-render placeholder would show as a framed box). The diagrams come
+   pre-sized by mermaid's useMaxWidth, which caps them to the container. */
+
+/* ------------------------------------------------------------ footer */
+
+.md-footer {
+  border-top: 1px solid var(--ph-border);
+}
+
+.md-footer__copyright {
+  font-size: .7rem;
+}
+
+/* ------------------------------------------------ micro-interactions */
+
+::selection {
+  background: var(--ph-blue-tint);
+}
+
+[data-md-color-scheme="slate"] ::selection {
+  background: rgba(50, 145, 255, .25);
+}
+
+:focus-visible {
+  outline: 2px solid var(--md-accent-fg-color);
+  outline-offset: 2px;
+}
+
+/* Thin, quiet scrollbars. */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(127, 127, 127, .35);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(127, 127, 127, .55);
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* The floating "back to top" pill reads as a small card. */
+.md-top {
+  border: 1px solid var(--ph-border);
+  border-radius: 999px;
+  background: var(--ph-bg);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, .08);
+}
+
+/* ----------------------------------------- mobile table fit (kept) */
 
 .md-typeset__table {
   display: block;
   max-width: 100%;
 }
 
-.md-typeset__table table {
+/* Material's bare-table rule gives tables display:inline-block, which
+   leaves the cell grid shrink-wrapped inside a wider border box (visible
+   as an empty margin between the last column and the table's right
+   border). A real table spans its width properly. */
+.md-typeset .md-typeset__table table {
+  display: table;
+  width: 100%;
   max-width: 100%;
-}
-
-/* Mermaid diagrams: never let a rendered SVG exceed the article width. */
-.md-typeset div.mermaid svg {
-  max-width: 100%;
-  height: auto;
 }
 
 @media screen and (max-width: 600px) {
