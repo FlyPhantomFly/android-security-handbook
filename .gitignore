@@ -254,3 +254,4 @@ planning-guide.md
 # Kept last so it cannot be overridden by a later rule.
 
 !.gitkeep
+site/
