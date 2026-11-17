@@ -387,7 +387,7 @@ frida -U -f com.fridalab.modes -l hook2.js --no-pause
 
 `Error: java.lang.ClassNotFoundException: Didn't find class "com.fridalab.plugin.Engine" on path: DexPathList[...]`
 
-Note that the error names the *path* it searched. Read it: the paths listed are the app's own
+the error names the *path* it searched. Read it: the paths listed are the app's own
 `base.apk` — the plugin DEX is not among them.
 
 ### Diagnose

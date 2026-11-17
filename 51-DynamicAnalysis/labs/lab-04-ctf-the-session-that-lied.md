@@ -28,7 +28,7 @@ directory they handed you. Four fragments of the flag are hidden in four differe
 The flag has the form `CH51{f1_f2_f3_f4}` and each fragment is a lowercase word or short phrase you
 will read directly out of the evidence once you look in the right place.
 
-> **⚠️ The scoring is asymmetric on purpose.** Finding the flag is worth 40 points. Writing a correct
+> **The scoring is asymmetric on purpose.** Finding the flag is worth 40 points. Writing a correct
 > report is worth 60. Every unsupported claim costs 10. It is entirely possible to find the flag and
 > score negative.
 

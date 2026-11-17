@@ -18,7 +18,7 @@ dynamic partitions and `fastbootd` from Android 10 (API 29); virtual A/B from An
 
 ---
 
-> **⚠️ Warning — read this before you type a single command from this chapter**
+> **Warning — read this before you type a single command from this chapter**
 >
 > This is the only chapter in the repository whose commands can destroy hardware and erase data
 > irrecoverably. Three facts, stated once, plainly, because they are facts and not scare tactics:
@@ -84,7 +84,7 @@ not a device you own.
 **Fastboot is the key to that seal, and the lock it opens is the most consequential lock on the
 device.**
 
-> **📖 Definition — bootloader**
+> **Definition — bootloader**
 > The **bootloader** is the first software the device runs after the silicon's own immutable boot
 > ROM. Its job is to find an operating-system kernel, verify it, load it into memory, and jump to it.
 > It runs *before* Linux exists, so there is no filesystem, no process, no `adb`, no Android at all —
@@ -92,7 +92,7 @@ device.**
 > every Android device one of those peripherals is USB, and one of the things it can do over USB is
 > speak a protocol called **fastboot**.
 
-> **📖 Definition — fastboot (three different things with one name)**
+> **Definition — fastboot (three different things with one name)**
 > The word is overloaded, and mixing the three up is the single most common source of confusion in
 > this topic:
 >
@@ -161,7 +161,7 @@ the bootloader is the act of removing the guarantee that the platform is the one
 [§5.7](#57-what-an-unlocked-bootloader-does-to-every-other-control-in-this-repository) works through
 that control by control, which is the section a client actually needs.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > `adb` talks to Android. `fastboot` talks to the thing that decides whether Android runs. They are
 > not two modes of one tool; they are two protocols, over two different USB interfaces, spoken by two
 > different pieces of software, with completely different trust properties. `adb` runs *inside* the
@@ -301,10 +301,10 @@ does not carry the image.** It carries only a partition name, and it operates on
 currently sitting in the device's download buffer. So does `boot`. So does `flashing unlock` on
 devices that require a signed token. One buffer, many consumers.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > That separation explains a failure mode people find baffling. If your `download:` succeeded and
 > your `flash:` failed, the image is *still in the device's RAM*. Re-issuing `flash:` alone would
-> work — the host tool simply does not offer you that, because it has no reason to assume the buffer
+> work — the host tool does not offer you that, because it has no reason to assume the buffer
 > is still intact after a `FAIL`. It also explains `fastboot boot`: exactly the same download, then
 > a different verb.
 
@@ -448,7 +448,7 @@ then perform an ordinary reboot. The bootloader starts, reads `misc`, sees the r
 that is what "bootonce" means — and enters fastboot mode instead of booting Linux. `adb reboot
 recovery` uses the same mailbox with the string `boot-recovery`.
 
-> **📖 Definition — `misc` partition**
+> **Definition — `misc` partition**
 > A small (typically 1 MiB) raw partition holding no filesystem, used purely as a shared structure
 > between Android and the bootloader. It is the *only* channel by which running Android can influence
 > the next boot. It also carries the "wipe data" command that a factory reset from Settings uses.
@@ -457,7 +457,7 @@ recovery` uses the same mailbox with the string `boot-recovery`.
 combination (very commonly Volume Down + Power) while powering on. This route works when Android
 does not boot at all, which is exactly the situation route 1 cannot help with.
 
-> **⚠️ Warning**
+> **Warning**
 > **Write your device's key combination down before you flash anything.** The single most common way
 > people lose a device in this chapter is: flash a bad image, device bootloops, `adb reboot
 > bootloader` no longer works because there is no Android to run it, and they do not know the key
@@ -481,7 +481,7 @@ essentially every device.
 | `fastboot reboot fastboot` | bootloader | Switch to `fastbootd` |
 | `fastboot continue` | fastboot mode | Resume the interrupted boot |
 
-> **🔬 Under the Hood — measured**
+> **Under the Hood — measured**
 > The AVD used for this chapter has **no `misc` partition at all**. `ls /dev/block/by-name/misc`
 > returns `No such file or directory`, and `/dev/block/by-name/` contains only `metadata`, `super`,
 > `vbmeta` and the two raw disks. That is the mechanical reason the emulator cannot enter fastboot
@@ -544,7 +544,7 @@ data flows, it is entered only by an explicit `DATA` response, and it is left on
 being reached. If the host and device disagree about the count — which cannot happen in a correct
 implementation, because the device *echoes back the size it will accept* — the transport wedges.
 
-> **⚠️ Warning — there is no authentication and no integrity checking on the wire**
+> **Warning — there is no authentication and no integrity checking on the wire**
 > Nothing in the fastboot protocol authenticates the host, and nothing checksums the payload. On an
 > unlocked device, anything that can drive the USB port can flash anything. A malicious charging
 > station cannot reach a *locked* device's flash because the bootloader refuses `flash:`, but an
@@ -593,7 +593,7 @@ than copied from documentation, so this table reflects what the current host too
 | `logical-block-size`, `erase-block-size` | Storage geometry | Alignment for `format` |
 | `off-mode-charge`, `battery-voltage` | Charging state | Some devices refuse to flash under a voltage threshold |
 
-> **🔍 Pentester's Note — `getvar:unlocked` is a claim, not evidence**
+> **Pentester's Note — `getvar:unlocked` is a claim, not evidence**
 > The bootloader is answering a question about itself. On a device where the bootloader has been
 > replaced, that answer is whatever the replacement says it is. The non-forgeable statement of lock
 > state is the `deviceLocked` field inside a **hardware key attestation certificate**, which is
@@ -604,7 +604,7 @@ than copied from documentation, so this table reflects what the current host too
 > `verifiedBootState = Unverified, deviceLocked = false` — seconds apart, on the same device. Use
 > `getvar` to characterise a device you control. Never use it as the basis of an assurance claim.
 
-> **⚠️ Warning — `getvar` is safe; the reboot to reach it is not always**
+> **Warning — `getvar` is safe; the reboot to reach it is not always**
 > On a device you do not own, entering fastboot mode is itself a state change: it interrupts the boot,
 > may clear the BCB, and on encrypted devices returns you to a pre-unlock state. Reconnaissance is
 > not free. Ask before you reboot a client device.
@@ -653,7 +653,7 @@ Grouped by risk. Everything in the first group is a read; everything below it ch
 | `fastboot oem unlock` | The pre-Android-6 spelling. Vendor-defined, so behaviour varies |
 | `fastboot oem ...` | Entirely vendor-defined. Some vendors ship debug commands here; some ship memory dumps |
 
-> **🔬 Under the Hood — `fastboot format` runs on your laptop, not on the phone**
+> **Under the Hood — `fastboot format` runs on your laptop, not on the phone**
 > `format` is not a device command. The host tool asks `getvar:partition-type:NAME` and
 > `getvar:partition-size:NAME`, builds an empty filesystem of that type and size **on the host**, and
 > then flashes it like any other image. That is why Google's `platform-tools` ships `mke2fs.exe`,
@@ -662,7 +662,7 @@ Grouped by risk. Everything in the first group is a read; everything below it ch
 > corollary that catches people: if the host's `mke2fs` is missing or the wrong version, `format`
 > fails with an error that appears to come from the device and does not.
 
-> **🔍 Pentester's Note — `fastboot oem` is where the interesting bugs live**
+> **Pentester's Note — `fastboot oem` is where the interesting bugs live**
 > The base protocol is small, well-reviewed and implemented by everyone. `oem` is a vendor extension
 > namespace with no specification and no shared test suite, frequently written by the team under the
 > most schedule pressure, and running in the most privileged execution context on the device with no
@@ -719,13 +719,13 @@ that positions its data at the right offset. The device flashes them in sequence
 `fastboot -S 100M flash super super.img` does, and what the tool does automatically when an image
 exceeds the buffer.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Sparse format is not compression. There is no dictionary, no entropy coding, and a sparse image of
 > random data is *larger* than the raw data (by the chunk headers). It is a description of a disk
 > image that says "these blocks are these bytes, and I decline to say anything about those blocks" —
 > and the enormous saving comes entirely from being allowed to decline.
 
-> **⚠️ Warning — `DONT_CARE` means the old contents survive**
+> **Warning — `DONT_CARE` means the old contents survive**
 > A `DONT_CARE` chunk is not "write zeros here". It is "skip this range". Flashing a sparse image
 > over a partition therefore does **not** guarantee that the ranges the image declines to describe
 > are erased — whatever was there before is still there. For a factory image this is fine, because
@@ -808,7 +808,7 @@ did.
 | Source available | No — closed, per-OEM | **Yes — `system/core/fastboot/device/`** |
 | Runs on a Linux kernel | No | Yes |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `fastbootd` is the half of the protocol you can actually read the source of, and that makes it the
 > better target for study. It also has a genuinely different trust posture: it runs on a full Linux
 > kernel with SELinux, inside a ramdisk that AVB verified — so a `fastbootd` compromise is a
@@ -817,7 +817,7 @@ did.
 
 ### 3.7 Dynamic partitions and the `super` partition
 
-> **📖 Definition — dynamic partition**
+> **Definition — dynamic partition**
 > A **dynamic** (or *logical*) partition is a named extent inside a single large physical partition
 > called `super`. Its size is not fixed at manufacture; it is described by metadata at the start of
 > `super` and can be changed by an update. The point is that a system update that needs `/system` to
@@ -867,7 +867,7 @@ The metadata that describes this lives at the start of `super` and is defined at
 | `LpMetadataPartitionGroup` | Grouping with a maximum total size — this is what stops an update over-committing `super` |
 | `LpMetadataBlockDevice` | The physical device(s) backing it, and the alignment |
 
-> **⚠️ Warning — measured, and worth knowing before you rely on `lpdump`**
+> **Warning — measured, and worth knowing before you rely on `lpdump`**
 > `lpdump` on the API 35 AVD returns `Failed to read metadata.`, both with no argument and pointed
 > directly at `/dev/block/by-name/super`, even running as root. The device-mapper tables above are
 > populated and correct, so the mapping exists — the metadata read is what fails, and the emulator's
@@ -900,7 +900,7 @@ system` needs `fastbootd` is layer two.** The bootloader can write `vda2`; it ca
 part of `vda2` is `system` without `liblp`. [20-Security-Architecture §3.2](../20-Security-Architecture/README.md#32-dm-verity--integrity-for-partitions-too-large-to-hash-at-boot)
 owns layer three.
 
-> **🔬 Under the Hood — measured, and honestly incomplete**
+> **Under the Hood — measured, and honestly incomplete**
 > Only `system` had a verity device on this AVD. `/vendor`, `/product` and `/system_ext` mount their
 > linear targets (`dm-4`, `dm-3`, `dm-2`) directly, with no verity layer — even though the `vbmeta`
 > partition on the same device *does* carry `AvbHashtreeDescriptor` entries for all four (see
@@ -909,7 +909,7 @@ owns layer three.
 > emulator-specific first-stage-init path, and the emulator is explicitly not a reference for boot
 > behaviour. Recorded as an observation, not a conclusion.
 
-> **🧠 Mental Model — A/B and dynamic partitions are orthogonal, and the AVD proves it**
+> **Mental Model — A/B and dynamic partitions are orthogonal, and the AVD proves it**
 > The same device measured `ro.boot.dynamic_partitions = true` and `ro.build.ab_update = false`, with
 > `ro.boot.slot_suffix` empty. Dynamic partitions with no A/B. People routinely assume the two
 > arrived together because they are of a similar vintage; they are independent features and you will
@@ -981,7 +981,7 @@ recomputed  3695fea807c912e3c0c7c265282055ae5d14c3f1b8594bbcd6f40e83b3e68371
                                              NO MATCH
 ```
 
-> **⚠️ Warning — the conclusion this forces, and it is not the popular one**
+> **Warning — the conclusion this forces, and it is not the popular one**
 > **`fastboot --disable-verity` produces a `vbmeta` image that fails AVB's own integrity check.** The
 > flags field is *inside* the region the hash covers, so setting it invalidates the hash, and the
 > signature over that hash no longer verifies against the OEM public key. It is not a supported
@@ -1061,7 +1061,7 @@ previous state was protecting.** Two mechanisms enforce it in practice:
    cryptographic rather than merely physical. Even a bit-for-bit image of the flash taken afterwards
    yields nothing, because the class keys that wrapped the file keys are gone.
 
-> **🔍 Pentester's Note — the practical consequence for evidence handling**
+> **Pentester's Note — the practical consequence for evidence handling**
 > This is why "unlock the bootloader and dump `/data`" is not a forensic technique on a modern
 > Android device, and why claims that it is should be met with scepticism. If a device arrives
 > locked, its user data is not reachable through fastboot at all — the paths that exist go through
@@ -1069,7 +1069,7 @@ previous state was protecting.** Two mechanisms enforce it in practice:
 > Recording that a device was locked on receipt is therefore a meaningful statement about what could
 > and could not have happened to it.
 
-> **⚠️ Warning — relocking wipes too, and people forget**
+> **Warning — relocking wipes too, and people forget**
 > The symmetry is not decorative. Going UNLOCKED to LOCKED also wipes, because the data written while
 > unlocked was written under a weaker guarantee and must not be carried into the stronger state where
 > attestation will vouch for the device. Plan for it: an engagement's evidence must be off the device
@@ -1077,7 +1077,7 @@ previous state was protecting.** Two mechanisms enforce it in practice:
 
 ### 3.10 A/B slots and virtual A/B
 
-> **📖 Definition — A/B (seamless) updates**
+> **Definition — A/B (seamless) updates**
 > An **A/B** device has two complete copies of every partition needed to boot — `boot_a`/`boot_b`,
 > `system_a`/`system_b`, `vbmeta_a`/`vbmeta_b`, and so on. One copy is *active* and running; the
 > update is written to the *inactive* copy while you use the phone; a reboot switches which is
@@ -1112,7 +1112,7 @@ fastboot --slot all   flash boot boot.img    # -> both
 fastboot set_active b                        # switch which one boots next
 ```
 
-> **⚠️ Warning — the single most common A/B mistake**
+> **Warning — the single most common A/B mistake**
 > Flashing a patched boot image to one slot, then having the device switch slots (because an OTA
 > completed, or because the slot you flashed failed to boot), and concluding that "the patch did not
 > work". It worked; you are running the other slot. Always record `current-slot` before and after,
@@ -1120,7 +1120,7 @@ fastboot set_active b                        # switch which one boots next
 > A/B device, "it stopped being rooted after an update" almost always means the *other* slot is
 > live and it was never patched.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > A/B is a double-buffer. You are always rendering into the buffer you are not displaying. `set_active`
 > is the buffer swap. Everything confusing about A/B becomes obvious once you hold that picture.
 
@@ -1143,7 +1143,7 @@ fastboot getvar snapshot-update-status    # none | snapshotted | merging
 | `snapshotted` | An update is staged but not merged | **No** — flash after `snapshot-update cancel` |
 | `merging` | A merge is actively running | **No** — let it finish, or `snapshot-update merge` |
 
-> **⚠️ Warning**
+> **Warning**
 > `fastboot snapshot-update cancel` is documented by the tool itself as something that "may make the
 > device unbootable until it is reflashed" — that wording is from `fastboot --help` verbatim. Flashing
 > partway through a virtual-A/B merge is one of the reliable ways to produce a device that needs a
@@ -1176,7 +1176,7 @@ enormously different downside.
 | Available on a locked device | No | No |
 | Available on every unlocked device | **No — see below** | Yes |
 
-> **⚠️ Warning — `fastboot boot` is not universal**
+> **Warning — `fastboot boot` is not universal**
 > Several OEMs disable the `boot` command in their bootloaders even when unlocked, because
 > "boot arbitrary RAM image" is exactly the primitive an attacker wants and the vendor judged the
 > tradeoff differently. You will see `FAILED (remote: 'unknown command')` or a vendor-specific
@@ -1184,7 +1184,7 @@ enormously different downside.
 > downloading the full stock factory image *first*, confirming you can enter fastboot with the key
 > combination, and accepting the risk deliberately rather than discovering it.
 
-> **🔍 Pentester's Note — the workflow this enables**
+> **Pentester's Note — the workflow this enables**
 > `fastboot boot` turns "modify the platform" from a destructive experiment into an iterable one. A
 > boot image with an instrumented `init`, a kernel with extra tracing, a ramdisk with your own
 > `init.rc` service — all of them become try-it-and-reboot rather than flash-and-pray. When you are
@@ -1223,7 +1223,7 @@ Three honest statements about these, because this is a subject where confident n
    phone with EDL" as a data-recovery claim is usually a claim about a pre-FBE device or about a
    device where the examiner also has the passcode.
 
-> **⚠️ Warning — what a "hard brick" is**
+> **Warning — what a "hard brick" is**
 > A **soft brick** is a device that does not boot Android but still reaches fastboot; it is recoverable
 > with a factory image. A **hard brick** is a device whose bootloader is gone or refuses to run, so
 > there is no fastboot; recovery requires the vendor path above, and on many devices requires an
@@ -1251,7 +1251,7 @@ Three honest statements about these, because this is a subject where confident n
 | `init_boot` partition (GKI) | Android 13 (API 33) | The ramdisk moved out of `boot`; changes which image you patch |
 | `fastboot fetch` | Android 12 (API 31) era | Optional; most retail bootloaders do not implement it |
 
-> **⚠️ Warning — every row above is a *specification* date, not a device fact**
+> **Warning — every row above is a *specification* date, not a device fact**
 > OEMs ship partial implementations, disable commands, and add their own. The only reliable statement
 > about a specific device is what `getvar all` says on that device. Treat this table as a guide to
 > what to *look for*, never as a claim about what is present.
@@ -1548,7 +1548,7 @@ certificate, verified **server-side** against Google's root, with the `deviceLoc
 // The device never gets to state its own verdict.
 ```
 
-> **🔍 Pentester's Note — how to grade this finding honestly**
+> **Pentester's Note — how to grade this finding honestly**
 > Finding `ro.boot.verifiedbootstate` in an app is a real finding, but its severity depends entirely
 > on what the app does with it. If it is one input among many in a risk score that also includes
 > server-verified attestation, it is **Informational** — a weak signal used weakly. If it is the sole
@@ -1612,7 +1612,7 @@ NUL-terminated pointer.**
 
 *Honest severity:* **Critical** where it is reachable on a *locked* device, because it defeats
 Verified Boot at its root and yields a persistent, undetectable compromise. **Low** where it requires
-an already-unlocked bootloader, because on an unlocked device the attacker can simply flash whatever
+an already-unlocked bootloader, because on an unlocked device the attacker can flash whatever
 they like — an exploit that grants what the device already grants is not a vulnerability, it is a
 complicated way to do something easy. **That distinction decides the entire severity, and it is the
 first question to ask about any bootloader bug.**
@@ -1649,7 +1649,7 @@ at all because it predates the standardised path.
 | **MASVS-CRYPTO-1** | Key attestation, which is the only trustworthy report of lock state |
 | **MASTG device-integrity / root-detection tests** | The practical tests. **Look the current test identifier up before citing it in a report** — MASTG test numbering has been renumbered between major versions, and a stale ID reads as carelessness |
 
-> **⚠️ Warning**
+> **Warning**
 > MASVS v2 categories (`MASVS-RESILIENCE-n`) are stable; MASTG *test* identifiers have moved between
 > editions. Cite the category confidently and look the test number up rather than repeating one from
 > memory. [71-OWASP-Mobile](../71-OWASP-Mobile/README.md) has the current mapping.
@@ -1671,7 +1671,7 @@ non-destructive.
    which are actually consulted and what happens to the result.
 4. **Only then, and only on a device you own, consider changing state.** Record everything first.
 
-> **🔍 Pentester's Note — the sentence to put in the report**
+> **Pentester's Note — the sentence to put in the report**
 > Not "the bootloader is unlocked". That is a device fact, and if it is *your* test device it is a
 > statement about your methodology, not about the client. The finding is about the *app*: "the
 > application's platform-integrity check reads `ro.boot.verifiedbootstate`, a property that any
@@ -1725,7 +1725,7 @@ Where it does appear:
   implant.
 - **Downgrade attacks** where the actor has physical access and the rollback index has not advanced.
 
-> **🔍 Pentester's Note — the factory-reset asymmetry**
+> **Pentester's Note — the factory-reset asymmetry**
 > "I factory reset it and it came back" is a strong indicator of boot-partition or `/system`
 > persistence, because a factory reset does not touch either. On an unlocked device, the way to
 > actually clear it is a full factory-image flash, not a reset. This distinction matters in incident
@@ -1845,10 +1845,10 @@ Three recognition cues, in order of reliability:
 ```
 
 **The patch is one instruction.** Replace the `invoke-virtual` + `move-result v1` pair with
-`const/4 v1, 0x1`, or simply change the literal `"green"` to whatever the device actually reports.
-The second option is more robust because it survives the method being inlined elsewhere.
+`const/4 v1, 0x1`, or change the literal `"green"` to whatever the device actually reports.
+The second option is more durable because it survives the method being inlined elsewhere.
 
-> **⚠️ Warning — the trap chapter 18 measured, and it applies exactly here**
+> **Warning — the trap chapter 18 measured, and it applies exactly here**
 > Patching a check function is not the same as defeating the check. `18-ARM` §5.4 patched a native
 > `verify_signature` to `return 1`, verified it returning 1, and the caller *still* refused — because
 > the compiler had inlined the check and the patched copy was called by nothing. The Java analogue is
@@ -1994,7 +1994,7 @@ cat /proc/cmdline    | tr ' ' '\n' | grep androidboot
 cat /proc/bootconfig | grep androidboot
 ```
 
-> **⚠️ Warning — measured: both of those are `Permission denied` from `adb shell` on API 35**
+> **Warning — measured: both of those are `Permission denied` from `adb shell` on API 35**
 > `/proc/cmdline` and `/proc/bootconfig` both returned `Permission denied` to the shell user on the
 > API 35 AVD, and were readable only as root. This corroborates
 > [39-EmulatorDetection](../39-EmulatorDetection/README.md), which measured the same restriction and
@@ -2019,7 +2019,7 @@ bootctl get-number-slots
 bootctl get-current-slot
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `dmctl table` and `lpdump` answer different questions and can disagree. `dmctl` reports live kernel
 > mappings; `lpdump` reports the metadata in `super`. On the API 35 AVD, `dmctl table` produced a
 > complete, correct extent map while `lpdump` returned `Failed to read metadata.` even as root. When
@@ -2032,7 +2032,7 @@ trace. It ships as [`scripts/bootprop-observer.js`](scripts/bootprop-observer.js
 than the excerpt below — the shipped version also hooks `ProcessBuilder`, watches `openat` for
 `/proc/cmdline`, and prints a summary of every property seen on detach.
 
-> **⚠️ Warning — verification status of this script, stated honestly**
+> **Warning — verification status of this script, stated honestly**
 > The shipped script **parses cleanly** (`node --check`) and its hook targets are the documented
 > platform APIs, but **it was not executed against a live process while writing this chapter.** The
 > `frida-server` binary present on the available API 35 emulator refuses to load: `CANNOT LINK
@@ -2124,7 +2124,7 @@ if (spf !== null) {
 console.log("[*] boot-property observer installed. Exercise the app.");
 ```
 
-> **🔍 Pentester's Note — observe before you spoof, always**
+> **Pentester's Note — observe before you spoof, always**
 > This script deliberately does not change any return value. Run it first and read the log. Two things
 > come out of that discipline that a spoofing script hides. First, you learn *which* properties the
 > app actually consults, which is often a much shorter list than the strings suggest. Second, you get
@@ -2166,7 +2166,7 @@ resetprop ro.boot.verifiedbootstate green
 resetprop ro.boot.flash.locked 1
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > `resetprop` on `ro.` properties is a global, device-wide change that persists until reboot and
 > affects every app. On a shared or daily-driver device that is a bigger intervention than it looks.
 > Prefer the per-process Frida hook when you only need one app to see it.
@@ -2186,7 +2186,7 @@ Wireshark on Linux, USBPcap on Windows. The payload is ASCII for commands and ra
 downloads, so a capture is readable without a dissector.
 
 [`examples/fastboot-wire-transcript.md`](examples/fastboot-wire-transcript.md) is an annotated
-transcript built from the protocol specification and the host tool's own strings, **clearly labelled
+transcript built from the protocol specification and the host tool's own strings, **labelled
 as reconstructed rather than captured**, because no device was put into fastboot mode for this
 chapter.
 
@@ -2247,7 +2247,7 @@ Three independent structural reasons, all measured on the same device:
 3. **There is no boot control HAL.** `bootctl get-number-slots` returns `Failed to get bootctl
    module.` and `lshal | grep -i boot` is empty.
 
-> **⚠️ Warning — do not generalise from the emulator in this chapter**
+> **Warning — do not generalise from the emulator in this chapter**
 > The AVD has no bootloader, so it has no lock state, no `flashing unlock`, no slots and no fastboot
 > transport. It is still useful for the *downstream* material — the property surface, the dynamic
 > partition layout, dm-verity mappings, and a real `vbmeta` to parse, all of which produced
@@ -2320,7 +2320,7 @@ than one with both: it means the property name is constructed at runtime, which 
 attempt to evade exactly the grep above. Hook it at runtime ([§7.2](#72-a-complete-frida-script-watching-every-boot-state-read))
 and the constructed name appears in plain text.
 
-> **⚠️ Warning — a hit is a lead, not a finding**
+> **Warning — a hit is a lead, not a finding**
 > This repository has measured this three separate times. Chapter 52 swept a 17 MB app and rejected
 > **15 of 17** high-confidence hits by hand. Chapter 33's leak hunter returned **132 hits and 132
 > false positives**. Chapter 38's mapper initially reported a self-signature check in 18 of 18 APKs
@@ -2430,7 +2430,7 @@ Interpretation table — but read the warning under it before you use it:
 | `red` | `1` | Verification failed. You are looking at a device mid-failure |
 | *(empty)* | *(empty)* | **The bootloader never reported one.** Measured on the API 35 AVD. Not a state — an absence |
 
-> **⚠️ Warning**
+> **Warning**
 > Every value in that table is self-reported by software the unlock made writable. Treat it as
 > orientation for your own test device, never as an assurance claim. The non-forgeable version is in
 > [50-HardwareBackedSecurity](../50-HardwareBackedSecurity/README.md).
@@ -2587,7 +2587,7 @@ extension. **The device never states a conclusion, so there is no local conclusi
 | Works offline | Yes | No, and that is a real cost |
 | Requires server infrastructure | No | Yes |
 
-> **🔍 Pentester's Note — grade this honestly**
+> **Pentester's Note — grade this honestly**
 > The fixed version has real costs: it needs a server, it needs network, and it will reject some
 > legitimate devices with broken or absent attestation. If a client has chosen the local check
 > deliberately, with those tradeoffs understood and something else compensating, the finding is
@@ -2647,7 +2647,7 @@ Six design decisions that separate this from a naive implementation:
    is empty, and the chain still verifies perfectly.** A pipeline that only checks "does the chain
    verify" passes an emulator. Check the security level, not just the signature.
 
-> **⚠️ Warning — the enterprise failure mode**
+> **Warning — the enterprise failure mode**
 > Treating "bootloader unlocked" as an automatic block. A meaningful fraction of an engineering
 > organisation's devices are unlocked for legitimate reasons, and a policy that blocks them
 > unconditionally gets exceptions carved into it until it means nothing. The useful policy is
@@ -2698,7 +2698,7 @@ The host sends `getvar:max-download-size` and compares the image against it, spa
 `download:` followed by the size as eight hex digits. The device replies `DATA` echoing that size,
 after which the host writes exactly that many raw bytes with no framing, and the device replies
 `OKAY`. Then the host sends `flash:boot`, and the device acts on whatever is in its download buffer,
-emitting zero or more `INFO` lines and finally `OKAY` or `FAIL`. Note that `flash:` does not carry the
+emitting zero or more `INFO` lines and finally `OKAY` or `FAIL`.`flash:` does not carry the
 image — the download and the flash are separate transactions against a shared buffer.
 
 **Q. What is `fastbootd` and why does it exist?**
@@ -2930,7 +2930,7 @@ entirely on files.
 | 03 | [vbmeta, verity, and the one byte that matters](labs/lab-03-vbmeta-and-verity.md) | Advanced | Parse a real vbmeta, locate the flags field, demonstrate that `--disable-verity` invalidates the image's own hash, and map descriptors to live dm-verity devices | A rooted device or emulator for the dm half |
 | 04 | [CTF — The Bricked Vault](labs/lab-04-ctf-bricked-vault.md) | CTF | Recover a flag from a deliberately-damaged set of firmware artefacts, using everything above | No — files only |
 
-> **⚠️ Warning**
+> **Warning**
 > **No lab in this chapter asks you to unlock a bootloader, flash a partition, or reboot a device
 > into fastboot mode.** That is deliberate. The destructive procedure is documented in
 > [62-Magisk/labs/lab-01](../62-Magisk/labs/lab-01-root-a-device.md), which is where it belongs — it

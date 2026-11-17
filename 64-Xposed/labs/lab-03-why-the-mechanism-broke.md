@@ -23,7 +23,7 @@ and no expiry mechanism.** You are going to establish the expiry date of an enti
 first principles, using nothing but a device and `adb`. Once you have done it for Xposed you can do
 it for any check you find in an APK.
 
-> **⚠️ This lab deliberately contains no instructions for installing classic Xposed.** It required
+> **This lab deliberately contains no instructions for installing classic Xposed.** It required
 > disabling Verified Boot, which [61-Fastboot](../../61-Fastboot/README.md) measured to be a
 > deliberate corruption of the image's own AVB signature — not a supported option — and which makes a
 > subsequently relocked device a brick. If you want managed-code hooking, use
@@ -127,7 +127,7 @@ adb shell 'su 0 touch /system/ch64-test' ; echo "exit=$?"
 adb shell 'su 0 ls -l /system/ch64-test'
 ```
 
-**If the file was created, delete it immediately** and note that your device has verity disabled or
+**If the file was created, delete it immediately** and confirm that your device has verity disabled or
 is using a writable overlay — which is itself a finding worth recording about your test device.
 
 ```bash

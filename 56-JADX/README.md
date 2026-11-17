@@ -35,7 +35,7 @@ plausible names for everything it had to invent names for, and prints a Java pro
 went well — **compiles to bytecode that behaves the same way**. That program is a hypothesis. It is
 usually a very good hypothesis. It is not the source code, and on some inputs it is wrong.
 
-> **🧠 Mental Model.** A courtroom sketch artist. Nobody is allowed to photograph the defendant, so an
+> **Mental Model.** A courtroom sketch artist. Nobody is allowed to photograph the defendant, so an
 > artist watches and draws. A good sketch is genuinely useful: you can pick the person out of a crowd
 > afterwards. But the tie in the sketch may be a different tie, the room's proportions are the
 > artist's, and if you are asked in a deposition to swear to the colour of the defendant's shoes, the
@@ -174,7 +174,7 @@ because the runtime needs them to resolve references. Almost nothing else that a
 The developer had a directory full of `.kt` and `.java` files with comments, meaningful variable
 names, whitespace, and a mental model. None of that shipped. What shipped is the machine's residue.
 
-> **📖 Definition — decompiler.** A program that takes compiled machine or virtual-machine code and
+> **Definition — decompiler.** A program that takes compiled machine or virtual-machine code and
 > produces source code in a high-level language which, when recompiled, behaves the same way. It is
 > distinct from a **disassembler**, which produces a one-to-one textual rendering of the instructions
 > themselves and invents nothing. `baksmali` is a disassembler. jadx is a decompiler.
@@ -232,7 +232,7 @@ $ jadx --version
 1.5.3
 ```
 
-> **⚠️ Warning — a Windows installation trap this chapter hit.** On this machine jadx was installed
+> **Warning — a Windows installation trap this chapter hit.** On this machine jadx was installed
 > from the Windows `jadx-gui` bundle, which ships `C:\Program Files\jadx\jadx.exe` and
 > `lib\jadx-gui-1.5.3-all.jar` and **nothing else**. That `jadx.exe` answers `--version` and `--help`
 > from the command line, which makes it look like the CLI — but give it real arguments and it opens
@@ -274,7 +274,7 @@ plausible, and **wrong**, with no marker of any kind. There is no flag that turn
 it, because if jadx knew, it would have warned. Section 6.6 contains a measured example: a method
 whose bytecode returns `105` and whose jadx output returns `100`, both verified by execution.
 
-> **🔍 Pentester's Note.** Calibrate on this and you will be ahead of most people who use this tool
+> **Pentester's Note.** Calibrate on this and you will be ahead of most people who use this tool
 > daily: **jadx's warnings are a floor on its error rate, not a ceiling.** A file with no `JADX WARN`
 > comments is not a file that decompiled correctly; it is a file where jadx had no doubts. Those are
 > different statements.
@@ -466,7 +466,7 @@ because it only decompiles the class you clicked.
 `semgrep`, counted, ranked, committed to a case directory, and attached to a report. The GUI can
 export the same tree ("Save all"), which is exactly the CLI's job done slowly.
 
-> **🧠 Mental Model.** jadx-gui is the reading room; the CLI is the photocopier. You read in the
+> **Mental Model.** jadx-gui is the reading room; the CLI is the photocopier. You read in the
 > reading room. You take copies away for everything that happens afterwards.
 
 ### 2.5 Trust boundary: jadx runs attacker-supplied input
@@ -506,7 +506,7 @@ The existence of a switch to *disable* these tells you they were added for a rea
 absolutely does ship APKs designed to break analysis tooling — [40 §3.8](../40-Obfuscation/README.md)
 covers anti-tool tricks as a defensive technique.
 
-> **⚠️ Warning.** Do not set `JADX_DISABLE_ZIP_SECURITY=true` because a sample "won't load". That is
+> **Warning.** Do not set `JADX_DISABLE_ZIP_SECURITY=true` because a sample "won't load". That is
 > precisely the sample for which the check exists. If you must, do it in a throwaway VM or container
 > with no credentials and no network, and never in your normal working directory. The failure mode of
 > zip traversal is files written outside your output directory, and you will not notice.
@@ -539,7 +539,7 @@ usage: jadx [command] [options] <input files>
 The `.smali` input path deserves a callout because it is not widely known and it is the single most
 useful capability in this chapter for *understanding* the decompiler:
 
-> **🔬 Under the Hood.** `jadx` bundles a Smali **assembler**, not just the ability to read Smali as
+> **Under the Hood.** `jadx` bundles a Smali **assembler**, not just the ability to read Smali as
 > text. Give it a `.smali` file and it produces a DEX in memory and decompiles that. This means you
 > can write six lines of Smali expressing an exact instruction shape and see immediately what jadx
 > makes of it. Every failure demonstration in §6 was produced this way, and
@@ -574,7 +574,7 @@ DEX you know is real, this is the flag.
 jadx -Pdex-input.verify-checksum=no -d out weird.dex
 ```
 
-> **🔍 Pentester's Note.** A checksum mismatch is itself a finding, not just an obstacle. Note it,
+> **Pentester's Note.** A checksum mismatch is itself a finding, not just an obstacle. Note it,
 > then get [12 — DEX Internals](../12-DEX-Internals/README.md) out and work out *which* bytes
 > disagree with the header. A file whose body was modified after the header was written is a file
 > someone modified on purpose.
@@ -584,11 +584,11 @@ jadx -Pdex-input.verify-checksum=no -d out weird.dex
 Once the DEX is parsed, each method's `code_item` is a flat array of instructions. jadx turns that
 into a **control-flow graph**.
 
-> **📖 Definition — basic block.** A maximal run of instructions with exactly one entry point (the
+> **Definition — basic block.** A maximal run of instructions with exactly one entry point (the
 > first instruction) and exactly one exit point (the last). No instruction in the middle is a branch
 > target and no instruction in the middle is a branch. Once you enter, you execute all of it.
 
-> **📖 Definition — control-flow graph (CFG).** A directed graph whose nodes are basic blocks and
+> **Definition — control-flow graph (CFG).** A directed graph whose nodes are basic blocks and
 > whose edges are the possible transfers of control between them. A `goto` is one edge. An `if` is
 > two. A `packed-switch` is one per case plus a default. A `try` region adds an edge from *every*
 > instruction inside it to the handler, because any of them might throw.
@@ -606,7 +606,7 @@ with more than one entry point — and §6.4 shows exactly what it prints when i
 
 ### 3.4 Stage 3 — SSA and type inference
 
-> **📖 Definition — SSA (static single assignment).** A representation in which every variable is
+> **Definition — SSA (static single assignment).** A representation in which every variable is
 > assigned exactly once. Where control flow merges and a variable could have come from either branch,
 > a notional *phi function* records that fact. SSA makes it trivial to ask "where did this value come
 > from", which is what every subsequent analysis needs.
@@ -659,7 +659,7 @@ if (i == -1 || i == 10) {
 file that the author wrote a character literal. jadx prints `10` because `10` is the truth of the
 bytecode; `'\n'` was a fact about the source text.
 
-> **🧠 Mental Model.** Type inference is jadx reading a shopping list that says "2, 3, 1" and having
+> **Mental Model.** Type inference is jadx reading a shopping list that says "2, 3, 1" and having
 > to work out from context which are kilograms, which are litres and which are "packets of". It gets
 > it right most of the time because the rest of the list constrains it. When nothing constrains it,
 > it writes "2" and moves on.
@@ -671,7 +671,7 @@ This is where a decompiler earns its name, and where it fails.
 The CFG is a graph. Java source is a **tree** of nested statements. `RegionMakerVisitor` must find a
 tree that generates the graph.
 
-> **📖 Definition — reducible control flow.** A CFG is *reducible* if every loop in it has exactly one
+> **Definition — reducible control flow.** A CFG is *reducible* if every loop in it has exactly one
 > entry point. Equivalently: it can be built up from single blocks by repeatedly nesting sequences,
 > if-then-elses and single-entry loops. Every CFG that `javac` or `kotlinc` can produce from
 > structured Java or Kotlin source is reducible — because those languages have no `goto`.
@@ -776,7 +776,7 @@ annotated inline, and it is **the most trustworthy thing jadx can give you** —
 it has asserted almost nothing. Registers are named `r0`, `r1`, `r2` rather than `v0`, `v1`, `p0`,
 and the offsets are labels rather than hex, but otherwise you are looking at the instruction stream.
 
-> **🔍 Pentester's Note.** `-m fallback` is the fastest way to answer "what does this method actually
+> **Pentester's Note.** `-m fallback` is the fastest way to answer "what does this method actually
 > do" without leaving jadx and setting up apktool. It is not a substitute for Smali — it drops the
 > opcode names, so you cannot tell `add-int` from `add-int/2addr`, and for a patch you need the real
 > thing. But for *reading*, on one method, it is thirty seconds of work and it cannot lie to you about
@@ -874,7 +874,7 @@ exactly what the method does. `--show-bad-code` gives you a method body that ass
 local and then **falls off the end without returning**. If you skim past the comment block, that reads
 as "this method does nothing".
 
-> **⚠️ Warning.** `--show-bad-code` does not show you *more* truth. It shows you jadx's best guess
+> **Warning.** `--show-bad-code` does not show you *more* truth. It shows you jadx's best guess
 > *instead of* the instruction dump, and on hard methods the guess is worse than the dump. Use it when
 > you want a rough shape for a large method that mostly worked. Never use it as your reading mode for
 > a method you intend to make a claim about. The default is the safer default for a reason.
@@ -948,7 +948,7 @@ So what does the flag do? It makes every identifier **unique, valid, and greppab
 | Names that are not valid Java identifiers at all (obfuscators emit Unicode, reserved words, names starting with digits) | Renamed to something that compiles |
 | The same class gets different names on different runs, so diffs between app versions are noise | `--deobf-cfg-file` persists the mapping in a `.jobf` file so names are stable |
 
-> **📖 Definition — the `.jobf` file.** jadx writes its generated aliases to a file next to the input
+> **Definition — the `.jobf` file.** jadx writes its generated aliases to a file next to the input
 > with a `.jobf` extension, and reads it back on the next run. That is what makes `--deobf` names
 > stable across runs and therefore usable for diffing app versions. Control it with
 > `--deobf-cfg-file` and `--deobf-cfg-file-mode` (`read`, `read-or-save`, `overwrite`, `ignore`).
@@ -969,7 +969,7 @@ class but by default keeps a `SourceFile` attribute; if the developer did not se
 `-renamesourcefileattribute`, that attribute still says `LoginPresenter.java`. jadx will then call the
 class `LoginPresenter` even though its DEX name is `a.b.c`. Always try it.
 
-> **🔍 Pentester's Note.** The correct mental model: `--deobf` is a *hygiene* flag, not a *recovery*
+> **Pentester's Note.** The correct mental model: `--deobf` is a *hygiene* flag, not a *recovery*
 > flag. Turn it on for scripted extraction (you need unique filenames and stable diffs). Leave it off
 > when reading in the GUI (the raw names are shorter and the GUI already handles collisions). Recovery
 > comes from `--use-source-name-as-class-name-alias`, from a leaked `mapping.txt`
@@ -1010,7 +1010,7 @@ jadx -Prename-mappings.format=PROGUARD_FILE \
      -d out-mapped app.apk
 ```
 
-> **⚠️ Warning.** Verify a mapping file before you trust it. A `mapping.txt` from version 4.2 of an
+> **Warning.** Verify a mapping file before you trust it. A `mapping.txt` from version 4.2 of an
 > app applied to version 4.9 will silently mislabel classes, because R8's name assignment is not
 > stable across builds. Spot-check: pick three classes the mapping names, and confirm their contents
 > match the name. If `LoginPresenter` contains image-loading code, your mapping is from a different
@@ -1101,7 +1101,7 @@ which `--no-debug-info` turns off.
 | Any build, but you passed `--no-debug-info` | Invented |
 | A library shipped as a debug `.aar` inside a release app | **Original, for that library only** |
 
-> **🔍 Pentester's Note.** Before you spend a day reading invented names, spend thirty seconds checking
+> **Pentester's Note.** Before you spend a day reading invented names, spend thirty seconds checking
 > whether you have to. Decompile, then `grep` the output for a local name that is not a jadx-invented
 > pattern. A quicker check: `dexdump -d classes.dex | grep -c "^ *[0-9a-f]*: *local:"` — if the count
 > is non-zero on a production APK, note it. Shipping debug info is not a critical finding on its own,
@@ -1139,7 +1139,7 @@ know what it fetched.
 | `--no-xml-pretty-print` | Emit XML as one line | Diffing, or feeding to a parser |
 | `--use-headers-for-detect-resource-extensions` | Sniff file types by magic bytes when resource names are obfuscated | Resource-obfuscated apps — see [40 §3.9](../40-Obfuscation/README.md) |
 
-> **🔍 Pentester's Note.** `jadx -s -d out app.apk` is the fastest complete manifest-and-resources
+> **Pentester's Note.** `jadx -s -d out app.apk` is the fastest complete manifest-and-resources
 > decode there is, and it is often the very first command you should run — before the full
 > decompilation, which you can start in another terminal. The manifest tells you the attack surface
 > ([32-Manifest](../32-Manifest/README.md)) and the network security config tells you whether
@@ -1177,13 +1177,13 @@ Two further options sit alongside:
 - `kotlin-smap.class-alias-source-dbg` (default `no`) — use the `SourceDebugExtension` annotation to
   name classes.
 
-> **⚠️ Warning — `apply-and-hide` hides evidence.** The `Intrinsics.checkNotNullParameter` calls are
+> **Warning — `apply-and-hide` hides evidence.** The `Intrinsics.checkNotNullParameter` calls are
 > not noise; they are a **behavioural fact**. They throw `NullPointerException` on a null argument,
 > which is a real control-flow path and occasionally the whole reason a crash happens. Hiding them
 > makes the output prettier and makes you blind to it. Keep the default `apply` unless you have a
 > specific reason.
 
-> **🔍 Pentester's Note.** The `@Metadata` annotation is a de-obfuscation oracle that R8 does not
+> **Pentester's Note.** The `@Metadata` annotation is a de-obfuscation oracle that R8 does not
 > remove by default. On a Kotlin app with default R8 rules, class names may be `a.b.c` in the DEX
 > while `@Metadata` still carries the original names, and jadx will show you both. If an app is
 > obfuscated and you can still read sensible Kotlin names, that is why — and it is worth telling the
@@ -1213,7 +1213,7 @@ you exactly where it is unsure.
 | `Code decompiled incorrectly, please refer to instructions dump.` | error | The method body below is **known wrong**. Read the dump instead |
 | `throw new UnsupportedOperationException("Method not decompiled: ...")` | error | Total refusal. §6.4 |
 
-> **🔍 Pentester's Note — this is a grep target, not decoration.** Before you read a single line of an
+> **Pentester's Note — this is a grep target, not decoration.** Before you read a single line of an
 > app, count them:
 >
 > ```bash
@@ -1249,7 +1249,7 @@ java -Xmx8g -cp "C:\Program Files\jadx\lib\jadx-gui-1.5.3-all.jar" jadx.cli.Jadx
 For jadx-gui, edit the launcher's JVM options or set `JAVA_OPTS`. The GUI decompiles lazily, so it
 survives inputs the CLI cannot — one more reason to keep both in the workflow.
 
-> **⚠️ Warning — the silent partial run.** A jadx run that printed errors and still exited zero has
+> **Warning — the silent partial run.** A jadx run that printed errors and still exited zero has
 > not necessarily decompiled everything. Always compare the class count you got against the class
 > count in the DEX before you conclude a class is absent:
 >
@@ -1343,7 +1343,7 @@ Because jadx is a heuristic tool, **its output changes between versions for the 
 a practical consequence people forget: if you are diffing two versions of an *app*, use the same
 version of *jadx* for both, or you will be reading jadx's changelog rather than the app's.
 
-> **🔍 Pentester's Note.** Record the jadx version in your notes alongside every extract you quote. A
+> **Pentester's Note.** Record the jadx version in your notes alongside every extract you quote. A
 > year later, when someone asks why they cannot reproduce your listing, "jadx 1.5.3" is the answer. A
 > report that quotes decompiled code without naming the tool version is quoting an unreproducible
 > artefact.
@@ -1389,7 +1389,7 @@ you can see it is a switch over `DecompilationMode`.
 
 That single line is the chapter in miniature. The output is *useful* and *not source*.
 
-> **🔬 Under the Hood.** The `$SwitchMap` pattern is worth recognising on sight because it appears in
+> **Under the Hood.** The `$SwitchMap` pattern is worth recognising on sight because it appears in
 > every Java or Kotlin program that switches on an enum. The compiler cannot switch on an enum
 > directly — `switch` needs an integer — so it generates a synthetic class holding an `int[]` that maps
 > each enum's `ordinal()` to a dense case index, and switches on that. [05-Kotlin](../05-Kotlin/README.md)
@@ -1589,7 +1589,7 @@ flag fixes it.
 | `/* renamed from: a.b.c */` | `DeobfuscatorVisitor` / `RenameVisitor` | `--deobf`, `--rename-flags` |
 | `throw new UnsupportedOperationException("Method not decompiled")` | `CheckRegions` + code generation | `-m simple`, `-m fallback` |
 
-> **🔍 Pentester's Note.** When output looks wrong, the productive question is never "is jadx broken".
+> **Pentester's Note.** When output looks wrong, the productive question is never "is jadx broken".
 > It is **"which pass produced this, and what happens if I turn it off?"** Re-running one class with
 > `--no-inline-methods --no-inline-anonymous --no-replace-consts --no-restore-switch-over-string` gives
 > you a maximally-literal rendering that is uglier and closer to the bytecode.
@@ -1624,7 +1624,7 @@ Project's Git hosting. This matters more than it sounds: a decompiler is only as
 the compiler that produced the input, which is exactly why §6.6's hand-written bytecode — produced by
 no compiler at all — is where the wheels come off.
 
-> **⚠️ Warning — do not cite line numbers.** AOSP file *paths* are stable across releases and safe to
+> **Warning — do not cite line numbers.** AOSP file *paths* are stable across releases and safe to
 > cite. Line numbers are not; they move every release. If you need to point at a specific function,
 > name the function.
 
@@ -1699,7 +1699,7 @@ because attacker effort is the only currency client-side protection trades in, t
 
 The security consequence is a design principle, not a mitigation:
 
-> **⚠️ Warning — the rule every mobile security finding traces back to.** Anything the app can compute
+> **Warning — the rule every mobile security finding traces back to.** Anything the app can compute
 > without contacting a server, an attacker can compute without the app. Anything the app knows, an
 > attacker knows. The only secrets that survive the client are the ones that are never on it.
 
@@ -1789,7 +1789,7 @@ a developer, a client, occasionally a lawyer — is going to challenge it. What 
 
 The working rule this chapter recommends:
 
-> **🔍 Pentester's Note — the evidence rule.** *Find it in Java. Confirm it in Smali. Prove it at
+> **Pentester's Note — the evidence rule.** *Find it in Java. Confirm it in Smali. Prove it at
 > runtime.* Cost: about ten minutes per finding. Benefit: your findings survive being argued with. For
 > a finding that will be disputed — anything about crypto, anything about an exception path, anything a
 > vendor has a commercial reason to deny — the Smali is not optional.
@@ -1822,7 +1822,7 @@ the decompiler.
 | Packing | jadx sees a stub | Forces a runtime DEX dump | Effective until the first dump, which is a known technique |
 | Removing debug info | Local names are invented | Moderate and free | **Do this.** It is a build flag |
 
-> **⚠️ Warning — anti-decompilation is not a vulnerability fix, and saying so in a report matters.**
+> **Warning — anti-decompilation is not a vulnerability fix, and saying so in a report matters.**
 > If an app hardcodes an API key and the developer's response is "we'll obfuscate it", the finding is
 > not remediated. The key is still extractable; it now takes an afternoon instead of a minute. Write
 > the remediation as *move the secret server-side*, and record obfuscation as defence in depth if you
@@ -1924,7 +1924,7 @@ What *can* be observed is everything around it:
 | Sending modified requests to the vendor's API | **Yes.** This is where you actually get noticed |
 | Making thousands of requests while fuzzing an endpoint | Yes, loudly |
 
-> **⚠️ Warning — the legal question is separate from the technical one, and it is the one that
+> **Warning — the legal question is separate from the technical one, and it is the one that
 > matters.** "Undetectable" is not "permitted". Decompiling an application may be restricted by its
 > licence, by contract, or by law depending on your jurisdiction and purpose. Interoperability and
 > security research carve-outs exist in some places and not others. Do this work under a scope
@@ -1976,7 +1976,7 @@ language compiler, `d8`, R8, or jadx. Get this wrong and you will spend an hour 
 
 That `MAX_ATTEMPTS` row is more interesting than it looks and it is a genuine trap:
 
-> **⚠️ Warning — constant substitution is a guess.** `ConstInlineVisitor` sees the literal `3` in the
+> **Warning — constant substitution is a guess.** `ConstInlineVisitor` sees the literal `3` in the
 > bytecode, notices the class has `static final int MAX_ATTEMPTS = 3`, and prints `MAX_ATTEMPTS`. It
 > has no way to know whether the author wrote `MAX_ATTEMPTS` or wrote a bare `3` that happens to equal
 > it. In the measured example of §6.2 both `MAX_ATTEMPTS` occurrences were genuine — but a `0`, a `1`
@@ -2136,7 +2136,7 @@ lookup, and calling `hashCode()` and discarding the answer is the cheapest one a
 jadx printed it because it is there. The line that looked most like a decompiler artefact was the
 most faithful line in the method.
 
-> **🔍 Pentester's Note.** Take the general lesson rather than the specific fact. An unexplained
+> **Pentester's Note.** Take the general lesson rather than the specific fact. An unexplained
 > statement in decompiled Java has three possible authors — the developer, the compiler, or the
 > decompiler — and *guessing* between them is exactly how confident wrong statements get written down.
 > One `dexdump` invocation settles it in ten seconds. [`scripts/jadx-vs-smali.sh`](scripts/jadx-vs-smali.sh)
@@ -2233,7 +2233,7 @@ Meanwhile `MAX_ATTEMPTS` — also a compile-time constant — came back *as a na
 the literal `3` to the field (§6.1). The same language feature produced opposite-looking results, and
 neither is jadx being inconsistent.
 
-> **🔍 Pentester's Note.** This is why `grep` for a URL finds the *use sites*, not the constant
+> **Pentester's Note.** This is why `grep` for a URL finds the *use sites*, not the constant
 > declaration, and why an endpoint can appear forty times across the tree with no single definition.
 > It is also why "the API base URL is defined in one place" is never a safe assumption when you are
 > patching.
@@ -2282,7 +2282,7 @@ the bytecode it is a synthetic field `val$tags` on the anonymous class. jadx has
 for readability. So in one construct you have jadx being maximally literal about one synthetic member
 and maximally helpful about another.
 
-> **🧠 Mental Model.** jadx is not aiming for compilable Java. It is aiming for *readable and
+> **Mental Model.** jadx is not aiming for compilable Java. It is aiming for *readable and
 > accurate*, and where those conflict it usually picks accurate. Any workflow that assumes "decompile,
 > edit, recompile" is built on a false premise. For editing, go to [14](../14-Dalvik/README.md) and
 > use Smali.
@@ -2293,7 +2293,7 @@ and maximally helpful about another.
 
 The rule is short, and the rest of the section is its justification and its detail:
 
-> **🔍 Pentester's Note — the escalation rule.** Read Java to *find*. Read Smali to *be certain*. Write
+> **Pentester's Note — the escalation rule.** Read Java to *find*. Read Smali to *be certain*. Write
 > Smali to *change*. Go to [14 — Dalvik](../14-Dalvik/README.md) the moment your question is about
 > exactness rather than location.
 
@@ -2511,7 +2511,7 @@ than a `short`, this warning says jadx did not know either.
 that jadx could not render as one, so you get the underlying `$VALUES` array and static initialiser.
 Readable, but you must translate it yourself.
 
-> **🔍 Pentester's Note.** Make this mechanical. Before reading any class, `grep` it for `JADX WARN`.
+> **Pentester's Note.** Make this mechanical. Before reading any class, `grep` it for `JADX WARN`.
 > If the method you are about to base a finding on has one, that method goes to Smali. Thirty seconds
 > per finding, and it converts your report's weakest claims into its strongest.
 > [`scripts/jadx-triage.py`](scripts/jadx-triage.py) produces this census for a whole app in one pass
@@ -2645,7 +2645,7 @@ Two honest caveats follow from that, and both are more useful than a confident c
 
 **What you should take from it regardless of the cause**, because this part is not in doubt:
 
-> **⚠️ Warning — the load-bearing conclusion of this chapter.** jadx's correctness is a property of the
+> **Warning — the load-bearing conclusion of this chapter.** jadx's correctness is a property of the
 > **shape of the bytecode**, not of the semantics of the program. Bytecode that `d8` emits is inside
 > the envelope jadx is tuned for. Bytecode that anything else emits — an obfuscator, a packer, a
 > hand-patched method, a different compiler, a bytecode-rewriting SDK — is outside it. **And you cannot
@@ -2715,7 +2715,7 @@ with 827 files containing `DefaultConstructorMarker` — the string
 `Intrinsics.checkNotNullParameter` appears **three times in 1.8 million lines**. In a debug build it
 would appear in nearly every public function. R8's optimiser removes the null checks in release builds.
 
-> **⚠️ Warning.** Do not use "no `Intrinsics` calls" as evidence that an app is not Kotlin. On a
+> **Warning.** Do not use "no `Intrinsics` calls" as evidence that an app is not Kotlin. On a
 > release build that fingerprint is largely gone. Use `kotlin/` package presence, `@Metadata`,
 > `DefaultConstructorMarker`, `Companion` fields, and class names ending in `Kt` instead — all of
 > which survived on the same app.
@@ -2765,7 +2765,7 @@ grep -rn "System.loadLibrary\|System.load(" out/sources --include=*.java
 unzip -l app.apk | grep "\.so$"
 ```
 
-> **⚠️ Warning — the absent-symbol trap.** If a `native` method's expected `Java_...` symbol is not in
+> **Warning — the absent-symbol trap.** If a `native` method's expected `Java_...` symbol is not in
 > the `.so`'s export table, the method was registered dynamically with `RegisterNatives` in
 > `JNI_OnLoad`. That is extremely common and it is often deliberate, because it defeats symbol-name
 > search. [16-JNI](../16-JNI/README.md) covers `RegisterNatives`;
@@ -2790,7 +2790,7 @@ A list to keep in mind before you write "the app does not…".
 | Behaviour of a `hiddenapi`-restricted reflective call | Depends on the platform's enforcement | [23-Permissions](../23-Permissions/README.md) |
 | Anything in a split APK you did not download | A different file | [10-APK-Internals](../10-APK-Internals/README.md) |
 
-> **🔍 Pentester's Note.** "I grepped the decompiled output and found nothing" is a statement about
+> **Pentester's Note.** "I grepped the decompiled output and found nothing" is a statement about
 > your grep, not about the app. Before it becomes a finding of absence it needs: a successful full
 > decompilation (§3.15), a refusal census (§3.14), a check for dynamic loading, a check for native
 > code, and a check that you have all the split APKs. Five commands. Do them.
@@ -2829,7 +2829,7 @@ Frida answers **"what"** — the actual arguments, the actual return, the actual
 And the loop closes: the values Frida returns often make a class's *purpose* obvious, at which point
 you go back and rename it in jadx-gui (§3.10), and the next read is easier.
 
-> **🧠 Mental Model.** jadx gives you the map; Frida gives you the GPS trace. A map with no trace tells
+> **Mental Model.** jadx gives you the map; Frida gives you the GPS trace. A map with no trace tells
 > you every road that exists. A trace with no map tells you where the car went but not what the roads
 > are called. Investigations need both.
 
@@ -2927,7 +2927,7 @@ Java.perform(function () {
 That script is shipped as [`scripts/jadx-blindspot.js`](scripts/jadx-blindspot.js) with a fuller
 version that handles byte arrays, suppresses noisy getters, and prints a stack on first call.
 
-> **🔍 Pentester's Note.** This inverts the usual order and it is genuinely the right move sometimes.
+> **Pentester's Note.** This inverts the usual order and it is genuinely the right move sometimes.
 > A method with obfuscated control flow may take an hour to read and thirty seconds to observe. Read
 > the Smali when you need to *be certain*; hook it when you need to *know what it does*. They are
 > different goals and the second one is often the one you actually have.
@@ -2987,7 +2987,7 @@ for p in $(adb shell pm path com.vendor.hrapp | sed 's/package://' | tr -d '\r')
 done
 ```
 
-> **⚠️ Warning — the split-APK trap, and it costs people hours.** Modern apps ship as a base APK plus
+> **Warning — the split-APK trap, and it costs people hours.** Modern apps ship as a base APK plus
 > configuration splits (per-ABI, per-density, per-language) and sometimes feature modules. **Code can
 > live in a split.** If you pull only `base.apk` and then conclude a class does not exist, you may be
 > wrong. Pull them all, and give jadx all of them at once:
@@ -3312,7 +3312,7 @@ grep -rl "Removed duplicated region" "$OUT" | wc -l
 | Refusals in the app's own package | 95 | Low. No control-flow obfuscation on the app itself |
 | Refusals in `io/vendorchat/android` | 180 | The largest cluster, and it is a third-party SDK |
 
-> **⚠️ Warning — jadx's console error count is not its failure count.** The run above ended with
+> **Warning — jadx's console error count is not its failure count.** The run above ended with
 > `finished with errors, count: 61`, and there are **2,104** refused methods in the output tree. The
 > console count reports methods that threw during processing; refusals that jadx handled gracefully are
 > recorded in the output files and never mentioned on the console. **If you are judging decompilation
@@ -3382,7 +3382,7 @@ different aliases in each run and the diff is entirely noise. With it, an obfusc
 between versions become visible — which is how you find the security fix in a patch release, and how
 you find the feature that shipped disabled.
 
-> **⚠️ Warning.** Even with a shared `.jobf`, R8 may assign different obfuscated names to the same
+> **Warning.** Even with a shared `.jobf`, R8 may assign different obfuscated names to the same
 > class in two builds, in which case the classes will not line up. Cross-check with class *content*
 > (method count, string constants) before concluding a class was added or removed.
 
@@ -3770,7 +3770,7 @@ That paragraph is the entire point of the section. It states the tool, the versi
 coverage, and the evidence standard — which is what makes the work defensible a year later when
 nobody remembers it.
 
-> **🔍 Pentester's Note.** The single highest-value line in that pipeline is the coverage accounting.
+> **Pentester's Note.** The single highest-value line in that pipeline is the coverage accounting.
 > Almost nobody does it, and it converts "we reviewed the app" into "we reviewed 99.4% of the app's
 > methods as Java and the remaining 0.6% as bytecode". The first is a claim. The second is a
 > measurement.

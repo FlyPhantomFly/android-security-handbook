@@ -104,7 +104,7 @@ Fill in this table from your own output. The reference column is what the chapte
 > *ever* have returned `true`, and how do you know?
 
 Write the answer in one sentence before moving on. If you cannot, reread the last two rows against
-the first three, and note that the root column is the only one that can distinguish absence from
+the first three, and confirm that the root column is the only one that can distinguish absence from
 refusal.
 
 ### 1.3 Build a real probe app
@@ -165,7 +165,7 @@ Install and run it, then:
 adb logcat -d -s CH64PROBE
 ```
 
-> **⚠️ If installation fails with `INSTALL_FAILED_USER_RESTRICTED`** on a physical device, that is an
+> **If installation fails with `INSTALL_FAILED_USER_RESTRICTED`** on a physical device, that is an
 > OEM "Install via USB" policy and not a fault in your APK. It is bypassable with root:
 > ```bash
 > adb push app.apk /data/local/tmp/probe.apk

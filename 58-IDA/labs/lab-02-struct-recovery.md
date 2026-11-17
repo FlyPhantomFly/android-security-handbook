@@ -24,11 +24,11 @@ of them look related. Supply the structure and the same code becomes `s->magic`,
 `s->issued_at`, `s->state` — and, crucially, **every other function that takes the same pointer becomes
 readable at the same time**, because you set the type once.
 
-That is the leverage. It is why chapter 57 §3.11 calls the equivalent step in Ghidra a fixed-point
+That is the payoff. It is why chapter 57 §3.11 calls the equivalent step in Ghidra a fixed-point
 computation with you inside the loop, and it is why this chapter argues it is the single action most
 worth doing well.
 
-> **📖 Definition**
+> **Definition**
 > A **structure** in C is a fixed layout of named fields at known byte offsets from a base address.
 > The compiler discards the names and keeps only the offsets, so the machine code contains
 > `[x0, #68]` where the source said `s->state`. **Recovering a structure is guessing the mapping
@@ -55,7 +55,7 @@ recovery — lab 01 did that. Having the names makes the listings readable while
     /tmp/ch58/libsession-unstripped.so
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > Do not open [`../examples/03-ground-truth-aarch64.md`](../examples/03-ground-truth-aarch64.md)
 > section 9 until section 5 tells you to. That is the answer key for this lab specifically.
 
@@ -81,7 +81,7 @@ You never guess a field's size. The load or store instruction states it.
 | `ldr x` / `str x` | 8 | |
 | `ldr q` / `str q` | 16 | a vector register — often a `memcpy` of a 16-byte block, not a real field |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The signed forms are worth pausing on. `ldrsw` on a length before a `memcpy` means the length is a
 > signed 32-bit value, and a negative length becomes an enormous unsigned size. Chapter 70 owns the
 > bug class; the point here is that **the instruction told you the type, and the type is the bug.**
@@ -192,7 +192,7 @@ used as a base pointer and choose **Create new struct type**. Hex-Rays walks eve
 that variable in the current function and generates a structure with a field at each offset, sized by
 the access width. You then rename the fields.
 
-> **⚠️ Warning — the shortcut's limitation, which matters**
+> **Warning — the shortcut's limitation, which matters**
 > It sees **only the accesses in the current function**. Run it on `session_step` and you get the
 > fields `session_step` touches and nothing else — no `user[32]`, because `session_step` never reads
 > it. The generated structure will be full of gaps named `field_20`, `field_24`, and it is very easy
@@ -303,7 +303,7 @@ Interceptor.attach(at(SEAL_EA), {
 | `step_count` increments by exactly 1 per call | `+0x48` confirmed as the counter |
 | Any field is garbage or wildly implausible | **That field is wrong.** Fix the offset or the width and re-run |
 
-> **⚠️ Warning**
+> **Warning**
 > A garbage value is a *refutation*, and it is the useful outcome. A run in which everything looks
 > plausible confirms the layout. A run in which one field is nonsense tells you exactly which
 > assumption to revisit — which is more information. Chapter 68 §3.5 calls this choosing the cheapest
@@ -407,7 +407,7 @@ correct about behaviour and silent about layout.
 
 ### 7.4 The rule that comes out of this
 
-> **🧠 Mental Model**
+> **Mental Model**
 > **Alignment padding is invisible to access-based recovery**, because nothing accesses it. The
 > consequence: a recovered structure's *field positions* can be right while its *field list* is
 > incomplete. When your recovered layout has a gap you cannot account for, the first hypothesis is

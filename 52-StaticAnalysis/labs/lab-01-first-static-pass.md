@@ -44,7 +44,7 @@ and share. Analysing it privately for learning is one thing; publishing hostname
 someone's product is another. If you must use one, anonymise as
 [`examples/README.md`](../examples/README.md) does and say so.
 
-> **⚠️ Warning**
+> **Warning**
 > Everything in this lab is read-only with respect to the device: `pm path`, `pull`, `dumpsys`,
 > `run-as`. Nothing installs, broadcasts, or modifies state. If a step in your own variation would
 > change the device, stop and think about whether the device is yours to change.
@@ -240,7 +240,7 @@ Aggregation ratio: 7346 raw hits collapsed to 9 leads (816.2x).
 - Why 7,346 hits became 9 leads.
 - What the 3,591 "killed by a validator" hits were. (`--print-catalogue` and the script's
   `v_base64ish` and `v_hostname` functions are the answer.)
-- Why `--show-suppressed` exists at all rather than the tool simply deleting noise.
+- Why `--show-suppressed` exists at all rather than the tool deleting noise.
 
 ### Run the catalogue by hand, once
 

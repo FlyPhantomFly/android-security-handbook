@@ -125,7 +125,7 @@ Receivers and services are where coverage quietly dies, because no amount of tap
 
 ```bash
 # host — what would a BOOT_COMPLETED receiver do? [MUTATES: sends a broadcast]
-#   Only against an app you own. Note that `am broadcast` sends ordered=true,
+#   Only against an app you own.`am broadcast` sends ordered=true,
 #   which is NOT how the platform sends most broadcasts -- chapter 29 measured this.
 adb shell "am broadcast -a android.intent.action.BOOT_COMPLETED -p $PKG"
 
@@ -136,7 +136,7 @@ adb shell "am start-service -n $PKG/<SERVICE>"
 adb shell "content query --uri content://<authority>/<path>"
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > These are mutations and two of them can change application state. **Only against an app you own or
 > have written permission to test.** And remember that reaching a component from `adb shell` (uid
 > 2000) is not the same as an app reaching it — that is a separate demonstration, and
@@ -214,7 +214,7 @@ at production. No session reaches them. No amount of driving reaches them.
 grep -rniE '(staging|preprod|uat|sandbox|qa)[0-9]*\.[a-z0-9-]+\.[a-z]{2,}' cov/out --include='*.java' | head
 ```
 
-**Checkpoint B.2.** If you find any, note that this is a finding **dynamic analysis structurally
+**Checkpoint B.2.** If you find any,this is a finding **dynamic analysis structurally
 cannot produce** — and that fact is worth a line in your limits section.
 
 ### B.3 Branches inside components you did reach

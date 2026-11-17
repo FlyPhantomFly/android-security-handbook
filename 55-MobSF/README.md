@@ -22,7 +22,7 @@ a whole class of confusion.
 no frida-server** — verified with `adb devices -l && adb shell getprop ro.product.model &&
 adb shell getprop ro.build.version.sdk`. No claim in this chapter depends on the device.
 
-> **⚠️ Warning — read §1.6 before you read anything else**
+> **Warning — read §1.6 before you read anything else**
 > **MobSF was not run while this chapter was written.** Docker's Linux engine does not start on this
 > machine. Every listing in this chapter is therefore labelled: **`MEASURED`** (produced by a tool
 > that really ran, here, on a real artefact) or **`EXPECTED SHAPE`** (what MobSF's own documentation
@@ -70,7 +70,7 @@ the permissions, decompile, grep for URLs, grep for keys, check the signature, l
 libraries. Every tester in the world did the same seven hours of work, by hand, badly and
 inconsistently, before the actual analysis could start.
 
-> **📖 Definition**
+> **Definition**
 > **MobSF** — the *Mobile Security Framework* — is an open-source application that performs
 > automated **static analysis** of mobile application artefacts (Android APK/AAB/source,
 > iOS IPA/source, Windows APPX), optional **dynamic analysis** on an instrumented Android device or
@@ -98,7 +98,7 @@ That last row is under-appreciated. [STYLE-GUIDE §7](../STYLE-GUIDE.md) defines
 to *"explain why an automated tool's finding is a false positive"*. You cannot do that for a tool you
 refuse to run.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > MobSF is a **metal detector with a very loud speaker**. It is genuinely excellent at telling you
 > where the metal is, it covers the whole beach in an hour, and it will beep at a bottle cap and a
 > Roman coin with exactly the same enthusiasm. [52-StaticAnalysis](../52-StaticAnalysis/README.md)
@@ -156,7 +156,7 @@ its output as a lead"*. This chapter is where that sentence is cashed out. Speci
 6. **The rewrite** — turning a scanner line into a defensible report entry, and turning the other
    thirty into a ledger of rejections with reasons.
 
-> **⚠️ Warning — what this chapter deliberately does NOT do**
+> **Warning — what this chapter deliberately does NOT do**
 > It does not re-teach manifest analysis ([32](../32-Manifest/README.md)), pinning
 > ([36](../36-CertificatePinning/README.md)), library inventory ([17](../17-Libraries/README.md)),
 > the APK container ([10](../10-APK-Internals/README.md)), WebView
@@ -268,7 +268,7 @@ reader without MobSF is not blocked. That was a design constraint imposed by thi
 turned out to be the right design anyway: in real work you receive a JSON report far more often than
 you receive a server.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > This is the ordinary condition of the job, not an unusual one. You will be handed a MobSF report
 > by a client, a colleague or a CI pipeline far more often than you will run MobSF yourself, and the
 > skill that matters is reading somebody else's report against the artefact. That is exactly what
@@ -310,7 +310,7 @@ export MOBSF_API_KEY='<the key>'
 export MOBSF_SERVER='http://127.0.0.1:8000'
 ```
 
-> **⚠️ Warning — before you upload a client's APK anywhere**
+> **Warning — before you upload a client's APK anywhere**
 > A MobSF instance holds every artefact ever uploaded to it, decompiled, on disk, indefinitely. A
 > shared or internet-reachable instance is therefore a repository of your clients' unreleased
 > binaries, guarded by one static API key. §5.11 treats this as a first-class operational-security
@@ -646,7 +646,7 @@ person reading the report. This is a real technique in malware analysis and is w
 
 **The database is the crown jewels.** See §5.11.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > The same argument applies to *your own* tooling and this repository takes it seriously.
 > [`52-StaticAnalysis §2.4`](../52-StaticAnalysis/README.md#24-the-trust-boundary-you-are-standing-on)
 > makes it for `apktool` and `jadx`; `17-Libraries/scripts/lib-inventory.sh` explicitly refuses ZIP
@@ -689,7 +689,7 @@ curl -s -H "Authorization: $MOBSF_API_KEY" -X POST \
 # {"deleted": "yes"}
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > If you are comparing two MobSF reports — two app versions, before and after a fix, your scan
 > against the client's — **check that both were produced by the same MobSF version**, and say so in
 > the report. The `version` key at the top of the JSON is there for this. Two reports from different
@@ -718,7 +718,7 @@ type: APK, split/AAB, iOS, Windows, or a source zip.
 HTML report, below sixty findings, so almost nobody reads it — and it is the section that tells you
 whether the sixty findings above it are about the application at all.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Read MobSF's report **bottom-up on the first pass**: file list, then libraries, then the manifest
 > inventory, then the findings. The findings only mean something once you know what kind of
 > application produced them.
@@ -803,7 +803,7 @@ activities and 2 exported providers**. After validation, exactly **two** of thos
 finding on their own; two more were merged into other findings; three were rejected or left as
 leads. §9.3 has the table.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > An exported-component line in a MobSF report is the tool saying *"there is a door here"*. It has
 > not tried the handle, it does not know what is behind it, and it does not know whether the door is
 > the front door that has to be there. Every one of them is a lead;
@@ -849,7 +849,7 @@ The security-relevant case is the inverse: v1 present without v2, which is the s
 of attack needed. Reporting the harmless direction as a weakness is a real thing scanners do, and
 this chapter's example ledger rejects exactly that row.
 
-> **⚠️ Warning**
+> **Warning**
 > One thing no certificate analyser will tell you: whether the app *checks its own* signature at
 > runtime, and whether that check handles rotation. [38-TamperDetection](../38-TamperDetection/README.md)
 > measured **6 of 198 installed packages carrying a signing lineage** — so a self-check that reads
@@ -966,7 +966,7 @@ correctly by default, so a long list of green rows tells you the vendor used a n
 and [16-JNI](../16-JNI/README.md) cover the mechanism: a `native` Java method gets an implementation
 either by name mangling (`Java_com_example_Foo_bar`, visible in `readelf --dyn-syms`) or by
 `RegisterNatives` (a `JNINativeMethod[]` array passed at runtime, usually from `JNI_OnLoad`, visible
-nowhere). An app that wants its native surface hidden simply registers it.
+nowhere). An app that wants its native surface hidden registers it.
 
 ```bash
 # host - the check MobSF's binary section does not make. MEASURED-CAPABLE: run it yourself.
@@ -987,7 +987,7 @@ parser` while reporting which link answered — copy that rather than assuming `
 DEX means MobSF's code analysis covered a rounding error of the program. Compute the ratio yourself
 and put it in the limits section.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > This repository has an NDK at
 > `C:\Users\harsh\AppData\Local\Android\Sdk\ndk\25.2.9519653\toolchains\llvm\prebuilt\windows-x86_64\bin\`,
 > which ships `llvm-readelf`, `llvm-readobj`, `llvm-objdump` and `llvm-nm` as drop-in replacements.
@@ -1041,13 +1041,13 @@ it:
   2    org.android.cmpen              1.0           58     34   5.0  debuggable x1
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > Do not put MobSF's security score in a client report, and do not let a client put it in a
 > requirement. "The app must score above 60 in MobSF" is a specification for passing a rule set, not
 > for being secure, and it is trivially gamed: suppress rules, remove a `<meta-data>` element, ship
 > the `secure`-band items. Score-driven security produces applications that pass scanners.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > **Confidence ranking is not severity ranking.** This repository has now measured that four
 > separate times — 33's 132/132, 52's 15-of-17-rejected HIGH band, 36's 12-surface/4-pin, and 38's
 > detector that reported 18/18 until it was split into STRONG and WEAK patterns and became a
@@ -1156,7 +1156,7 @@ That line exists so that "the report has no manifest findings" and "my parser di
 manifest findings" are distinguishable. A parser that silently returns zero is worse than one that
 crashes.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Record the MobSF version alongside the report hash in your engagement notes, exactly as you record
 > the artefact's SHA-256. A finding is reproducible only against a stated tool version, and "MobSF
 > flagged it" is not a citation.
@@ -1243,7 +1243,7 @@ predict.** Static analysis is an act of prediction: you read a file and predict 
 will do with it. **Every divergence between MobSF's reading and the platform's behaviour is either a
 false positive or a miss**, and the only way to know which is to read the platform.
 
-> **⚠️ Warning — on the paths in §4.1–§4.5**
+> **Warning — on the paths in §4.1–§4.5**
 > MobSF's internal layout has been reorganised more than once. The paths below describe the 4.x tree
 > as documented by the project. If a path is wrong in your checkout, `find . -name '<basename>'`
 > will locate it in a second — and the *structure* of the argument does not depend on the path.
@@ -1729,7 +1729,7 @@ python3 -B ../36-CertificatePinning/scripts/pinning-surface.py --apk target.apk
 > of enforcement**; whether a mismatched certificate is actually rejected is recorded in section
 > `<x>`, where we attempted interception."
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The inverse error is just as common and more embarrassing: concluding "no pinning" from the absence
 > of a `TrustManager`, when the pins are declared in `res/xml/network_security_config.xml`. Static
 > analysis has to check every layer before it may make a *negative* claim, and the layers live in
@@ -1837,7 +1837,7 @@ V033  [WARNING]  appsec:network
             pin instead - see 36-CertificatePinning section 8.2.
 ```
 
-> **⚠️ Warning — the general rule this case is an instance of**
+> **Warning — the general rule this case is an instance of**
 > **Every name-based detection in a scanner degrades to a false negative under obfuscation, silently
 > and without any signal in the report.** That covers root detection, tamper detection, crypto
 > libraries, tracker identification, and anything else keyed on a type or method name. The
@@ -1902,7 +1902,7 @@ half. MobSF reports both halves and joins neither, because §4.1's pipeline is o
 ### 5.5 What MobSF is genuinely, reliably good at
 
 A chapter this critical has to be equally precise about the other direction. These are the things
-MobSF does that you should simply use, subject only to the caveat in the last column.
+MobSF does that you should use, subject only to the caveat in the last column.
 
 | What | Why it is reliable | Caveat |
 |---|---|---|
@@ -2020,7 +2020,7 @@ Everything in §5.3 applies to an adversary who is *trying*. Malware authors are
 | **Server-controlled behaviour** | A benign app. The payload arrives after review | — |
 | **Emulator and root detection** | A dynamic-analysis section describing an app that did nothing | [37](../37-RootDetection/README.md) |
 
-> **🧠 Mental Model**
+> **Mental Model**
 > **A clean MobSF report on a sophisticated sample is not evidence of anything.** It is what a
 > sophisticated sample is designed to produce. The signals that survive are structural: a
 > disproportionate asset directory, a tiny DEX, an app with zero string literals, a `.so` with
@@ -2038,7 +2038,7 @@ page. Six symptoms, in the order a reviewer notices them:
 4. **The security score appears in the executive summary.** §3.9.
 5. **There is no limits section.** So the reader cannot tell what was not examined. §3.14.
 6. **There is no ledger.** So the reader cannot tell whether the eight findings were selected or
-   were simply all that the tool produced.
+   were all that the tool produced.
 
 The cost is concrete and it is not just embarrassment:
 
@@ -2088,7 +2088,7 @@ Guarded by a **single static API key with no scopes** (§4.4).
 | **Run it in a container on a host you can lose** | It parses hostile input for a living (§2.6) |
 | **Check the engagement scope before uploading anywhere** | Some contracts prohibit third-party processing of the artefact entirely |
 
-> **⚠️ Warning**
+> **Warning**
 > MobSF's dynamic analyser also uploads and installs the application on a device it controls, and can
 > route its traffic through its own proxy. On a shared instance, that means a third party's
 > infrastructure sees your client's API traffic and, potentially, credentials used during testing.
@@ -2172,13 +2172,13 @@ grep -rl 'JADX ERROR\|Failed to decompile\|// decompilation failed' out/sources 
 grep -rho 'JADX ERROR[^\n]*' out/sources | sort | uniq -c | sort -rn | head
 ```
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > [56-JADX](../56-JADX/README.md) is the chapter that measured the gap: console said
 > `count: 61`, the tree contained **2,104 refused methods across 1,424 files**. *"Chapter 56 counts
 > the tree, not the summary."* Adopt that habit here: a MobSF code-analysis section over a tree with
 > two thousand refused methods is not a scan of the application, and nothing in the report says so.
 
-`MEASURED`, this chapter, on the two example APKs — and note that the *smaller*, obfuscated build
+`MEASURED`, this chapter, on the two example APKs — and confirm that the *smaller*, obfuscated build
 decompiled cleanly while the larger one did not:
 
 | APK | jadx console | `.java` files produced |
@@ -2259,7 +2259,7 @@ The general habit, per report section:
 | A native symbol is present | `readelf --dyn-syms --wide lib/*/lib*.so` |
 | A library version | `META-INF/*.version`, corroborated by the class set — [17](../17-Libraries/README.md) |
 
-> **⚠️ Warning**
+> **Warning**
 > [56-JADX](../56-JADX/README.md) built a case where a method **decompiles to clean, warning-free
 > Java that returns 100 while the bytecode returns 105**, and ships `Proof.java` which runs both
 > readings and prints both numbers. It then failed to isolate the trigger across four variants and
@@ -2287,7 +2287,7 @@ aapt2 dump xmltree --file AndroidManifest.xml target.apk \
 apkid target.apk                                             # 4. a named packer?
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > **High entropy is not evidence of encryption.** Compressed data, PNGs, ZIPs, ML model weights and
 > font atlases are all high entropy. The signal is entropy **plus** context, which is why the check
 > above has four parts.
@@ -2344,7 +2344,7 @@ This is the FAQ's most common practical question and the answer has parts:
 So: **MobSF's own prepared AVD, Genymotion, or a rooted physical device.** A stock retail phone will
 not do.
 
-> **⚠️ Warning — a trap this repository measured, and it invalidates naive TLS tests**
+> **Warning — a trap this repository measured, and it invalidates naive TLS tests**
 > On the rooted device used by several chapters here, **APatch had replaced
 > `/system/etc/security/cacerts` with a tmpfs and bind-mounted an interception CA into it**, with 139
 > certificates present. The consequence is severe and easy to miss: **a successful intercept on that
@@ -2636,7 +2636,7 @@ for e in d.get('urls',[]):
 for x in sorted(u, key=lambda s:(not s.startswith('http://'), s)): print(x)"
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Run the URL command on any real report and the first thing you will see is
 > `http://schemas.android.com/apk/res/android` and its siblings. 52 measured one of those appearing
 > in **627 of 3,655 files**, and its scoring model pushes it to LOW through two independent penalties.
@@ -2712,7 +2712,7 @@ Four design decisions in that output are worth copying into any tool you build:
    before you see traffic. A triage that ignores cost is not a triage.
 4. **Every ranked app carries three next steps.** A rank with no next step is a number.
 
-> **⚠️ Warning**
+> **Warning**
 > The counts are **capped at 8 per signal**, deliberately. An app with forty exported activities is
 > not twenty times more interesting than one with two; it is a bigger app. Without a cap, component
 > count dominates every ranking and you will spend your week on whichever application is largest.
@@ -2859,7 +2859,7 @@ python3 -B scripts/mobsf-validate.py --report ./ci-reports/$SHA.json \
 # then diff ledger.csv against the previous build's, and fail only on the gate list
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > When a client tells you "we run MobSF in CI", the useful follow-up is not "what does it find" but
 > **"what does it fail the build on, and how many suppressions do you have?"** The suppression list
 > is a map of everything the team has decided not to look at, and it is frequently the most
@@ -3066,7 +3066,7 @@ V024  "n8qhwbn+IyvfEIwOQgznb1lXWTWUuUsnxI57Lp1CEUPMb9ntxAimu/SB8O3UnLKK"
 | The base64 that decodes to text | Obfuscation, defeated in one command — and it is returned by an **exported** provider | **Medium**, and the severity comes from the provider (§5.4's join), not from the encoding |
 | The ciphertext | A ciphertext whose key derivation is in the same APK | **Merged** into the crypto finding |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > This is the most common inflation in mobile reporting. A base64 blob in a DEX gets written up as a
 > "hardcoded credential" hundreds of times a year. **Decode it before you name it, and then ask what
 > it protects.** 52 makes the same point about the same class of value, and its example decoded to a
@@ -3202,7 +3202,7 @@ grep -a -o -h -E 'sha256/[A-Za-z0-9+/]{43}=' /tmp/dexes/*.dex | sort -u
 # sha256/+xpjwBQ7+BLhq1r+/AU3qLNIaXPt+JgXAJ9yIQaHNkQ=
 ```
 
-> **🧠 Mental Model**
+> **Mental Model**
 > When a client enables obfuscation between two tests, **expect the scanner's report to shrink and do
 > not read the shrinkage as improvement.** Re-baseline on the value-derived sections, and re-check
 > every *negative* claim by hand. The negatives are where obfuscation does its damage, because
@@ -3263,7 +3263,7 @@ FILE a ticket on:    everything else
 NEVER gate on:       the security score, the item count, minSdk
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The systemic finding is also the one with the best economics for the client, and saying so is how
 > a report becomes an engagement rather than a document. "Fix the manifest in your shared networking
 > SDK and eleven applications stop permitting cleartext" is a sentence that gets budget. "App 27 has

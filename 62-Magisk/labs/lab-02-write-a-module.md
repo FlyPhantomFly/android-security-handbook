@@ -35,7 +35,7 @@ Getting the CA into the system store is the standard answer, and it is a Magisk 
 And a professional reason: you are going to be handed modules by other people. Writing two of them
 is how you learn to read a third one critically, which is lab 04.
 
-> **⚠️ Warning**
+> **Warning**
 > Everything in this lab runs as root at boot, before any security software exists. A typo in
 > `post-fs-data.sh` can bootloop the device. Part 4 makes you cause that failure deliberately, in a
 > controlled way, so that the first time you meet it is not on the morning of an engagement. Do the
@@ -95,7 +95,7 @@ cd hello && zip -r ../hello.zip . -x '.*' && cd ..
 unzip -l hello.zip          # module.prop MUST be at the archive root, not under hello/
 ```
 
-> **⚠️ Warning — the packaging mistake everyone makes once**
+> **Warning — the packaging mistake everyone makes once**
 > `zip -r hello.zip hello/` produces an archive whose entries are `hello/module.prop`. Magisk looks
 > for `module.prop` at the **root** of the ZIP and will reject it. Always `cd` into the directory
 > and zip `.` — and always check with `unzip -l` before you push. On macOS also exclude the resource
@@ -188,7 +188,7 @@ cd systemca && zip -r ../systemca.zip . -x '.*' && cd ..
 unzip -l systemca.zip
 ```
 
-> **📖 Definition — `set_perm_recursive`**
+> **Definition — `set_perm_recursive`**
 > A helper function defined in Magisk's own `util_functions.sh`, which is sourced into the
 > environment your `customize.sh` runs in. The signature is
 > `set_perm_recursive <dir> <owner> <group> <dirmode> <filemode> [context]`. `ui_print` is from the
@@ -301,7 +301,7 @@ result in terms of *which directory the runtime actually reads*, and describe �
 what a module for Android 14+ would have to do differently and why it is harder. (Hint: APEX mounts
 are established later in boot than `post-fs-data`.)
 
-> **⚠️ Warning — the DenyList interaction you are about to hit in lab 03**
+> **Warning — the DenyList interaction you are about to hit in lab 03**
 > If you later add your target app to DenyList, Magisk unmounts this module inside that app's mount
 > namespace, and the certificate disappears for exactly the app you wanted to intercept. That is not
 > a bug and it is not fixable by reinstalling the module. Lab 03 measures it precisely.
@@ -460,7 +460,7 @@ EOF
 one line. Give two concrete reasons that is a worse answer, one about the device and one about the
 validity of your test results.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The temptation is always `setenforce 0`. Resist it. A permissive device is a different device:
 > apps take different code paths, some detect `getenforce` directly, and any finding you produce is
 > open to the objection that it only reproduces with SELinux disabled. Targeted `magiskpolicy --live`
@@ -473,7 +473,7 @@ validity of your test results.
 Cause the failure now, under controlled conditions, so that the first time you see a module bootloop
 you already know what it looks like and how to get out.
 
-> **⚠️ Warning**
+> **Warning**
 > Do this only on the device from lab 01, and only after you have practised safe mode. The device
 > will take noticeably longer to boot, and on some Magisk versions the boot will proceed with the
 > module's script killed. Do not extend the sleep beyond 90 seconds.
@@ -707,7 +707,7 @@ Android properties live in a shared memory region (`/dev/__properties__`), mappe
 every process and written only by `init` over a socket. The `ro.` immutability is enforced by
 `init`'s property service refusing the write — it is a policy in a userspace daemon, not a hardware
 or kernel guarantee. `resetprop` runs as root and writes into the property area directly, so the
-policy simply never applies.
+policy never applies.
 
 What it does **not** do: change anything the bootloader measured. `ro.boot.verifiedbootstate` is a
 *copy*, made at boot, of a value the bootloader passed on the kernel command line. Rewriting the

@@ -316,7 +316,7 @@ No. It costs one `mprotect` call.
 Full RELRO (`-Wl,-z,relro,-z,now`) makes the linker resolve everything at load time and then mark the
 GOT read-only. That is genuine hardening against **memory-corruption** exploits — a stray write can no
 longer land in the GOT and hijack control flow. It is essentially no obstacle to someone who already
-executes code in the process, because they can simply call `mprotect` first.
+executes code in the process, because they can call `mprotect` first.
 
 State that precisely when you report it. Over-claiming a control is a fast way to lose a developer's
 trust on everything else in the report.

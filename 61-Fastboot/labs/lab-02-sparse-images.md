@@ -63,7 +63,7 @@ the same code paths.
 ### Step 1.1 — The two structures
 
 From AOSP at `system/core/libsparse/include/sparse/sparse_format.h`. Every field is **little-endian**
-— note that this is the opposite of AVB's `vbmeta`, which is big-endian. Writing both parsers in one
+—this is the opposite of AVB's `vbmeta`, which is big-endian. Writing both parsers in one
 sitting is how people get this wrong.
 
 ```
@@ -236,7 +236,7 @@ for name, raw in [
           % (name, len(raw), len(simg), len(raw) / len(simg)))
 ```
 
-> **⚠️ `importlib.util.module_from_spec` writes bytecode even with `PYTHONDONTWRITEBYTECODE=1`.**
+> **`importlib.util.module_from_spec` writes bytecode even with `PYTHONDONTWRITEBYTECODE=1`.**
 > This is a measured fact in this repository — a script using exactly this pattern left a
 > `__pycache__` under `scripts/` twice. Run with `python3 -B`, and check afterwards:
 > `find . -name __pycache__`.

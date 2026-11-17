@@ -93,7 +93,7 @@ v1.0:  ERROR - finished with errors, count: 8        1,995 .java files, 1,757 cl
 v1.2:  (clean)                                         234 .java files,   171 classes
 ```
 
-**Note that already.** The *unobfuscated* build is the one the decompiler struggled with, and the
+**Register this early.** The *unobfuscated* build is the one the decompiler struggled with, and the
 obfuscated one decompiled cleanly. "Obfuscated" and "hard to decompile" are not the same property —
 R8 renames and shrinks; it does not primarily attack the decompiler. That distinction is
 [40-Obfuscation](../../40-Obfuscation/README.md)'s and it matters here because people expect the

@@ -1288,7 +1288,7 @@ Jump straight to the block you need. Anchors are GitHub's.
 
 ### 59 — radare2
 
-*> Every radare2 command here is **📘 Unverified** — radare2 was not installed on the machine where*
+*> Every radare2 command here is **Unverified** — radare2 was not installed on the machine where*
 
 - [The grammar in one table](../../59-radare2/cheatsheet.md#the-grammar-in-one-table)
 - [Launching](../../59-radare2/cheatsheet.md#launching)
@@ -1306,7 +1306,7 @@ Jump straight to the block you need. Anchors are GitHub's.
 - [r2pipe (Python)](../../59-radare2/cheatsheet.md#r2pipe-python)
 - [r2frida — live process](../../59-radare2/cheatsheet.md#r2frida--live-process)
 - [Android triage recipes](../../59-radare2/cheatsheet.md#android-triage-recipes)
-- [JNI offsets — ✅ Measured](../../59-radare2/cheatsheet.md#jni-offsets---measured)
+- [JNI offsets — Measured](../../59-radare2/cheatsheet.md#jni-offsets--measured)
 - [AArch64 patterns worth recognising](../../59-radare2/cheatsheet.md#aarch64-patterns-worth-recognising)
 - [Measured facts from this chapter](../../59-radare2/cheatsheet.md#measured-facts-from-this-chapter)
 - [Common traps](../../59-radare2/cheatsheet.md#common-traps)
@@ -1336,7 +1336,7 @@ Jump straight to the block you need. Anchors are GitHub's.
 
 ### 61 — Fastboot
 
-*> **⚠️ Commands marked D are DESTRUCTIVE. Two marked B can BRICK a device.***
+*> **Commands marked D are DESTRUCTIVE. Two marked B can BRICK a device.***
 
 - [Risk key](../../61-Fastboot/cheatsheet.md#risk-key)
 - [Getting in and out](../../61-Fastboot/cheatsheet.md#getting-in-and-out)

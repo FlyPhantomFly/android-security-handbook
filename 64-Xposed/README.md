@@ -23,7 +23,7 @@ claims in this chapter are measurements and which are not.
 
 ---
 
-> ## ⚠️ Read this before you read anything else: what is measured here and what is not
+> ## Read this before you read anything else: what is measured here and what is not
 >
 > **Classic Xposed is functionally dead on modern Android, and it is not installed anywhere on this
 > machine or on any attached device.** That is not a limitation of the write-up; it is the chapter's
@@ -104,7 +104,7 @@ That is this chapter. Three things, in order:
 2. **The API**, because it did not die and you will read module source written against it this year.
 3. **The detection surface**, because it outlived the framework and it is a live finding.
 
-> **🧠 Mental Model.** Classic Xposed is to Android hooking what the Model T is to cars: nobody drives
+> **Mental Model.** Classic Xposed is to Android hooking what the Model T is to cars: nobody drives
 > one, and you cannot understand why a modern car is shaped the way it is without knowing one existed.
 > The difference is that Xposed left something behind that a Model T did not — **an API that is still
 > running, and a detection surface that is still shipping.**
@@ -123,7 +123,7 @@ options and all of them were bad.
 The gap in the middle is obvious once it is stated: there was **no way to change one method's
 behaviour, in one application, without changing that application's bytes.**
 
-> **📖 Definition — hooking.** Arranging for your code to run when somebody else's function is
+> **Definition — hooking.** Arranging for your code to run when somebody else's function is
 > called, without modifying the source of that function. [65-Hooking](../65-Hooking/README.md) owns
 > this from first principles — what a hook physically is, the five places a call can be intercepted,
 > and why each fails. This chapter does not re-derive any of it; it describes what one particular
@@ -163,7 +163,7 @@ eventually, and a great deal at the time".
 
 ### 1.4 What classic Xposed was, precisely
 
-> **📖 Definition — classic Xposed.** A framework, installed by **replacing files on the Android
+> **Definition — classic Xposed.** A framework, installed by **replacing files on the Android
 > system partition**, which (a) substituted its own build of `/system/bin/app_process` for the
 > stock one, (b) had that binary add `XposedBridge.jar` to the **boot class path** before the runtime
 > started, and (c) provided a native library that could redirect the dispatch of any Java method to a
@@ -187,7 +187,7 @@ mechanism with a separate reason for dying:
 6. **There was no scope.** A module ran everywhere, always. §3.9 — and this is the design decision
    [63-LSPosed](../63-LSPosed/README.md)'s single largest feature exists to correct.
 
-> **⚠️ Warning — the most common wrong sentence about this chapter's subject.** "Xposed hooks methods
+> **Warning — the most common wrong sentence about this chapter's subject.** "Xposed hooks methods
 > by injecting into Zygote" is **not** what classic Xposed did, and getting this backwards makes the
 > whole lineage incomprehensible. Classic Xposed did not inject *into* Zygote at runtime; it
 > **replaced the program that becomes Zygote**, so its code was there from the process's first
@@ -250,7 +250,7 @@ classic-Xposed path returns `ENOENT` *to root*, so the check returns the right a
 the wrong reason and would return the same answer on a fully compromised device. §5.4 turns that into
 a vulnerability class with an honest severity, and §8 automates finding it.
 
-> **🔍 Pentester's Note.** "The application checks for Xposed" is not a finding, in either direction.
+> **Pentester's Note.** "The application checks for Xposed" is not a finding, in either direction.
 > The finding is **"the application's only control over X is a client-side check which cannot fire on
 > any device shipped since 2018, therefore X is effectively unprotected"** — and then the severity is
 > X's severity, not the check's. §5.4 and §5.6 develop that; §11.2 lists getting it wrong as the most
@@ -258,7 +258,7 @@ a vulnerability class with an honest severity, and §8 automates finding it.
 
 ### 1.7 Ethics, stated once
 
-> **⚠️ Warning.** Every module in this chapter targets `com.pentest.ch64.vault`, a lab application
+> **Warning.** Every module in this chapter targets `com.pentest.ch64.vault`, a lab application
 > you build yourself in [Lab 02](labs/lab-02-read-a-classic-module.md). Every APK scanned in §8 was
 > pulled from a device the author controls. Point a module at software you do not own and are not
 > explicitly authorised to test and you are, depending on jurisdiction, committing an offence — and
@@ -451,7 +451,7 @@ to what the manufacturer shipped"* — the boot image is patched instead, and mo
 presented through bind mounts inside mount namespaces. 62's mental model for that is a projector
 shining on an unchanged wall. **Classic Xposed is the graffiti.**
 
-> **🔬 Under the Hood.** The last row of the second block is the one people forget, and it is why an
+> **Under the Hood.** The last row of the second block is the one people forget, and it is why an
 > Xposed install or uninstall took several minutes and a scary-looking boot. Adding a jar to the boot
 > class path changes the boot class path's checksum, which invalidates every AOT-compiled artefact on
 > the device — `boot.oat` and every application's `.odex`. The next boot recompiles all of it.
@@ -478,7 +478,7 @@ technique at all**, because it owned the executable. Riru, Zygisk, `LD_PRELOAD`,
 `RegisterNatives` rewriting are all answers to a question Xposed never had to ask — and every one of
 them appeared *after* replacing the binary stopped being possible.
 
-> **🧠 Mental Model.** Ask "how does the framework's code get into the process?" and the whole family
+> **Mental Model.** Ask "how does the framework's code get into the process?" and the whole family
 > tree falls out. Xposed: *it was already there, because it is the program.* Riru: *the linker loads
 > it, because it replaced a library the program already needs.* Zygisk: *a root daemon injects it.*
 > Frida: *a foreign process `ptrace`s in.* Four eras, four answers, one question. The hooking itself
@@ -520,7 +520,7 @@ dm-verity exists because a persistent root kit on `/system` is the worst outcome
 exists to decouple vendor code from the framework. ART became Mainline so security fixes could ship
 without an OS update. A/B exists so an interrupted update does not brick the device.
 
-> **🧠 Mental Model.** **Architectural changes are often better security controls than security
+> **Mental Model.** **Architectural changes are often better security controls than security
 > features.** Nothing on the right is a "stop Xposed" feature; collectively they ended it. This is
 > the same observation [63-LSPosed §10](../63-LSPosed/README.md) reaches from the other end, asking
 > what happens to LSPosed if Android moves away from Zygote — and the answer is the same shape: the
@@ -548,7 +548,7 @@ Neither [13-ART](../13-ART/README.md) nor [65-Hooking](../65-Hooking/README.md) 
 [62-Magisk §4.1](../62-Magisk/README.md) names it in a table and hands it here. So it starts from
 first principles.
 
-> **📖 Definition — `app_process`.** The command-line program that starts the Android runtime. It is
+> **Definition — `app_process`.** The command-line program that starts the Android runtime. It is
 > an ordinary ELF executable at `/system/bin/app_process`. Given `--zygote` it becomes **Zygote**,
 > the process every application is forked from. Given a class name instead, it runs that class's
 > `main` as a one-shot Java program — which is what `am`, `pm`, `dumpsys` and every other Java-based
@@ -604,7 +604,7 @@ runs before `runtime.start`:
 | 4 | Change the class to be run from `ZygoteInit` to `XposedBridge` | So framework code ran first and could set itself up before Zygote preloaded anything |
 | 5 | `XposedBridge.main` did its work, then called `ZygoteInit.main` itself | The stock boot continued, with the framework already present |
 
-> **🔬 Under the Hood.** Step 5 is the elegant part and the fragile part at once. `XposedBridge.main`
+> **Under the Hood.** Step 5 is the elegant part and the fragile part at once. `XposedBridge.main`
 > was a **wrapper** around `ZygoteInit.main`: it ran, then handed control on, and from Zygote's point
 > of view nothing had happened. That is why there is no "Xposed process" — there is only Zygote, with
 > a different early history. It is also why an exception thrown during Xposed's setup did not produce
@@ -640,7 +640,7 @@ own signature, so it is *"a deliberate corruption that only an unlocked bootload
 recovery, which mounted `/system` read-write outside of Android and copied the files. This is why
 "install a custom recovery" appeared in every Xposed guide, and it presupposes an unlocked
 bootloader — which on most devices wipes the data partition, and on many enterprise or
-carrier-locked devices is simply not possible.
+carrier-locked devices is not possible.
 
 **What the framework left, and how it could be undone.** The installer saved the stock binary as
 `/system/bin/app_process.orig` before overwriting it. Uninstalling meant copying that back — which is
@@ -654,7 +654,7 @@ probe list. Measured: `ENOENT` on the AVD, from all three vantages.
 | A per-release `app_process` build | One release a year; Treble; per-vendor variation | §3.10 |
 | Surviving an OTA | Block-level A/B updates recompute the whole partition | [62-Magisk §1](../62-Magisk/README.md) |
 
-> **⚠️ Warning.** Do not attempt a classic Xposed install on any device you care about, and never on
+> **Warning.** Do not attempt a classic Xposed install on any device you care about, and never on
 > a client device. It requires disabling Verified Boot, which is not reversible by re-enabling a
 > flag — [61-Fastboot](../61-Fastboot/README.md) measured that a device left in that state and then
 > relocked is a brick, and built a whole CTF around the mechanism. If you need managed-code hooking
@@ -662,7 +662,7 @@ probe list. Measured: `ENOENT` on the AVD, from all three vantages.
 
 ### 3.3 `XposedBridge.jar` on the boot class path
 
-> **📖 Definition — boot class path.** The list of `.jar` files whose classes the runtime loads
+> **Definition — boot class path.** The list of `.jar` files whose classes the runtime loads
 > before, and outside, any application's own class loader. Classes on it are visible to every process
 > on the device without anyone asking for them. `java.lang.String` and `android.app.Activity` live
 > there.
@@ -691,7 +691,7 @@ have had them.
 
 ### 3.4 `hookMethodNative` — the Dalvik form
 
-> **⚠️ Documentation-derived.** Everything in §3.4 and §3.5 describes a mechanism that could not be
+> **Documentation-derived.** Everything in §3.4 and §3.5 describes a mechanism that could not be
 > executed here: no device attached runs Dalvik, and none runs classic Xposed.
 > [13-ART §3.17](../13-ART/README.md)'s framework table is this repository's existing one-line
 > statement of the ART form — *"set the method's native flag and redirected its entry to a
@@ -718,7 +718,7 @@ Xposed's move was:
 The name `hookMethodNative` is a description of step 2: *make the method native*. It was exposed to
 Java as a `private static native` method on `XposedBridge` and implemented in `libxposed_dalvik.so`.
 
-> **🔬 Under the Hood.** This is why the framework's dispatcher signature looks the way it does. A
+> **Under the Hood.** This is why the framework's dispatcher signature looks the way it does. A
 > native method receives a `JNIEnv*`, a `jobject`/`jclass` receiver, and its arguments; Xposed's
 > generic function received the same, plus enough context to identify *which* Java method had been
 > called, and then boxed the arguments into an `Object[]` so the Java-side callbacks could read and
@@ -768,7 +768,7 @@ Read operation 1 and operation 3 together and the shape of the whole thing appea
 `ArtMethod` is turned into a native method whose implementation is the dispatcher, and a pristine
 copy is kept so the original can still be reached.**
 
-> **🔬 Under the Hood — the convergence worth noticing.** An inline hook needs a *trampoline* holding
+> **Under the Hood — the convergence worth noticing.** An inline hook needs a *trampoline* holding
 > the displaced instructions, because the function's first bytes were overwritten
 > ([65-Hooking §2.3](../65-Hooking/README.md)). A managed hook needs a *backup method* holding the
 > original entry pointer, because the method's dispatch slot was overwritten. Classic Xposed's backup
@@ -792,7 +792,7 @@ second is the fatal one.
    LSPlant derives offsets at runtime, and it is the reason the *table-driven* generation of engines
    ended.
 
-> **⚠️ Warning.** Reason 2 is not a historical curiosity, it is live advice: **never hard-code an
+> **Warning.** Reason 2 is not a historical curiosity, it is live advice: **never hard-code an
 > `ArtMethod` field offset in anything you write.** [13-ART](../13-ART/README.md) ships
 > [`13-ART/scripts/artmethod-inspect.js`](../13-ART/scripts/artmethod-inspect.js), which locates the
 > field without one. An engine with tabulated offsets works on the author's device and corrupts
@@ -834,7 +834,7 @@ semantics** — LSPosed re-implements this contract faithfully. What belongs her
 that the contract is *a description of this dispatcher's control flow*, preserved for a decade after
 the dispatcher itself was replaced.
 
-> **🔍 Pentester's Note.** The single-dispatcher design is also why a classic-Xposed stack trace has a
+> **Pentester's Note.** The single-dispatcher design is also why a classic-Xposed stack trace has a
 > recognisable shape: a frame naming `de.robv.android.xposed.XposedBridge.handleHookedMethod` sat
 > between a hooked method and its caller, in every process, for every hook. That is the signature the
 > stack-inspection check in [`examples/XposedDetector.java`](examples/XposedDetector.java) looks for —
@@ -873,7 +873,7 @@ The last row is the only genuine semantic change in the list, and it is a small 
 else in this table means today exactly what it meant in 2015**, which is a remarkable stability
 record for any API and the practical reason this chapter is worth reading.
 
-> **⚠️ Warning — `compileOnly`, and the failure that produces no error.** The API must be on the
+> **Warning — `compileOnly`, and the failure that produces no error.** The API must be on the
 > compile classpath and **must not be packaged into the module**. In Gradle that is
 > `compileOnly 'de.robv.android.xposed:api:82'`, never `implementation`. A module that ships its own
 > copy of `de.robv.android.xposed` ends up with the module's code calling the *module's*
@@ -904,7 +904,7 @@ classes that implement the entry-point interfaces. See
 
 **3. The API on the compile classpath only** — §3.7's warning.
 
-> **🔍 Pentester's Note — the permanent, structural leak.** **An obfuscated module must publish its
+> **Pentester's Note — the permanent, structural leak.** **An obfuscated module must publish its
 > entry class name in plaintext, and there is no configuration in which that is not true.** The
 > framework reads `assets/xposed_init` with no knowledge of any obfuscation mapping, so R8 renaming
 > the entry class breaks the module. Every module therefore carries a `-keep` on its entry classes,
@@ -937,7 +937,7 @@ feature classic Xposed did not have"* and *"LSPosed's single largest practical i
 one people underrate"*. This is what it improved on: **a security boundary implemented as a coding
 convention**.
 
-> **🧠 Mental Model.** Under LSPosed, `android` scope — loading a module into `system_server` — is
+> **Mental Model.** Under LSPosed, `android` scope — loading a module into `system_server` — is
 > rated **Critical** by [63-LSPosed §5.4](../63-LSPosed/README.md), because it is unrestricted code
 > execution in the platform process. Under classic Xposed, **every enabled module had it, by
 > default, with no checkbox.** Read 63's §5.4 and then reread that sentence; it is the most
@@ -973,15 +973,15 @@ per-version offset table has no version to index by.
 **Force 4 — A/B seamless updates.** Block-level OTA replaces the whole partition. Every update
 removed the framework, and re-installing re-broke Verified Boot.
 
-**Force 5 — the successors were simply better.** Riru and then Zygisk solved the injection problem
+**Force 5 — the successors were better.** Riru and then Zygisk solved the injection problem
 *without* touching a partition, which meant no verity conflict, no OTA breakage, and no per-release
 binary port. **Once a systemless path existed, there was no argument left for the system-modifying
 one.** That is the honest reason classic Xposed has no users rather than few users.
 
-> **⚠️ Warning — the wrong lesson.** It is tempting to read this as "Android locked things down and
+> **Warning — the wrong lesson.** It is tempting to read this as "Android locked things down and
 > killed a useful tool". The capability did not go away: [63-LSPosed](../63-LSPosed/README.md) does
 > everything classic Xposed did, better, on a current device. What went away is **the requirement to
-> permanently damage the device's integrity guarantees in order to get it**. That is a strictly
+> permanently damage the device's integrity guarantees to get it**. That is a strictly
 > better world for a tester, and the reason this chapter's ethics note (§1.7) says the modern answer
 > to "how do I install Xposed" is "don't".
 
@@ -991,7 +991,7 @@ Between classic Xposed and LSPosed sits a period that is easy to skip and worth 
 because it is where the injection problem was first solved systemlessly and because you will meet its
 artefacts in old detection lists.
 
-> **📖 Definition — Riru.** A framework by RikkaW that got a native library into Zygote by
+> **Definition — Riru.** A framework by RikkaW that got a native library into Zygote by
 > **replacing a library Zygote already loads**, so the dynamic linker pulled Riru in as a normal
 > dependency. Early versions targeted `libmemtrack`, later ones `libnative_bridge`. Riru is a
 > *substrate*: it hooks nothing itself and provides no API for hooking. [62-Magisk §3.8](../62-Magisk/README.md)
@@ -1028,7 +1028,7 @@ Neither is a general answer, and it is worth being blunt about why: **both chang
 thing you are testing.** A finding produced against a repackaged or containerised app carries an
 immediate objection — "that is not our app" — and it is usually correct.
 
-> **🔍 Pentester's Note.** There is one case where they are genuinely the right tool: when you have no
+> **Pentester's Note.** There is one case where they are genuinely the right tool: when you have no
 > root, cannot get root, and the question is about *the app's own logic* rather than about its
 > platform integration. [53-Frida](../53-Frida/README.md)'s gadget-in-a-repackaged-APK route has the
 > same shape and the same caveat, and [63-LSPosed §7.9](../63-LSPosed/README.md) lists it as the
@@ -1068,7 +1068,7 @@ Short list, stated for completeness and because it is the only place this chapte
 | **Device-wide effect with no per-process decision** | No scope (§3.9) | Scope is the point, and is not optional |
 | **Working on Android 4.x** | It was built for it | LSPosed's floor is API 27 |
 
-Note that the first three are the same three things that killed it, described approvingly. That is not
+the first three are the same three things that killed it, described approvingly. That is not
 a coincidence and it is the most useful thing in the table: **the properties that made classic Xposed
 powerful are exactly the properties that made it unshippable.** A capability with no boundary is
 easier to build, more useful, and impossible to defend.
@@ -1090,7 +1090,7 @@ easier to build, more useful, and impossible to defend.
 | LSPosed | **API 27 – 35 and current** | Same API, no partition writes, per-application scope |
 | The Xposed **API** version | **82**, unchanged for years | A module's `xposedminversion`. Not an Android version and not an LSPosed version |
 
-> **⚠️ Warning.** The row people misread is the last one. `xposedminversion="82"` in a module's
+> **Warning.** The row people misread is the last one. `xposedminversion="82"` in a module's
 > manifest says nothing whatsoever about which Android versions the module supports, and a module
 > declaring it is not "old". It is the only value anyone has used for years.
 
@@ -1132,7 +1132,7 @@ that `new File("/data/adb/lspd").exists()` returns the same answer installed or 
 run, and adds the left-hand column, which is this chapter's own: **`File.exists()` conflates ENOENT
 with EACCES, and a detector built on it cannot tell a clean device from a locked cupboard.**
 
-> **⚠️ Warning — read the app column precisely.** These were taken through `run-as`, whose SELinux
+> **Warning — read the app column precisely.** These were taken through `run-as`, whose SELinux
 > domain is `runas_app` (measured: `u:r:runas_app:s0:c207,c256,c512,c768`), **not**
 > `untrusted_app`. This repository's standing rule is *prove reachability from an app, not from the
 > shell*, and `run-as` sits between the two: it has an application uid and MCS categories but a
@@ -1241,13 +1241,13 @@ entry-point field without hard-coding an offset. What belongs here is which of t
 |---|---|---|
 | Copy the `ArtMethod` | `art_method.h` | The size of the copy is the size of the struct, which is release-dependent — §3.5's reason 1 |
 | Set `kAccNative` | `modifiers.h` defines the bit; `art_method.h` holds `access_flags_` | 13-ART's field table records that `access_flags_` carries *"Java modifiers **plus ART-internal bits**"* |
-| Point the entry at the generic JNI trampoline | `quick_trampoline_entrypoints.cc` | 13-ART §3.16 tabulates `art_quick_generic_jni_trampoline` as a **legitimate** entry-point value, which is why a naive "is this entry point unusual?" detector cannot simply flag it |
+| Point the entry at the generic JNI trampoline | `quick_trampoline_entrypoints.cc` | 13-ART §3.16 tabulates `art_quick_generic_jni_trampoline` as a **legitimate** entry-point value, which is why a naive "is this entry point unusual?" detector cannot flag it |
 | Discourage recompilation | `jit.cc` reads the hotness counter; `modifiers.h` defines `kAccCompileDontBother` | Without this the JIT compiles a hot method and writes a **new** entry point over the framework's — the hook silently stops firing |
 
 That third row is worth a callout on its own, because it is the single most useful thing an analyst
 can take from this section.
 
-> **🔬 Under the Hood.** `art_quick_generic_jni_trampoline` in a method's entry point is **normal**
+> **Under the Hood.** `art_quick_generic_jni_trampoline` in a method's entry point is **normal**
 > for a genuinely native method and **anomalous** for a method declared in Java with a body.
 > Detecting a classic-Xposed hook is therefore not "is the entry point weird?" but *"is this method's
 > entry point inconsistent with its declaration?"* — a Java method with bytecode whose `access_flags_`
@@ -1361,7 +1361,7 @@ harmless either. Its costs are real and rarely counted:
 - It **decays silently.** Nothing warns you when a check's premise expires. The check goes on
   returning `false` and looking healthy.
 
-> **🔍 Pentester's Note.** This is the most transferable idea in the chapter, and it is not about
+> **Pentester's Note.** This is the most transferable idea in the chapter, and it is not about
 > Xposed. **A client-side integrity check has an expiry date and no expiry mechanism.** When you find
 > one, the useful question is not "can I bypass it?" — you can — but *"on what devices can this check
 > fire at all?"* Answer that with a number and you have written a finding the developer can act on.
@@ -1457,7 +1457,7 @@ vulnerability that an application can be hooked; that is a property of the platf
 worth writing is the one underneath — *"control X is enforced only by a client-side check that cannot
 fire on any current device, therefore X is unprotected"* — and then the severity is X's.
 
-> **⚠️ Warning.** Do not report "the app does not detect Xposed" as a finding at all unless the threat
+> **Warning.** Do not report "the app does not detect Xposed" as a finding at all unless the threat
 > model explicitly includes a compromised device. MASVS-RESILIENCE is scoped that way in the
 > standard's own words, and reporting resilience gaps against an application with no resilience
 > requirement is the single most common way a mobile report loses a developer's attention.
@@ -1609,7 +1609,7 @@ type T-B — *"leaves the APK alone"* — and rates the on-disk evidence in the 
 classic Xposed left plenty of evidence **on the system partition**. The two statements are
 compatible and the distinction is the whole point: the framework was noisy, the tampering was silent.
 
-> **🔍 Pentester's Note.** The realistic historical infection path was never an exploit. It was a user
+> **Pentester's Note.** The realistic historical infection path was never an exploit. It was a user
 > who rooted their own device, installed the Xposed Installer, and then enabled a module from a forum
 > — and that module then ran in every process on the phone. That is the same supply-chain argument
 > [63-LSPosed §5.4](../63-LSPosed/README.md) makes about modern modules, with the scope checkbox
@@ -1640,7 +1640,7 @@ Two differences from a modern investigation, both consequential:
 - **The `dalvik-cache` timestamp cluster is a genuinely good dating primitive** and has no modern
   equivalent, because a systemless framework does not invalidate the boot class path.
 
-> **⚠️ Warning.** Everything in that table needs either a physical image or root on a live device, and
+> **Warning.** Everything in that table needs either a physical image or root on a live device, and
 > rooting a live device changes it. Document the acquisition method. This repository's standing
 > discipline applies: **your own rooting is methodology, not a finding.**
 
@@ -1674,7 +1674,7 @@ Read the second and third lines together, because that gap is the whole `compile
 **21 classes compiled, 4 dexed.** The other 17 are the generated API stub, excluded from the DEX
 exactly as `compileOnly` excludes the real jar (§3.7).
 
-> **📖 Definition — a build with a hole in it.** The shipped DEX **references** ten
+> **Definition — a build with a hole in it.** The shipped DEX **references** ten
 > `de.robv.android.xposed` types and **defines** none of them. On any ordinary Android app that is a
 > broken build that would fail at first use with `NoClassDefFoundError`. On a module it is correct,
 > and it is the defining structural property of the format: the framework supplies those classes at
@@ -1716,7 +1716,7 @@ pins `RootCheck.isRooted` to `false` and 63's does not. **The reference list is 
 signal triage primitive and it survives obfuscation**, because R8 can rename everything a module owns
 and nothing it imports.
 
-> **⚠️ Warning — what the list does NOT tell you.** It cannot tell you which framework will load the
+> **Warning — what the list does NOT tell you.** It cannot tell you which framework will load the
 > module. Classic Xposed, EdXposed and LSPosed all consume this identical format
 > ([63-LSPosed §2.5](../63-LSPosed/README.md)). A module APK carries no evidence of its intended
 > framework, and any tool claiming to distinguish them from the APK alone is guessing.
@@ -1825,7 +1825,7 @@ differs, the array construction differs (63's `javac` emitted `filled-new-array`
 `new-array` plus `aput-object`, because the argument counts differ), and **every semantically
 important element is identical.** Ten years of API stability, in two listings from two chapters.
 
-> **🔍 Pentester's Note.** That first row is the most useful fact in this section. **A module cannot
+> **Pentester's Note.** That first row is the most useful fact in this section. **A module cannot
 > hide what it hooks.** Class, method and field names are string constants, because reflection is
 > string-based. String encryption can hide them — and then the decryption routine becomes the thing
 > you attack, which is the same trade every packer makes
@@ -1868,7 +1868,7 @@ pattern in module triage, and it is what
 [`scripts/xposed-detection-scan.py`](scripts/xposed-detection-scan.py) and
 [63-LSPosed](../63-LSPosed/README.md)'s `detect-xposed-module.py` are both looking for.
 
-> **⚠️ Warning — presence and absence are not symmetric, and 63 measured why.** Finding
+> **Warning — presence and absence are not symmetric, and 63 measured why.** Finding
 > `XC_MethodReplacement` or `setResult` in a DEX is strong evidence the module changes behaviour.
 > **Not** finding it is weak evidence of anything: [63-LSPosed §6.3](../63-LSPosed/README.md) measured
 > a `private static final boolean` guard causing `javac` to fold the condition and eliminate an
@@ -2011,7 +2011,7 @@ That is more hedging than most write-ups contain, and it is the point. **A chapt
 leaves artefact X" without saying which device it looked at is telling you what it read, not what it
 saw.**
 
-> **⚠️ Warning — `su -c` fails on this emulator in a way that reads as "not rooted".**
+> **Warning — `su -c` fails on this emulator in a way that reads as "not rooted".**
 > ```
 > $ adb -e shell 'su -c id'
 > su: invalid uid/gid '-c'
@@ -2083,7 +2083,7 @@ Five things worth extracting, and the last one is a trap:
    inheriting that bug**, and it is exactly the same failure shape as §5.3: absent and bad are
    different conditions, and code that conflates them gets the wrong answer.
 
-> **🔍 Pentester's Note.** Put that table in the report. When a developer asks why their
+> **Pentester's Note.** Put that table in the report. When a developer asks why their
 > Xposed-detection code is being called dead, three columns of `ENOENT` from a device they can
 > reproduce on ends the conversation faster than any amount of prose about Verified Boot.
 
@@ -2102,7 +2102,7 @@ Three ways to get an app vantage, in increasing order of fidelity:
 | A purpose-built probe APK | `untrusted_app` | **The real answer.** [Lab 01](labs/lab-01-the-detection-surface.md) builds one | You have to build and install it |
 | Frida, in-process, against the real target | the target's own domain | Answering "what does *this* app see?" | Needs root and a working frida-server — see the warning below |
 
-> **⚠️ Warning.** `frida-server` on this AVD does **not** load on API 35. Chapter 61 measured the
+> **Warning.** `frida-server` on this AVD does **not** load on API 35. Chapter 61 measured the
 > failure precisely: `CANNOT LINK EXECUTABLE … empty/missing DT_HASH/DT_GNU_HASH … (new hash type
 > from the future?)`. That is a frida-version problem, not a root problem — `su 0 id` returns uid 0
 > seconds later — and confusingly `frida-ps -U` still lists processes, so the failure only appears
@@ -2138,7 +2138,7 @@ It reports four independent signals, because any one alone is weak:
 | `access_flags_` claims `kAccNative` on a method with bytecode | **The classic-Xposed hook, structurally** (§6.4) | Classic only |
 | Entry point outside the boot image, the app's `.odex` and the JIT cache | Something rewrote the entry point | Any |
 
-> **⚠️ Warning — execution status.** This script was **reviewed, not executed**, for the reason in
+> **Warning — execution status.** This script was **reviewed, not executed**, for the reason in
 > §7.3. Its `ArtMethod` offset handling defers to
 > [`13-ART/scripts/artmethod-inspect.js`](../13-ART/scripts/artmethod-inspect.js) rather than
 > hard-coding anything, which is the part most likely to be wrong in a script of this kind. Its own
@@ -2223,7 +2223,7 @@ The single STRONG hit was adjudicated by hand:
 |---|---|---|
 | `com.topjohnwu.magisk` | `pkg.lsposed` (`org.lsposed.manager`), plus `path.appprocess` | **Not detection code.** It is the Magisk manager naming a well-known module it interoperates with. Correctly flagged, correctly dismissed |
 
-> **⚠️ Warning — what this measurement does and does not support.** It supports: *"the Android
+> **Warning — what this measurement does and does not support.** It supports: *"the Android
 > platform and Google's own applications do not ship Xposed-detection code"*, which is a real and
 > slightly surprising finding. It does **not** support any claim about how many banking, DRM,
 > gaming or enterprise applications do, because **the corpus contains four third-party apps** and
@@ -2267,7 +2267,7 @@ Three applications, 147 hits, every one accounted for, none genuine. The word ap
 (`isExposed`), in Compose and androidx API names, in resource strings, and in documentation comments
 that survive into the constant pool.
 
-> **⚠️ Warning.** This is not a curiosity, it is a **58-false-positives-out-of-58** result on the
+> **Warning.** This is not a curiosity, it is a **58-false-positives-out-of-58** result on the
 > first tool anybody reaches for. A tester who runs that grep and reports "58 of 237 applications
 > reference Xposed" has published a number that is wrong in every digit.
 > [`scripts/xposed-detection-scan.py`](scripts/xposed-detection-scan.py) therefore **never matches a
@@ -2308,7 +2308,7 @@ The fix and the rule it produced: **never put a token shorter than about eight c
 STRONG tier**, and the removed signature is retained as a commented block in the script so nobody
 reintroduces it.
 
-> **🔍 Pentester's Note — the general rule this belongs to.**
+> **Pentester's Note — the general rule this belongs to.**
 > [38-TamperDetection](../38-TamperDetection/README.md) reported a self-signature check in **18 of 18
 > APKs** and had to split every pattern into STRONG/WEAK to reach a defensible 13/18.
 > [52-StaticAnalysis](../52-StaticAnalysis/README.md) rejected **15 of 17** high-confidence hits on
@@ -2377,7 +2377,7 @@ in `/data/app`** — that is, sideloaded or Play-updated. So the device-side sho
 exactly the population you most want to scan, and in this corpus it would have silently skipped
 **Chrome, the single largest and most interesting third-party application present.**
 
-> **⚠️ Warning.** A device-side grep sweep that reports "no Xposed detection found" has not scanned
+> **Warning.** A device-side grep sweep that reports "no Xposed detection found" has not scanned
 > the apps that matter, and nothing in its output says so. Pull and scan properly, or at minimum run
 > the shortcut and then check which APKs it could not see.
 > [`scripts/xposed-detection-scan.py`](scripts/xposed-detection-scan.py) prints the STORED/DEFLATED
@@ -2417,7 +2417,7 @@ for p in pats:
 " out/classes.dex
 ```
 
-> **⚠️ Warning.** Do not use `strings` for this on Windows. The `strings` most likely to be on your
+> **Warning.** Do not use `strings` for this on Windows. The `strings` most likely to be on your
 > `PATH` there is a Sysinternals-style build which **cannot open an MSYS `/c/...` path** and **emits
 > CRLF**, so every anchored `grep` silently matches nothing. This repository has lost time to it
 > before, and this chapter hit it again while writing
@@ -2541,7 +2541,7 @@ public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lpparam) {
 }
 ```
 
-Measured, from the compiled DEX (§6), this is what an analyst sees — note that no callback class is
+Measured, from the compiled DEX (§6), this is what an analyst sees —no callback class is
 constructed anywhere in the method:
 
 ```smali
@@ -2654,7 +2654,7 @@ expiry mechanism.** The fix is process, not code.
 | **The CI build fails if a new check has no premise recorded** | The only control on the list that prevents the problem rather than detecting it |
 
 ```java
-// The shape. Note that nothing here decides anything.
+// The shape.nothing here decides anything.
 final class PostureReport {
     // Each signal carries WHAT IT SAW, not a verdict, and a premise id so the
     // server can correlate firing rates against the check's stated premise.
@@ -2691,7 +2691,7 @@ device with Verified Boot. The **API**, yes, universally: LSPosed implements the
 
 **Q. Why does Xposed need root?**
 It did not need root at *runtime* — it needed write access to the system partition at *install*
-time, which is a stronger requirement. Once installed, the framework was simply part of the boot
+time, which is a stronger requirement. Once installed, the framework was part of the boot
 path.
 
 **Q. What is `app_process`?**

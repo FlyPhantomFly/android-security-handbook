@@ -258,7 +258,7 @@ adb shell "dumpsys trust" | grep -o "deviceLocked=[01]" # before any app-origina
 | **16,836 → 168** | Raw hits collapsed to leads on a 20,091-file tree (100×) | this chapter §9.4 |
 | **15 of 17** | HIGH-band leads rejected on inspection on a real commercial app (88%) | this chapter §9.4 |
 | **3,591 of 7,346** | Hits killed by rule validators before a human saw them | this chapter §3.6 |
-| **54%** | Share of a real app's tree that is neither obviously app nor obviously library | this chapter §9.4 |
+| **54%** | Share of a real app's tree that is neither recognisably app nor recognisably library | this chapter §9.4 |
 
 ---
 

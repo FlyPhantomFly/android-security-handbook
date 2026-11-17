@@ -45,7 +45,7 @@ adb wait-for-device && adb devices -l
 
 ### 1.2 The rules for this lab
 
-> **⚠️ Warning — read these before you write a line of code.**
+> **Warning — read these before you write a line of code.**
 >
 > 1. **Do not run `adb tcpip` on a device you care about.** It creates a real, persistent
 >    network exposure. This lab needs a TCP-reachable `adbd`; an emulator already is one.
@@ -137,7 +137,7 @@ def recv_message(sock):
 > bytes. Every hand-written ADB client that "works on the emulator and breaks over the network"
 > made this mistake.
 
-### ✅ Checkpoint A
+### Checkpoint A
 
 ```python
 h = pack(A_OPEN, 1, 0, b"shell:id\x00")
@@ -184,7 +184,7 @@ if __name__ == "__main__":
     print("maxdata:", maxdata)
 ```
 
-### ✅ Checkpoint B
+### Checkpoint B
 
 Against an emulator you should get the device banner straight back, because emulator images ship
 `ro.adb.secure=0`. Confirm that:
@@ -276,7 +276,7 @@ def load_private_key(path):
     return ints[1], ints[3]
 ```
 
-> **⚠️ From this point on, your program holds a credential in memory.** Do not add a `print(pem)`
+> **From this point on, your program holds a credential in memory.** Do not add a `print(pem)`
 > "just to check". Do not paste your key into a chat window to ask for help. If you must debug,
 > print `n.bit_length()` — that is `2048` and reveals nothing.
 
@@ -368,7 +368,7 @@ def connect(sock, keypath, offer_key=False, features="cmd,stat_v2,ls_v2"):
         raise IOError("unexpected %s" % NAMES.get(command, hex(command)))
 ```
 
-### ✅ Checkpoint C
+### Checkpoint C
 
 - `selftest()` passes.
 - Against the emulator, nothing changes (no `A_AUTH` is sent) — and you understand why.
@@ -430,7 +430,7 @@ Three details in there are the whole lab, and all three are things people get wr
 3. **`A_CLSE` with `arg0 == 0` before any `A_OKAY`** is a refusal, and that is the only signal you
    get.
 
-### ✅ Checkpoint D
+### Checkpoint D
 
 ```python
 s = socket.create_connection(("127.0.0.1", 5555), timeout=10)
@@ -467,7 +467,7 @@ for svc in SAFE_SERVICES:
     s.close()
 ```
 
-> **⚠️ The list above is deliberately safe.** `root:`, `unroot:`, `tcpip:`, `usb:`, `remount:` and
+> **The list above is deliberately safe.** `root:`, `unroot:`, `tcpip:`, `usb:`, `remount:` and
 > `reboot:` all take effect immediately. Do not add them to a sweep.
 
 ### 6.2 See the shell-v2 framing
@@ -499,7 +499,7 @@ Open `shell:logcat` and `shell:id` on the same connection with different local i
 reading them. This is the moment the multiplexing stops being theoretical: you will see messages for
 both streams arriving on one socket, distinguished only by `arg1`.
 
-### ✅ Checkpoint E
+### Checkpoint E
 
 - A service table for your target.
 - A working shell-v2 parser that reports an exit code.

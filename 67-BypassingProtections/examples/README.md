@@ -168,7 +168,7 @@ OUTDIR=/tmp/ch67 ./build.sh --uninstall
 
 **Requirements:** an Android SDK with build-tools (`aapt2`, `d8`, `zipalign`, `apksigner`) and one
 platform `android.jar`; a JDK with `javac` and `keytool`; `python3`; `adb`. An NDK is **optional** —
-without it the native tier is simply absent, and the app reports `native tier absent`, which is a
+without it the native tier is absent, and the app reports `native tier absent`, which is a
 state the labs deliberately ask you to recognise.
 
 Built and verified on: build-tools 35.0.1, `android-35`'s `android.jar`, JDK 24, NDK 25.2.9519653

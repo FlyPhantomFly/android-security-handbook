@@ -8,11 +8,11 @@
 
 > **Provenance.** Ghidra **is** installed on the machine this chapter was written on (12.1.2 PUBLIC,
 > Java 24.0.2) and was run headless against the chapter's own target, so the tool behaviour this lab
-> relies on is **✅ Measured**. Any decompiler listing quoted below as an *expected result* is
-> **📘 Illustrative** — it shows the shape to look for, not a capture from a specific binary, and
+> relies on is **Measured**. Any decompiler listing quoted below as an *expected result* is
+> **Illustrative** — it shows the shape to look for, not a capture from a specific binary, and
 > your addresses and variable names will differ. Build the real target with
 > [`../examples/build.sh`](../examples/build.sh) and check your findings against its source. See
-> [the chapter's provenance statement](../README.md#-read-this-before-you-read-anything-else-what-is-measured-here-and-what-is-not).
+> [the chapter's provenance statement](../README.md#read-this-before-you-read-anything-else-what-is-measured-here-and-what-is-not).
 
 ---
 

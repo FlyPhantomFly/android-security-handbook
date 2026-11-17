@@ -67,7 +67,7 @@ The fix is to match the `frida-server` build to the image (or use an image the b
 Where you cannot, `frida-gadget` avoids the standalone binary entirely — it is loaded by the app
 itself — and §§1–6 of the chapter, including the miniature-Frida build in §4.4, need no server at
 all. The full disclosure, with the table of what to do instead, is
-[at the top of the chapter](README.md#-read-this-before-you-install-anything-frida-server-does-not-run-on-every-image).
+[at the top of the chapter](README.md#read-this-before-you-install-anything-frida-server-does-not-run-on-every-image).
 
 Frida is not broken in general. This is one named, reproducible, version-specific failure, and on a
 matched host/image pair everything in this chapter runs as written.
@@ -112,7 +112,7 @@ By the time a human sees the app on screen and types a command, all of that is s
 
 ---
 
-**5. `Java.use` throws `ClassNotFoundException` for a class I can see clearly in JADX. Why?**
+**5. `Java.use` throws `ClassNotFoundException` for a class I can see in JADX. Why?**
 
 Because `Java.use` resolves names through one specific `ClassLoader` — `Java.classFactory.loader` —
 and your class is in a different one.
@@ -352,7 +352,7 @@ BoringSSL. No Java hook reaches that code, so every Java-level hook you installe
 changes nothing.
 
 Hook the native side instead: `SSL_CTX_set_custom_verify` (modern BoringSSL) and `SSL_CTX_set_verify`
-(classic OpenSSL), replacing the verification callback with one that always accepts. Note that the
+(classic OpenSSL), replacing the verification callback with one that always accepts.the
 symbol may live in the app's own library rather than `libssl.so`, so search *every* loaded module —
 [`scripts/ssl-pinning-bypass.js`](scripts/ssl-pinning-bypass.js) does this.
 
@@ -410,7 +410,7 @@ this with bounds checking. Never write a raw address you saw in a previous run; 
 
 ---
 
-**22. `nm` shows no `Java_*` symbols but the app clearly has `native` methods. Where are they?**
+**22. `nm` shows no `Java_*` symbols but the app declares `native` methods. Where are they?**
 
 The app called `RegisterNatives` from `JNI_OnLoad` instead of relying on name-based lookup. That binds
 arbitrary — usually stripped, non-exported — functions to Java method names at runtime, so the mapping
@@ -434,7 +434,7 @@ adb shell pm path com.example.app
 adb pull /data/app/~~xxxx/com.example.app-yyyy/base.apk
 ```
 
-Note that an app installed from Play has a cloud profile and is therefore likely to be AOT-compiled
+an app installed from Play has a cloud profile and is therefore likely to be AOT-compiled
 with inlining, whereas a sideloaded one usually is not. That difference alone changes whether a hook
 fires, which is why `cmd package compile -m verify -f` matters more on Play-installed apps.
 

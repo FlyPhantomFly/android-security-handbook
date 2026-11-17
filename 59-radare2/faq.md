@@ -2,9 +2,9 @@
 
 Real questions, answered directly. Including the ones people are embarrassed to ask.
 
-> Every radare2 command here is **📘 Unverified** — radare2 was not installed on the machine where
+> Every radare2 command here is **Unverified** — radare2 was not installed on the machine where
 > this chapter was written. Facts about binaries, byte encodings and device behaviour are
-> **✅ Measured**. See [README.md](README.md) for the full statement.
+> **Measured**. See [README.md](README.md) for the full statement.
 
 ---
 
@@ -87,7 +87,7 @@ stripped ELF — all of it is inferred.
 
 It is slow because the work is proportional to the amount of code.
 
-> **✅ Measured** — AArch64 `libsqlite.so` from an API 35 device carries **1,657,588 bytes of code —
+> **Measured** — AArch64 `libsqlite.so` from an API 35 device carries **1,657,588 bytes of code —
 > 414,397 instructions — behind 364 exported names.** That is roughly one name per 4,554 bytes of
 > machine code. Analysis is not reading names; it is inventing 400,000 instructions' worth of
 > structure from a few hundred starting points.
@@ -102,7 +102,7 @@ Whenever your question is about structure rather than code. Imports, exports, st
 linked libraries and hardening flags all come from parsing the ELF header and two or three tables.
 That cost is bounded by symbol-table size, not code size.
 
-> **✅ Measured** — x86_64 `libhwui.so` is 13,005,808 bytes with **6,336,785 bytes of code** and just
+> **Measured** — x86_64 `libhwui.so` is 13,005,808 bytes with **6,336,785 bytes of code** and just
 > **1,080 dynamic symbols**. Structural parsing reads the 1,080-entry table and never touches the
 > 6.3 MB. Those two numbers differ by orders of magnitude and that gap is the whole argument.
 
@@ -122,7 +122,7 @@ first and confirm with `afl~?`, which prints the function count.
 **The reference is indirect.** `axt` can only see references it computed statically. A call through a
 register has no static target.
 
-> **✅ Measured** — every JNI call in this chapter's sample target is exactly this. From
+> **Measured** — every JNI call in this chapter's sample target is exactly this. From
 > `llvm-objdump -d`:
 > ```
 >     1a40: 08 5d 43 f9   ldr   x8, [x8, #1720]
@@ -173,7 +173,7 @@ works. In that second case it may be the only tool that helps.
 
 Probably nothing wrong with the patch. This chapter measured it happening with a correct patch.
 
-> **✅ Measured** — `lt_verify_license` was patched to `mov w0,#1; ret`, the bytes were verified in
+> **Measured** — `lt_verify_license` was patched to `mov w0,#1; ret`, the bytes were verified in
 > place with `llvm-objdump`, and the program's output on a real device was **identical** to the
 > unpatched binary. The cause was in the caller:
 > ```
@@ -208,7 +208,7 @@ cp target.so target.so.patched      # always work on a copy
 ```
 
 ```
-# 📘 Unverified
+# Unverified
 [0x0]> e io.cache=1                 # stage writes in memory
 [0x0]> wa mov w0, 1; ret
 [0x0]> pdf                          # inspect before committing
@@ -224,7 +224,7 @@ cp target.so target.so.patched      # always work on a copy
 
 You used a virtual address as a file offset. They are not the same.
 
-> **✅ Measured** — in this chapter's sample executable, `llvm-readelf -S` reports `.text` at virtual
+> **Measured** — in this chapter's sample executable, `llvm-readelf -S` reports `.text` at virtual
 > address `0x4794` and file offset `0x794`. The delta is `0x4000`. A function at virtual address
 > `0x4854` lives at file offset `0x854`. Writing at `0x4854` in a hex editor would land past the end
 > of the file entirely.
@@ -245,7 +245,7 @@ hand.
 The binary is stripped, which is the normal state of shipped Android native code. `fcn.` means
 "radare2 found a function here and nothing told it the name". `sym.` means a symbol supplied one.
 
-> **✅ Measured** — of eleven real Android system libraries pulled from an API 35 device, **ten had
+> **Measured** — of eleven real Android system libraries pulled from an API 35 device, **ten had
 > zero `.symtab` sections**. The exception was AArch64 `libc.so`, which kept a full symbol table of
 > **2,667** entries.
 
@@ -262,7 +262,7 @@ gives you the ratio as two numbers.
 This is the most useful finding in the chapter, and it is almost universally believed to be
 impossible.
 
-> **✅ Measured** — the same source file, two builds with NDK 25.2.9519653:
+> **Measured** — the same source file, two builds with NDK 25.2.9519653:
 >
 > | Build | `strings \| grep xbin` |
 > |---|---|
@@ -285,7 +285,7 @@ The fix is one word — make the key opaque to the optimiser:
 static volatile unsigned char g_xor_key = 0xA7;
 ```
 
-> **✅ Measured** — with `volatile`, the `-O2` build hides the string and the decode loop survives
+> **Measured** — with `volatile`, the `-O2` build hides the string and the decode loop survives
 > (vectorised, but real). Same reasoning as
 > [19-Memory](../19-Memory/README.md)'s `volatile` scrubbing loop: a standard defensive idiom that
 > the optimiser is otherwise entitled to delete.
@@ -370,14 +370,14 @@ The mapping is built at run time by `RegisterNatives`, so no symbol names the im
 **Statically**, four threads to pull:
 
 ```
-# 📘 Unverified
+# Unverified
 [0x0]> iz~^\(              # JNI signatures always start with "("
 [0x0]> iz                  # the method name is usually the adjacent string
 [0x0]> iS~data.rel.ro      # the JNINativeMethod table usually lives here
 [0x0]> aa; pdf @ sym.JNI_OnLoad
 ```
 
-> **✅ Measured** — in this chapter's sample the whole of `.rodata` is fifty bytes and contains, in
+> **Measured** — in this chapter's sample the whole of `.rodata` is fifty bytes and contains, in
 > order: `/system/xbin/su`, `com/pentest/ch59/Native`, `(Ljava/lang/String;)I`, `dynGate`,
 > `gate=%d`. Class, signature and method name sit adjacent because the compiler emitted them in
 > reference order. The C function implementing it is `static` and appears in **no** symbol table.
@@ -397,7 +397,7 @@ The JNI specification fixes the order of the ~230 entries in `JNINativeInterface
 one pointer. So on a 64-bit target **an offset is a function name**, and the pattern
 `ldr x8,[x0]` · `ldr x8,[x8,#N]` · `blr x8` is always a JNI call with `N` identifying which one.
 
-> **✅ Measured** — in the sample target, offset `48` (`0x30`) is `FindClass` and offset `1720`
+> **Measured** — in the sample target, offset `48` (`0x30`) is `FindClass` and offset `1720`
 > (`0x6b8`) is `RegisterNatives`, independently confirming the table in
 > [57-Ghidra](../57-Ghidra/README.md) §3.8.
 
@@ -457,7 +457,7 @@ running it does not alter evidence — relevant for forensics.
 The caveats: a maliciously malformed file is an attack surface for any parser, so run it in a VM or
 container if the sample is untrusted. `r2 -n` skips `r_bin` entirely and gives you a raw byte view
 when structure-aware parsing crashes, which is often the state anti-analysis tricks leave a tool in.
-And obviously the debugger and r2frida *do* execute the target — that is their job.
+And the debugger and r2frida *do* execute the target — that is their job.
 
 Hash before you touch anything. `#sha256` inside a session hashes the current block.
 
@@ -486,7 +486,7 @@ Being precise about which: radare2 is fast at **structural parsing** and at **st
 not magic at code analysis — discovering functions in 400,000 instructions is the same hard problem
 for every tool.
 
-> **✅ Measured (a floor, not radare2)** — this chapter could not time `aaa` because radare2 was not
+> **Measured (a floor, not radare2)** — this chapter could not time `aaa` because radare2 was not
 > installed. It measured the cheapest possible subset — decoding every instruction once, with
 > `llvm-objdump` — at roughly **210,000–281,000 instructions per second**, linear in `.text` size
 > and essentially independent of file size. Anything that also discovers functions and computes
@@ -524,10 +524,10 @@ vulnerable" and you will eventually be wrong in front of a client.
 
 Trust it exactly as far as it claims, which is the point of the marking.
 
-Every radare2 **command** is marked **📘 Unverified**: transcribed from the tool's documentation and
+Every radare2 **command** is marked **Unverified**: transcribed from the tool's documentation and
 source, believed correct, not executed here. Every claim about a **binary** — sizes, sections, symbol
 counts, disassembly listings, byte encodings, timings, and the behaviour of patched programs on a
-real Android device — is marked **✅ Measured** and names the tool and device that produced it.
+real Android device — is marked **Measured** and names the tool and device that produced it.
 
 That split is deliberate. The hard part of this chapter is not which letters to type; it is what is
 actually inside an Android native library and what question to ask of it. Those facts were measured
@@ -548,4 +548,4 @@ to the return value, you are guessing. A correct, verified patch on the wrong fu
 indistinguishable from a patch that failed.
 
 **Run `strings` on the release artefact, not the debug build.** Compile-time obfuscation is a comment
-to the optimiser, and at `-O2` it may simply be deleted.
+to the optimiser, and at `-O2` it may be deleted.

@@ -14,7 +14,7 @@ artefact with `aapt2`, `jadx` 1.5.3, `apksigner` and `unzip`.
 
 The rule this file exists to demonstrate:
 
-> **📖 Definition**
+> **Definition**
 > A **scanner output** names a construct. A **finding** names an actor, a reachable path, an asset,
 > and a consequence. The distance between the two is the job.
 
@@ -320,7 +320,7 @@ V011 | minSdk=24 "vulnerable Android version" | REJECTED |
      on the items that matter.
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Publishing the ledger is not an admission that you found little. It is the only evidence a reader
 > has that the items you *did* report were selected rather than transcribed. A report showing
 > "39 scanner items worked down to 8 findings, with a reason against each of the 31 rejections" is

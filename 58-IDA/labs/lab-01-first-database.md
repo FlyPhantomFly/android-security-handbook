@@ -27,7 +27,7 @@ Keep that file open. Chapter 68 calls it the journal and its four fields are Hyp
 Refutation, Verdict. You will use it three times in this lab, and the discipline is the point: a
 hypothesis with no written refutation test is a wish.
 
-> **⚠️ Warning**
+> **Warning**
 > Do not open [`../examples/03-ground-truth-aarch64.md`](../examples/03-ground-truth-aarch64.md) until
 > section 7 tells you to. It is the answer key, it is complete, and reading it first converts this lab
 > from an exercise into a reading assignment. If you get stuck, the hints in section 6 are graduated
@@ -107,7 +107,7 @@ Write the hash in your journal. Record what `-h` tells you:
 | `Machine` | `AArch64` | `e_machine` 183 / `0xB7` → `lib/arm64-v8a/`. Chapter 15 tabulates the rest |
 | `Entry point address` | some value | Non-zero would suggest a PIE executable rather than a library |
 
-> **📖 Definition**
+> **Definition**
 > **`ET_DYN`** is the ELF file type meaning "dynamically-relocatable object". Both shared libraries
 > and position-independent executables use it, which is why the type alone does not tell you which
 > you have. Android's linker has refused non-PIE executables since API 21.
@@ -134,7 +134,7 @@ interactive session, and what to look at first when it does.** It costs seconds 
 Expect no `.symtab` section, an error or nothing from plain `nm`, and a small non-zero count from
 `nm -D`.
 
-> **📖 Definition**
+> **Definition**
 > **`.symtab`** is the full symbol table — every function and object with a name, including internal
 > ones. **`.dynsym`** is the *dynamic* symbol table, holding only what the dynamic linker needs to
 > resolve at load time. `--strip-all` removes `.symtab` and **cannot** remove `.dynsym`, which is why
@@ -176,7 +176,7 @@ Undefined symbols are imports. Read them as a **reading order**, not a verdict:
 | `ptrace` | Anti-debug, or a debugger. Chapter 38 measured only **1 of 18** real APKs importing it |
 | `__system_property_get` | A property read. Not necessarily a root check — chapter 38 again |
 
-> **⚠️ Warning**
+> **Warning**
 > An import is not a behaviour. Chapter 38's mapper first reported a self-signature check in **18 of
 > 18** APKs and was lying, because `getPackageInfo` is how every SDK reads its own version string.
 > Splitting patterns into strong and weak brought it to a defensible 13 of 18. **If a detector agrees
@@ -233,7 +233,7 @@ Let auto-analysis finish. Then, if you want the annotations done for you:
 
 *File → Script file…* (`Alt+F7`) → [`scripts/02-ida-android-annotate.py`](../scripts/02-ida-android-annotate.py)
 
-> **⚠️ Warning**
+> **Warning**
 > That script is **reviewed, not executed** — see its header, and the chapter's honesty callout. IDA
 > is not installed on the machine where this chapter was written. If it fails, read the traceback,
 > fix it, and consider writing down what was wrong: an untested script that a reader repairs is worth
@@ -295,7 +295,7 @@ The JNI entry point is a wrapper. What does it call? In IDA, the *Function calls
 
 **Deliverable.** The list of functions the entry point calls, in call order.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Note whether the calls go through the PLT (`@plt` in the disassembly, or a jump into a small stub).
 > Chapter 68 §8.3 measured that a call-site grep for `bl.*<name>` produces a **false negative** on
 > PLT-routed calls, and must be written `bl.*<name(@plt)?>`. This library reproduces that exactly,
@@ -317,7 +317,7 @@ halves of a 32-bit value into one register.
 
 **Deliverable.** The 32-bit constant, and one sentence saying why a byte search for it fails.
 
-> **📖 Definition**
+> **Definition**
 > **`movk`** — *move wide with keep* — writes a 16-bit immediate into a chosen 16-bit field of a
 > register and leaves the other bits alone. AArch64 cannot encode an arbitrary 32-bit immediate in one
 > instruction, so a constant like `0x5345534E` becomes `mov w9, #0x534E` followed by
@@ -338,7 +338,7 @@ One function has an obvious dispatch structure. Find the indirect branch and the
 Question 4 is the interesting one, and it is the first place in this lab where tools genuinely differ.
 Record what yours did.
 
-> **⚠️ Warning**
+> **Warning**
 > If you are tempted to patch the bound check because it looks like a gate: do not, and understand
 > why. Removing the bound on an indexed indirect branch converts a safe dispatch into an
 > out-of-bounds branch, which is a control-flow hijack primitive. You would be introducing a
@@ -369,7 +369,7 @@ the same as the table being empty. §3.5 of the chapter, and Task 6.)
 **Deliverable.** Explain, in one sentence, why the hex dump shows zeroes and the relocation table
 shows addresses, and say which of the two your disassembler was showing you.
 
-> **📖 Definition**
+> **Definition**
 > **`R_AARCH64_RELATIVE`** is a relocation meaning "at this offset, store `load_bias + addend`". The
 > addend is in the relocation entry, not in the file's bytes, so the location reads as zero until the
 > linker processes it at load time. Chapter 15 §3.7 owns relocations, and measured the same behaviour
@@ -425,7 +425,7 @@ Then `llvm-objdump -d` at each addend to see what they are.
 <details>
 <summary><b>Hint 5 — I want to know what the strings say</b></summary>
 
-There is a `.rodata` array of bytes that is not ASCII and not obviously a table. Look at what reads
+There is a `.rodata` array of bytes that is not ASCII and not visibly a table. Look at what reads
 it: a loop that XORs a constant into each byte and writes to the stack. Find the constant. Then decode
 the array yourself:
 

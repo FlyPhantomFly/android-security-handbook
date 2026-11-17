@@ -71,7 +71,7 @@ into them. A capability that ships in the platform, is documented by the vendor,
 pipeline on earth, and is *not* on anybody's detection checklist is a more interesting capability
 than one that is none of those things.
 
-> **📖 Definition**
+> **Definition**
 > **Instrumentation**, in the Android platform sense, is a class the system instantiates inside an
 > application's process before that application's own `onCreate()` runs, giving it the ability to
 > observe and control the application's lifecycle. The system decides to do this because a *second*
@@ -167,7 +167,7 @@ drawn deliberately:
 
 | Chapter | Owns | This chapter's relationship to it |
 |---|---|---|
-| [53 — Frida](../53-Frida/README.md) | Dynamic instrumentation as a **tool**, from outside the process | Cited, never re-derived. §7.6 compares the two honestly, including the cases where Frida is simply better |
+| [53 — Frida](../53-Frida/README.md) | Dynamic instrumentation as a **tool**, from outside the process | Cited, never re-derived. §7.6 compares the two honestly, including the cases where Frida is better |
 | [65 — Hooking](../65-Hooking/README.md) | The **mechanism** of interception: the five hook types, trampolines, PLT/GOT | Cited. This chapter changes what a process *contains*; that one changes what a method *does*. §3.17 draws the distinction sharply |
 | [63 — LSPosed](../63-LSPosed/README.md) | The Zygote-injected managed hooking framework | Cited. LSPosed needs root and a Zygote injection to reach every process; instrumentation needs neither, and reaches exactly one |
 | [64 — Xposed](../64-Xposed/README.md) | The historical framework and the `app_process` replacement | Cited for the contrast in §3.17's table |
@@ -388,7 +388,7 @@ to. Read the class as three groups of members.
 `callActivityOnRestoreInstanceState`, `callActivityOnPictureInPictureRequested`,
 `callActivityOnUserLeaving`.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > Search `ActivityThread.java` in the API 35 SDK sources for `mInstrumentation.` and you get 46 call
 > sites. Every activity lifecycle transition in the platform goes through the instrumentation object.
 > An instrumentation that overrides `callActivityOnCreate` is, in effect, a hook on
@@ -413,7 +413,7 @@ If you want the app's `SharedPreferences`, its `getFilesDir()`, or its `Applicat
 storage, find it empty, and conclude the app stores nothing. This is the most common beginner error
 in the whole subject and it fails silently.
 
-> **⚠️ Warning**
+> **Warning**
 > `getTargetContext().getOpPackageName()` returns the **target's** package name, not the test's, and
 > `ActivityThread.initInstrumentation()` says why in a comment: app-ops are checked against the real
 > calling UID, and the UID belongs to the target. Anything you do from an instrumentation that is
@@ -453,7 +453,7 @@ not a child of it. This trips people up because every other component lives insi
 | `android:handleProfiling` | boolean | If `false`, the framework starts and stops profiling for you when `-p` is passed | See `ActivityThread.initInstrumentation` |
 | `android:functionalTest` | boolean | Historical hint that the test drives the whole app | The framework stores it in `InstrumentationInfo` and does nothing else with it |
 
-> **🧠 Mental Model**
+> **Mental Model**
 > `<instrumentation targetPackage="X">` is a **one-way declaration of intent to enter X**. It is not
 > a permission request, X is never asked, and X cannot refuse it in its own manifest. What stops it
 > is not consent but *identity* — the check in §3.9. Think of it as a key cut to fit a specific lock,
@@ -482,7 +482,7 @@ inputs to everything that follows:
 | `nativeLibraryDir`, `secondaryNativeLibraryDir` | Where the test APK's `.so` files live |
 | `handleProfiling`, `functionalTest` | The manifest booleans |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `InstrumentationInfo` is readable by any app through
 > `PackageManager.queryInstrumentation(String targetPackage, int flags)`. That single call is the
 > complete, one-line defence an application can mount against this entire chapter — pass your own
@@ -536,7 +536,7 @@ CI systems parse it and get it wrong.
 | `INSTRUMENTATION_FAILED: <component>` | The framework could not start it |
 | `INSTRUMENTATION_ABORTED: ...` | The run was aborted |
 
-> **⚠️ Warning**
+> **Warning**
 > `INSTRUMENTATION_CODE: -1` means **success**. The value is `android.app.Activity.RESULT_OK`, which
 > is `-1`; `RESULT_CANCELED` is `0`. Every person meeting this protocol for the first time reads
 > `-1` as an error. A CI gate written as "fail if the code is not zero" inverts the meaning of every
@@ -587,7 +587,7 @@ Line them up and the order is unambiguous:
 | 5 | `Application.onCreate()` | +7.21 ms | No — you are ahead of it |
 | 6 | the app's own initialisation work | +17.6 ms | No |
 
-> **⚠️ Warning — the framework's own documentation is wrong about this**
+> **Warning — the framework's own documentation is wrong about this**
 > The javadoc on `Instrumentation.onCreate` in the API 35 sources reads: *"Called when the
 > instrumentation is starting, before any application code has been loaded."* Three pieces of
 > application code have provably already run by then. `handleBindApplication()` calls
@@ -606,7 +606,7 @@ initialisation logic land on the *wrong* side of the line for you:
 | `Application.onCreate()` — where most hand-written init lives | No | **Yes** |
 | `Activity.onCreate()` and everything after | No | **Yes**, and you also get the framework's own `callActivityOnCreate` hook |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > If the check you want to defeat lives in `attachBaseContext` or a provider, instrumentation alone
 > will not get in front of it — you are reduced to observing the aftermath, or you need a technique
 > that acts at process spawn: Frida's `-f` spawn-and-hold ([53 §4](../53-Frida/README.md)) or a
@@ -687,7 +687,7 @@ read.static.premiumBefore false
 
 `SharedPreferences` through `getTargetContext()`, the backing XML read directly as a file, a private
 file under `getFilesDir()`, and a **private static field** read by reflection. None of it required a
-vulnerability in the app. The app is not misconfigured. It is simply that the code doing the reading
+vulnerability in the app. The app is not misconfigured. It is that the code doing the reading
 is the app.
 
 And the write:
@@ -703,7 +703,7 @@ app ships is package-private and unreachable. It was set to `true` by reflection
 and the app's own `isPremium()` — invoked afterwards, also by reflection, so the JIT could not have
 constant-folded our reading of it — returned `true`. Same process, same heap, same static field.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > [65 — Hooking](../65-Hooking/README.md) changes what a **method does**. This chapter changes what
 > the **process contains**. If the decision you care about is a value, instrumentation reaches it
 > directly and no hook is needed. If the decision is computed fresh every time — a syscall, a
@@ -760,14 +760,14 @@ UID 0 instrumented a package it had no signing relationship with, in both target
 
 So the rule, stated correctly:
 
-> **📖 Definition — the instrumentation gate, as measured**
+> **Definition — the instrumentation gate, as measured**
 > `ActivityManagerService.startInstrumentation()` refuses unless **the test package and the target
 > package are signed by the same certificate**, or the caller is privileged (root; system UID).
 > `android:debuggable` plays **no part** in this decision in either direction. What `debuggable`
 > gates is a different set of things — `run-as`, JDWP attach, `adb backup` of app data — which are
 > covered in [51 §3](../51-DynamicAnalysis/README.md) and are frequently confused with this.
 
-> **⚠️ Warning — the honest caveat on these six rows**
+> **Warning — the honest caveat on these six rows**
 > The device is `userdebug` and reports `ro.debuggable=1`. Several platform checks take a more
 > permissive branch on such a build, and `ActivityManagerService.startInstrumentation()` contains at
 > least one `Build.IS_DEBUGGABLE`-conditioned branch in the shipping AOSP tree. **Rows 1, 2, 5 and 6
@@ -828,7 +828,7 @@ caller**:
 
 With both cleared, an ordinary application UID started an instrumentation successfully.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `am instrument` is **not** a shell-only privilege. The signature relationship is what matters, and
 > a signature relationship is something an application vendor has with *its own other packages*. An
 > app suite that ships several co-signed packages, or a vendor that ships a "diagnostics" APK
@@ -887,7 +887,7 @@ ua.shell.readProcModules virtio_snd 45056 0 - Live 0x000000000000
 Every path in the `deny.*` block above came back through this channel. The instrumented process is
 UID 10210 for its own reads and, simultaneously, has a pipe to a UID 2000 command executor.
 
-> **⚠️ Warning — this invalidates measurements silently, which is the worst kind**
+> **Warning — this invalidates measurements silently, which is the worst kind**
 > If you build a detection probe as an instrumentation and reach for `UiAutomation.executeShellCommand`
 > because it is convenient, **you have measured the shell's vantage and your output will not say so.**
 > The app you are assessing has no `UiAutomation`. It cannot list `/data/local/tmp`, cannot stat
@@ -941,13 +941,13 @@ willing to show you — run twice against the same process:
 | `android.os.SystemProperties` | 10 methods, 2 fields | 35 methods, 6 fields | +25, +4 |
 | `VMRuntime.setHiddenApiExemptions` visible? | **false** | **true** | the flag unhides its own escape hatch |
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > The last row is the joke the platform tells on itself. `setHiddenApiExemptions` is the method that
 > lifts hidden-API enforcement for a process, and it is itself hidden — so an app cannot call it, but
 > an instrumentation started with `--no-hidden-api-checks` can see and call it. This is the API
 > `frida-server` and several testing tools use to unblock a process wholesale.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Generalise this past its subject. **A single positive lookup against a filtered API surface is not
 > evidence about the filter.** It is the same lesson this repository learned three times over from
 > detector signatures that agreed with themselves — 38's 18-of-18 self-signature claim, 52's rejected
@@ -978,7 +978,7 @@ This is a hard operational constraint and it is the sharpest practical differenc
 | Iteration speed | one full app start per run | attach once, edit script, re-run |
 | Notice to the user | app visibly restarts | none |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > If your target requires a login, a hardware token, or a fifteen-tap onboarding flow to reach the
 > interesting screen, an instrumentation that finishes after each run will make you do that fifteen
 > times. Two answers: drive the navigation *from* the instrumentation with `startActivitySync()` so
@@ -1003,7 +1003,7 @@ is one character. Second, and more usefully for a reviewer: **once installed, a 
 an ordinary package.** It appears in `pm list instrumentation` and instruments normally. `testOnly`
 protects a distribution channel, not a device.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Play Store rejects `testOnly` APKs, so you will not find one there — but you will find them in
 > enterprise MDM catalogues, in "beta" side-load links, in CI artefact buckets that are world
 > readable, and attached to Jira tickets. An APK carrying `android:testOnly` plus an
@@ -1026,7 +1026,7 @@ you which layer to attack and which to ignore:
 | `androidx.test.orchestrator` | Runs each test in its own `am instrument` invocation, for isolation | a **second** test APK |
 | `android.test.InstrumentationTestRunner` | The pre-AndroidX runner, needing `<uses-library android:name="android.test.runner"/>` | platform, deprecated |
 
-> **🧠 Mental Model**
+> **Mental Model**
 > `AndroidJUnitRunner` has no privilege that `VaultProbe` in this chapter's `examples/` lacks. It is
 > 240 lines of platform API versus tens of thousands of lines of test-discovery machinery, and the
 > platform cannot tell them apart. When you read a shipping APK and find `AndroidJUnitRunner`, what
@@ -1138,7 +1138,7 @@ error strings the service itself produced. In order:
 8. On `finishInstrumentation`, deliver the bundle to the watcher and
    `forceStopPackageLocked(…, "finished inst")` (§3.13, measured).
 
-> **⚠️ Warning**
+> **Warning**
 > This repository's rule is to never fabricate an AOSP line number. The device printed
 > `ActivityManagerService.startInstrumentation(ActivityManagerService.java:16513)` in the refusal's
 > remote stack trace — that number belongs to *this AVD's build* of Android 15 and is quoted here as
@@ -1301,7 +1301,7 @@ force-stop, and it is documented behaviour, not a bug.
 APK you are permitted to modify, strip its signature, re-sign it with your key, build a test APK with
 the *same* key and an `<instrumentation>` node aimed at it, install both, and you have arbitrary code
 execution inside the app with no root, no Frida, and no injected library. §3.9 rows 1 and 2 are the
-proof, and note that the app does **not** need to be debuggable. See
+proof, and confirm that the app does **not** need to be debuggable. See
 [38 — Tamper Detection](../38-TamperDetection/README.md) for what the app can do about the re-signing
 half; nothing it can do stops the instrumentation half once the signature matches.
 
@@ -1373,7 +1373,7 @@ you confirm it:
 | **Test back door reachable in production** | A runtime "are we under test" check gating a bypass | Grep for `Class.forName` on test packages, `BuildConfig.DEBUG` in a released build, and system-property reads |
 | **Co-signed instrumentation channel** | Two production packages, one signing key, one declaring an `<instrumentation>` aimed at the other | `pm list instrumentation`, then compare signer digests with `apksigner verify --print-certs` |
 
-> **⚠️ Warning**
+> **Warning**
 > Do not write "instrumentation is a vulnerability" in a report. It is a platform feature working as
 > designed, and a reviewer who says otherwise loses credibility for the finding that *is* real. The
 > finding is always one of the six rows above: an artefact that escaped, a residue that shipped, a
@@ -1440,7 +1440,7 @@ static boolean instrumentationAimedAtUs(Context ctx) {
 }
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > That check tells you a test APK is *installed*, which is a real and useful signal. It does not tell
 > you that you are *currently* instrumented, and it is worth knowing the difference. The direct
 > question is whether `ActivityThread`'s instrumentation is a plain `Instrumentation` or a subclass —
@@ -1480,7 +1480,7 @@ The artefacts are unusually good, because everything goes through the package ma
 | `/sdcard/instrument-logs/` | shared storage | Left behind by `am instrument -f` with no path |
 | The test APK's own `/data/data/<test-pkg>` | filesystem | Separate from the target's, and often forgotten by an attacker cleaning up |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Those two logcat lines are the single best indicator that this technique was used, and they are
 > emitted by `system_server` rather than by the app, so an attacker inside the app cannot suppress
 > them. If you are the defender, ship them to your logging backend. If you are the attacker, know
@@ -1678,9 +1678,9 @@ of finding is real and reproducible, and this particular instance is harmless. A
 banking app whose kept test classes named its staging host and its feature-flag names would be the
 same mechanism with a different rating.
 
-> **⚠️ Warning — and this is the load-bearing observation**
+> **Warning — and this is the load-bearing observation**
 > `pm list instrumentation` on this device returned **zero rows**, including for Magisk. The manifest
-> carries no `<instrumentation>` node; the test classes are simply present as code. **The declared
+> carries no `<instrumentation>` node; the test classes are present as code. **The declared
 > check and the residue check are complementary, not redundant**, and the residue check is the one
 > that found something. A review that runs only `pm list instrumentation` and reports "no test
 > instrumentation present" has looked in the wrong place.
@@ -1785,7 +1785,7 @@ Everything is a string; there is no typed channel. Results go back three ways:
 | `finish(code, bundle)` | at the end, as `INSTRUMENTATION_RESULT` | no |
 | `Log.i(TAG, …)` | immediately, in logcat | **yes**, and independently of the protocol |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Emit every finding **twice** — once into the result bundle and once to logcat. A probe that only
 > uses `finish()` loses everything if the process dies before it gets there, and a process you are
 > instrumenting is a process you may well crash. `examples/vault-probe/VaultProbe.java` does both, in
@@ -1810,7 +1810,7 @@ runOnMainSync(() -> {
 process, so there is nothing to marshal. That is a capability Frida also has, but here it costs one
 line and no script.
 
-> **⚠️ Warning**
+> **Warning**
 > `startActivitySync`, `sendKeySync` and friends **must not** be called from the main thread; the
 > framework throws if you try. That is what the instrumentation thread is for. Conversely, touching a
 > `View` must happen on the main thread. `runOnMainSync` is the bridge in one direction and
@@ -1945,7 +1945,7 @@ for tok in (b'Landroidx/test/', b'Lorg/junit/', b'Landroidx/test/uiautomator/',
 PY
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > Do **not** run this as a `grep` over the raw APK on the device. Chapter 64 measured 234
 > `classes.dex` entries STORED against 16 DEFLATED across a 237-APK corpus on this same emulator
 > image — and all 16 DEFLATED entries were in `/data/app`, ten of them Chrome's. A byte-level grep
@@ -2250,7 +2250,7 @@ Different preconditions, similar outcome. Frida needs a server binary and usuall
 root and a Zygote injection and reaches every process; instrumentation needs a signature relationship
 or root, reaches exactly one package, and is the only one of the three that is a supported platform
 feature with a stable API. In a threat model, treat "attacker can re-sign and install two packages"
-as the precondition and note that it also implies they defeated whatever repackaging control you
+as the precondition and confirm that it also implies they defeated whatever repackaging control you
 have.
 
 ### 10.5 Principal engineer
@@ -2377,13 +2377,12 @@ lab 02's matrix will give different answers on a `user` build and says so.
 | 03 | [Ordering, vantage, and the two traps](labs/lab-03-ordering-and-vantage.md) | Measure exactly how early your code runs, decide what you can pre-empt, and avoid the `UiAutomation` vantage trap |
 | 04 | [CTF — Before Application](labs/lab-04-ctf-before-application.md) | Assemble a three-part flag that is only obtainable by understanding the startup ordering |
 
-> **⚠️ Warning — authorised testing only**
 > Every fixture in `examples/` and `labs/` is a purpose-built lab application. Install them on a
 > device you own. `labs/ctf-vault/` is *deliberately* built to give up its secrets; treat it the way
 > you would treat any deliberately vulnerable app, and uninstall it when you are finished. Do not
 > point any of this chapter's tooling at an application you do not own or are not contracted to
 > assess. Every network reference in this chapter's code uses the `.invalid` TLD, which by RFC 2606
-> can never resolve.
+> can never resolve. See [SECURITY.md](../SECURITY.md) for authorised-testing scope.
 
 ---
 

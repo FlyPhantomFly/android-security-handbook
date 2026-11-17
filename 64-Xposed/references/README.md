@@ -4,7 +4,7 @@ Annotated. Every link resolves; every claim's provenance is stated.
 
 ---
 
-> **⚠️ Provenance — read this before citing anything from here.**
+> **Provenance — read this before citing anything from here.**
 >
 > **Classic Xposed is not installed on the machine or the device this chapter was written on, and it
 > could not be.** The only device attached was an `sdk_gphone16k_x86_64` AVD, Android 15 / API 35,

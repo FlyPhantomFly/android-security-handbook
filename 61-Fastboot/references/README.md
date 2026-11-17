@@ -97,7 +97,7 @@ for the title.
 | **MASVS-CRYPTO-1** | Key management and attestation |
 | MASTG device-integrity and root-detection tests | The practical tests |
 
-> **⚠️ MASVS v2 *categories* are stable; MASTG *test* identifiers have been renumbered between
+> **MASVS v2 *categories* are stable; MASTG *test* identifiers have been renumbered between
 > editions.** Cite the category confidently and **look the test number up at the time of writing**
 > rather than repeating one from memory — a stale ID reads as carelessness in a report.
 > [71-OWASP-Mobile](../../71-OWASP-Mobile/README.md) carries the current mapping.

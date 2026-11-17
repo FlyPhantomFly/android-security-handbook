@@ -44,7 +44,7 @@ This builds, into a scratch directory outside the repository:
 | `plt-got-hook` | PLT/GOT slot swap (this lab, §4) |
 | `hook-that-fails` | A correct hook on a function nobody calls (Lab 03's subject) |
 
-> **⚠️ Warning.** The build script writes to `$OUT`, which defaults to a temporary directory. It
+> **Warning.** The build script writes to `$OUT`, which defaults to a temporary directory. It
 > never writes a `.so` or an executable into this repository. Binaries are on the artefact blocklist.
 > If you see one appear under `65-Hooking/`, delete it.
 
@@ -69,7 +69,7 @@ adb shell chmod 755 /data/local/tmp/plt-got-hook
 adb shell /system/bin/linker64 /data/local/tmp/plt-got-hook
 ```
 
-> **🔬 Under the Hood.** Why `/system/bin/linker64` and not just `/data/local/tmp/plt-got-hook`?
+> **Under the Hood.** Why `/system/bin/linker64` and not just `/data/local/tmp/plt-got-hook`?
 > Because on many vendor builds a direct `execve` of a file in `/data/local/tmp` is refused — the
 > shell reports `No such device or address` and exits 126, which is a maximally unhelpful message for
 > "this filesystem will not let me execute that". Handing the binary to the dynamic linker works,
@@ -233,7 +233,7 @@ DT_JMPREL entries = 3
 Same process, same libc, same function — two different answers, because the hook did not touch
 `strcmp`. It touched *libguard.so's idea of where `strcmp` lives*.
 
-> **🧠 Mental Model.** A PLT/GOT hook is not a hook on a function. It is a hook on a **relationship**:
+> **Mental Model.** A PLT/GOT hook is not a hook on a function. It is a hook on a **relationship**:
 > "this module, calling that symbol". Every loaded library keeps its own table, so hooking one leaves
 > the rest alone. That is a feature when an app and its anti-tamper SDK both call `open()` and you
 > only want to see the app's calls. It is a trap when the call you care about comes from a library
@@ -417,7 +417,7 @@ The script reports both halves:
   [`16-JNI/scripts/jni_mangle.py`](../../16-JNI/scripts/jni_mangle.py).
 - `JNI_OnLoad` present — dynamic registration is possible, and everything above applies.
 
-> **🔍 Pentester's Note.** A library with `JNI_OnLoad` and **no** `Java_*` exports is telling you
+> **Pentester's Note.** A library with `JNI_OnLoad` and **no** `Java_*` exports is telling you
 > something: every native method it provides is registered dynamically, deliberately, and you will
 > not learn the mapping from the file. That is not proof of hostility — it is also faster and lets
 > the developer use short C function names — but it does mean your analysis has to be dynamic.

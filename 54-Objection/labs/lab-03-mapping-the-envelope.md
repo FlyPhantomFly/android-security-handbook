@@ -25,7 +25,8 @@ You will be able to:
 3. Produce the same statement for `android sslpinning disable`.
 4. Write the result as a reusable artefact rather than a session memory.
 
-> **⚠️ Authorised testing only.** Everything here runs against applications you build.
+> Everything here runs against applications you build. See [SECURITY.md](../../SECURITY.md) for
+> authorised-testing scope.
 
 ---
 
@@ -316,7 +317,7 @@ It should flip under `simulate`, because the hook compares with `indexOf(path) >
 string equality against the full absolute path.
 
 The instructive comparison is with check B: `/sbin/magisk` does not flip, and
-`/data/adb/magisk` does not flip, even though both are obviously root artefacts. The list is
+`/data/adb/magisk` does not flip, even though both are plainly root artefacts. The list is
 **not** a pattern, a prefix set, or a heuristic. It is thirteen literal strings, and a path that
 differs by one character falls straight through.
 </details>

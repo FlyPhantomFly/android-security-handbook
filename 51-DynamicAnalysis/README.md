@@ -57,7 +57,7 @@ tells you the truth about the paths it *did* take, including — and this is the
 paths that are not drawn on any diagram, because on Android the wiring is partly built while the
 current flows.
 
-> **📖 Definition**
+> **Definition**
 > **Dynamic analysis** is the examination of a program's *behaviour* while it runs. It is not "using
 > Frida", and it is not "putting a proxy in front of the phone". Those are instruments. Dynamic
 > analysis is the discipline of arranging a controlled execution, observing it through channels you
@@ -114,7 +114,7 @@ Static was not wrong. Static was answering a different question — *does this c
 the question that mattered was *what is it listening for*. That gap is not a defect in anyone's tool.
 It is a property of the platform: `IntentFilter` is a runtime object.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Static analysis draws the map. Dynamic analysis drives the roads. The map shows roads nobody drives
 > — that is over-approximation, and it is where false positives come from. **And the driver keeps
 > finding roads the map does not have**, because on Android roads are built at runtime. 52 §3.9
@@ -125,7 +125,7 @@ It is a property of the platform: `IntentFilter` is a runtime object.
 
 Dynamic analysis pays for behavioural truth with one weakness, and it is a big one.
 
-> **⚠️ Warning**
+> **Warning**
 > **Dynamic analysis sees only the code you caused to run.** A clean dynamic pass proves that nothing
 > bad happened on the paths you drove. It proves *nothing whatsoever* about the paths you did not.
 > The sentence "we found no evidence of X" is defensible only when it is followed by "during a
@@ -177,7 +177,7 @@ What the method owns, and none of those chapters owns:
    exact mirror of 52's blind-spot statement.
 5. **Honest severity.** Observing a behaviour is not a finding. Impact and reachability decide.
 
-> **⚠️ Warning**
+> **Warning**
 > If you are here to learn Frida, you are in the wrong chapter and the right one is linked above.
 > This chapter deliberately ships no hooking tutorial and no command catalogue. Its two scripts are
 > the two things no other chapter provides: a **delta recorder** and a **coverage reporter**.
@@ -327,7 +327,7 @@ That table is the honest reading of a clean report, and it is why `session-recor
 sentence like *"That is a real negative result and it is bounded by the window length"* rather than a
 green tick.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > On the test device `adb logcat -g` reports `main: ring buffer is 256 KiB (251 KiB consumed, 1 MiB
 > readable)`. A 256 KiB ring on a chatty device holds **minutes**, not hours. If your exercise window
 > is longer than the ring, the early part of it is gone before you read it — which is why
@@ -433,7 +433,7 @@ matter."*
 | "`InMemoryDexClassLoader` is referenced" | The dumped DEX, which restarts 52's pipeline at stage 3 |
 | A confidence-ranked lead queue | A verdict per lead: fired, did not fire, or not reached |
 
-> **🧠 Mental Model**
+> **Mental Model**
 > **Use dynamic analysis to understand and static analysis to be exhaustive, in that order**,
 > whenever both are available. 52 §7.6 phrases it identically and
 > [40-Obfuscation](../40-Obfuscation/README.md) §6.1 phrases it from a third side. Three chapters
@@ -483,7 +483,7 @@ Four consequences, all of which have bitten real analysts:
   interception CA into the system store, so that
   `NetworkSecurityConfig.getDefaultBuilder()` returned 139 anchors at **every** `targetSdk` — 23, 24,
   28, 30, 34 — which looks exactly like the API 24 user-CA rule not existing. It does exist. The CA
-  simply was not a *user* CA any more. **A device whose posture you have not established will teach
+  was not a *user* CA any more. **A device whose posture you have not established will teach
   you the opposite of the truth.**
 - **You are uid 2000 and an attacker is not.** See §1.4.
 - **The device is somebody's.** Both physical devices in this repository are daily drivers. Every
@@ -491,7 +491,7 @@ Four consequences, all of which have bitten real analysts:
   unavoidable — `am force-stop`, launching an Activity — are named as mutations at the point of use
   and reversed afterwards.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Record the device posture into the evidence directory at the start of every session, not into your
 > memory. `session-recorder.sh` writes `device.txt` with fourteen properties including
 > `security_patch`, `ro.debuggable`, `getenforce` and `deviceLocked`, and it does it before it does
@@ -558,7 +558,7 @@ finding about the device itself:
 | no `frida-server` | 53's entire toolchain is unavailable here without deploying a gadget into an app you build. §3.5.4 |
 | no `cacerts` mount | Trust-store questions **can** be answered honestly on this device, unlike the other one in this repository |
 
-> **⚠️ Warning**
+> **Warning**
 > `ro.build.version.release` and the security patch level are independent, and OEMs decouple them
 > routinely. Never infer one from the other, and never infer "modern platform" from "modern version
 > string".
@@ -621,7 +621,7 @@ objection -g com.example.target explore
 adb shell settings put global http_proxy :0       # the reversal
 ```
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > Version matching is the single most common setup failure and it is not a warning, it is a hard
 > requirement: the frida client and `frida-server` speak a versioned protocol.
 > [53-Frida](../53-Frida/README.md) §7.1 covers this, the ABI selection problem, the SELinux
@@ -673,7 +673,7 @@ awkward elsewhere:
 
 #### 3.1.5 The restorable baseline — the checklist item 80 asks for
 
-> **📖 Definition**
+> **Definition**
 > A **restorable baseline** is a recorded device state that you can return to, so that an experiment
 > can be repeated and so that you leave the device as you found it. It is not a backup. It is a
 > written record plus a reversal procedure.
@@ -736,7 +736,7 @@ Two further facts, both measured on that device and both contradicting common ta
   `ls -d` both rather than trusting any version table.
 - Store filenames are **`subject_hash_old`** (MD5), not `subject_hash`, and the files are **DER**.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Chapter 44 hit this and wrote it up as a first-class methodology trap rather than publishing a
 > conclusion it could not support. That is the correct response and it is the model for every
 > environment problem: **when the device cannot answer the question, say the device cannot answer the
@@ -788,7 +788,7 @@ dummy interface churn by a few kilobytes for free, and every other channel is qu
 *calibrated* instrument. Any private-filesystem change in a subsequent run is attributable; any
 loopback traffic under about 4 KB per 45 seconds is not.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > A control run turns your evidence from *anecdote* into *measurement*, and it costs one command and
 > the length of your window. Scientists call this a negative control and would not publish without
 > one. Neither should you.
@@ -804,7 +804,7 @@ needs a baseline.
 
 ### 3.3 Reading the platform's own record: what `dumpsys package` settles
 
-Before instrumenting anything, there is a class of question the platform will simply answer, and it
+Before instrumenting anything, there is a class of question the platform will answer, and it
 answers authoritatively — because `dumpsys package` reports what PackageManagerService *parsed and
 applied*, not what a file claims about itself.
 
@@ -842,7 +842,7 @@ android.permission.READ_EXTERNAL_STORAGE: granted=false, flags=[ ...|RESTRICTION
 android.permission.CAMERA: granted=false, flags=[ USER_SENSITIVE_WHEN_GRANTED|... ]
 ```
 
-> **📖 Definition**
+> **Definition**
 > A manifest `<uses-permission>` is a **request**. `granted=` is the **answer**. The gap between them
 > is where a great many "the app has camera access" claims die, and it is only visible at runtime.
 > [23-Permissions](../23-Permissions/README.md) owns the model; this chapter owns reading it live and
@@ -927,10 +927,10 @@ So the correct rule is: **`run-as` requires `FLAG_DEBUGGABLE` *and* an applicati
 tries `run-as` on a debuggable system app and reads "not an application" will conclude the app is not
 debuggable, which is the opposite of true.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > Note the SELinux context in the success case: `u:r:runas_app:s0:c150,c256,c512,c768`. Two things
 > are worth reading there. It is **not** the app's own domain — `run-as` transitions to a dedicated
-> `runas_app` domain, which is why it can read the data directory but is not simply "being the app".
+> `runas_app` domain, which is why it can read the data directory but is not "being the app".
 > And there are **four MCS categories, not two**. [21-App-Sandbox](../21-App-Sandbox/README.md) and
 > [22-SELinux](../22-SELinux/README.md) give the pair as `c[appId & 0xff]` and `c[256 + (appId >> 8)]`
 > — for appId 150 that is `c150,c256`, which matches exactly. The additional `c512,c768` encode the
@@ -969,7 +969,7 @@ exactly as important as a positive one would have been, and §5.6 uses it as the
 honest severity: the *reachability* is real and demonstrated, and the *asset* behind it is nearly
 nothing, and both facts go in the report.
 
-> **⚠️ Warning**
+> **Warning**
 > `adb shell` does not preserve your host shell's quoting. It joins its arguments with spaces and
 > hands the result to the device's `/system/bin/sh`, so a nested
 > `run-as $PKG sh -c 'stat -c "%s %Y"'` arrives with its quotes already eaten and silently produces
@@ -995,7 +995,7 @@ nothing, and both facts go in the report.
 | Network content | a proxy the app trusts | user-CA trust, or a rebuild |
 | Frida | `frida-gadget` embedded in a rebuild | you can rebuild the APK |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > [67-BypassingProtections](../67-BypassingProtections/README.md) demonstrated the most interesting
 > entry in that table's spirit: it used **`adb reverse tcp:27042 tcp:27042`** to create a *real*
 > listening socket on the device inside `adbd`, so that an app's anti-Frida port check genuinely
@@ -1006,7 +1006,7 @@ nothing, and both facts go in the report.
 
 **What.** Arm the channels you need, at the lowest cost that can answer your question.
 
-> **📖 Definition**
+> **Definition**
 > **Altitude** is the distance between where you intervene and the decision you care about.
 > [20-Security-Architecture](../20-Security-Architecture/labs/lab-03-integrity-gate-bypass.md)
 > introduced the word in this repository and
@@ -1072,7 +1072,7 @@ Three failure modes, in the order you will meet them:
 | TLS errors, app refuses to connect | The app does not trust your CA — either user CAs are not trusted (API 24+ default) or it pins | [44](../44-NetworkSecurityConfig/README.md), then [36](../36-CertificatePinning/README.md) |
 | Intercept succeeds — and proves nothing | Your proxy CA is in the **system** store | §3.1.6. This is the trap |
 
-> **⚠️ Warning**
+> **Warning**
 > **A successful intercept is not evidence of missing pinning until you have established where your
 > CA lives.** Run `adb shell mount | grep cacerts` and check whether a root module has promoted it.
 > Chapter 44 declined to publish a conclusion for exactly this reason.
@@ -1091,7 +1091,7 @@ jdb -attach localhost:8700
 From a `jdb` prompt you get live classes, live objects, field reads and method breakpoints — a large
 fraction of what people reach for Frida to do — with no injection at all.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > **A JDWP debugger does not set `TracerPid`.** [38-TamperDetection](../38-TamperDetection/README.md)
 > attached `jdb`, enumerated threads, and read `TracerPid: 0` throughout. Many published anti-debug
 > tables list `TracerPid` as *the* debugger check; it detects `ptrace`-based attachment, not a Java
@@ -1109,7 +1109,7 @@ complete for an app you are allowed to modify:
 5. run-as, jdb, and frida-gadget are all now available
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > A rebuilt APK is **not the shipped artefact** and every finding derived from it carries that
 > caveat. Re-signing changes the signing certificate, which breaks any self-verification the app
 > performs and can change behaviour. [38-TamperDetection](../38-TamperDetection/README.md) measured
@@ -1173,7 +1173,7 @@ which simpleperf
 | `frida-trace` | needs Frida | Named function tracing with argument decoding | — |
 | Perfetto / `atrace` | yes | System-wide tracing including Binder transactions | — |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `strace` earns its reputation for one specific job: finding a **native** root or integrity check
 > that Java-level hooking missed, by showing the `openat("/system/xbin/su")` that no Java hook ever
 > saw. [67-BypassingProtections](../67-BypassingProtections/README.md) §7.8 owns that technique. If
@@ -1215,11 +1215,11 @@ debugger gives you Frida's view without injection. Choose by what you have, not 
 [18-ARM](../18-ARM/README.md) owns AAPCS64 and the instruction set;
 [19-Memory](../19-Memory/README.md) owns the heap you will be reading.
 
-> **⚠️ Warning**
+> **Warning**
 > `lldb-server` needs root to attach to another app's process, and on Android 13 `adb shell` is
 > **SELinux-denied from reading another app's `/proc/<pid>/maps`** — measured in this repository, and
 > the reason `19-Memory/examples/fixture-app-maps.txt` is synthetic and labelled as such. On an
-> unrooted device this row of the capability matrix is simply closed, and the chapter says so rather
+> unrooted device this row of the capability matrix is closed, and the chapter says so rather
 > than printing commands that cannot work.
 
 ### 3.6 Stages 4 and 5 — Exercise and Observe
@@ -1318,7 +1318,7 @@ Three defences, all cheap:
 | Check the focused window after each step | `dumpsys window \| grep mCurrentFocus` |
 | Check the app is still alive at the end | `pidof <pkg>` — channel 03 catches this automatically |
 
-> **🧠 Mental Model**
+> **Mental Model**
 > **"Nothing changed" and "nothing ran" produce identical delta reports.** Distinguishing them is
 > what logcat is for, and it is the first thing to check whenever a channel is silent. A silent
 > report from a session in which the app never started is not a negative result; it is a void one.
@@ -1366,7 +1366,7 @@ the platform talking about your app rather than your app doing anything. Learn t
 traces. `am start` from the shell logs `from uid 2000`. A Frida injection changes the process's memory
 map. Anything you can see in your own tooling's output must not be reported as the app's behaviour.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The single line in this chapter's own logcat capture that proves subtraction 3 matters:
 > `ActivityTaskManager: START u0 {…cmp=com.vendor.fieldmgr/…MainActivity} from uid 2000`. **`from uid
 > 2000` is you.** That is not the app launching itself and it is not another app launching it. It is
@@ -1462,7 +1462,7 @@ Three data points, no root, and an argument settled permanently.
 
 Weakest, because the shell is not an app, and the temptation to use it is enormous.
 
-> **⚠️ Warning**
+> **Warning**
 > Never write "an attacker can start this component" on the strength of an `adb shell am start`. The
 > shell holds capabilities no app has. Write **"the component started successfully when invoked from
 > `adb shell` (uid 2000); reachability from an unprivileged application was
@@ -1527,7 +1527,7 @@ Measured on the target application:
 
 The missing one is an Activity with **no intent-filter**. `dumpsys package`'s resolver tables exist to
 answer *"which component would win this Intent"*, so a component with no filter has no reason to be
-indexed. It is still a component; it is simply not resolvable by Intent, and it is started by explicit
+indexed. It is still a component; it is not resolvable by Intent, and it is started by explicit
 Intent from inside the app.
 
 **The consequence is arithmetic, and it is the best number in this chapter:**
@@ -1551,7 +1551,7 @@ python3 -B scripts/coverage-reporter.py -p com.example.target \
         --components entrypoints.txt --logcat ./evidence/s01/09-logcat.txt
 ```
 
-> **🧠 Mental Model**
+> **Mental Model**
 > **A coverage percentage is a fraction, and the numerator is the easy half.** Anyone can count what
 > they touched. The discipline is in refusing to let the thing you are measuring choose the
 > denominator — which is exactly the same discipline as refusing to let an app's own manifest define
@@ -1644,7 +1644,7 @@ Three consequences that change how you read every `dumpsys` output in this chapt
 - **The caller needs `android.permission.DUMP`**, which `adb shell` holds and an ordinary app does
   not. Every observation in this chapter made through `dumpsys` was made by a privileged party.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > `dumpsys` is also why [29-BroadcastReceivers](../29-BroadcastReceivers/README.md) could measure
 > something no APK-based tool can: AMS's `mRegisteredReceivers` is the **only** reader-visible record
 > of the runtime broadcast surface. Its measurement — 299 of 431 actions with no manifest declaration
@@ -1680,7 +1680,7 @@ the *exercise*, not of the application. Chapter 29 recorded three snapshots of t
 giving **1,151 / 1,281 / 1,290** registrations, which is the honest way to say that this number is
 timestamped rather than stable.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The `flags` argument gained `RECEIVER_EXPORTED` / `RECEIVER_NOT_EXPORTED` at API 33 and they became
 > mandatory for apps targeting 34. That is a *manifest-free* export decision made in code — which
 > means the export status of a runtime receiver is itself invisible to static tooling unless you read
@@ -1722,7 +1722,7 @@ Four properties that matter to an analyst:
 | 10+ | A one-time user consent dialog gates some log access for apps holding the permission |
 | All versions | **`adb shell` reads everything, always.** This is the attacker model that matters for a lost or shared device |
 
-> **⚠️ Warning**
+> **Warning**
 > "Logcat is not readable by other apps on modern Android" is true and irrelevant to most findings.
 > The realistic attacker for a logged credential is *anyone with ADB access to an unlocked device* —
 > a malicious charger, a shared kiosk, an enterprise fleet with USB debugging enabled, a stolen
@@ -1803,7 +1803,7 @@ There are exactly two ways a `native` Java method gets an implementation:
 | `RegisterNatives` | **Nothing.** The mapping is a `JNINativeMethod[]` array passed at runtime, usually from `JNI_OnLoad` | **No** |
 
 `ClassLinker::LinkCode` consults the registered map first and falls back to `dlsym` on the mangled
-name. So an app that wants its native surface hidden simply registers it, and `readelf` shows zero
+name. So an app that wants its native surface hidden registers it, and `readelf` shows zero
 `Java_*` symbols while the app has twenty native methods.
 
 **This is the cleanest case in the whole repository of a blind spot that dynamic analysis closes
@@ -1822,7 +1822,7 @@ this is the referral's answer.
 That line is the entire content of the handoff: 41 methods that no file names, and one offset that
 turns a 4 MB library into a function to read.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > **Absence of a symbol is not absence of a function.** The mirror rule — absence of a manifest entry
 > is not absence of a receiver — is §4.2. Both are the same structural fact: on Android, the binding
 > between a name and an implementation is frequently made at runtime, and a file cannot record a
@@ -1869,7 +1869,7 @@ adb shell "run-as $PKG ls -la /data/data/$PKG"
 | "What did last quarter's build do?" | You cannot run it | — | Static, on the archived artefact |
 | "What does the server enforce?" | You see the client's half | It is not on the device | Neither. Test the API directly |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The inverse error is as common and more embarrassing: concluding *"the app does not send the
 > token"* from a proxy log, when the app pinned and your proxy saw nothing at all. **A quiet proxy
 > and a refused proxy look identical in the report and are opposite results.** Check that you are
@@ -1917,7 +1917,7 @@ with Burp open" report being taken seriously in the same room.
 The technique is the single highest-yield hour in a mobile assessment and it is almost embarrassingly
 simple.
 
-> **📖 Definition**
+> **Definition**
 > A **known-value sweep** is: cause the application to obtain a secret whose value you know, then
 > search every storage channel on the device for that exact value. You are not guessing what a
 > credential looks like — you have it. This converts an open-ended hunt into `grep`.
@@ -1980,7 +1980,7 @@ adb logcat -d -b all | grep -F -- "$VALUE"
 adb shell uiautomator dump /sdcard/ui.xml && adb shell "grep -c -- '$VALUE' /sdcard/ui.xml"
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > **Search the database *files*, not the database.** [33-Storage](../33-Storage/README.md) measured a
 > `logout` that deleted 2 rows and left all four secrets readable in a **61,832-byte `-wal` file**
 > while SQL reported them gone. Any storage review that runs a `SELECT` instead of reading bytes will
@@ -2029,7 +2029,7 @@ try {
 }
 ```
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > The native equivalent is worse than the textbook says. [19-Memory](../19-Memory/README.md) measured
 > that on Android there is **no Scudo quarantine** — a freed block came straight back at the same
 > address — that freed memory is **not zeroed**, with identical bytes read back after `free`, and that
@@ -2154,7 +2154,7 @@ matrix.
 }
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > `-assumenosideeffects` removes the *call*, but an expensive or side-effecting argument expression
 > can survive. Verify by decompiling the release artefact and grepping for the tag — which is 52's
 > job, and is the loop closing again.
@@ -2318,7 +2318,7 @@ three would have been wrong:
   of the vulnerability.
 - **Reporting "hardcoded debug mode"** with no demonstration would be a lead, not a finding.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > **Severity is question four, never question one.** 52 says this about a string in a DEX; it is
 > equally true of a behaviour on a screen. "I observed X" is the beginning of the sentence. The rest
 > of it is who can cause X and what X gets them.
@@ -2384,7 +2384,7 @@ narrated as an achievement. 67 §1.6 states the rule that governs all three and 
 because it applies to every runtime finding: **"A bypassed control is not a finding. The finding is
 what the control was protecting and whether the server re-verifies it."**
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Put your own coverage statement *in* the submission. "Reached 11 of 19 components; the behaviour
 > reproduces on every cold start; here is the control run showing it does not occur when the app is
 > idle" converts a five-minute triage into a five-second acceptance, because it answers the questions
@@ -2448,7 +2448,7 @@ into "a bearer token was written in cleartext".
 **View 5 — the hook (53):** the call site, the stack trace, and the value *before* it was written —
 which is the only view that can tell you the token was in a `String` and never scrubbed.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > jadx tells you what the code *means*. `dumpsys` tells you what the platform *did*. A filesystem
 > delta tells you what *changed*. `cat` tells you what it *is*. A hook tells you *when and from
 > where*. Reach for the cheapest view that settles your question — and reach for a second one before
@@ -2537,7 +2537,7 @@ Three of 67's rules are load-bearing for anyone arriving from this chapter and a
 - **"Hooking rents the answer. Static analysis buys it."** When you find yourself defeating the same
   check every session, that is the signal to go and read it.
 
-> **⚠️ Warning**
+> **Warning**
 > Do not report a bypass as a vulnerability, and do not report the *absence* of anti-tampering as one
 > either. Both are observations about hardening. The finding is downstream: what did the control
 > protect, and does the server check it independently?
@@ -2568,7 +2568,7 @@ only an intercept attempt can produce, and it is a finding *about the static evi
 misleading*. That is the strongest form of the loop: the runtime pass did not just add information,
 it corrected the static reading.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > When a target's secret is a constant, static analysis is faster than any hook you can write, and it
 > takes one command. When a target's secret is a *behaviour*, no amount of reading will produce it.
 > Ask which one you are chasing before you choose a tool — that question is §7.5's whole decision
@@ -2607,7 +2607,7 @@ Two of those rows have a discipline attached that is easy to lose:
   not execute during 40 minutes of use covering login, browse and checkout" — which is useful — and
   never "the method is unreachable", which is not supported.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The `InMemoryDexClassLoader` row is the one that changes an engagement. A dumped DEX is a *new
 > artefact*: hash it, and run 52's eight stages over it from stage 3. Chapter 22 measured why this
 > became the standard packer technique — app domains kept `execmem` but lost
@@ -2740,7 +2740,7 @@ dumpsys activity services $PKG
 bound to them** — the `Client` lines, which are a live cross-app reachability map that no manifest
 contains.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > [28-Services](../28-Services/README.md) measured something here that inverts a common assumption:
 > **`getCallingUid()` in `onBind` returns the service's own UID, not the caller's.** A victim at uid
 > 10310 logged `onBind … callingUid=10310` while the attacker was 10313 — then the AIDL method one
@@ -2917,7 +2917,7 @@ reading a different code path than the one that ran** — a different overload, 
 different classloader, a different split, or code that was replaced at runtime. That last case is the
 interesting one and it is how dynamic DEX loading is usually discovered.
 
-> **⚠️ Warning**
+> **Warning**
 > The most common cause of a 2-versus-3 disagreement is embarrassing and worth checking first:
 > **you analysed a different artefact than the one installed.** `base.apk` without its splits, an
 > APK-mirror download, or a build you compiled. Hash the file you pulled from the device and hash the
@@ -2928,7 +2928,7 @@ interesting one and it is how dynamic DEX loading is usually discovered.
 Two of the platform's own readers can disagree, which is worth knowing before you quote either.
 [26-Intent](../26-Intent/README.md) measured `pm get-app-link` (singular, the pre-API-31 reader) and
 `dumpsys package domain-preferred-apps` **disagreeing with each other for the same package** — so
-quote both, and note that `pm get-app-links` (plural) does not exist below API 31 at all.
+quote both, and confirm that `pm get-app-links` (plural) does not exist below API 31 at all.
 
 The same discipline applies to the receiver surface: `cmd package query-receivers` returns
 "No receivers found" for `VOLUME_CHANGED_ACTION` while AMS shows six live registrations. Neither is
@@ -3044,7 +3044,7 @@ and 52 makes the symmetric complaint about teams that discover a scanner.
 - **Analysis of what you cannot run.** Last quarter's build; a flavour for hardware you lack; malware
   that refuses to execute in your environment.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Every finding in a good mobile report has **two** provenances: a place in the artefact and a moment
 > in a session. The first makes it re-checkable; the second makes it real. A finding with only the
 > first is a lead. A finding with only the second is an anecdote.
@@ -3345,7 +3345,7 @@ Running [29-BroadcastReceivers](../29-BroadcastReceivers/README.md)'s `receiver-
 of the broadcast surface invisible to every APK-based tool ever written, including this repository's
 own manifest scanners.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > **Confidence orders a static queue; coverage bounds a dynamic claim.** Neither is severity, and
 > neither is a finding. 52's most instructive number was that 15 of 17 high-confidence leads were
 > false; this chapter's is that the same session was 67% or 50% covered depending on who was allowed
@@ -3686,7 +3686,7 @@ A missing process rendered as a blank value, which is indistinguishable from a f
 It now prints `pid (no process -- the app is not running)`, which is the single most important line in
 channel 03 and deserves to be legible.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > All four bugs shared one property: **the tool kept running and produced output that looked right.**
 > That is the failure mode to design against, and it is the same lesson 52 draws from its own five
 > bugs. Print your counts — files captured, lines matched, mode used — every run, and make a *gap*
@@ -3725,7 +3725,7 @@ for the rooted variant.
 Lab 2 needs an APK you can decompile — the lab names public options. Lab 3 works against the same
 target as lab 1. Lab 4 ships its own evidence set and needs no device at all.
 
-> **⚠️ Warning**
+> **Warning**
 > Only run any of this against applications you own or have written permission to test. On a shared
 > or daily-driver device, **observe — do not install, instrument, broadcast or modify state.** Every
 > command in these labs that touches a device is read-only unless the lab marks it **[MUTATES]** in

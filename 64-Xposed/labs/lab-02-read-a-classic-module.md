@@ -338,7 +338,7 @@ which of them come from the module half and which from the detector half.
 **Requires LSPosed, and a device you are willing to root.** Everything above works without it; this
 part is the payoff if you have the setup.
 
-> **⚠️ Do not attempt to install classic Xposed.** It requires disabling Verified Boot, which is not
+> **Do not attempt to install classic Xposed.** It requires disabling Verified Boot, which is not
 > reversible in practice and can brick a relocked device. Chapter README §3.2 and
 > [61-Fastboot](../../61-Fastboot/README.md) cover why.
 

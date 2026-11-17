@@ -7,11 +7,11 @@
 
 > **Provenance.** Ghidra **is** installed on the machine this chapter was written on (12.1.2 PUBLIC,
 > Java 24.0.2) and was run headless against the chapter's own target, so the tool behaviour this lab
-> relies on is **✅ Measured**. Any decompiler listing quoted below as an *expected result* is
-> **📘 Illustrative** — it shows the shape to look for, not a capture from a specific binary, and
+> relies on is **Measured**. Any decompiler listing quoted below as an *expected result* is
+> **Illustrative** — it shows the shape to look for, not a capture from a specific binary, and
 > your addresses and variable names will differ. Build the real target with
 > [`../examples/build.sh`](../examples/build.sh) and check your findings against its source. See
-> [the chapter's provenance statement](../README.md#-read-this-before-you-read-anything-else-what-is-measured-here-and-what-is-not).
+> [the chapter's provenance statement](../README.md#read-this-before-you-read-anything-else-what-is-measured-here-and-what-is-not).
 
 ---
 
@@ -227,7 +227,7 @@ cat so-triage-out/inventory.csv
 | Which of the imported functions are interesting, and why? | |
 | Which strings are worth following? | |
 
-Note that one of the exports has a strange name with a `__` in it. Decode it before you move on. What
+one of the exports has a strange name with a `__` in it. Decode it before you move on. What
 Java method does `Java_com_ghidralab_first_Native_hashOf__Ljava_lang_String_2I` correspond to, and why
 does that one need the suffix when `..._hashOf` does not?
 
@@ -305,7 +305,7 @@ jstring Java_com_ghidralab_first_Native_getEndpoint(JNIEnv *env, jobject thiz)
 ```
 
 **Write down what changed and why.** Nothing about the binary was modified. The offset `0x538` was
-always `NewStringUTF`; Ghidra simply did not know that `param_1` was a `JNIEnv *`. That single fact is
+always `NewStringUTF`; Ghidra did not know that `param_1` was a `JNIEnv *`. That single fact is
 the whole of §3.8.
 
 ### Step 6 — Read a real function
@@ -340,7 +340,7 @@ instruction that loads its address, and therefore the function that uses it.
 This is the fundamental navigation technique in a stripped binary: you do not know function names, but
 you do know what the code *talks about*. Strings are the index.
 
-Try it with the format string `"hashOf -> 0x%08x"`. Note that it leads you to
+Try it with the format string `"hashOf -> 0x%08x"`.it leads you to
 `Java_..._hashOf`, and that the format string itself tells you the return type is being printed as a
 32-bit hex value. Debug logging left in native code is a narrated walkthrough of the algorithm — a
 point worth remembering when you read §11's developer mistakes.

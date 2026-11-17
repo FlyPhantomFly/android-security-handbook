@@ -23,13 +23,13 @@ the C++ standard library. Nothing in the binary marks the boundary.
 
 Reading 7,700 functions to find 300 is not a plan.
 
-> **📖 Definition**
+> **Definition**
 > **FLIRT** — Fast Library Identification and Recognition Technology — puts the correct name on a
 > library function inside a stripped binary. It matches each function's **first 32 bytes** against a
 > database of patterns built from the library's object files, with any byte the linker would rewrite
 > masked out, plus a CRC over what follows and the function's total length.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > **FLIRT's value is subtractive.** It does not tell you which function is interesting. It tells you
 > which 7,700 are not, so that the 300 that remain are a list a human can read. "How many functions
 > did the signatures name?" is therefore a better first question than "what did they name them?" — the
@@ -90,7 +90,7 @@ cd 58-IDA
 python3 -B scripts/01-make-flirt-pat.py /tmp/ch58/libcrcutil.a --explain
 ```
 
-> **⚠️ Warning — what this script is**
+> **Warning — what this script is**
 > [`../scripts/01-make-flirt-pat.py`](../scripts/01-make-flirt-pat.py) implements the published `.pat`
 > grammar and **was executed** — its `ar` and ELF parsing is verified against `llvm-nm` and
 > `llvm-readelf`, and every line it emits round-trips through its own parser. Its **CRC column has
@@ -189,7 +189,7 @@ a time, and every byte of it is fixed.
 
 ### 3.4 The general rule
 
-> **🔬 Under the Hood — why AArch64 is structurally worse for FLIRT than x86**
+> **Under the Hood — why AArch64 is structurally worse for FLIRT than x86**
 > On x86, a relocated value is usually a 4-byte absolute address embedded in a longer instruction. Mask
 > it and you lose four bytes; the opcode survives and still discriminates.
 >
@@ -272,7 +272,7 @@ FLIRT names functions. **Type libraries give them prototypes**, and the two are 
 tells you not to read a function, a prototype tells the decompiler what its arguments are so that
 *every caller* becomes readable.
 
-> **📖 Definition**
+> **Definition**
 > A **type library** (`.til`) is a compiled collection of C declarations — structures, unions, enums,
 > typedefs and function prototypes — that IDA can load into a database and apply. Ghidra's equivalent
 > is a `.gdt` data type archive. Chapter 57 §3.8 covers the concept in depth and this lab does not
@@ -328,7 +328,7 @@ ls "$ANDROID_NDK/toolchains/llvm/prebuilt/"*/sysroot/usr/include/jni.h
 **In IDA:** *File → Load file → Parse C header file…* (`Ctrl+F9`).
 **In Ghidra:** *File → Parse C Source…*.
 
-> **⚠️ Warning**
+> **Warning**
 > Parsing `jni.h` directly frequently fails on the first attempt in **both** tools, because the header
 > pulls in platform definitions the parser does not have. The symptom is a long list of parse errors
 > and a type library missing exactly the struct you wanted — and it is easy not to notice, because the
@@ -395,7 +395,7 @@ cp /tmp/ch58/crcutil.sig "$IDADIR/sig/arm/"
 # then in IDA: View > Open subviews > Signatures, Insert, pick it
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > This repository will not tell you where to obtain FLAIR other than with a licence, and will not
 > point at cracked builds or key generators for IDA or any other commercial tool. If you do not have a
 > licence, the free equivalents are below and they are genuinely usable.

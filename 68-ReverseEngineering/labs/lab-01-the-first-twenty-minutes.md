@@ -23,7 +23,7 @@ The rule feels arbitrary and is not. The moment you start reading, you stop tria
 investigating — without having decided what to investigate. Triage is the decision about where to
 spend the reading; you cannot make it by reading.
 
-> **📖 Definition — triage.** Sorting by urgency under time pressure, with incomplete information.
+> **Definition — triage.** Sorting by urgency under time pressure, with incomplete information.
 > The word comes from battlefield medicine, and the analogy is exact: you are not treating anything
 > yet, you are deciding what gets attention and in what order, and the decision has to be made faster
 > than a full assessment would take.
@@ -106,7 +106,7 @@ Add three more of your own. Test each against:
 3. Does the exported licence-checking function participate in that decision?
 4. Is the protected content present in the file, or produced at runtime?
 
-Note that all four are about **one decision**. That is what "bounded" buys you: the brief mentions
+all four are about **one decision**. That is what "bounded" buys you: the brief mentions
 licensing, and you have converted it into questions with first commands.
 
 Notice too what is *not* in the list: "how does the library work". It is unbounded, and nobody asked.
@@ -247,7 +247,7 @@ python3 -B ../scripts/re-journal.py observe H1 \
 python3 -B ../scripts/re-journal.py verdict H1 refuted
 ```
 
-> **⚠️ Warning — why `(@plt)?` is mandatory.** `llvm-objdump` renders a call routed through the
+> **Warning — why `(@plt)?` is mandatory.** `llvm-objdump` renders a call routed through the
 > Procedure Linkage Table as `bl 0x1ac0 <iv_derive_seed@plt>`. A pattern anchored on `>` immediately
 > after the name **misses it entirely and reports zero for a function that is definitely called.**
 > Measured on this fixture built at `-O0`: `iv_derive_seed` scores 0 with the bare pattern and 1 with
@@ -293,7 +293,7 @@ no counterpart in the optimised binary — §3.9's point, visible in one diff.
 The fixture has five exports. A real app has twenty thousand classes, and the funnel matters more,
 not less.
 
-> **⚠️ Warning — scope and ethics.** Use an application **you own**, installed on **your own device**,
+> **Warning — scope and ethics.** Use an application **you own**, installed on **your own device**,
 > or a well-known deliberately-vulnerable training app. Reverse engineering is contractually and
 > statutorily contextual (§1.6); a lab suggesting it is not authorisation.
 

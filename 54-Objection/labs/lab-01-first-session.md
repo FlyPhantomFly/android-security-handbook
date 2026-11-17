@@ -23,8 +23,9 @@ By the end of this lab you will be able to:
 
 That last one is the point of the lab. Everything else is scaffolding for it.
 
-> **⚠️ Authorised testing only.** Every step uses `examples/target-app/`, an application built
-> for this chapter. Do not point any of this at software you do not own.
+> Every step uses `examples/target-app/`, an application built for this chapter. Do not point any
+> of this at software you do not own. See [SECURITY.md](../../SECURITY.md) for authorised-testing
+> scope.
 
 ---
 
@@ -558,8 +559,7 @@ command reads the runtime's table, not the APK.
 <summary>`build.sh` fails with "failed to load XML file"</summary>
 
 You are on Git Bash and the SDK tools are Windows binaries that do not understand `/c/Users/...`
-paths. The script already handles this with `cygpath`; check that `cygpath` is on your PATH. Also
-note that XML comments must not contain two consecutive hyphens — `aapt2` rejects the file with
+paths. The script already handles this with `cygpath`; check that `cygpath` is on your PATH. Also: XML comments must not contain two consecutive hyphens — `aapt2` rejects the file with
 a confusing "not well-formed" error if they do.
 </details>
 

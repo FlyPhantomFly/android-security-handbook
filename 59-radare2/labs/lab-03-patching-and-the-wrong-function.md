@@ -25,10 +25,10 @@ independent mechanisms that produce this identical symptom:
 Both are diagnosed the same way, and the diagnosis is one command. Learning it here costs you three
 hours; learning it on an engagement costs you a day.
 
-> **⚠️ On the state of this chapter**
+> **On the state of this chapter**
 > radare2 was **not installed** on the machine where this was written. Every `r2` command is
-> **📘 Unverified**. The patches, the byte encodings, the file offsets and — critically — the
-> behaviour of every patched binary on a real device are **✅ Measured**, and each says how.
+> **Unverified**. The patches, the byte encodings, the file offsets and — critically — the
+> behaviour of every patched binary on a real device are **Measured**, and each says how.
 >
 > Where this lab shows you a patch applied without radare2, it is because the measurement had to be
 > made with a Python byte-writer instead. The radare2 command that does the same thing is given
@@ -60,7 +60,7 @@ You want `r2gate` — an AArch64 executable built from
 [`01-r2-target.c`](../examples/01-r2-target.c) with
 `-O2 -pie -Wl,-z,max-page-size=16384`.
 
-> **⚠️ The 16 KiB page trap**
+> **The 16 KiB page trap**
 > That link flag is not optional. NDK r25c binaries without it **segfault at load** on 16 KiB-page
 > Android images, which includes current AVDs, and no error message points at page size. A
 > three-line `int main(void){return 42;}` exits **139**. Measured independently by
@@ -76,11 +76,11 @@ adb shell chmod 755 /data/local/tmp/ch59_r2gate
 adb shell /data/local/tmp/ch59_r2gate testkey
 ```
 
-> **✅ Measured** — on the AVD `sdk_gphone16k_x86_64` (Android 15 / API 35, x86_64, 16 KiB pages)
+> **Measured** — on the AVD `sdk_gphone16k_x86_64` (Android 15 / API 35, x86_64, 16 KiB pages)
 > this prints `gate=0`. An AArch64 binary runs there through `libndk_translation.so`, so an arm64
 > target can be exercised without a physical phone.
 
-> **⚠️ If `execve` is blocked**
+> **If `execve` is blocked**
 > Some vendor builds refuse to execute from `/data/local/tmp` — the push succeeds, `chmod +x`
 > succeeds, and the run fails with `No such device or address` and exit **126**
 > ([65-Hooking](../../65-Hooking/README.md) measured it; [60-ADB §3.7](../../60-ADB/README.md)
@@ -101,13 +101,13 @@ ends with a cleanup step.
 ### 1.1 — Find the functions
 
 ```
-# 📘 Unverified
+# Unverified
 $ r2 ~/ch59-build/r2gate
 [0x0]> aa
 [0x0]> afl~lt_
 ```
 
-> **✅ Measured** — `llvm-nm` on the shipped build reports:
+> **Measured** — `llvm-nm` on the shipped build reports:
 >
 > ```
 > 00000000000048a0 T lt_gate
@@ -121,11 +121,11 @@ $ r2 ~/ch59-build/r2gate
 ### 1.2 — Read the licence check
 
 ```
-# 📘 Unverified
+# Unverified
 [0x0]> pdf @ sym.lt_verify_license
 ```
 
-> **✅ Measured** — the tail of the function, from `llvm-objdump -d` (addresses from the shared
+> **Measured** — the tail of the function, from `llvm-objdump -d` (addresses from the shared
 > library build; the executable's differ by a fixed amount):
 >
 > ```
@@ -156,7 +156,7 @@ The shape `mov` + `movk` + `cmp` + `cset` is the most recognisable security chec
 **Before patching anything, ask who calls it.**
 
 ```
-# 📘 Unverified
+# Unverified
 [0x0]> axt sym.lt_verify_license
 [0x0]> pdf @ sym.lt_gate
 ```
@@ -174,14 +174,14 @@ Do this now, and actually read the output. Part 3 is entirely about what happens
 cp ~/ch59-build/r2gate ~/ch59-build/r2gate.verifyonly
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > `r2 -w` has no "save" step. `wa` writes through to disk the moment you press Enter. There is no
 > confirmation and no backup. This is why the copy is step one.
 
 ### 2.2 — Patch with a safety net
 
 ```
-# 📘 Unverified
+# Unverified
 $ r2 -w ~/ch59-build/r2gate.verifyonly
 [0x0]> e io.cache=1                   # stage writes in memory instead of on disk
 [0x0]> aa
@@ -197,7 +197,7 @@ commit when satisfied. Turn it on before every patching session.
 Three equivalent ways to write the same patch:
 
 ```
-# 📘 Unverified
+# Unverified
 [0x0]> wa mov w0, 1; ret       # assemble source
 [0x0]> wx 20008052c0035fd6     # raw bytes
 [0x0]> wao ret1                # let r2 work out "make this return 1"
@@ -205,7 +205,7 @@ Three equivalent ways to write the same patch:
 
 ### 2.3 — The encodings, verified
 
-> **✅ Measured** — assembled with `aarch64-linux-android21-clang -c -x assembler-with-cpp` from NDK
+> **Measured** — assembled with `aarch64-linux-android21-clang -c -x assembler-with-cpp` from NDK
 > 25.2.9519653 and read back with `llvm-objdump -d`:
 >
 > | Instruction | Bytes (file order) | Word |
@@ -224,11 +224,11 @@ If you patch with anything other than radare2 — a Python script, a hex editor 
 arithmetic, and getting it wrong corrupts an unrelated part of the file.
 
 ```
-# 📘 Unverified -- r2 prints both columns side by side
+# Unverified -- r2 prints both columns side by side
 [0x0]> iS
 ```
 
-> **✅ Measured** — `llvm-readelf -S ~/ch59-build/r2gate`:
+> **Measured** — `llvm-readelf -S ~/ch59-build/r2gate`:
 >
 > ```
 > .text   PROGBITS   0000000000004794   000794   000288   AX
@@ -276,7 +276,7 @@ Never verify a patch by eye.
 llvm-objdump -d ~/ch59-build/r2gate.verifyonly --disassemble-symbols=lt_verify_license | head -6
 ```
 
-> **✅ Measured** — the patch is present and exactly correct:
+> **Measured** — the patch is present and exactly correct:
 >
 > ```
 >     4854: 20 00 80 52   mov   w0, #1
@@ -300,7 +300,7 @@ adb shell /data/local/tmp/ch59_verifyonly radare2
 
 Before you run it, write down what you expect.
 
-> **✅ Measured** — on the AVD `sdk_gphone16k_x86_64` (API 35):
+> **Measured** — on the AVD `sdk_gphone16k_x86_64` (API 35):
 >
 > ```
 > $ adb shell /data/local/tmp/ch59_r2gate    radare2      ->  gate=0
@@ -316,12 +316,12 @@ The patch is correct. The patch is present. The bytes are verified. Nothing chan
 The diagnosis is the command you were told to run in Part 1.3 and may have skipped:
 
 ```
-# 📘 Unverified
+# Unverified
 [0x0]> axt sym.lt_verify_license
 [0x0]> pdf @ sym.lt_gate
 ```
 
-> **✅ Measured** — `llvm-objdump -d r2gate --disassemble-symbols=lt_gate`:
+> **Measured** — `llvm-objdump -d r2gate --disassemble-symbols=lt_gate`:
 >
 > ```
 > 00000000000048a0 <lt_gate>:
@@ -349,7 +349,7 @@ There it is. `lt_gate` calls `lt_probe_paths` **first** and returns early if it 
 
 `lt_probe_paths` checks whether `/system/xbin/su` exists.
 
-> **✅ Measured** — on the AVD:
+> **Measured** — on the AVD:
 >
 > ```
 > $ adb shell ls -l /system/xbin/su
@@ -404,7 +404,7 @@ There are three defensible targets, and choosing between them is the skill:
 Patch the probe:
 
 ```
-# 📘 Unverified
+# Unverified
 $ cp ~/ch59-build/r2gate ~/ch59-build/r2gate.probeonly
 $ r2 -w ~/ch59-build/r2gate.probeonly
 [0x0]> e io.cache=1
@@ -432,7 +432,7 @@ PY
 Now run the **full truth table**. Build all four variants and test each with a wrong key and the
 correct key.
 
-> **✅ Measured** — all four variants built from the shipped `examples/01-r2-target.c`, pushed to the
+> **Measured** — all four variants built from the shipped `examples/01-r2-target.c`, pushed to the
 > AVD `sdk_gphone16k_x86_64` (API 35) and executed. The accepted key is `radare2`.
 >
 > | Binary | `key=wrongkey` | `key=radare2` |
@@ -468,7 +468,7 @@ You just changed four bytes. On a real engagement that is the simplest part of t
 
 That last row is worth reading before lab 04.
 
-> **🔍 Consider hooking instead**
+> **Consider hooking instead**
 > [Frida](../../53-Frida/README.md) changes behaviour at run time with no file modification, so
 > signature checks never fire. Patching is right when you need persistence or have no injection
 > path; hooking is right most other times. Knowing which to reach for is the actual skill.

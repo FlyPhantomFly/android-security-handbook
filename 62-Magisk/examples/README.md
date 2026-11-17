@@ -37,7 +37,7 @@ blocklist and must never be committed.
 | [`pentest-prep-module/`](pentest-prep-module/) | A scripts-only module: `skip_mount`, boot stages, `system.prop`, `sepolicy.rule`, `uninstall.sh` | [Lab 02](../labs/lab-02-write-a-module.md) Part 3 |
 | [`malicious-module-defanged/`](malicious-module-defanged/) | **A deliberately hostile module, defanged.** Every dangerous action is present as text and neutralised in execution | [Lab 04](../labs/lab-04-module-audit.md) |
 
-> **⚠️ Warning — `malicious-module-defanged/`**
+> **Warning — `malicious-module-defanged/`**
 > That directory contains a module written to be caught. Every hostile action it describes is real
 > and is exactly what a trojanised module would do; every one of them is routed through a `would()`
 > wrapper that prints the command instead of running it, and the module refuses to do anything at all

@@ -232,7 +232,7 @@ Work them in that order. Most of the time it is (1).
 
 ---
 
-### 10. Can jadx produce Java that is simply wrong, with no warning?
+### 10. Can jadx produce Java that is wrong, with no warning?
 
 **Yes, and this is the single most important thing in the chapter.**
 
@@ -417,7 +417,7 @@ Reading room and photocopier. You read in one and take copies from the other.
 
 ### 18. Can I recompile jadx's output and rebuild the app?
 
-**No,** and it is not a goal jadx has. Two examples from this chapter's measured output that simply
+**No,** and it is not a goal jadx has. Two examples from this chapter's measured output that
 do not compile:
 
 ```java

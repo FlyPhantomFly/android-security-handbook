@@ -56,20 +56,20 @@ a binary called `su` into `/system/xbin/`, set its permissions so that any proce
 and it would run as UID 0, and rebooted. The change was permanent, visible in a directory listing,
 and completely at odds with the model Android was moving toward.
 
-> **📖 Definition — root**
+> **Definition — root**
 > On any Unix-like system, "root" is the user with UID 0, for which the kernel skips almost every
 > permission check. "Rooting" an Android device means installing a mechanism that lets a chosen
 > process obtain UID 0 on demand. Android ships with no such mechanism, deliberately: the security
 > model depends on every app being an isolated, unprivileged Linux user.
 
-> **📖 Definition — dm-verity**
+> **Definition — dm-verity**
 > A Linux kernel device-mapper target that sits between the filesystem and the block device. Every
 > 4 KiB block read from the underlying partition is hashed and checked against a Merkle tree whose
 > root hash is signed. A modified block produces a hash mismatch, and the kernel returns an I/O
 > error (or panics, depending on the configured mode). See
 > [20-Security-Architecture](../20-Security-Architecture/README.md).
 
-> **📖 Definition — AVB (Android Verified Boot)**
+> **Definition — AVB (Android Verified Boot)**
 > The chain that establishes and checks those signatures. The bootloader verifies `vbmeta`, which
 > contains the signed hash descriptors for `boot`, `system`, `vendor` and other partitions. `vbmeta`
 > itself is verified against a key stored in hardware. The result is a boot state — `green`
@@ -97,7 +97,7 @@ byte-for-byte identical to what the manufacturer shipped. Instead:
    kernel feature that makes a file at path X appear to contain the contents of a different file,
    for some processes and not others, without changing the underlying storage at all.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Old-style root is graffiti on the wall: permanent, visible to anyone who looks, and it wrecks the
 > paintwork. Magisk is a projector: the wall is untouched, but from where the app is standing, the
 > wall appears to have something written on it. Turn off the projector — which is exactly what
@@ -144,7 +144,7 @@ This is where most beginners over-estimate. Being root on the device does **not*
   layer. A root process in a restrictive domain can be less capable than an unprivileged process in
   a permissive one. This is why `magiskpolicy` exists.
 
-> **⚠️ Warning**
+> **Warning**
 > Everything in this chapter assumes a device you own, bought for testing, and are willing to brick.
 > Unlocking a bootloader **erases all user data**, voids warranties on many devices, permanently
 > trips fuses on some (Samsung KNOX, for example), and on a small number of devices cannot be
@@ -300,7 +300,7 @@ learns the caller's real UID from the kernel via `SO_PEERCRED` — which the cal
 consults its policy database, optionally prompts the user, and if allowed, forks a new root process
 and passes the file descriptors back.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > Passing file descriptors over a UNIX socket uses `sendmsg()` with an `SCM_RIGHTS` control message.
 > The kernel duplicates the descriptor into the receiving process's descriptor table. This is the
 > same primitive Binder uses for FD passing and the reason `adb shell` output from `cmd` reaches your
@@ -378,7 +378,7 @@ partition. This is the single most common source of confusion for people followi
 on a Pixel 7 or newer you patch `init_boot.img`, not `boot.img`, because that is where the ramdisk
 containing `/init` lives.
 
-> **📖 Definition — ramdisk**
+> **Definition — ramdisk**
 > A small compressed CPIO archive embedded in the boot image. The kernel unpacks it into a RAM
 > filesystem and executes `/init` from it. It contains `init`, the `.rc` startup scripts, the SELinux
 > policy files, and the mount points that the real filesystems will later be mounted onto.
@@ -400,9 +400,9 @@ containing `/init` lives.
 6. **Repack.** Rebuild the CPIO, recompress, and rebuild the image with the original header fields
    preserved so the bootloader still recognises it.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > On devices where the ramdisk is absent (older "system-as-root" designs where the kernel mounts
-> `/system` directly as `/`), Magisk cannot simply replace `/init`. It instead uses the **recovery**
+> `/system` directly as `/`), Magisk cannot replace `/init`. It instead uses the **recovery**
 > partition ramdisk or relies on a `vendor_boot`/`init_boot` ramdisk. `magiskinit` contains logic to
 > detect which situation it is in at runtime by inspecting the kernel command line
 > (`androidboot.*` parameters) and the presence of `/system_root`. This detection code is the reason
@@ -428,7 +428,7 @@ runs before `init`, so it loads a policy that includes Magisk's own rules, and `
 to load the stock policy is a no-op because the policy is already loaded and, on production kernels,
 `/sys/fs/selinux/load` is made unwritable after the first load.
 
-> **📖 Definition — SELinux domain**
+> **Definition — SELinux domain**
 > A label attached to a process that determines what it may do. Every rule in policy has the form
 > "domain X may perform operation O on objects labelled Y". Being UID 0 does not exempt you: a root
 > process in the `untrusted_app` domain still cannot read `/data/system/packages.xml`. See
@@ -474,7 +474,7 @@ Magisk creates a domain conventionally called `magisk` and grants it broad acces
 `magiskd` into it. Root shells spawned through `su` are placed in a permissive context by default so
 that your commands actually work.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > When a command fails as root with "Permission denied" and `dmesg | grep avc` shows a denial, you
 > are looking at SELinux, not at Unix permissions. The fastest diagnostic is `id -Z` to see your
 > context and `getenforce` to see global mode. The fastest fix during testing — and it is a *testing*
@@ -518,7 +518,7 @@ This table is the one to memorise if you write modules.
 | `late_start service` | After zygote has started, during the boot animation | Framework coming up, `service` calls may work | Anything that needs the framework. **Non-blocking**, runs in parallel |
 | `boot-completed` | After `sys.boot_completed=1` | Everything | Late fix-ups, launching helper apps |
 
-> **⚠️ Warning**
+> **Warning**
 > A `post-fs-data.sh` that hangs will bootloop the device. Never put an unbounded `while` loop, a
 > network call, or a `wait` on something that may never arrive in `post-fs-data.sh`. If you need to
 > wait for the framework, use `service.sh` and poll `getprop sys.boot_completed`.
@@ -574,7 +574,7 @@ of the real directory, populate it with bind mounts to every original entry plus
 entries, and mount that over the original — otherwise adding one file to `/system/bin` would hide
 every other binary in `/system/bin`.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > That directory-cloning behaviour is why adding a single CA certificate to
 > `/system/etc/security/cacerts/` requires Magisk to replicate the entire directory. It is also why
 > `mount | grep magisk` on a rooted device shows a long list of individual bind mounts rather than
@@ -628,7 +628,7 @@ hardware-backed attestation at all.
 | `ro.secure` | `1` | `adbd` will not run as root |
 | `sys.oem_unlock_allowed` | `0` | OEM unlocking not enabled |
 
-> **⚠️ Warning**
+> **Warning**
 > Spoofing these properties is **not** a Play Integrity bypass and has not been for years. The
 > hardware-backed attestation path signs the real boot state inside the TEE and sends it to Google's
 > servers, where the verdict is computed. Nothing you do in Linux userspace changes what the TEE
@@ -636,7 +636,7 @@ hardware-backed attestation at all.
 
 ### 3.8 Zygisk in detail
 
-> **📖 Definition — Zygisk**
+> **Definition — Zygisk**
 > Magisk's mechanism for running module code inside the zygote process and therefore inside every
 > forked app process. The name is a portmanteau of "zygote" and "Magisk". It replaced the earlier
 > third-party **Riru** framework, which achieved the same thing by hijacking a library that zygote
@@ -668,7 +668,7 @@ Zygisk also provides:
 | `hookJniNativeMethods()` | Replace entries in a JNI native method table (see [65-Hooking](../65-Hooking/README.md)) |
 | `pltHookRegister()` / `pltHookCommit()` | PLT/GOT hooking of the target process |
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > `connectCompanion()` exists because after `postAppSpecialize` your code has the app's UID and
 > SELinux context and can no longer read `/data/adb` or open privileged sockets. The companion runs
 > as root, forked from `magiskd`, and you talk to it over a UNIX socket. Any privileged work a
@@ -706,7 +706,7 @@ window, Magisk:
 | Zygote's memory maps containing an extra loaded library | Partially — `DLCLOSE_MODULE_LIBRARY` helps |
 | Init process name / `/proc/1/exe` inode oddities | No |
 
-> **🧠 Mental Model**
+> **Mental Model**
 > DenyList is a **retreat**, not a cloak. It works by removing Magisk's effects from a process rather
 > than by lying about them. Anything Magisk cannot remove — a property it did not set, a signature
 > the TEE produced, a file it does not control — remains visible. Frame it to yourself as "make the
@@ -726,7 +726,7 @@ Root hiding has gone through distinct eras:
 
 The honest conclusion, and the one you should carry into engagements and into interviews:
 
-> **⚠️ Warning**
+> **Warning**
 > **Root hiding is an arms race you may lose, and on a modern device with hardware-backed attestation
 > you will lose it if the app checks properly.** Plan for this. Have a fallback: an older device
 > without hardware attestation, an emulator with a patched image, a build of the app provided by the
@@ -754,7 +754,7 @@ Three root solutions are in common use. They differ in where the privileged code
 | Device support breadth | Very wide | Narrower — depends on kernel availability | Narrower |
 | Maturity / ecosystem | Largest by far | Growing | Smallest |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The practical reason to know about KernelSU is that when an app's root detection defeats Magisk,
 > moving the root implementation into the kernel sometimes moves you back ahead of it — because
 > userspace scanning cannot see kernel state. It is not a silver bullet, and on devices with
@@ -823,7 +823,7 @@ table so that its own function runs instead. Its function calls the original, th
 it is in the parent or the child from the return value — invokes module callbacks at exactly the
 right points relative to step 6.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > This "replace an entry in the JNI native method table" technique is a general-purpose hooking
 > primitive, not a Magisk-specific trick. The table is populated by `RegisterNatives()`, and a
 > pointer in it is just memory in the process. Zygisk exposes it to modules as
@@ -891,7 +891,7 @@ Root on a device is a total compromise of the Android security model, and malwar
   modules from forums and Telegram channels; a module runs arbitrary root shell code at every boot,
   before any security software exists. There is no code signing on Magisk modules.
 
-> **⚠️ Warning**
+> **Warning**
 > Installing a Magisk module is equivalent to giving the module's author a permanent root shell on
 > your device that runs at every boot before the framework starts. Read `post-fs-data.sh`,
 > `service.sh` and `customize.sh` of every module before you install it. On your test device this is
@@ -932,7 +932,7 @@ what a report or an interview answer needs:
 | Verified Boot downgrade | Flashing an older, signed but vulnerable `boot`/`vbmeta` combination where rollback protection is absent or misconfigured |
 | Kernel exploits used to obtain root without unlocking | The historical path (`dirtycow`-class, `binder` UAF-class bugs). These are real CVEs; look them up rather than trusting a number from memory |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > If you are assessing a **device** rather than an app, the questions are: does the bootloader unlock
 > wipe user data; is rollback protection enforced on `vbmeta`; is the boot state accurately reported
 > to attestation; is `ro.debuggable` 0 on production builds; is there a `userdebug` build in the
@@ -1124,7 +1124,7 @@ move-result-object v1
 ```
 
 At that point strings-based discovery fails and you switch to dynamic: hook
-`java.io.File.<init>(String)` and `java.lang.String` comparison methods and simply watch what paths
+`java.io.File.<init>(String)` and `java.lang.String` comparison methods and watch what paths
 the app constructs at runtime. Obfuscation hides code from a reader; it does not hide behaviour from
 an observer.
 
@@ -1144,7 +1144,7 @@ su -c 'id -Z'              # SELinux context of the root shell
 getenforce                 # Enforcing on a healthy device
 ```
 
-> **⚠️ Warning — run those *inside* `adb shell`, not as arguments to it**
+> **Warning — run those *inside* `adb shell`, not as arguments to it**
 > `adb shell` does not preserve the host shell's quoting: it joins its arguments with spaces and
 > hands the result to the device's `sh`. So `adb shell su -c 'magisk -v'` reaches the device as <!-- lint:allow SU-DASH-C SU-DASH-C-BARE -- the broken form, quoted as the counter-example this warning teaches -->
 > `su -c magisk -v`, the `-v` is consumed by **`su`**, and you read *su's* version while believing
@@ -1191,7 +1191,7 @@ nsenter --mount=/proc/$PID/ns/mnt -- ls -la /system/bin/su
 nsenter --mount=/proc/$PID/ns/mnt -- ls -la /system/etc/security/cacerts/ | head
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `nsenter` into the target's mount namespace is the single most useful diagnostic in this chapter.
 > It answers, definitively and in one command, the question "what does the app see at this path?" —
 > and it immediately reveals the DenyList/system-CA conflict described in §2.2, because your
@@ -1381,7 +1381,7 @@ adb shell "su -c 'dmesg'" | grep -iE "magisk|init|avc" > kernel.log
 adb shell "su -c 'touch /data/adb/modules/*/disable && reboot'"
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > Magisk's **safe mode** (triggered by holding Volume Down through boot on most devices) disables all
 > modules for that boot. Learn the gesture for your device *before* you need it. It is the difference
 > between a five-minute recovery and reflashing the whole phone.
@@ -1525,7 +1525,7 @@ unzip image-<device>-<build>.zip boot.img init_boot.img 2>/dev/null || true
 ls -la boot.img init_boot.img
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > The boot image **must** match the build currently installed on the device. Patching a boot image
 > from a different build and flashing it produces, at best, a bootloop and, at worst, a device that
 > cannot mount `/data`. Check `ro.build.fingerprint` and match it character for character.
@@ -1549,7 +1549,7 @@ fastboot boot patched.img        # non-persistent: a power cycle undoes it
 adb shell "su -c 'magisk -v'"
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `fastboot boot` is the most important safety habit in this entire chapter. It loads the image into
 > RAM and boots it once. If the image is wrong, you power-cycle and the device boots the untouched
 > stock image. Only flash after a successful `fastboot boot`. On some devices `fastboot boot` is
@@ -1640,7 +1640,7 @@ ls -la /system/etc/security/cacerts/ | grep -c ''      # should be original coun
 openssl x509 -in /system/etc/security/cacerts/9a5ba580.0 -noout -subject
 ```
 
-> **⚠️ Warning — Android 14+**
+> **Warning — Android 14+**
 > From Android 14 the CA store is managed by the Conscrypt APEX module and lives under
 > `/apex/com.android.conscrypt/cacerts`. A `system/etc/security/cacerts` overlay is no longer
 > sufficient, because the runtime reads the APEX path. Modules targeting Android 14+ must bind-mount
@@ -1648,7 +1648,7 @@ openssl x509 -in /system/etc/security/cacerts/9a5ba580.0 -noout -subject
 > boot. Use a module written for your Android version, and always verify with the certificate-check
 > command above rather than assuming.
 
-> **⚠️ Warning — DenyList interaction**
+> **Warning — DenyList interaction**
 > If you add your target app to DenyList, Magisk unmounts this module in that app's namespace and
 > your certificate disappears for exactly the app you wanted to intercept. When you need both root
 > hiding and interception, use a Zygisk-module-based CA injector that runs *after* the DenyList
@@ -1742,7 +1742,7 @@ fi
 Note the bounded wait loop. An unbounded `while` in `service.sh` will not bootloop the device (it is
 non-blocking) but it will leave a runaway process; in `post-fs-data.sh` the same loop would be fatal.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Auto-starting `frida-server` at boot is convenient and also the single most detectable thing you
 > can do. A default `frida-server` listens on TCP 27042 and its process name is `frida-server`. For
 > anything beyond casual testing, rename the binary, bind it to a UNIX socket or a non-default port
@@ -1871,7 +1871,7 @@ diff "$EV/props-before.txt" "$EV/props-after.txt" > "$EV/props-diff.txt" || true
 echo "Done. Evidence in $EV/"
 ```
 
-> **🧠 Mental Model**
+> **Mental Model**
 > The artefact that matters in an enterprise engagement is not the rooted device — it is the
 > *record* of exactly how the device was configured. When a client disputes a finding, the answer
 > "here is the fingerprint, the boot image hash, the module list and the mount table at the time of
@@ -1978,7 +1978,7 @@ delay introduced by the Zygisk hooks, or a `stat()` returning `EACCES` where a s
 **Q: Compare Magisk and KernelSU from a detection standpoint.**
 Magisk's privileged logic lives in userspace and expresses itself through userspace artefacts —
 mounts, a daemon process, a socket, a patched policy — all of which are in principle observable by
-another userspace process. KernelSU moves the logic into the kernel: the mounts are simply never
+another userspace process. KernelSU moves the logic into the kernel: the mounts are never
 applied to a non-allowlisted process's namespace, so there is nothing for it to observe, and the
 privileged component is not a process at all. That is a genuine detection advantage. It is not
 absolute — kernel version strings, module lists, and behavioural probes can still betray it — and it

@@ -82,7 +82,7 @@ Xposed did its injection by **replacing a file in the system partition**. Specif
 `/system/bin/app_process`, the binary that starts Zygote and every app process, with its own version
 that loaded an extra jar — `XposedBridge.jar` — into the boot class path before anything else ran.
 
-> **📖 Definition — boot class path.** The list of `.jar` files whose classes the runtime loads before
+> **Definition — boot class path.** The list of `.jar` files whose classes the runtime loads before
 > and outside any application's own class loader. Classes on it are visible to every process on the
 > device without anyone asking for them. `java.lang.String`, `android.app.Activity` and every other
 > framework class live there. Putting your own jar on it means your classes are visible everywhere,
@@ -124,7 +124,7 @@ in a single session. What you lose without LSPosed is the set of jobs where *per
 
 ### 1.4 What LSPosed is, precisely
 
-> **📖 Definition — LSPosed.** A **Zygisk module** (see [62-Magisk](../62-Magisk/README.md)) that
+> **Definition — LSPosed.** A **Zygisk module** (see [62-Magisk](../62-Magisk/README.md)) that
 > loads a framework into the Zygote process, so that framework code is inherited by every forked
 > application process; that framework then, on a per-application basis chosen by the user, loads
 > third-party **module** APKs into the target process and lets their code replace the entry points of
@@ -172,7 +172,7 @@ Three things worth extracting from that table, because they are the parts that g
   is LSPosed. When somebody says "I wrote an Xposed module in 2025", they almost certainly mean an
   LSPosed module written against the Xposed API.
 
-> **🧠 Mental Model.** Draw the stack with three independent layers and you will never confuse these
+> **Mental Model.** Draw the stack with three independent layers and you will never confuse these
 > names again: **root** (Magisk / KernelSU / APatch) gives you privilege; **injection** (Zygisk /
 > Riru) gets a native library into Zygote; **framework** (LSPosed / EdXposed / classic Xposed)
 > decides whose code runs where and installs the actual method hooks using an **engine** (LSPlant /
@@ -201,7 +201,7 @@ investigation is a first-class finding, and §5.9 covers what to collect.
 
 ### 1.7 Ethics, stated once
 
-> **⚠️ Warning.** Every module in this chapter targets an application you build yourself from this
+> **Warning.** Every module in this chapter targets an application you build yourself from this
 > chapter's labs. Point a module at software you do not own and are not explicitly authorised to
 > test and you are, depending on jurisdiction, committing an offence — and in every jurisdiction
 > breaching the terms under which the software was licensed to you. **Modules that defeat licensing,
@@ -388,7 +388,7 @@ arrive at wrong conclusions about LSPosed's power.
 - **The module** has *no privilege at all beyond the app it landed in*. It cannot read `/data/adb`.
   It cannot see other apps' data. It has exactly the permissions the target declared in its manifest.
 
-> **⚠️ Warning.** "A module runs as root" is wrong and it is the most common misconception about
+> **Warning.** "A module runs as root" is wrong and it is the most common misconception about
 > LSPosed. A module runs as the **target application**. If you want privileged work done from a
 > module you must ask something privileged to do it for you — which is precisely what Zygisk's
 > `connectCompanion()` exists for ([62-Magisk §3.8](../62-Magisk/README.md)) and why LSPosed keeps a
@@ -412,7 +412,7 @@ module reaches it only by hooking the Java method that calls into C — which me
 boundary, not the decision. §3.15 is explicit about this limit and §7.9 turns it into a tool-choice
 rule.
 
-> **🔬 Under the Hood.** Nothing stops a module from loading its own native library with
+> **Under the Hood.** Nothing stops a module from loading its own native library with
 > `System.loadLibrary` once it is inside the target process and doing native inline hooking from
 > there — it is ordinary code in an ordinary process. But that is you writing a native hooking engine
 > ([65-Hooking §3.4](../65-Hooking/README.md)) and calling it from a module, not the Xposed API doing
@@ -468,7 +468,7 @@ of historical interest only, because they explain design choices that otherwise 
 
 ### 3.1 Zygote, and why "before the process exists" is a category difference
 
-> **📖 Definition — Zygote.** A process started early in boot which loads the Android runtime,
+> **Definition — Zygote.** A process started early in boot which loads the Android runtime,
 > preloads several thousand framework classes and a set of shared libraries, and then does nothing
 > but wait on a socket. When the system needs a new application process, it does not `execve` a new
 > program: it tells Zygote to `fork()`. The child inherits everything Zygote loaded, then
@@ -491,7 +491,7 @@ Three consequences, and each is a whole property of LSPosed:
 | **There is no injection event in the app process** | Nobody called `dlopen`. Nobody called `ptrace`. Nobody created a thread. The process was *born* with the code present |
 | **`LD_PRELOAD` does not work on Android apps** | [65-Hooking §3.7](../65-Hooking/README.md) makes this point: the linker consults `LD_PRELOAD` at `execve`, and an app process never has one. Zygisk is the platform's answer to the same problem |
 
-> **🧠 Mental Model.** Frida asks "how do I get into this process?" LSPosed asks "how do I get into
+> **Mental Model.** Frida asks "how do I get into this process?" LSPosed asks "how do I get into
 > the process that all processes are made from?" The first is a break-in; the second is inheritance.
 > Every difference in detectability, persistence and iteration speed between the two tools is
 > downstream of that one question.
@@ -525,7 +525,7 @@ app's class loader and to install hooks that the app's own code will hit. It is 
 no privilege: by the time module code runs, the process has been an ordinary app for several
 milliseconds.
 
-> **⚠️ Warning.** `getFlags()` reports whether the process is on Magisk's **DenyList**, and LSPosed
+> **Warning.** `getFlags()` reports whether the process is on Magisk's **DenyList**, and LSPosed
 > respects it — a DenyListed process gets no modules. That is a feature when you are trying to hide,
 > and a genuinely confusing failure mode when you are not: a module that works everywhere and
 > silently does nothing in one app is very often a DenyList entry somebody added months ago and
@@ -549,7 +549,7 @@ are all consequences of what a manager needs to be able to do:
 That last row surprises people who go looking for LSPosed on a device and conclude it is not
 installed because there is no icon. It is also, deliberately, one less artefact.
 
-> **🔍 Pentester's Note.** "No LSPosed app in the launcher" is not evidence of absence, and neither is
+> **Pentester's Note.** "No LSPosed app in the launcher" is not evidence of absence, and neither is
 > `pm list packages | grep -i lsposed`. The manager can be reached through a shortcut, through a
 > dial-pad code, or through the Magisk app, and its package name can be randomised. §5.5 and §7.5
 > cover what *is* evidence.
@@ -581,7 +581,7 @@ an app.** LSPosed's scope list includes two pseudo-targets that are not ordinary
 | **`android`** (the system framework) | The module loads into **`system_server`**, at uid 1000 with the platform's permissions | Effectively a system-wide compromise. A hook in `system_server` sees every Binder transaction on the device |
 | **`system`/manager-adjacent entries** | Varies by build | Treat any non-app scope entry as privileged |
 
-> **⚠️ Warning.** A module you enable with `android` in scope is code you have granted **system**
+> **Warning.** A module you enable with `android` in scope is code you have granted **system**
 > privileges to, on a device you also root. There is no meaningful sandbox left. Review the module's
 > source, or do not enable it with that scope. This is the single highest-consequence decision a user
 > of LSPosed makes and the manager's checkbox does not look any different from the others.
@@ -594,7 +594,7 @@ The module APK is a file on disk, owned by the module's own package. The target 
 different uid with a different sandbox. Getting the module's code to *execute* inside the target is
 therefore a genuine problem, and it is solved with an ordinary Android mechanism.
 
-> **📖 Definition — class loader.** The object responsible for turning a class *name* into a loaded
+> **Definition — class loader.** The object responsible for turning a class *name* into a loaded
 > class. Android's runtime has several, arranged in a parent-first delegation chain: the boot class
 > loader (framework classes), then the app's `PathClassLoader` (the app's own DEX), then any loader
 > the app created itself. **A class name is only meaningful relative to a loader.** Two different
@@ -652,7 +652,7 @@ XposedHelpers.findAndHookMethod(ClassLoader.class, "loadClass",
 });
 ```
 
-> **🔬 Under the Hood.** This is the managed-layer twin of the *timing* problem
+> **Under the Hood.** This is the managed-layer twin of the *timing* problem
 > [65-Hooking §4.4](../65-Hooking/README.md) describes for native libraries: `.init_array` runs
 > inside `dlopen`, so a hook installed after `System.loadLibrary` returns is already too late. Here
 > the resource is a class rather than a library and the gate is a class loader rather than the
@@ -698,7 +698,7 @@ class hierarchy and it means nothing on its own.
 | `XposedBridge.hookMethod(Member m, XC_MethodHook cb)` | Takes a `Method` or `Constructor` | You resolved the member yourself, e.g. by iterating `getDeclaredMethods()` |
 | `XposedBridge.invokeOriginalMethod(Member, Object, Object[])` | Static | Call the *unhooked* original, from anywhere, including from outside a hook |
 
-> **⚠️ Warning.** The varargs form is not type-checked at compile time. `findAndHookMethod("Foo", cl,
+> **Warning.** The varargs form is not type-checked at compile time. `findAndHookMethod("Foo", cl,
 > "bar", String.class, new XC_MethodHook(){...})` and `findAndHookMethod("Foo", cl, "bar",
 > new XC_MethodHook(){...}, String.class)` both compile; the second throws at runtime because the last
 > element is not a callback. Every "my module crashes on load with `IllegalArgumentException`" report
@@ -825,7 +825,7 @@ The last row is worth a moment: `setAdditionalInstanceField(someAppObject, "ch63
 gives you a place to remember something about an object you did not create and cannot subclass. It is
 implemented as a weak-keyed map, so it does not leak the object.
 
-> **🔍 Pentester's Note.** `XposedHelpers` also has an internal member cache, so repeated
+> **Pentester's Note.** `XposedHelpers` also has an internal member cache, so repeated
 > `findAndHookMethod` calls on the same target are cheap. That is a performance note for module
 > authors and a **detection** note for everyone else: a module hooking a hot method adds work to
 > every invocation of it, and a target that times its own methods can notice. Timing-based hook
@@ -855,7 +855,7 @@ pointer.** [65-Hooking §3.3](../65-Hooking/README.md) states the same thing as 
 13-ART derives it, including how to locate the field without hard-coding an offset. Neither is
 re-derived here.
 
-> **⚠️ Warning.** `ArtMethod`'s layout is **not stable**. ART became a Mainline module at API 29,
+> **Warning.** `ArtMethod`'s layout is **not stable**. ART became a Mainline module at API 29,
 > which means two devices reporting the same Android release can have different ART builds with
 > different field offsets. A hooking engine with hard-coded offsets works on the author's phone and
 > fails on yours. This is the concrete reason LSPlant derives offsets at runtime rather than
@@ -904,7 +904,7 @@ Three consequences of this design that show up in practice:
 | **The original's code is never modified** | Which is why a checksum over the app's DEX or over its compiled `.odex` sees nothing. Contrast with SandHook's inline mode, which does modify compiled code |
 | **A recursive call inside the original does NOT re-enter the hook** | The original body was compiled with direct references; going through the backup does not pass the target's entry point again. This is usually what you want and occasionally a surprise |
 
-> **🔬 Under the Hood.** The native and managed worlds converge here in a way worth noticing.
+> **Under the Hood.** The native and managed worlds converge here in a way worth noticing.
 > An inline hook needs a *trampoline* holding the displaced instructions because the function's first
 > bytes were overwritten. A managed hook needs a *backup method* holding the original entry pointer
 > because the method's dispatch slot was overwritten. Different layer, different artefact, same
@@ -935,7 +935,7 @@ Where LSPosed is at a disadvantage relative to Frida is not the mechanism but th
 That table, not any deep property of ART, is why the working practice this chapter recommends is
 **explore with Frida, ship with LSPosed** — §7.9.
 
-> **🔍 Pentester's Note.** Run `adb shell cmd package compile -m verify -f <pkg>` and force-stop
+> **Pentester's Note.** Run `adb shell cmd package compile -m verify -f <pkg>` and force-stop
 > before concluding a module's hook does not work. It discards the AOT-compiled code, so the inlined
 > copy stops existing and the dispatch comes back. If the hook then fires, your finding is "the check
 > is inlined at `-O2`", which is a more interesting sentence than "my module did not work".
@@ -970,7 +970,7 @@ dependencies {
 }
 ```
 
-> **⚠️ Warning.** `compileOnly`, never `implementation`. At runtime the framework supplies
+> **Warning.** `compileOnly`, never `implementation`. At runtime the framework supplies
 > `de.robv.android.xposed.*`. A module that packages its own copy ends up with the module's classes
 > calling the module's `XposedBridge` — a different class from the one the framework loaded — and the
 > hooks are installed into nothing. The symptom is a module that loads cleanly, logs nothing, and
@@ -1106,7 +1106,7 @@ error as [64-Xposed](../64-Xposed/README.md)'s 1,141 substring hits that resolve
 58 56 0:27 / /debug_ramdisk/.magisk/pts rw,nosuid,noexec,relatime shared:15 - devpts devpts rw,...
 ```
 
-> **⚠️ Warning — read this measurement precisely.** These were taken through `run-as`, whose SELinux
+> **Warning — read this measurement precisely.** These were taken through `run-as`, whose SELinux
 > domain is `runas_app`, **not** `untrusted_app`. This repository's standing rule is *prove
 > reachability from an app, not from the shell*, and `run-as` sits between the two: it has the app's
 > uid and MCS categories (`u:r:runas_app:s0:c207,c256,c512,c768`) but a domain with its own rules.
@@ -1190,7 +1190,7 @@ static const JNINativeMethod gMethods[] = {
 **Rewriting `fnPtr` in that table is a single pointer write, and it changes what happens on every
 app launch on the device.** No instruction is modified, so nothing that checksums code sees anything.
 That is the same property [65-Hooking §3.8](../65-Hooking/README.md) gives hook type 5 in general;
-here it is applied at the one place in Android where it has maximum leverage.
+here it is applied at the one place in Android where it has maximum effect.
 
 Following the C++ down one more level, `SpecializeCommon` is where the child does the work the name
 suggests — `setresuid`, `setresgid`, `selinux_android_setcontext`, the seccomp filter install, and
@@ -1319,7 +1319,7 @@ why the failure modes are so hard to diagnose without the map above.**
 
 ### 4.7 LSPosed's own tree, for when you need the ground truth
 
-> **⚠️ Warning.** The paths in this table name files in **the LSPosed project's own repository**, not
+> **Warning.** The paths in this table name files in **the LSPosed project's own repository**, not
 > in this one and not in AOSP. They are here as a reading guide. Do not treat them as files this
 > chapter ships.
 
@@ -1414,7 +1414,7 @@ grep -rn "isRooted\|isRepackaged\|isDeviceSecure" out/sources/ | head -40
 Look for a `static` box type (`Boolean`, not `boolean`) — the nullable form is the tell that it is a
 lazily-computed cache rather than a constant.
 
-**Dynamic detection.** Three lines in a module, and note that they do not hook anything:
+**Dynamic detection.** Three lines in a module, and confirm that they do not hook anything:
 
 ```java
 // The field write beats the check without a single hook being installed.
@@ -1533,7 +1533,7 @@ is unrestricted code execution in the platform process. As a finding against a *
 methodology*: **High**, because a tester who enables a random module from a forum on the device
 holding their client's data has created the incident themselves.
 
-> **🔍 Pentester's Note.** This is the concrete reason the "rooted test device" in a mature practice
+> **Pentester's Note.** This is the concrete reason the "rooted test device" in a mature practice
 > is a dedicated, wiped, no-real-accounts device. It is not superstition about root. It is that the
 > tooling ecosystem — Magisk modules, Zygisk modules, LSPosed modules — is a supply chain you
 > participate in every time you flash a zip, and one of its links runs in `system_server`.
@@ -1641,7 +1641,7 @@ is the one underneath: *"the application's only control over X is a client-side 
 bypassable, therefore X is effectively unprotected"* — and then the severity is X's severity, not the
 check's.
 
-> **⚠️ Warning.** Do not report "the app does not detect LSPosed" as a finding at all unless the
+> **Warning.** Do not report "the app does not detect LSPosed" as a finding at all unless the
 > threat model explicitly includes a compromised device. MASVS-RESILIENCE is scoped that way in the
 > standard's own words, and reporting resilience gaps against an app with no resilience requirement
 > is the single most common way a mobile report loses a developer's attention.
@@ -1695,7 +1695,7 @@ That last row is why [38-TamperDetection](../38-TamperDetection/README.md) class
 instrumentation as tamper type T-B — "leaves the APK alone" — and rates the on-disk evidence as
 **nothing**.
 
-> **🔍 Pentester's Note.** Malware in this class needs root, which is a large barrier for
+> **Pentester's Note.** Malware in this class needs root, which is a large barrier for
 > opportunistic infection and almost none for a user who rooted the device themselves and then
 > installed a module from a forum. The realistic infection path is not an exploit; it is a
 > "free premium unlocker" zip. That is the same supply-chain argument as §5.4, pointed the other way.
@@ -1717,7 +1717,7 @@ The order matters. **Get the scope table first**, because it answers the questio
 investigation depends on: *which applications was this module able to see?* A module installed but
 scoped to nothing has run nowhere.
 
-> **⚠️ Warning.** Everything in that table lives under `/data/adb`, which means acquiring it requires
+> **Warning.** Everything in that table lives under `/data/adb`, which means acquiring it requires
 > root on the device — which means your acquisition changes the device. Document the acquisition
 > method in the report. This repository's standing discipline applies: **your own rooting is
 > methodology, not a finding.**
@@ -1868,7 +1868,7 @@ Six things an analyst reads straight off that listing, without decompiling anyth
 | `filled-new-array {v2, v3, v4}` | The varargs array. **The callback is the last element** — the API contract from §3.6.3, visible in the bytecode |
 | `.catchall` around the whole thing | The module defends against `NoSuchMethodError`. Its absence in a module you are triaging means the author never tested against a version where the target changed |
 
-> **🔍 Pentester's Note.** That first row is the most useful fact in this whole section. **A module
+> **Pentester's Note.** That first row is the most useful fact in this whole section. **A module
 > cannot hide what it hooks.** Class names, method names and field names are string constants,
 > because reflection is string-based. String encryption can hide them — and then the encryption
 > routine becomes the thing you hook, which is the same trade every packer makes
@@ -1938,7 +1938,7 @@ but the code inside the `if` is not in the DEX at all.
 
 This is the most important sentence in §6, so it gets its own callout:
 
-> **⚠️ Warning.** **A module's most dangerous capability can be completely absent from the shipped
+> **Warning.** **A module's most dangerous capability can be completely absent from the shipped
 > bytecode while being one boolean away in the source.** Triaging a module by grepping its DEX for
 > `setResult` or `XC_MethodReplacement` tells you what *this build* does — not what the author can
 > ship tomorrow from the same source with a one-character change and the same package name and
@@ -2046,14 +2046,14 @@ magisk --list         = su, resetprop
 pm list packages      = com.topjohnwu.magisk    (and no lsposed/xposed package)
 ```
 
-> **⚠️ Warning — `su -c` fails on this emulator in a way that reads as "not rooted".**
+> **Warning — `su -c` fails on this emulator in a way that reads as "not rooted".**
 > ```
 > $ adb -e shell 'su -c id'
 > su: invalid uid/gid '-c'
 > ```
 > The AVD's `su` takes `su 0 <command>`, not `su -c <command>`. A previous chapter in this repository
 > nearly recorded this device as unrooted on exactly that basis. **Try both forms before concluding
-> anything**, and note that the two physical devices this repository has used — a Redmi `M2101K6P`
+> anything**, and confirm that the two physical devices this repository has used — a Redmi `M2101K6P`
 > and an `i9000S` — take the `-c` form. Neither was attached during this chapter's work.
 
 **Three honest gaps, stated up front so no reader mistakes a source-level claim for a measurement:**
@@ -2127,7 +2127,7 @@ adb logcat | grep CH63                 # if the module also used android.util.Lo
 # and LSPosed's own log, through the manager, for XposedBridge.log lines
 ```
 
-> **⚠️ Warning.** `am force-stop` is necessary and frequently forgotten. A module is loaded at
+> **Warning.** `am force-stop` is necessary and frequently forgotten. A module is loaded at
 > **process start**. Installing a module, enabling it, or changing its scope does nothing to a process
 > that is already running — and Android keeps app processes alive long after the user leaves the app.
 > The symptom is a module that "does not work" and then mysteriously starts working the next morning.
@@ -2187,7 +2187,7 @@ entry point outside known ranges yes   0x… not in boot image / odex / JIT cach
 
 Full source and the honest caveats: [`scripts/detect-lsposed.js`](scripts/detect-lsposed.js).
 
-> **⚠️ Warning.** This script was **not executed against a live LSPosed installation**, because the
+> **Warning.** This script was **not executed against a live LSPosed installation**, because the
 > available device had neither LSPosed nor Zygisk enabled (§7.1). Its class-loader and stack-walking
 > halves were exercised against an ordinary process on the test device; the LSPosed-specific
 > assertions are reviewed code, and the script's own header says so. That distinction matters more
@@ -2259,7 +2259,7 @@ section adds the rows that decide real cases rather than repeating it.
 | You need to change behaviour ten times an hour | **Frida** | This is the whole argument |
 | You need the *least* observable footprint inside the target | **LSPosed** | No `ptrace`, no injected agent, no extra thread — but the framework's classes are visible in-process (§5.5), so "least" is not "none" |
 
-> **🧠 Mental Model.** **Explore with Frida; ship with LSPosed.** Frida's advantage is the feedback
+> **Mental Model.** **Explore with Frida; ship with LSPosed.** Frida's advantage is the feedback
 > loop, and the feedback loop is what you need while you are still wrong about things. LSPosed's
 > advantage is that the result is a durable artefact that runs without you. Almost every module worth
 > having started life as a Frida script.
@@ -2523,7 +2523,7 @@ adb shell am broadcast -a com.pentest.ch63.SIGN \
     --es path /v1/transfer --es body '{"to":"attacker","amount":1}'
 ```
 
-> **⚠️ Warning.** That receiver is **exported by default** for a dynamically-registered receiver with
+> **Warning.** That receiver is **exported by default** for a dynamically-registered receiver with
 > no permission, which means *any* application on the device can drive your oracle while the module
 > is enabled. On a lab device that is convenient. On any other device it is a vulnerability you
 > introduced. Pass a `broadcastPermission`, or check `getCallingUid` equivalents, or — best — use
@@ -2741,11 +2741,11 @@ which is mild evidence it is right.
 The framework does not survive in its current form, and there has been steady pressure in that
 direction — isolated processes, app zygotes, and the general trend towards stronger per-app
 isolation. Anything that reduces what a forked child inherits from a shared parent reduces LSPosed's
-leverage proportionally, and anything that replaces `fork` with `exec` removes it entirely. The
+reach proportionally, and anything that replaces `fork` with `exec` removes it entirely. The
 capability would not disappear — it would move to a per-process injection model, which is Frida's,
 and it would lose exactly the properties that make LSPosed distinctive: no injection event, zero
 marginal cost per app, and pre-`Application` timing. **The interesting observation is that the
-platform can weaken this attacker capability without ever addressing "hooking", simply by changing
+platform can weaken this attacker capability without ever addressing "hooking", by changing
 how processes are created.** Architectural changes are often better security controls than security
 features.
 

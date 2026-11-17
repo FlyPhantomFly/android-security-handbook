@@ -139,7 +139,7 @@ reopened it" is not the same as "the process restarted".
 **Task 1.2.** How would you make this failure *impossible* to make again in your own workflow? (One
 good answer: a shell function that force-stops before every launch. Another: read the pid every time.)
 
-> **⚠️ Some changes need more than a force-stop.** Enabling the framework itself, and scope changes
+> **Some changes need more than a force-stop.** Enabling the framework itself, and scope changes
 > involving `android`, generally need a reboot. If a force-stop does not do it and everything else
 > checks out, reboot before you start doubting your code.
 
@@ -275,7 +275,7 @@ dispatch through its `ArtMethod` to intercept.
 callee, AOT-compiled caller with the result baked in, target not resolved yet, and wrong class
 loader.
 
-> **🔍 The finding is not "my hook did not work".** The finding is *"the posture check is inlined at
+> **The finding is not "my hook did not work".** The finding is *"the posture check is inlined at
 > the app's compilation level, so a hook on it has no effect — you have to hook the caller"*, and on
 > the defensive side, *"a small private check being inlined is why this control is harder to hook
 > than the developer's threat model assumed"*. Chapter 65's §5.4 records the native twin of this
@@ -402,7 +402,7 @@ Two good answers:
 `setResult` in `before`. Observe what happens to the first module's callbacks. Write down what you
 would have concluded if you did not know the second module existed.
 
-> **🧠 Mental Model.** Chapter 65 states this for native hooks and it is identical here: **"never
+> **Mental Model.** Chapter 65 states this for native hooks and it is identical here: **"never
 > fired" and "fired but did nothing" are different problems with different fixes**, and an
 > unconditional log on entry is the one line that tells them apart. Everything in this lab is
 > downstream of that distinction.

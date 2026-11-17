@@ -53,7 +53,7 @@ report a device as compromised when it was authorised, or you dismiss an authori
 "just USB debugging" when it is a permanent, transferable credential sitting in a file that survives
 factory reboots of the tool but not the device.
 
-> **📖 Definition**
+> **Definition**
 > **ADB** — the Android Debug Bridge. Three cooperating programs and one wire protocol that together
 > give a workstation a shell, a file transfer channel, a port forwarder, an installer and a debugger
 > attachment point on an Android device, over USB or TCP.
@@ -74,7 +74,7 @@ Java framework has booted, and a password that a factory line cannot manage acro
 So Android built its own. And it built it around the one physical connection every phone already
 has: the USB cable it charges with.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > ADB is a **service hatch** cut into the side of the device. It is not a door for users; it is a
 > hatch for the people who build and repair the thing. Like a real service hatch, three properties
 > matter and they are exactly the three that decide every security question in this chapter:
@@ -99,7 +99,7 @@ Instead it kept the hatch and put a lock on it, and the whole of §3.9 and §5 i
 
 ### 1.4 The one sentence that decides half your findings
 
-> **⚠️ Warning**
+> **Warning**
 > `adb shell` is **not an app**. It is a `/system/bin/sh` process forked directly by `adbd`, running
 > as UID 2000 (`shell`), in the SELinux domain `shell`, with 183 install-time permissions and
 > 16 pre-granted runtime permissions that no third-party application can ever hold. Anything you
@@ -271,7 +271,7 @@ constants in every ADB implementation look like arbitrary hexadecimal.
 has lost byte alignment. If `magic != command ^ 0xffffffff`, the stream is unrecoverable and the
 only correct response is to drop the connection.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > The `data_check` field is documented in AOSP's own `protocol.txt` as a CRC32 of the payload. It
 > is not. The implementation sums the payload bytes and truncates to 32 bits, and since protocol
 > version `0x01000001` **nobody verifies it at all**. Measured evidence: in every message adbd sent
@@ -363,10 +363,10 @@ current device over the wire protocol. `host:devices-l`, `host:features`, `host:
 `host:track-devices` are the ones worth knowing — `track-devices` is how Android Studio's device
 dropdown updates without polling.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Port 5037 is bound to `127.0.0.1`, so it is not remotely reachable by default. But it is
 > reachable by **every process running as you**, with no authentication whatsoever. A malicious
-> program on your laptop does not need to steal `adbkey`: it can simply ask the running adb server
+> program on your laptop does not need to steal `adbkey`: it can ask the running adb server
 > to run commands on every attached device. This is the least-discussed and most immediate risk in
 > the entire ADB design, and the mitigation is the boring one — do not run untrusted code on the
 > machine that holds your test devices.
@@ -425,7 +425,7 @@ back. The comment on `Stream._next_for_me()` in
 [`scripts/adb-install-transport.py`](scripts/adb-install-transport.py) records this, because it was
 a real bug found by running the code, not a hypothetical.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > An ADB transport is a **tiny TCP stack running inside one connection**. `A_OPEN` is `connect()`,
 > the id pair is the four-tuple, `A_WRTE`/`A_OKAY` is send with a one-segment window, and `A_CLSE`
 > is `FIN`. If you already understand sockets, you already understand this; the only surprise is
@@ -458,7 +458,7 @@ dispatches. This table is the map:
 | `dev:<path>` | Opens a device node directly | Rarely allowed by SELinux |
 | `sink:` / `source:` | Bandwidth test endpoints | |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > This table is more useful than it looks. If you have found something that speaks the ADB protocol
 > — a debug port on an IoT device, an emulator you did not start, a container — the service strings
 > are the enumeration surface. `A_OPEN` each one and record whether you get `A_OKAY` or an immediate
@@ -509,7 +509,7 @@ around it on old devices by appending `; echo $?` to your command and parsing th
 | Binary-safe | no — the PTY translates `\n` to `\r\n` | yes, with `raw` |
 | Window size changes | no | packet id 5 |
 
-> **⚠️ Warning**
+> **Warning**
 > The PTY line-ending translation in v1 is why `adb shell cat file.bin > out.bin` corrupts binary
 > data on older devices: every `0x0a` becomes `0x0d 0x0a`. Use `adb exec-out cat file.bin`, which
 > opens the `exec:` service and is binary-safe. This is a real data-integrity trap in forensic work.
@@ -636,7 +636,7 @@ adb push /etc/hostname /data/local/tmp/x.txt
 adb shell rm /data/local/tmp/x.txt
 ```
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > On this repository's test device the vendor build **blocks `execve` on `/data/local/tmp`**, so
 > pushing a binary there and running it fails even after `chmod +x`. The workaround recorded
 > elsewhere in this repo is `adb shell /system/bin/linker64 /data/local/tmp/prog args`, which loads
@@ -675,7 +675,7 @@ adb host-features
 ```
 
 On this chapter's setup, `adb host-features` listed 22 features and `adb features` listed 12 — the
-API 30 device simply does not implement the other ten.
+API 30 device does not implement the other ten.
 
 | Feature | What it changes |
 |---|---|
@@ -691,7 +691,7 @@ API 30 device simply does not implement the other ten.
 | `track_app` | A live feed of app process start/stop, used by Studio |
 | `delayed_ack` | A larger effective window than the one-message rule of §3.3 |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The banner is a fingerprint you get *before authenticating* on a device that requires no
 > authentication, and it leaks `ro.product.name`, `ro.product.model` and `ro.product.device`. On an
 > exposed port 5555 that is enough to identify the exact hardware before you do anything else. It
@@ -762,7 +762,7 @@ image or a filesystem dump for authorised keys.
 The rest of the line is a free-text comment, conventionally `user@hostname`, written by whichever
 `adb` generated the key. It is **not authenticated in any way**. Do not use it to attribute a key.
 
-> **⚠️ Warning**
+> **Warning**
 > `~/.android/adbkey` is an **unencrypted PKCS#8 private key**. On the machine this chapter was
 > written on it is 1,732 bytes beginning `-----BEGIN PRIVATE KEY-----`. There is no passphrase
 > prompt because there is no passphrase. Treat that file exactly as you would treat an SSH private
@@ -856,7 +856,7 @@ is:
 5. `system_server` writes the verdict back down the socket, and `adbd` completes or refuses the
    handshake.
 
-> **⚠️ Warning**
+> **Warning**
 > Step 3 runs on the device's screen. **If the screen is unlocked, anyone holding the device can
 > approve an authorisation.** Since Android 11 the dialog is suppressed while the device is locked,
 > which is why "screen lock set" is a genuine, load-bearing mitigation for physical ADB attacks and
@@ -909,7 +909,7 @@ On the **`userdebug` emulator**, `ro.debuggable=1` so `adb root` works — and `
 for a key. That is not an emulator quirk to be dismissed; it is the *same* configuration that shipped
 on the set-top boxes in §1.5.
 
-Measured refusal on the production device — note that it is a read-only probe, because adbd declines
+Measured refusal on the production device —it is a read-only probe, because adbd declines
 without restarting:
 
 ```
@@ -1123,7 +1123,7 @@ would hide them. `1011(adb)` is the group that exists specifically for this daem
 
 #### 3.12.4 The rule that follows
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > **Never conclude "an attacker can reach this" from the fact that `adb shell` could.** If
 > `am start -n com.bank/.AdminActivity` launches a non-exported activity, that tells you `shell`
 > holds the relevant privilege — not that a malicious app does. The only acceptable proof is a
@@ -1184,7 +1184,7 @@ $ adb shell settings get global adb_wifi_enabled
 0
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > This chapter did **not** run `adb tcpip` on the test device, deliberately. It is a daily-driver
 > phone, and turning USB debugging into a network service — on whatever network it happens to join
 > next — is not a change to make for a demonstration. Everything in §3.13.2 that needed measuring
@@ -1332,7 +1332,7 @@ adb forward tcp:9229 localabstract:chrome_devtools_remote   # WebView inspection
 adb forward --remove-all
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `adb forward tcp:0 localabstract:chrome_devtools_remote` asks the host to pick a free port and
 > prints it. That is the reliable way to script WebView inspection without port collisions — and
 > `localabstract:chrome_devtools_remote` is worth remembering on its own, because it is how
@@ -1376,7 +1376,7 @@ adb forward --list
 adb reverse --list
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > A `reverse` leaves a **listening socket on the device** for as long as it exists, reachable by
 > every app on that device. If you forward your Burp instance and then walk away, any app on the
 > phone can talk to your proxy. Remove reverses explicitly; they are not cleaned up by
@@ -1455,7 +1455,7 @@ Apps that care check for this from the other side — `Debug.isDebuggerConnected
 | 14 / 34 | `adb install --bypass-low-target-sdk-block` needed for old APKs |
 | 15–16 / 35–36 | `delayed_ack` (a real send window), `devraw`, `app_info`, `openscreen_mdns` in the feature list |
 
-> **⚠️ Warning**
+> **Warning**
 > Do not read a version table as a substitute for measurement. This repository has already recorded
 > one case where a widely repeated version claim was wrong on real hardware. Run
 > [`scripts/adb-posture.sh`](scripts/adb-posture.sh) on the device in front of you and quote that.
@@ -1534,7 +1534,7 @@ This is the complete path. Every step is real; nothing is elided into "and then 
    `PackageSetting` write, and the `PACKAGE_ADDED` broadcast.
 10. **The result string** comes back up stream 3 as `A_WRTE` payloads and your client prints it.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > Step 6 is where the privilege check happens, and it is not in `adb`. `PackageManagerService`
 > checks `Binder.getCallingUid()`, which is 2000, against `INSTALL_PACKAGES`, which
 > `com.android.shell` holds. **The transport never checks anything.** `adbd` will happily open a
@@ -1561,7 +1561,7 @@ Device side, `daemon/auth.cpp`:
 - `AdbDebuggingManager` on the other side raises the dialog and, on "always allow", appends to
   `adb_keys`.
 
-> **⚠️ Warning**
+> **Warning**
 > `$ADB_VENDOR_KEYS` is worth knowing about as an attacker and as a defender. It is an environment
 > variable naming extra private keys the `adb` client will try. Some OEM and carrier builds ship a
 > **vendor key already present in `/adb_keys` on the ramdisk**, so that a factory host can connect
@@ -1688,7 +1688,7 @@ This is the part most reports get wrong in both directions.
 | `ro.debuggable=1` in a shipped product | **High** | Turns the above into a remote **root** shell |
 | A vendor key in `/adb_keys` in a public firmware image | **High** | One leak authenticates the entire fleet |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Write the **device role** into the finding. "ADB over TCP is enabled" with no role is unratable
 > and a reviewer will discount it. "ADB over TCP is enabled on a customer-facing payment terminal
 > that is never rebooted and sits on the store's flat network" is a finding that gets fixed.
@@ -1886,7 +1886,7 @@ and a passive IDS rule can be written against the same string. If you own the ne
 sit on, alerting on `device::ro.product` crossing it is a cheap, high-signal detection: no
 legitimate production traffic contains it.
 
-> **⚠️ Warning**
+> **Warning**
 > Scanning for port 5555 across a network is a **port scan**, and connecting to what you find is
 > **access**. Both need written authorisation naming the ranges. The techniques in this chapter make
 > it easy to do accidentally; the fact that a device answers is not consent.
@@ -2203,7 +2203,7 @@ python3 -B scripts/adb-mini-client.py --port 5555 --service "shell:id" -v
 << A_CLSE  arg0=0x0000000f arg1=0x00000001 len=0
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Note `cksum=0x00000000` on every message the device sent, including ones with payloads. That is
 > the measured proof of the §2.3 claim that the checksum field is dead. You will not find that in
 > any tutorial; you find it by looking at the bytes.
@@ -2248,7 +2248,7 @@ for s in "shell:" "shell,v2,raw:id" "exec:id" "sync:" "jdwp" "track-jdwp" \
 done
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > Do not put `root:`, `tcpip:`, `remount:` or `reboot:` in a sweep you run against a device you care
 > about — they take effect immediately. Lab 03 runs this sweep against an emulator for exactly that
 > reason, and the list above is safe only because the destructive entries are the last thing you
@@ -2344,7 +2344,7 @@ Run it and then type `adb shell id` in another terminal; you will see the `A_OKA
 `A_CLSE` for that stream appear in order. The full script, with the read side as well, is
 [`scripts/adbd-trace.js`](scripts/adbd-trace.js).
 
-> **⚠️ Warning**
+> **Warning**
 > Attaching Frida to `adbd` on the device you are attached *through* is a good way to lose your
 > shell. If the hook throws, `adbd` may die and take your connection with it. Do it on a device you
 > can physically reach, and know that `adb kill-server` on the host will not help.
@@ -2377,7 +2377,7 @@ There is nothing about the ADB *protocol* in an APK. What there is:
 | An app that toggles ADB | `grep -rn 'WRITE_SECURE_SETTINGS' out/` then look for `Settings.Global.putInt` |
 | `allowBackup` (a different extraction route with the same cable) | `aapt2 dump badging app.apk \| grep -i backup` |
 
-> **⚠️ Warning**
+> **Warning**
 > `android:debuggable="true"` in the manifest is a **serious** finding, not a hygiene note, and the
 > reason is entirely about ADB: it makes `run-as <pkg>` work, which gives anyone with a shell full
 > read/write access to that app's private data with no root. See

@@ -99,7 +99,7 @@ not contain `0x2000`; it contains the number of pages from *here* to *there*. Mo
 a different address and it computes a different answer, with no error, no fault and no hint that
 anything is wrong.
 
-> **📖 Definition — PC-relative.** An instruction is *PC-relative* when its effect depends on the
+> **Definition — PC-relative.** An instruction is *PC-relative* when its effect depends on the
 > address at which it executes. Copying such an instruction to a new address changes its meaning.
 > On AArch64 the PC-relative forms are `adr`, `adrp`, `ldr` (literal), `b`, `bl`, `b.cond`,
 > `cbz`/`cbnz` and `tbz`/`tbnz`. Everything else — arithmetic, register-offset loads and stores,
@@ -162,7 +162,7 @@ ways, and choosing between them is a real decision.
 
 **Cost:** 4 bytes, so you displace only one instruction.
 **Limit:** `b`'s immediate is 26 bits, scaled by 4 and signed, giving a reach of **±128 MiB**. If
-your replacement is further away than that, you simply cannot encode the branch.
+your replacement is further away than that, you cannot encode the branch.
 
 ### 4.2 Option B — a 16-byte absolute jump
 
@@ -296,11 +296,11 @@ static void *alloc_near(void *near) {
 destroy whatever mapping already occupied that address. With it, the trampoline landed **10,004
 bytes below** the target.
 
-> **⚠️ Warning.** Never use bare `MAP_FIXED` to place a trampoline. If something is already mapped
+> **Warning.** Never use bare `MAP_FIXED` to place a trampoline. If something is already mapped
 > there — another library's text, the heap, a thread stack — `MAP_FIXED` unmaps it without asking and
 > the process dies later, somewhere else, for no visible reason.
 
-> **🔍 Pentester's Note.** This is the practical reason production hooking engines allocate from a
+> **Pentester's Note.** This is the practical reason production hooking engines allocate from a
 > pool of pages reserved near each loaded module rather than calling `mmap` per hook. The range
 > constraint is not theoretical; it is the first thing that breaks.
 
@@ -346,7 +346,7 @@ Check the arithmetic by hand — this is the moment the lab either lands or does
 
 That matches the measured output exactly. The instruction changed; its meaning did not.
 
-> **🔬 Under the Hood.** Cross-check against static analysis: `hookability.py` reported the target
+> **Under the Hood.** Cross-check against static analysis: `hookability.py` reported the target
 > page as `0x2000` in **file** terms. The library's load base on that run was `0x71f982a000`
 > (`0x71f982b714 − 0x1714`). `0x71f982a000 + 0x2000` = `0x71f982c000`. The static analyser and the
 > running process agree to the byte. When your static and dynamic pictures agree like this, you are
@@ -422,7 +422,7 @@ core that had not recently fetched that line, a different microarchitecture with
 a second thread already inside the function are all cases where it would fail — and it would fail
 non-deterministically, which is the worst kind of bug to own.
 
-> **🧠 Mental Model.** Cache maintenance is not an optimisation you can skip when it seems to work.
+> **Mental Model.** Cache maintenance is not an optimisation you can skip when it seems to work.
 > It is the difference between "correct" and "happened to work on the chip I tested". This lab tried
 > to catch it failing, failed to, and reports both facts rather than repeating folklore in either
 > direction.

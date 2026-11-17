@@ -13,8 +13,9 @@
 [10 — APK Internals](../../10-APK-Internals/README.md) for what `apksigner` is doing ·
 [60 — ADB](../../60-ADB/README.md)
 
-**Authorised testing only.** Both fixtures are purpose-built lab applications shipped as source in
-`../examples/`. Install them on a device you own. Remove them at the end; step 9 tells you how.
+Both fixtures are purpose-built lab applications shipped as source in `../examples/`. Install
+them on a device you own. Remove them at the end; step 9 tells you how. See
+[SECURITY.md](../../SECURITY.md) for authorised-testing scope.
 
 ---
 

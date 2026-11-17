@@ -4,7 +4,7 @@ Runnable module sources for [chapter 63](../README.md). Everything here targets
 `com.pentest.ch63.vault`, the deliberately vulnerable lab application you build in
 [Lab 02](../labs/lab-02-your-first-module.md), and nothing else.
 
-> **⚠️ Ethics.** A module runs inside somebody's application, with that application's identity.
+> **Ethics.** A module runs inside somebody's application, with that application's identity.
 > Point these files, or anything derived from them, only at software you own or are explicitly
 > authorised to test. Nothing in this repository defeats licensing, payment or anti-cheat controls in
 > shipped third-party software.
@@ -86,7 +86,7 @@ dependencies {
 }
 ```
 
-> **⚠️ `compileOnly`, never `implementation`.** The framework supplies `de.robv.android.xposed.*` at
+> **`compileOnly`, never `implementation`.** The framework supplies `de.robv.android.xposed.*` at
 > runtime. A module that packages its own copy ends up with the module's code calling the *module's*
 > `XposedBridge`, which is a different class from the one the framework loaded, and every hook is
 > installed into nothing. The symptom is a module that loads cleanly, logs nothing and hooks nothing.

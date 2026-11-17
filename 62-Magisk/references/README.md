@@ -57,7 +57,7 @@ this chapter. Directory map, matching [§4.4](../README.md#44-reading-magisks-ow
 | `native/src/sepolicy/` | `magiskpolicy` — compiled-policy manipulation, and the rule grammar your `sepolicy.rule` is parsed with |
 | `native/src/zygisk/` | The zygote loader, JNI hooking, and the module API's implementation |
 | `app/` | The Manager app, including the repackaging that "Hide the Magisk app" performs |
-| `scripts/` (`util_functions.sh`, `boot_patch.sh`, `flash_script.sh`) | **`boot_patch.sh` is the single most instructive file in the project** — a readable shell script that performs the entire boot image patch. Reading it once removes all the mystery. Note that this is Magisk's own `scripts/` directory in its own repository, not this chapter's |
+| `scripts/` (`util_functions.sh`, `boot_patch.sh`, `flash_script.sh`) | **`boot_patch.sh` is the single most instructive file in the project** — a readable shell script that performs the entire boot image patch. Reading it once removes all the mystery.this is Magisk's own `scripts/` directory in its own repository, not this chapter's |
 
 ---
 
@@ -144,7 +144,7 @@ the kernel sometimes moves you back ahead of a userspace scanner. See
 | Resource | Why |
 |---|---|
 | [MASVS](https://mas.owasp.org/MASVS/) | The standard your client's requirements are probably derived from |
-| [MASVS-RESILIENCE](https://mas.owasp.org/MASVS/09-MASVS-RESILIENCE/) | Where root detection sits. Note that MASVS itself frames these as *resilience* controls, assessed by whether they raise attacker effort — not as security controls that must be unbypassable. Quote that framing; it is the honest one |
+| [MASVS-RESILIENCE](https://mas.owasp.org/MASVS/09-MASVS-RESILIENCE/) | Where root detection sits.MASVS itself frames these as *resilience* controls, assessed by whether they raise attacker effort — not as security controls that must be unbypassable. Quote that framing; it is the honest one |
 | [MASTG](https://mas.owasp.org/MASTG/) | Test procedures, including the platform-integrity and anti-reversing tests |
 | [MASTG Android tests](https://mas.owasp.org/MASTG/tests/android/) | The specific tests to cite alongside a root-detection finding |
 
@@ -174,7 +174,7 @@ Search by topic rather than by URL, since hosting moves.
 |---|---|
 | *Android Internals: A Confectioner's Cookbook* — Jonathan Levin | The deepest published treatment of the low-level boot and `init` path that Magisk modifies. If you want to understand `magiskinit` properly, understand `init` first |
 | *Android Security Internals* — Nikolay Elenkov | Best structural account of the security model root breaks. Dated in specifics, still the right mental model |
-| Linux `mount_namespaces(7)`, `mount(2)`, `nsenter(1)` man pages | The actual primitives behind everything in [Lab 03](../labs/lab-03-denylist-investigation.md) and [Lab 05](../labs/lab-05-ctf-invisible-mount.md). Mount propagation (`shared`, `slave`, `private`) is explained here and nowhere else as clearly |
+| Linux `mount_namespaces(7)`, `mount(2)`, `nsenter(1)` man pages | The actual primitives behind everything in [Lab 03](../labs/lab-03-denylist-investigation.md) and [Lab 05](../labs/lab-05-ctf-invisible-mount.md). Mount propagation (`shared`, `slave`, `private`) is explained here and nowhere else as precisely |
 | Kernel `Documentation/filesystems/proc.rst` | The field-by-field definition of `/proc/<pid>/mountinfo`, which you will read more of in this chapter than anywhere else |
 
 ---

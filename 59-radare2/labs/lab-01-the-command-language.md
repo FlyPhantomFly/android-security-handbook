@@ -22,10 +22,10 @@ nobody memorises six hundred commands.
 deliberately teaches you almost nothing about Android. It teaches you to read and construct commands.
 Lab 02 applies that to real libraries.
 
-> **⚠️ On the state of this chapter**
+> **On the state of this chapter**
 > radare2 was **not installed** on the machine where this chapter was written, so every radare2
-> command here is marked **📘 Unverified** — transcribed from the tool's documentation and source,
-> not executed. Everything stated about the *binary* you will be looking at is **✅ Measured** with
+> command here is marked **Unverified** — transcribed from the tool's documentation and source,
+> not executed. Everything stated about the *binary* you will be looking at is **Measured** with
 > the Android NDK's LLVM tools, and each such claim says so.
 >
 > If a command in this lab behaves differently from what is written, **the tool is right**. Note the
@@ -84,7 +84,7 @@ cd 59-radare2/examples
 You want `libr2target.so` from that build. It is small on purpose — small enough that you can hold
 the whole thing in your head while you learn the commands.
 
-> **✅ Measured** — the target as built by `examples/build.sh` with
+> **Measured** — the target as built by `examples/build.sh` with
 > `aarch64-linux-android21-clang` from NDK 25.2.9519653 at `-O2 -Wall -Wextra`, zero warnings.
 > `llvm-readelf -S` reports `.text` at address `0x18bc`, file offset `0x8bc`, size `0x250` — that is
 > **592 bytes, 148 AArch64 instructions in the entire library.** `llvm-nm -D --defined-only` reports
@@ -117,7 +117,7 @@ document happens to be a binary, and this is the cursor.
 Try these in order and watch the prompt:
 
 ```
-# 📘 Unverified
+# Unverified
 [0x000018bc]> s 0x1000          # seek to an absolute address
 [0x00001000]> s+16              # forward 16 bytes
 [0x00001010]> s-                # undo the last seek (like a browser's back button)
@@ -166,7 +166,7 @@ There are about a dozen roots. These are the ones that matter:
 Run each of these and read the output before moving on. Do not skim:
 
 ```
-# 📘 Unverified
+# Unverified
 [0x0]> iI          # binary info: arch, bits, stripped, hardening flags
 [0x0]> iE          # exports
 [0x0]> ii          # imports
@@ -177,7 +177,7 @@ Run each of these and read the output before moving on. Do not skim:
 
 ### What you should see, and why
 
-> **✅ Measured** — the ground truth for each command, established with LLVM tools:
+> **Measured** — the ground truth for each command, established with LLVM tools:
 >
 > | Command | What it must report |
 > |---|---|
@@ -201,18 +201,18 @@ Five strings tell you: the library checks for `su` (root detection), it register
 called `dynGate` on class `com.pentest.ch59.Native` taking a String and returning an int, and it
 prints a result. You have not decoded a single instruction.
 
-> **🔍 Note on `/system/xbin/su`**
+> **Note on `/system/xbin/su`**
 > The source file **XOR-encrypts** that string specifically so it will not appear here. At `-O2` the
 > compiler evaluated the decode at compile time and stored the plaintext anyway. That is a measured
 > finding, not a mistake in the example — chapter §3.8 and §5.3 explain it, and lab 02 makes you
-> reproduce it. For now, just note that the "protection" is visibly absent.
+> reproduce it. For now: the "protection" is visibly absent.
 
 ### Checkpoint 2
 
 Without looking anything up, predict what each of these does, then run it:
 
 ```
-# 📘 Unverified
+# Unverified
 [0x0]> ie
 [0x0]> izz
 [0x0]> iSS
@@ -241,7 +241,7 @@ The point is that you predicted these correctly from the pattern. That is the gr
 responds to it.
 
 ```
-# 📘 Unverified
+# Unverified
 [0x0]> ?           # the root verbs
 [0x0]> a?          # everything under "a"
 [0x0]> af?         # everything under "af"
@@ -271,7 +271,7 @@ Using only `?`, find the command that:
 3. `afi` — analyse, function, info.
 4. `afv` — analyse, function, variables.
 
-Note that you did not memorise any of these. You navigated `a?` → `af?` and read.
+you did not memorise any of these. You navigated `a?` → `af?` and read.
 
 </details>
 
@@ -290,7 +290,7 @@ These attach to nearly any command:
 Try each on the same base command and compare:
 
 ```
-# 📘 Unverified
+# Unverified
 [0x0]> iE
 [0x0]> iEj
 [0x0]> iEq
@@ -311,7 +311,7 @@ This is where radare2 stops being a command line and starts being fast.
 ### 4.1 — `@` runs a command somewhere else
 
 ```
-# 📘 Unverified
+# Unverified
 [0x0]> pd 5 @ sym.lt_gate       # disassemble 5 instructions there
 [0x0]> px 32 @ 0x690            # hex dump 32 bytes of .rodata
 [0x0]>                          # ...and the cursor never moved. Check the prompt.
@@ -325,7 +325,7 @@ Run `pd 5 @ sym.lt_gate` and then look at the prompt. It is unchanged. That is t
 ### 4.2 — `~` is grep, built in
 
 ```
-# 📘 Unverified
+# Unverified
 [0x0]> iE~Java              # only lines containing "Java"
 [0x0]> iE~!main             # lines NOT containing "main"
 [0x0]> iz~su,dyn            # lines containing "su" OR "dyn"
@@ -343,7 +343,7 @@ in 4.3 possible.
 ### 4.3 — `@@` is a for-loop
 
 ```
-# 📘 Unverified
+# Unverified
 [0x0]> aa                        # some analysis, so there are functions to iterate
 [0x0]> afi @@ sym.*              # run "afi" once per symbol flag
 [0x0]> pdf @@ fcn.*              # disassemble every discovered function
@@ -364,7 +364,7 @@ in 4.3 possible.
 ### 4.4 — `|` and `>` are the ordinary shell ones
 
 ```
-# 📘 Unverified
+# Unverified
 [0x0]> iz | wc -l
 [0x0]> aflj > functions.json
 ```
@@ -378,7 +378,7 @@ Write **one** command that disassembles five instructions at every place the lib
 <summary>Answer</summary>
 
 ```
-# 📘 Unverified
+# Unverified
 [0x0]> aa
 [0x0]> pd 5 @@= `axt sym.imp.access ~[1]`
 ```
@@ -391,7 +391,7 @@ Decomposed:
 - `@@=` — iterate over the resulting list of addresses.
 - `pd 5` — at each one, print five instructions.
 
-> **✅ Measured** — the ground truth is a **single** call site.
+> **Measured** — the ground truth is a **single** call site.
 > `llvm-objdump -d libr2target.so` shows exactly one `bl` to `access@plt`:
 >
 > ```
@@ -403,7 +403,7 @@ Decomposed:
 
 </details>
 
-> **⚠️ The trap that costs everyone an hour**
+> **The trap that costs everyone an hour**
 > `axt` needs analysis to have run. On a freshly opened binary it returns **nothing, silently**, and
 > an empty result looks exactly like "there are no cross-references". If `axt` gives you nothing,
 > your first move is `aa`, not a conclusion. Confirm analysis happened with `afl~?` — a non-zero
@@ -488,7 +488,7 @@ axt sym.imp.abort
 Analysis you do not write down is analysis you will do twice.
 
 ```
-# 📘 Unverified
+# Unverified
 [0x0]> aa
 [0x0]> s sym.lt_probe_paths
 [0x0]> afn probe_su_path          # rename the FUNCTION here
@@ -503,7 +503,7 @@ Analysis you do not write down is analysis you will do twice.
 **Save your work:**
 
 ```
-# 📘 Unverified
+# Unverified
 [0x0]> Ps mylab                   # save a project
 [0x0]> q
 $ r2 -p mylab                     # reopen it with all names and analysis intact
@@ -517,7 +517,7 @@ between a two-second start and a coffee break, every single morning.
 ## Part 7 — Visual mode (15 minutes)
 
 ```
-# 📘 Unverified
+# Unverified
 [0x0]> aa
 [0x0]> s sym.lt_gate
 [0x0]> VV                         # graph view of this function
@@ -534,7 +534,7 @@ In the graph view:
 | `q` | back out one level |
 | `:` | run an ordinary r2 command without leaving |
 
-> **✅ Measured** — `lt_gate` has a specific and readable shape, which `llvm-objdump -d` shows:
+> **Measured** — `lt_gate` has a specific and readable shape, which `llvm-objdump -d` shows:
 >
 > ```
 > 00000000000048a0 <lt_gate>:            (addresses from the r2gate executable build)

@@ -16,7 +16,8 @@
 [10 — APK Internals](../../10-APK-Internals/README.md) for signing blocks ·
 [21 — App Sandbox](../../21-App-Sandbox/README.md)
 
-**Authorised testing only.** All five artefacts are chapter fixtures.
+All five artefacts are chapter fixtures. See [SECURITY.md](../../SECURITY.md) for
+authorised-testing scope.
 
 ---
 
@@ -156,7 +157,7 @@ INSTRUMENTATION_CODE: -1
 **Row 2 is the end of Claim A.** No `DEBUGGABLE` in the flags, and the instrumentation ran, read the
 app's `SharedPreferences`, and returned `RESULT_OK`.
 
-Note that `adb install -r` of `vault-release` over `vault-debuggable` succeeded because both are
+`adb install -r` of `vault-release` over `vault-debuggable` succeeded because both are
 signed with key A. Turning `debuggable` off is not a downgrade as far as the package manager is
 concerned.
 
@@ -224,7 +225,7 @@ INSTRUMENTATION_CODE: -1
 > device runs Magisk's `su`, `su -c` does work — check with `adb shell "su 0 id"` first and use
 > whichever form returns uid 0.
 
-If your device is not rooted, rows 5 and 6 are simply unavailable. Record that as "not measured on
+If your device is not rooted, rows 5 and 6 are unavailable. Record that as "not measured on
 this device" rather than assuming the answer; a missing measurement honestly labelled is worth more
 than a guess.
 
@@ -306,7 +307,7 @@ Permission Denial: disable hidden API checks from pid=14505, uid=10210
 
 A **different** denial. Still not the gate: `am` also sets a test-API access flag by default, because
 tests are expected to use `@TestApi` members, and the service enforces a permission for it. Turn it
-off — and note that the flag reads backwards, because the default is the permissive one:
+off — and confirm that the flag reads backwards, because the default is the permissive one:
 
 ```bash
 # host
@@ -481,7 +482,7 @@ debuggable build first.
 <summary>Row 2 fails to install with INSTALL_FAILED_UPDATE_INCOMPATIBLE</summary>
 
 Something signed with a different key is installed under that package name. Uninstall it first.
-Note that the package manager will happily replace a debuggable build with a release build and vice
+the package manager will happily replace a debuggable build with a release build and vice
 versa, as long as the key matches — the flag is not part of the upgrade check.
 </details>
 

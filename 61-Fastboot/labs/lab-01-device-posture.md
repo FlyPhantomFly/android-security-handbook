@@ -7,9 +7,9 @@
 [§3.1](../README.md#31-how-a-device-enters-fastboot-mode-and-how-it-leaves),
 [60-ADB](../../60-ADB/README.md)
 **You need:** any Android device or emulator you can run `adb shell` on. Root is optional and the lab
-says clearly which steps need it.
+says which steps need it.
 
-> **⚠️ This lab does not put anything into fastboot mode, and you must not either.**
+> **This lab does not put anything into fastboot mode, and you must not either.**
 > Every command here runs against a booted Android. Nothing reboots, flashes, erases or unlocks.
 > That is not a limitation of the lab — it is the point. Almost everything worth knowing about a
 > device's bootloader posture is readable from the running system, and reading it is free while
@@ -184,7 +184,7 @@ adb shell "su -c 'cat /proc/cmdline'" 2>&1 | tr ' ' '\n' | grep -i androidboot
 adb shell "su 0 cat /proc/cmdline"    2>&1 | tr ' ' '\n' | grep -i androidboot
 ```
 
-> **⚠️ `su` is not portable, and getting this wrong looks like "not rooted"**
+> **`su` is not portable, and getting this wrong looks like "not rooted"**
 > A Magisk-style `su` takes `su -c '<cmd>'`. **The Android emulator's `su` takes `su 0 <cmd>` and
 > fails on `-c`** in a way that reads exactly like an unrooted device. A previous chapter in this
 > repository nearly recorded a rooted emulator as unrooted for that reason. Always try both.

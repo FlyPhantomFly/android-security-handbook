@@ -55,7 +55,7 @@ You do **not** know:
 - how many checks the app performs (five, as it happens),
 - which of them the command hooked (three of five sit inside its envelope),
 - which of them actually fired (one of the three),
-- whether any check was suppressed or whether there was simply nothing to suppress,
+- whether any check was suppressed or whether there was nothing to suppress,
 - what the app probed that the tool never looked at.
 
 **You cannot answer the question.** Not because the tool malfunctioned — it did exactly what

@@ -3,7 +3,7 @@
 Real questions, answered directly. The obvious ones are here too, because they are the ones people
 are embarrassed to ask and they are load-bearing.
 
-**⚠ Measured versus documentation-derived.** Answers citing a number from a device or a corpus were
+**Measured versus documentation-derived.** Answers citing a number from a device or a corpus were
 measured on `sdk_gphone16k_x86_64` (Android 15 / API 35, Magisk 30.7). Answers about classic
 Xposed's *internals* are documentation-derived — **it is not installed anywhere here and no session
 with it was fabricated.** [README.md](README.md)'s opening callout has the full split.

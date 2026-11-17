@@ -23,7 +23,7 @@ Android 5–16 (API 21–36), `arm64-v8a` primarily, `armeabi-v7a` and `x86_64` 
 
 ---
 
-> ## ⚠️ Read this before you read anything else: what is verified here and what is not
+> ## Read this before you read anything else: what is verified here and what is not
 >
 > **IDA Pro is commercial software and it is not installed on the machine where this chapter was
 > written.** That was checked, not assumed:
@@ -98,13 +98,13 @@ data is undecidable in general — your only recourse was to run it again with d
 print it again. Nothing you learned was retained. Every insight you had lived in your head or on
 paper, and when you came back on Monday you started over.
 
-> **📖 Definition**
+> **Definition**
 > A **disassembler** turns machine-code bytes back into assembly instructions. On AArch64 this is
 > close to mechanical: every instruction is exactly four bytes and `c0 03 5f d6` is `ret`, always.
 > The hard part is not decoding an instruction; it is knowing **where instructions start** and where
 > data begins. That is the part a disassembler must guess, and the part you correct.
 
-> **📖 Definition**
+> **Definition**
 > An **interactive disassembler** keeps a persistent *database* of everything it has decided and
 > everything you have told it — names, types, comments, function boundaries, which bytes are code —
 > and re-derives its output from that database. Your corrections are inputs to the next analysis, not
@@ -135,7 +135,7 @@ about which three, because vendors are not.
 Everything else — the disassembly itself, the decompilation of ordinary C, the scripting, the triage
 — is available for free, and §3.13 says so plainly.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > On a typical Android engagement you will read three native functions: the one that decides whether
 > the device is rooted, the one that derives the encryption key, and the one that signs the API
 > request. The question this chapter answers is not "is IDA good" — it is good — but **"does IDA get
@@ -177,7 +177,7 @@ Three consequences, and they are the most useful paragraphs in this section:
 - **It is not fine for a client's binary.** See the next point, because it is a contract question and
   not a technical one.
 
-> **⚠️ Warning — the procurement trap that catches consultancies**
+> **Warning — the procurement trap that catches consultancies**
 > **IDA Home, IDA Classroom and IDA Pro Essential decompile in the Hex-Rays cloud.** Hex-Rays states
 > that it "does not process any personal data except the IP address of user and does not persist any
 > data at all after the cloud decompilation takes place", and there is no reason to doubt that.
@@ -210,7 +210,7 @@ libraries and interactive structure recovery; IDAPython as an automation surface
 `android_server`; and — because this is a pentest repository — an honest account of when the money is
 worth it.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Chapter 68 gives you an **evidence ladder**: Tier 3 is decompiled code, Tier 4 is ground-truth
 > encoding, Tier 5 is observed execution. IDA is a Tier 3 and Tier 4 instrument in one window, which
 > is genuinely useful — the pseudocode pane and the listing pane are synchronised, so you can move
@@ -318,7 +318,7 @@ Seeing them next to a `.so` is not corruption; it is an interrupted session.
 | `.pat` | FLIRT *patterns*, text, pre-compilation | §3.7 — the format [`scripts/01-make-flirt-pat.py`](scripts/01-make-flirt-pat.py) emits |
 | `.idc` | IDA's own C-like scripting language | The only scripting IDA Free has |
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > A **netnode** is IDA's universal storage primitive: a record keyed by an address (or by an arbitrary
 > name), holding a set of sparse arrays — one for byte-sized values, one for 32-bit, one for strings,
 > one for blobs — each indexed by a small integer "alt" or "sup" key. Everything IDA knows is stored
@@ -396,7 +396,7 @@ roughly the third function.
 | The database is a version-locked binary format | A database written by IDA 9.0 is not readable by 8.4. Databases are not a long-term archival format for your findings | Export what matters: the pseudocode of the functions you care about, as text, into the report. §8.4 |
 | Two analysts cannot share one database | There is no merge. IDA Teams (a separately-licensed add-on) exists precisely because of this | Split by library, not by function, and agree naming conventions up front |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Decide your naming convention in the first ten minutes and write it at the top of the database as a
 > comment at the entry point. Something like: `j_` prefix for confirmed JNI entry points, `chk_` for
 > anything that returns a boolean the app acts on, `TODO_` for a function you looked at and
@@ -439,7 +439,7 @@ IDA reads `e_machine` from the ELF header and normally gets this right unaided. 
 the mapping — `183` / `0xB7` is `EM_AARCH64` and means `lib/arm64-v8a/`. When IDA asks you to choose,
 the file is packed, corrupt, or not an ELF, and that is itself information.
 
-> **⚠️ Warning**
+> **Warning**
 > An APK usually ships several ABI directories, and `lib/arm64-v8a/libfoo.so` and
 > `lib/armeabi-v7a/libfoo.so` are **different binaries built from the same source**. Analyse the one
 > the device under test actually loads. Confirm it, do not infer it:
@@ -497,7 +497,7 @@ unexplored bytes into code aggressively; on a stripped, obfuscated library it ca
 into 2,000, and that jump is itself diagnostic — chapter 57 makes the same point about Ghidra's
 Aggressive Instruction Finder.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Auto-analysis is a fixed-point computation, and **you are part of the loop.** Every fact you supply
 > — this is a function, this returns nothing, this parameter is a `session_ctx *` — re-enters the
 > queue and can produce a cascade. Anyone who reads IDA's output passively, without editing, is
@@ -512,7 +512,7 @@ Chapter 57 explains **P-Code**, Ghidra's intermediate representation: one flat I
 from each instruction, on which all analysis runs. Hex-Rays' design is different in a way that
 changes what you can do when the output is wrong.
 
-> **📖 Definition**
+> **Definition**
 > **Microcode** is the Hex-Rays decompiler's intermediate representation: a register-transfer-level
 > instruction set into which each machine instruction is expanded. Like P-Code it is
 > architecture-neutral, so the decompiler is written once and instantiated per processor.
@@ -539,7 +539,7 @@ There is also `MMAT_ZERO`, the "nothing yet" state.
 
 After `MMAT_LVARS` the decompiler builds a second, different structure:
 
-> **📖 Definition**
+> **Definition**
 > The **ctree** is the decompiler's C abstract syntax tree: the `if`s, `while`s, expressions and
 > declarations that the pseudocode window prints. It is built from mature microcode, and the
 > documentation is explicit that it requires maturity `MMAT_LVARS` or higher because it needs local
@@ -579,7 +579,7 @@ licence.
 `>` and `<` keys move between maturity levels. (Documentation-derived — verify the binding on your
 build; Hex-Rays has changed it between versions.)
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > The two-hook structure in the diagram is why the deobfuscation plugin ecosystem is what it is.
 > Obfuscators that flatten control flow or insert opaque predicates produce microcode with
 > recognisable, removable patterns. A plugin registers an `optinsn_t` or `optblock_t` callback, gets
@@ -639,7 +639,7 @@ And the table itself, twelve bytes in `.rodata`:
 | `lsl #2` scales them to instruction words | Maximum reach is 255 × 4 = 1020 bytes; a larger switch forces the compiler to a different form |
 | The bound check is a separate `cmp`/`b.hi` **before** the table | This is what makes the indirect branch safe |
 
-> **⚠️ Warning**
+> **Warning**
 > That last row is a live hazard during your own analysis. If you ever patch out a bound check like
 > `cmp w1, #11 ; b.hi <default>` — perhaps because it looked like a licence check — you have
 > converted a safe table dispatch into an **out-of-bounds indirect branch**, which is a control-flow
@@ -668,7 +668,7 @@ argument. There are four honest responses and you should know all four:
 The last row is not a cop-out; it is chapter 68's discipline. The annotate script's `--` indirect
 inventory (§3.10) exists to make the gap countable rather than invisible.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Count the indirect calls in a library before you promise anyone a "complete" static review. In the
 > chapter's fixture the count is 1 and the code is 300 lines. In a real obfuscated library protected
 > by control-flow flattening the count is in the hundreds, every one is the same dispatcher, and a
@@ -715,7 +715,7 @@ Three inference rules do all the work, and they are tool-independent:
 3. **`memset(p, 0, N)` gives you `sizeof`.** Look for the constant in the third argument of the
    `memset` in the initialiser. In the fixture that is `0x50`, and it confirms the layout exactly.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > A recovered structure is **a hypothesis about memory layout**, and it can be wrong in a way that
 > stays consistent. If you place a field at `+0x08` as `uint64_t` when the truth is two `uint32_t`s,
 > every access still decodes and the pseudocode still reads plausibly — it just says something false
@@ -737,7 +737,7 @@ them — `ch58_crc32`, `ch58_fnv1a64`, `ch58_hex` — came from a static archive
 code. Reading them is wasted time. In a real 8,000-function library that ships a statically-linked
 BoringSSL, the ratio is far worse: perhaps 96% of the functions are library code.
 
-> **📖 Definition**
+> **Definition**
 > **FLIRT** — Fast Library Identification and Recognition Technology — is IDA's mechanism for putting
 > the right name on a library function in a stripped binary. It works by matching each function's
 > **first 32 bytes** against a database of patterns built from the library's object files, with the
@@ -810,7 +810,7 @@ relocation the linker rewrites, so FLIRT cannot depend on it.
 which are not relocations. **Nothing is masked; the full 32 bytes are usable, plus a 24-byte CRC.**
 It is the strongest signature of the three.
 
-> **🔬 Under the Hood — why AArch64 is worse for FLIRT than x86**
+> **Under the Hood — why AArch64 is worse for FLIRT than x86**
 > On x86, a relocated field is usually a 4-byte absolute address embedded in a longer instruction, so
 > masking it costs four bytes and the opcode survives. On AArch64 every instruction is exactly four
 > bytes and the relocated field lives *inside* the instruction word, sharing it with the opcode bits.
@@ -823,7 +823,7 @@ It is the strongest signature of the three.
 > criticism of anyone's signature database. It is also why the `^OFF REFNAME` referenced-name field
 > matters more on ARM than on x86: it recovers discriminating power that masking threw away.
 
-> **⚠️ Warning — what this script's numbers are and are not**
+> **Warning — what this script's numbers are and are not**
 > [`scripts/01-make-flirt-pat.py`](scripts/01-make-flirt-pat.py) parses `ar` archives and ELF64
 > objects correctly — verified against `llvm-nm` and `llvm-readelf` — and every line it emits
 > round-trips through its own parser. **Its `ACRC` column has never been checked against `sigmake`,
@@ -869,7 +869,7 @@ moment you learn which of "your" functions are actually the same function inline
 | An open-source library at the version the target ships | BoringSSL, curl, zlib, protobuf, SQLite. Match the version; a different release produces different bytes |
 | Your own earlier engagement's databases | This is what **Lumina** automates, and §3.11 explains why you may not want it to |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > FLIRT's real value on Android is **subtractive**. It does not tell you which function is
 > interesting; it tells you which 7,700 are not, so the 300 that remain are a list you can read. That
 > is the same argument chapter 52 makes about sweeps producing leads rather than findings, applied to
@@ -882,7 +882,7 @@ moment you learn which of "your" functions are actually the same function inline
 parameter is a `session_ctx *` propagates through every expression that touches it. Telling it that
 one *import* is `void *memcpy(void *, const void *, size_t)` propagates through every caller.
 
-> **📖 Definition**
+> **Definition**
 > A **type library** (`.til`) is a compiled collection of C type declarations — structures, unions,
 > enums, typedefs and function prototypes — that IDA can load into a database and apply. IDA ships
 > a set for common platforms; `tilib` builds new ones; and `File → Load file → Parse C header file`
@@ -908,7 +908,7 @@ The header to parse is the NDK's own, so the types match the revision your targe
 ls "$ANDROID_NDK/toolchains/llvm/prebuilt/<host>/sysroot/usr/include/jni.h"
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > Parsing `jni.h` directly frequently fails on the first attempt, in both tools, because the header
 > pulls in platform definitions the parser does not have. The symptom is a long list of parse errors
 > and a type library missing exactly the struct you wanted. Two fixes, in order of preference: define
@@ -976,7 +976,7 @@ Also present for non-Android Linux: `linux_server`, `linux_server32`, `armlinux_
 `-K` (keep session alive / kill debuggee on close), and `-c` / `-k` for a TLS certificate chain and
 private key.
 
-> **⚠️ Warning — choose the server by the process, not by the device**
+> **Warning — choose the server by the process, not by the device**
 > **Measured** on an `sdk_gphone16k_x86_64` AVD, Android 15 / API 35:
 >
 > ```text
@@ -1018,7 +1018,7 @@ $ ./scripts/04-android-server-preflight.sh
 
 Three of those results are worth extracting, because two of them contradict widely-copied advice.
 
-> **⚠️ Warning — `ptrace_scope` does not exist here, and most guides tell you to set it**
+> **Warning — `ptrace_scope` does not exist here, and most guides tell you to set it**
 > Search for "IDA Android debugging" and a large fraction of the results tell you to run
 > `echo 0 > /proc/sys/kernel/yama/ptrace_scope`. **Measured on an API 35 AVD: that file is absent.**
 > The Yama LSM's `ptrace_scope` is a mainline-Linux control; this Android image does not expose it.
@@ -1050,7 +1050,7 @@ AVC rather than reaching for `setenforce`:
 su 0 dmesg -T | grep -i avc | tail
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > Do not run `setenforce 0` to make a debugging session work on a device whose behaviour you are
 > assessing. Chapter 22 owns the reasoning: you would be measuring a device that no longer resembles
 > the one your finding is about, and any conclusion about access control becomes worthless. If you
@@ -1107,7 +1107,7 @@ kept `idaapi`, `idc` and `idautils` as convenience layers. The ones you will use
 | `ida_ida` | `ida.hpp` | Database-wide settings; from 9.0 the `inf_get_*` accessors |
 | `ida_nalt` | `nalt.hpp` | `get_root_filename()` and other per-database attributes |
 
-> **⚠️ Warning — the IDA 9.0 breaking changes that will bite you**
+> **Warning — the IDA 9.0 breaking changes that will bite you**
 > Two removals in 9.0 break a large fraction of scripts written before it, and both are
 > documentation-derived from Hex-Rays' own porting guide:
 >
@@ -1121,7 +1121,7 @@ kept `idaapi`, `idc` and `idautils` as convenience layers. The ones you will use
 > the internet that uses `ida_struct` predates 9.0 and will fail with an `ImportError` that does not
 > explain itself. [`scripts/02-ida-android-annotate.py`](scripts/02-ida-android-annotate.py) shims the
 > first case explicitly so one file works either side of the boundary; the second cannot be shimmed
-> and is simply avoided.
+> and is avoided.
 
 **The Android-specific script this chapter ships.**
 [`scripts/02-ida-android-annotate.py`](scripts/02-ida-android-annotate.py) does the six things you
@@ -1181,7 +1181,7 @@ idat64 -A -c \
 | `-p<type>` | Force a processor type | For a headerless blob dumped from memory |
 | `-B` | Batch: analyse, produce an `.asm`, exit | The crude form, when you only want a listing |
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > `ida_auto.auto_wait()` at the top of a headless script is not optional. `-S` runs your script when
 > the initial autoanalysis is *scheduled*, not necessarily finished, so without the wait your script
 > can enumerate functions before they exist and report a library with eleven functions. This is the
@@ -1196,7 +1196,7 @@ in IDA Free, which is a further reason IDA Free is not a route into Android work
 This section has no equivalent in chapters 57 or 59, because the tools they cover do not have this
 property. It is the part of this chapter most likely to matter to your employer.
 
-> **📖 Definition**
+> **Definition**
 > **Lumina** is a Hex-Rays service that stores metadata about functions — names, prototypes, comments,
 > operand types — keyed by a hash of the function, on a server. Push a function you have named and
 > others can pull that name; pull a function you have not named and you may get somebody else's. The
@@ -1238,7 +1238,7 @@ often they actually bite:
    confidential work product, and they can be pulled by anyone who later opens a binary containing the
    same function.
 
-> **🔍 Pentester's Note — the policy to actually adopt**
+> **Pentester's Note — the policy to actually adopt**
 > Decide Lumina's setting per *engagement*, not once. For your own research and open-source targets,
 > the public server is a genuine accelerator; use it. For client work under NDA: use a **local**
 > decompiler tier, disable Lumina push, and if you want the benefit, buy Private Lumina and host it
@@ -1263,7 +1263,7 @@ Pulling §1.3 together into a decision, because "should we buy IDA" is a questio
 | Learning, at home, on your own fixtures and open-source targets | **Ghidra** — it is free, local, scriptable, and its ARM-64 decompiler is good. **IDA Home** if you want to learn IDA specifically; its cloud decompiler is fine for code you own |
 | Learning, and you were about to download IDA Free | It cannot open an arm64 library and has no IDAPython. Use Ghidra |
 
-> **🧠 Mental Model**
+> **Mental Model**
 > The right way to think about the three tools is not a ranking. **Ghidra's centre of gravity is deep
 > interactive analysis of one binary, for free. IDA's is the best decompiler output money can buy plus
 > mature on-device debugging. radare2's is fast, scriptable, composable triage that runs anywhere,
@@ -1394,13 +1394,13 @@ idat64 -A -c -o"$WORKDIR/$(basename "$so").i64" ... "$so"
 ```
 
 Add `*.i64`, `*.idb`, `*.id0`, `*.id1`, `*.nam`, `*.til` to `.gitignore` on every machine you own — and
-note that this repository's artefact blocklist already refuses them, which is why chapter 58 ships
+this repository's artefact blocklist already refuses them, which is why chapter 58 ships
 sources and a build script and no databases.
 
-> **⚠️ Warning**
+> **Warning**
 > The same argument applies to a Ghidra project directory and to a radare2 project file, and to the
 > extracted APK tree itself. The reason it gets a section here is that IDA's database is the most
-> *shareable-feeling* of them — one file, opens cleanly on someone else's machine, obviously "just
+> *shareable-feeling* of them — one file, opens cleanly on someone else's machine, plainly "just
 > notes". It is not just notes.
 
 ### 5.2 Your tool is a parser of attacker-controlled input
@@ -1423,7 +1423,7 @@ worth acting on:
 - The database format is a rich binary format read by the same program. Opening somebody else's `.i64`
   is opening an untrusted file in a complex parser.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The practical version of all of this: **analyse malware in a disposable VM with no credentials, no
 > client data and no network path to either.** That advice long predates any specific defect and does
 > not depend on one existing.
@@ -1443,7 +1443,7 @@ to a report.
 | A packer or loader stub | To hide the real payload | Tiny `.text`, huge `.rodata`, `mprotect` imported, and almost no strings |
 | Custom crypto | Because someone thought they could | The absence of a recognised primitive plus a lot of XOR and rotation |
 
-> **⚠️ Warning — honest severity**
+> **Warning — honest severity**
 > Finding a key in a native library is a finding whose severity depends entirely on what the key
 > protects. Chapter 57 §3.12's table grades key sources and this chapter defers to it. What is worth
 > adding: **"the app obfuscates its strings" is not a vulnerability, and "the app does not obfuscate
@@ -1551,7 +1551,7 @@ repository.
 6. **Where control flow left, say so.** Every `blr` and every unrecovered `br` is a boundary of your
    analysis. §3.5.
 
-> **⚠️ Warning**
+> **Warning**
 > Chapter 56 built a case where decompiled Java is clean, warning-free, and returns **100** while the
 > bytecode returns **105** — and shipped a program that runs both readings and prints both numbers.
 > That is the managed-code version of this section's whole argument. A decompiler's output is evidence
@@ -1569,7 +1569,7 @@ repository.
 | Packing | Tiny `.text`, huge `.rodata`, `mprotect` imported | Dump from memory after unpacking; chapter 40 |
 | Symbol stripping | Not obfuscation, just the default. **Measured: 43 symbols in, 11 out** | FLIRT for the library half; structure recovery for the rest |
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > Obfuscators are written against specific tools. A vendor that tests against Hex-Rays produces output
 > that breaks Hex-Rays and may decompile fine in Ghidra — and vice versa. **When one decompiler
 > refuses a function, try the other one before concluding the function is hard.** That is a genuine
@@ -1684,7 +1684,7 @@ IDA's marketing implies and more often than Frida users assume.
 | Anything on a process where frida-server is already attached | **Neither, until you detach** | One tracer per process |
 | Anything on a device you must not modify | **Neither** | Both require pushing a binary and root |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The combination that works best on Android is the one chapter 57 recommends for Ghidra and it does
 > not change here: **the disassembler for static understanding and annotation, Frida for runtime.**
 > Reach for the IDA debugger when Frida's function-level view is too coarse — which is a real
@@ -1724,7 +1724,7 @@ occupied. The section headers will be wrong or absent — chapter 15 ships a fix
 header table removed, exactly as packers produce — so you are working from program headers and from
 whatever you can reconstruct.
 
-> **⚠️ Warning**
+> **Warning**
 > A memory dump is a *post-relocation* image. Its GOT entries hold resolved addresses, its
 > `.data.rel.ro` holds real pointers rather than zeros, and its `.bss` holds live data. That is a
 > convenience for reading and a hazard for comparison: the dump will differ from the file everywhere a
@@ -1770,7 +1770,7 @@ Four things worth extracting from five rows:
    18 of 18 APKs and was lying, because `getPackageInfo` is how every SDK reads its own version
    string. **An import is a reading order, not a verdict.**
 
-> **🧠 Mental Model**
+> **Mental Model**
 > That table cost seconds and no licence, and it decides which file gets the next two hours. **Reach
 > for the expensive interactive tool when you have chosen a function to read, not to choose a file to
 > open.** Chapter 59 makes the same argument with a different toolchain and goes further — radare2 will
@@ -1808,7 +1808,7 @@ you are decompiling the whole library, you have lost the plot.
 | Which functions are large and unnamed? | Sort the Functions window by size. In a stripped library the largest unnamed function is very often the one you want |
 | What is at this address? | `G` |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > "Sort by size, look at the top of the list" is a genuinely good heuristic on a stripped Android
 > library and almost nobody teaches it. The application's real logic — a parser, a crypto core, a
 > state machine — is usually large. Small unnamed functions are usually accessors, thunks, or C++
@@ -1826,7 +1826,7 @@ An `.i64` is not a deliverable (§5.1) and is not readable in five years (§3.1)
 | Addresses as **offsets** | Always as `module + 0xNNN` | An absolute address is meaningless to the next reader |
 | The recovered structure, as C | Copy from Local Types | Goes straight into the remediation advice |
 
-> **⚠️ Warning**
+> **Warning**
 > When you quote decompiled pseudocode in a report, **label it as decompiler output** and give the
 > tool and version. It is a reconstruction (§6.2), the reader is entitled to know it is one, and if it
 > is later shown to be wrong the label is the difference between a corrected finding and a credibility
@@ -2296,7 +2296,7 @@ a check (`strings` finds nothing) that passed for exactly the wrong reason. The 
 `0x875` and the decode runs. Adding those 29 bytes to `.rodata` **shifted every function address in
 the file**, which is why every listing in this chapter was re-measured afterwards.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Numbers one and four are the same mistake and it is the one worth internalising: **a negative
 > result can be produced by two different causes, and "the plaintext is absent" is satisfied both by
 > "it is encrypted" and by "there is nothing there at all".** The check that distinguished them was
@@ -2340,7 +2340,7 @@ Work each lab twice. The first pass is "get the answer". The second is "state, i
 without the word *somehow*, what the tool was doing and why the first approach was slower". The second
 pass is what transfers to a target you did not write.
 
-> **⚠️ Warning**
+> **Warning**
 > Analyse only binaries you wrote, applications you own, or targets you have written permission to
 > examine. Reverse engineering may be restricted by licence terms and by law in your jurisdiction
 > independently of your intent, and the fact that a technique is documented here is not authorisation.

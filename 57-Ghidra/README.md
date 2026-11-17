@@ -10,7 +10,7 @@
 
 ---
 
-## ⚠ Read this before you read anything else: what is measured here and what is not
+## Read this before you read anything else: what is measured here and what is not
 
 This repository's rule is that claims are measured, not recited. This chapter mixes two kinds of
 material, and it says which is which up front — because a constructed listing that *reads* like a
@@ -30,15 +30,15 @@ sample"**, and that distinction is marked throughout:
 
 | Marker | Meaning |
 |---|---|
-| **✅ Measured** | Produced by running a named tool here: Ghidra 12.1.2 headless, or the NDK 25.2.9519653 toolchain (`aarch64-linux-android21-clang++`, `llvm-objdump`, `llvm-readelf`, `llvm-nm`). The tool, the input binary and the output are named. |
-| **📘 Illustrative** | A **constructed teaching example**. The target library, its addresses, its byte strings and its listings were written to demonstrate a method. They were **not** recovered from a real sample, and re-running the steps will not reproduce them. The *method* is real; the *sample* is invented. |
+| **Measured** | Produced by running a named tool here: Ghidra 12.1.2 headless, or the NDK 25.2.9519653 toolchain (`aarch64-linux-android21-clang++`, `llvm-objdump`, `llvm-readelf`, `llvm-nm`). The tool, the input binary and the output are named. |
+| **Illustrative** | A **constructed teaching example**. The target library, its addresses, its byte strings and its listings were written to demonstrate a method. They were **not** recovered from a real sample, and re-running the steps will not reproduce them. The *method* is real; the *sample* is invented. |
 
 **What is measured.** Everything about this chapter's own target:
 [`examples/01-reference-jni-lib.cpp`](examples/01-reference-jni-lib.cpp), built by
 [`examples/build.sh`](examples/build.sh) into `libreference.so` (stripped) and
 `libreference-unstripped.so` (the answer key). Its symbol counts, section layout, `.init_array`
 relocation, JNI function-table offsets and the Ghidra decompiler output shown for it are all
-**✅ Measured**, and each such claim names how it was obtained. That target is real, it builds from
+**Measured**, and each such claim names how it was obtained. That target is real, it builds from
 source with one command, and a reader with Ghidra can reproduce every figure quoted for it.
 
 **What is illustrative.** The five worked examples in [section 9](#9-examples) are staged on
@@ -49,10 +49,10 @@ the short before/after decompiler fragments used as illustrations in §3.4, §3.
 which carries its own marker. In particular, **the 32 bytes printed in §9.1 are not a key extracted
 from anything** — see the note there.
 
-> **⚠️ Warning**
+> **Warning**
 > Chapters [58-IDA](../58-IDA/README.md) and [59-radare2](../59-radare2/README.md) carry a similar
 > pre-ToC block, but they are marking a *different* gap: those tools are not installed here, so their
-> **commands** are marked `📘 Unverified`. Here the tool *is* installed, so nothing is unverified for
+> **commands** are marked `Unverified`. Here the tool *is* installed, so nothing is unverified for
 > want of a tool — what is marked instead is the **sample**. Same two-tier discipline, different axis.
 > If a step below behaves differently in your Ghidra than what is written, **the tool is right and
 > this chapter is wrong.** Fix it here.
@@ -107,7 +107,7 @@ What is left on disk is this, and only this:
 1f 20 03 d5 fd 7b bf a9 fd 03 00 91 ...
 ```
 
-> **📖 Definition**
+> **Definition**
 > **Machine code** is the raw byte sequence a CPU executes directly. It contains no names, no types,
 > no comments, and no structure beyond what the instruction encoding itself implies. Every piece of
 > information a human needs to understand a program — names, types, control structures, intent — was
@@ -121,7 +121,7 @@ different problems.
 
 ### What a disassembler does
 
-> **📖 Definition**
+> **Definition**
 > A **disassembler** converts machine code bytes back into assembly instructions. It is, in
 > principle, a lookup: the byte pattern `1f 20 03 d5` in ARM64 means `nop`, always, unambiguously.
 > A disassembler makes no guesses about meaning; it only decodes encoding.
@@ -138,7 +138,7 @@ thousand.
 
 ### What a decompiler does
 
-> **📖 Definition**
+> **Definition**
 > A **decompiler** converts machine code into a high-level language — in Ghidra's case, a C-like
 > pseudo-language. Unlike disassembly, this is a genuine *inference* problem: the decompiler must
 > guess which registers and stack slots correspond to which source variables, guess their types,
@@ -151,7 +151,7 @@ gives up from someone who supplies the two missing facts that make the whole fun
 focus. That is the central skill this chapter teaches, and it is why this chapter spends more time
 on P-Code and type propagation than on which menu contains which button.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Think of the decompiler as a translator working from a language it half-knows, with no dictionary.
 > Given `mov x0, #0; add x0, x0, x1`, it must decide: is `x0` an integer counter, a pointer being
 > advanced, or a length accumulating? All three compile to the same instruction. The decompiler picks
@@ -187,7 +187,7 @@ tasks become impractical:
    `memcpy(dest, src, user_controlled_len)` where `dest` is a 64-byte stack array is a finding you
    can see at a glance in decompiled output and would grind through for an hour in assembly.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > On a typical Android engagement you will not read every native function. You will read three: the
 > one that implements the root check, the one that derives the encryption key, and the one that signs
 > the API request. Everything in this chapter is in service of finding those three functions fast and
@@ -325,7 +325,7 @@ decompilation becomes readable; the readable code tells you what to hook next.
 
 ### 3.1 SLEIGH — how Ghidra knows what an instruction means
 
-> **📖 Definition**
+> **Definition**
 > **SLEIGH** is a domain-specific language for describing processor instruction sets. A SLEIGH
 > specification defines the register set, the address spaces, how instruction bytes decode into
 > mnemonics and operands, and — critically — the **semantics**: what each instruction does, expressed
@@ -354,7 +354,7 @@ does not model — pointer authentication (`PAC`), the Scalable Vector Extension
 tagging (`MTE`). The fix is to select a language variant that includes the extension at import time,
 or to accept the gap and read those instructions manually.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > Pointer authentication instructions (`PACIA`, `AUTIA`, `PACIASP`, `RETAA`) appear in libraries built
 > for ARMv8.3-A and above, which includes plenty of shipping Android code on recent Pixel and Samsung
 > hardware. On CPUs that do not implement PAC, these encode into the NOP space and execute as no-ops,
@@ -366,13 +366,13 @@ or to accept the gap and read those instructions manually.
 
 This is the concept that most people skip and should not.
 
-> **📖 Definition**
+> **Definition**
 > **P-Code** is Ghidra's intermediate representation (IR): a small, register-transfer-level,
 > architecture-neutral instruction set. Every real machine instruction is translated into one or more
 > P-Code operations. All of Ghidra's analysis — data flow, type inference, decompilation — operates on
 > P-Code, never on ARM64 or x86 directly.
 
-> **📖 Definition**
+> **Definition**
 > A **varnode** is P-Code's only operand type. It is a triple of *(address space, offset, size in
 > bytes)*. A CPU register is a varnode in the `register` space. A stack slot is a varnode in the
 > `stack` space (or `unique` after transformation). A literal constant is a varnode in the `const`
@@ -405,7 +405,7 @@ enable *Listing Fields → PCode Field*) you need to know what you are looking a
 | SSA / analysis-only | `MULTIEQUAL`, `INDIRECT`, `CAST`, `PTRADD`, `PTRSUB` | Not produced by SLEIGH; created by the decompiler during transformation. `MULTIEQUAL` is the SSA φ (phi) function |
 | Escape hatch | `CALLOTHER` | "This instruction does something P-Code cannot express" — used for `svc` (syscall), cache maintenance, cryptographic accelerator instructions such as `AESE`/`AESMC` |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `CALLOTHER` in a decompiled function is a signal, not noise. If you see `CALLOTHER("AESE", ...)`
 > you have found hardware-accelerated AES, and the surrounding code is a key schedule. If you see
 > `CALLOTHER` on an `svc #0`, you have found a direct syscall — which frequently means the code is
@@ -440,7 +440,7 @@ decompiler's job is to collapse it back down.
 Having translated to P-Code, the decompiler builds a control-flow graph and converts it to **SSA
 form**.
 
-> **📖 Definition**
+> **Definition**
 > **Static Single Assignment (SSA) form** is a representation in which every variable is assigned
 > exactly once. If the original code assigns `x` three times, SSA renames them `x₁`, `x₂`, `x₃`.
 > Where two control-flow paths join and could each have defined the variable, a **φ (phi) function**
@@ -463,7 +463,7 @@ With SSA in place the decompiler runs a series of simplification passes:
 | Calling convention application | Uses the compiler spec to decide which registers are arguments, which is the return | `FUN_00101234(param_1, param_2)` with the right arity |
 | Structural analysis | Matches CFG shapes against known patterns | `if`, `while`, `for`, `do/while`, `switch` reappear |
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > Dead code elimination is why decompiled ARM64 looks so much cleaner than the assembly. ARM64
 > instructions like `subs` set the N, Z, C and V condition flags. SLEIGH faithfully models all four
 > as separate P-Code assignments. In a typical function, 90% of those flag writes are never read.
@@ -490,7 +490,7 @@ That is the whole game. Compare:
 **Before — the decompiler knows nothing:**
 
 ```c
-// 📘 Illustrative — constructed to show the before/after contrast in one place.
+// Illustrative — constructed to show the before/after contrast in one place.
 // Ghidra output with no type information supplied
 undefined8 FUN_00112a40(long param_1,long param_2,long param_3)
 {
@@ -539,14 +539,14 @@ engineering**, and section 3.8 covers it in full.
 | A value flows into a `RETURN` | Constrains the function's return type |
 | Two types meet at a `MULTIEQUAL` | Ghidra computes a "meet" in its type lattice; conflicting types produce `undefined` |
 
-> **📖 Definition**
+> **Definition**
 > **`undefined`, `undefined1`, `undefined4`, `undefined8`** in Ghidra output mean "a value of this
 > many bytes whose type I could not determine". They are not a C type; they are Ghidra telling you it
 > gave up. `undefined8` on a 64-bit target usually means "8 bytes — could be a `long`, a pointer, or a
 > `double`, and nothing in the code disambiguated it". Every `undefined` in a function you care about
 > is an invitation to supply a type.
 
-> **⚠️ Warning**
+> **Warning**
 > The decompiler's type inference is *unsound* by design — it prefers producing readable output to
 > producing provably correct output. It will happily show you `param_1 + 1` as pointer arithmetic
 > when the original code did integer arithmetic, or vice versa. **Never report a vulnerability based
@@ -587,7 +587,7 @@ VMARGS=-Xmx8G
 | Non-Shared Project | A local `.gpr` file plus a `.rep` directory on your disk | Almost always. One project per target application. |
 | Shared Project | Backed by a Ghidra Server, with check-in/check-out and version history | Team engagements where two people reverse the same library, or when you want auditable history of your analysis |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Create **one project per application**, and import every `.so` from that APK into it, not one
 > project per library. Cross-library references matter: an app's obfuscated `libsecure.so` frequently
 > calls into a vendor SDK's `libvendor.so`, and having both in one project lets you follow the call.
@@ -609,7 +609,7 @@ made.
 Ghidra normally detects the language correctly from the ELF header's `e_machine` field. If it
 presents you with a list to choose from, the file is either corrupt, packed, or not actually an ELF.
 
-> **⚠️ Warning**
+> **Warning**
 > An APK typically ships several ABI directories. `lib/arm64-v8a/libfoo.so` and
 > `lib/armeabi-v7a/libfoo.so` are **different binaries** compiled from the same source. Analyse the
 > one that the device under test actually loads — check with
@@ -639,7 +639,7 @@ libraries.
 | Variadic Function Signature Override | Off | Turn on if the target uses `printf`-family logging heavily | Recovers format-string arguments |
 | Scalar Operand References | On | Keep on | Turns immediates that look like addresses into references |
 
-> **📖 Definition**
+> **Definition**
 > **Function ID (FID)** is Ghidra's library-function identification mechanism. It computes a hash over
 > a function's instructions (with operands masked out, so that different link addresses still match)
 > and looks the hash up in a database of known library functions. When it hits, the function gets its
@@ -651,7 +651,7 @@ libraries.
 manually created functions in a region the analyser missed, or after you have applied a data type
 archive. Your manual edits are preserved; analysis does not clobber user-set names or types.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > For an obfuscated library, the productive sequence is: run standard analysis first, look at the
 > function count, then run *Aggressive Instruction Finder* and *Decompiler Parameter ID* and compare.
 > If the function count jumps from 200 to 2,000, the library was doing something to hide its code
@@ -800,7 +800,7 @@ pointers, so the first real function is at index 4. On a 64-bit target, byte off
 | `UnregisterNatives` | 216 | `0x6c0` | |
 | `GetJavaVM` | 219 | `0x6d8` | The library caching the VM pointer for later thread attachment |
 
-> **⚠️ Warning**
+> **Warning**
 > These indices come from the standard `JNINativeInterface` layout and are stable across Android
 > versions because the JNI specification fixes the order. Nevertheless, verify against the `jni.h`
 > from the NDK revision you believe the target was built with before you rely on an offset in a
@@ -844,7 +844,7 @@ with an escaping scheme for awkward characters:
 If the method is overloaded, the mangled name gains `__` followed by the encoded argument signature.
 
 Finding these in Ghidra is one search: *Search → Program Text…* → search for `Java_` in *Labels*, or
-simply expand *Symbol Tree → Exports* and read.
+expand *Symbol Tree → Exports* and read.
 
 ```bash
 # host — the same thing from the command line, before you even open Ghidra
@@ -886,7 +886,7 @@ On a 64-bit target that structure is 24 bytes: three pointers.
    pointers as references. Follow each pointer and rename the target function to
    `jni_<ClassName>_<methodName>`.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Two shortcuts. First, if the library is not obfuscated, the JNI signature strings
 > (`(Ljava/lang/String;)[B` and friends) are extremely distinctive — search *Defined Strings* for
 > `(L` and the table will be adjacent in memory, because the compiler places the string literals and
@@ -902,7 +902,7 @@ On a 64-bit target that structure is 24 bytes: three pointers.
 
 ### 3.10 Strings, cross-references and navigation
 
-> **📖 Definition**
+> **Definition**
 > A **cross-reference** (xref) is a recorded relationship between two addresses: address A references
 > address B, because A contains a call to B, a branch to B, or a data pointer to B. Ghidra maintains
 > these bidirectionally, so from any address you can ask both "what does this reference?" and "what
@@ -933,7 +933,7 @@ direction is the one that finds things.
 You have now gone from "this app checks for root somehow" to "here is the exact function", in under a
 minute, with no dynamic analysis.
 
-> **⚠️ Warning**
+> **Warning**
 > Ghidra's string analyser only finds strings it recognises as strings. Obfuscated libraries commonly
 > XOR-encode string constants and decode them on the stack at use time; those strings do not appear in
 > *Defined Strings* at all, and `strings` on the file finds nothing. Their absence is itself
@@ -942,7 +942,7 @@ minute, with no dynamic analysis.
 
 ### 3.11 Practical retyping — the worked example
 
-> **📘 Illustrative** — `FUN_00104b20` is a constructed example, written to put every retyping step
+> **Illustrative** — `FUN_00104b20` is a constructed example, written to put every retyping step
 > in one function. The *offsets* in it are correct and checkable against the measured table in §3.8
 > (`0x5c0` `GetByteArrayElements`, `0x558` `GetArrayLength`, `0x538` `NewStringUTF`), and §9.0 shows
 > the same transformation on a real binary — but this particular function was not decompiled from
@@ -1034,7 +1034,7 @@ The decompiled output changes from arithmetic to `param_1->state`, `param_1->key
 `param_1->mode` — and now every other function that takes the same struct becomes readable for free,
 because you set the type once in a shared archive.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Reverse engineering with a decompiler is a **fixed-point computation** and you are part of it. You
 > supply a fact; the decompiler propagates it and reveals more structure; the new structure suggests
 > the next fact. Keep going until the output stops changing. Anyone who reads decompiled output
@@ -1059,7 +1059,7 @@ at. Cryptographic algorithms have fingerprints:
 | Constant `0xedb88320` or `0x04c11db7` | CRC-32 polynomial | Not encryption — do not report it as such |
 | Repeated `x ^= key[i % keylen]` in a loop | XOR "encryption" | The most common thing you will actually find |
 
-> **⚠️ Warning**
+> **Warning**
 > Finding a CRC-32 table and reporting "the application uses a weak custom cipher" is a real mistake
 > that real people make. CRC-32 is a checksum, not a cipher. Identify the primitive before you write
 > anything down. See [34-Cryptography](../34-Cryptography/README.md).
@@ -1118,7 +1118,7 @@ class provides a large set of convenience methods and a set of pre-bound variabl
 | Jython (Python 2.7 dialect) | Bundled in Ghidra 10.x and still present in 11.x | Fast to write; but it is Python 2, so no f-strings and no `pip` packages |
 | PyGhidra (CPython 3) | Ghidra 11.x | Real Python 3 with access to `pip` packages — use this when your script needs `requests`, `capstone`, `yara`, or anything else from PyPI |
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > Jython runs *inside* the Ghidra JVM, so a Jython script manipulates the same Java objects the GUI
 > does — that is why `currentProgram.getFunctionManager()` works unchanged from Java to Jython. Names
 > are Java names, not Pythonic ones. PyGhidra takes the other route: it runs a real CPython
@@ -1171,12 +1171,12 @@ $GHIDRA_HOME/support/analyzeHeadless \
     -deleteProject
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > `analyzeHeadless` is a Java program with a full analysis engine, and it will consume every core you
 > give it and several gigabytes of RAM per file. Running it against a directory of a hundred large
 > libraries on a laptop will take hours and may exhaust memory. Set `-max-cpu`, set
-> `-analysisTimeoutPerFile`, and test on one file before you launch the batch. Also note that a
-> single Ghidra project cannot be opened by two `analyzeHeadless` processes at once — use separate
+> `-analysisTimeoutPerFile`, and test on one file before you launch the batch. A single
+> Ghidra project cannot be opened by two `analyzeHeadless` processes at once — use separate
 > project names if you parallelise externally.
 
 ### 3.14 Version tracking and binary diffing
@@ -1225,7 +1225,7 @@ robustness is exactly what you need for Android, where the same open-source libr
 every vendor with different NDK versions. Use BSim to answer "which known library is this stripped
 function from?"
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > For pure patch diffing, many practitioners still prefer the standalone
 > [BinDiff](https://www.zynamics.com/software.html) tool, which is now free and has a Ghidra
 > export path via the BinExport plugin. Ghidra's Version Tracking is more powerful and more manual;
@@ -1290,14 +1290,14 @@ Then in Ghidra: *Debugger → Connect…*, choose the LLDB or GDB connector, poi
 `localhost:1234`, and attach to the target PID. Set breakpoints by navigating in the Listing and
 pressing `K` (*Toggle Breakpoint*) or via the Breakpoints window.
 
-> **⚠️ Warning**
+> **Warning**
 > Attaching a debugger sets `TracerPid` in `/proc/<pid>/status` to a non-zero value, and it is trivial
 > for an app to read that. Any app with meaningful anti-tamper will detect this instantly and either
 > exit or, worse, silently change behaviour so that you spend an afternoon analysing a decoy path.
 > See [38-TamperDetection](../38-TamperDetection/README.md) and
 > [67-BypassingProtections](../67-BypassingProtections/README.md).
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > In practice, the combination that works best on Android is: **Ghidra for static understanding and
 > annotation, Frida for runtime**. Use Ghidra to find the offset, Frida to read the arguments, and
 > Ghidra again to turn those observations into types. Reach for the Ghidra debugger when you need to
@@ -1318,7 +1318,7 @@ An honest assessment. Ghidra is excellent and it is not always the right tool.
 | Anti-decompilation constructs | Some obfuscators specifically target Ghidra's decompiler and crash or hang it | Fall back to the Listing and read assembly; or radare2 |
 | Emulation | Ghidra has a P-Code emulator, but it is awkward for real use | Unicorn Engine, Qiling, or Frida's `Interceptor` |
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Ghidra, IDA and radare2 are not competitors you must choose between; they are three tools with
 > different centres of gravity. Ghidra's is *deep interactive analysis of one binary, for free*.
 > IDA's is *the best decompiler output money can buy, plus mature on-device debugging*. radare2's is
@@ -1435,7 +1435,7 @@ linker parses in `bionic/linker/linker.cpp` and `bionic/linker/linker_phdr.cpp`.
 | `.rodata` | Mark read-only data for string analysis | |
 | `.init_array` / `.fini_array` entries | Entry points for analysis | |
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > `DT_INIT_ARRAY` deserves attention. Functions listed there run when the linker loads the library —
 > *before* `JNI_OnLoad`, and before any Java code has a chance to observe anything. Packers and
 > anti-analysis code live there because it is the earliest execution opportunity. In Ghidra, look at
@@ -1530,7 +1530,7 @@ attachments is a remote code execution primitive.
 | Shipping a `.so` with full debug symbols or DWARF | Hands the analyst the original names and types | Strip release builds; check with `readelf -S` for `.debug_*` sections |
 | Shipping an unstripped `libc++_shared.so` next to a stripped app library | Gives the analyst named references to every standard library call | Not a real problem, but be aware it is why some of your imports have nice names |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > When you write the finding, the remediation must be honest. "Move the key to native code" is not a
 > remediation; you just defeated that. The correct remediations are architectural: the secret should
 > not be on the device at all, or it should be in hardware-backed storage where the app can *use* it
@@ -1636,7 +1636,7 @@ done
 
 That loop tells you, before you open Ghidra: the architecture, the dependencies, whether the binary
 is stripped, and whether JNI methods are statically registered. If the `Java_` count is zero but the
-app clearly uses native methods, registration is dynamic and section 3.9's recovery procedure
+app declares native methods, registration is dynamic and section 3.9's recovery procedure
 applies.
 
 ### 6.2 Recognising the Java–native boundary from both sides
@@ -1682,7 +1682,7 @@ territory.
 **In the `.so`'s symbol table**, if registration is static:
 
 ```
-# 📘 Illustrative — constructed readelf --dyn-syms output, trimmed.
+# Illustrative — constructed readelf --dyn-syms output, trimmed.
 # For real `readelf`/`llvm-readelf` output on a real target, run examples/build.sh,
 # which prints the exported Java_* symbols of libreference.so as it builds.
    Num:    Value          Size Type    Bind   Vis      Ndx Name
@@ -1723,7 +1723,7 @@ The C-level function receives two extra leading parameters that do not appear in
 | 2 | `jobject thiz` (instance methods) or `jclass clazz` (static methods) | `x1` |
 | 3+ | The declared parameters, in order | `x2`, `x3`, `x4`, `x5`, `x6`, `x7`, then the stack |
 
-> **⚠️ Warning**
+> **Warning**
 > Floating-point parameters do **not** consume general-purpose registers on AArch64 — they go in
 > `v0`–`v7`. So a method `(FI)V` puts the `float` in `s0` and the `int` in `x2`, not `x2` and `x3`.
 > Getting this wrong produces argument values that look like garbage, and it is a common cause of
@@ -1732,11 +1732,11 @@ The C-level function receives two extra leading parameters that do not appear in
 
 ### 6.4 Recognisable patterns in decompiled ARM64
 
-> **📘 Illustrative** — the snippets below are pattern sketches, not captures from one binary; each
+> **Illustrative** — the snippets below are pattern sketches, not captures from one binary; each
 > shows the minimum needed to recognise a shape. Two of them are confirmed on this chapter's own
 > target: decompiling `Java_com_example_ref_Reference_transform` in `libreference.so` with Ghidra
 > 12.1.2 produces both the paired `undefined8` load/store form of an inlined `memcpy` and the
-> `__stack_chk_guard` prologue/epilogue pair described here. **✅ Measured** — see §9.0 for the run.
+> `__stack_chk_guard` prologue/epilogue pair described here. **Measured** — see §9.0 for the run.
 
 **A stack canary**, present in almost every function built with `-fstack-protector`:
 
@@ -1816,7 +1816,7 @@ in the decompilation.
 | Native packer (whole library encrypted) | The `.so` on disk decrypts itself in an `init_array` constructor | Almost no analysable code; a large encrypted blob section | Dump the library from process memory at runtime, then load the dump into Ghidra |
 | VM-based obfuscation | Logic compiled to a custom bytecode interpreted by a native VM | A dispatcher loop over a byte array with dozens of handlers | The hardest case. Reverse the VM's instruction set, then write a disassembler for it |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > **Dumping a packed library from memory** is the single most valuable anti-packing technique and it
 > is easy with Frida. Wait until after the library is loaded and decrypted, enumerate the module,
 > and write its memory range to a file. The dump is not a valid ELF (its section headers may be
@@ -1863,7 +1863,7 @@ The register conventions:
 | `w0`–`w30` | The lower 32 bits of the corresponding `x` register |
 | `v0`–`v31` | SIMD/FP registers; `s`/`d`/`q` views of the same |
 
-> **🧠 Mental Model**
+> **Mental Model**
 > When the decompiler output is nonsense, do not stare at it harder. Switch to the Listing, find the
 > function's `bl` calls and its string references, and reconstruct the *shape* — what does it call,
 > what constants does it touch, how big is its stack frame. Nine times out of ten, the shape is
@@ -1901,7 +1901,7 @@ var target = m.base.add(GHIDRA_ADDR.sub(GHIDRA_BASE));
 console.log("runtime address:", target);
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > Verify Ghidra's image base rather than assuming `0x100000`. Open *Window → Memory Map* and read the
 > start address of the first `PT_LOAD` block. Ghidra sometimes uses `0x0` for position-independent
 > objects, and some loaders rebase. Getting this wrong by `0x100000` produces hooks that land in the
@@ -1985,7 +1985,7 @@ if (!hookRegisterNatives()) {
 Typical output:
 
 ```
-📘 Illustrative — constructed sample output showing the script's format,
+Illustrative — constructed sample output showing the script's format,
 not a capture from a run. The script itself is real; see scripts/RecoverRegisterNatives.py.
 
 === RegisterNatives: 4 method(s) ===
@@ -2190,7 +2190,7 @@ dumping.
 | Direct references | *Search → For Direct References…* | Find everything pointing at a data address |
 | Strings, with options | *Search → For Strings…* | Re-run string detection with a different minimum length or encoding (UTF-16 matters for some libraries) |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > *Search → For Instruction Patterns…* is underused and excellent. To find every direct syscall in a
 > library — which is how sophisticated code evades your libc hooks — search for the `svc` instruction
 > and inspect each hit's surroundings for the syscall number loaded into `x8`. A library making raw
@@ -2360,7 +2360,7 @@ work from `JNI_OnLoad` or a constructor — which is exactly what a packer does.
 
 ## 9. Examples
 
-> **📘 Illustrative — read this before the five examples below**
+> **Illustrative — read this before the five examples below**
 > The five scenarios in this section are staged on invented libraries — `libcrypto_helper.so`,
 > `libsecure.so`, `libapi.so`. **No such binary exists in this repository or was ever analysed.**
 > Every address, decompiler listing, Listing-pane dump and byte string below was *written* to show
@@ -2374,9 +2374,9 @@ work from `JNI_OnLoad` or a constructor — which is exactly what a packer does.
 >
 > **The chapter's own target is the opposite case.** `libreference.so`, built by
 > [`examples/build.sh`](examples/build.sh) from source you can read, is a real binary that was really
-> analysed in Ghidra 12.1.2 — see the **✅ Measured** block immediately below and §9.0.
+> analysed in Ghidra 12.1.2 — see the **Measured** block immediately below and §9.0.
 
-> **🔬 Under the Hood — build the reference library first**
+> **Under the Hood — build the reference library first**
 > [`examples/01-reference-jni-lib.cpp`](examples/01-reference-jni-lib.cpp) contains one clean
 > instance of every construct the five examples below ask you to recognise. Because you wrote it,
 > you can check every guess — which is the fastest way there is to build recognition.
@@ -2391,7 +2391,7 @@ work from `JNI_OnLoad` or a constructor — which is exactly what a packer does.
 > knowing before Ghidra is open: what the strip removed, which exports survived it, the `.init_array`
 > relocation, and the strings the `RegisterNatives` table left behind.
 >
-> **✅ Measured — the build, not the analysis.** What was verified here is that *this source
+> **Measured — the build, not the analysis.** What was verified here is that *this source
 > compiles*: it builds clean under `-Wall -Wextra` with `aarch64-linux-android21-clang++` from
 > **NDK 25.2.9519653** (clang 14.0.7, LLD 14.0.7), and the stripped/unstripped pair was measured with
 > `llvm-readelf` — `--strip-all` takes `.symtab` from **47 symbols to 0** and leaves `.dynsym` at
@@ -2400,14 +2400,14 @@ work from `JNI_OnLoad` or a constructor — which is exactly what a packer does.
 >
 > This statement covers the **compiler's** output only. It says nothing about any Ghidra listing
 > elsewhere in this chapter, and it must not be read as extending to one — the §9 walkthroughs are
-> **📘 Illustrative** and are labelled individually. For decompiler output that *was* measured, see
+> **Illustrative** and are labelled individually. For decompiler output that *was* measured, see
 > §9.0 below.
 >
 > `examples/02-jni-types-for-ghidra.h` also parses clean as a C translation unit under the same
 > flags, which matters because its whole job is to be accepted by a C parser that is stricter and
 > less forgiving than a compiler.
 
-### 9.0 ✅ Measured — real Ghidra output on this chapter's own target
+### 9.0 Measured — real Ghidra output on this chapter's own target
 
 Before the staged walkthroughs, here is decompiler output that is **not** staged. This is what
 Ghidra 12.1.2 PUBLIC actually printed for `libreference.so` — the stripped library
@@ -2417,7 +2417,7 @@ Ghidra 12.1.2 PUBLIC actually printed for `libreference.so` — the stripped lib
 support/analyzeHeadless <proj> ch57 -import libreference.so -postScript <decompile script> JNI_OnLoad
 ```
 
-> **✅ Measured** — Ghidra 12.1.2 PUBLIC (build 20260605), Java 24.0.2, language
+> **Measured** — Ghidra 12.1.2 PUBLIC (build 20260605), Java 24.0.2, language
 > `AARCH64:LE:64:v8A:default`, image base `0x00100000`. Auto-analysis found **46 functions**, of
 > which **7** were left as unnamed `FUN_`. `JNI_OnLoad` was located at `0x00102864`.
 
@@ -2483,7 +2483,7 @@ void Java_com_example_ref_Reference_plainMethod(long *param_1)
 }
 ```
 
-> **✅ Measured** — `NewStringUTF` is index **167**, so its offset is `167 * 8 = 0x538`. Note that
+> **Measured** — `NewStringUTF` is index **167**, so its offset is `167 * 8 = 0x538`.
 > this is *not* `0x548`; `0x548` is index 169, `GetStringUTFChars`, which goes the other way. The two
 > are one slot apart in the table and easy to confuse, and confusing them inverts the direction of
 > data flow through the function.
@@ -2492,7 +2492,7 @@ void Java_com_example_ref_Reference_plainMethod(long *param_1)
 
 ### 9.1 Simple — find and read a hardcoded key
 
-> **📘 Illustrative** — `libcrypto_helper.so` does not exist. The symbol address, the decompiler
+> **Illustrative** — `libcrypto_helper.so` does not exist. The symbol address, the decompiler
 > listing, the `DAT_` address and the 32 bytes below are all constructed. Nothing here was recovered
 > from a real application.
 
@@ -2510,7 +2510,7 @@ Import into Ghidra, analyse, navigate to `Java_com_example_db_Crypto_getKey`. Re
 `JNIEnv *`. The result:
 
 ```c
-/* 📘 Illustrative — constructed listing, not Ghidra output from a real binary.
+/* Illustrative — constructed listing, not Ghidra output from a real binary.
    Compare §9.0 for what unretyped output on a real target actually looks like. */
 jbyteArray Java_com_example_db_Crypto_getKey(JNIEnv *env,jobject thiz)
 {
@@ -2525,7 +2525,7 @@ Double-click `DAT_00120a40`, select 32 bytes, *Right-click → Copy Special → 
 shaped like this you would get 32 bytes back. The ones written here are **not** such a recovery:
 
 ```
-📘 Illustrative — 32 arbitrary bytes, invented for this walkthrough.
+Illustrative — 32 arbitrary bytes, invented for this walkthrough.
 NOT a key extracted from any application. Do not cite, test or report these.
 
 8f 3a 12 e0 44 91 bc 7d 05 6e f2 33 aa 18 90 c4
@@ -2545,17 +2545,17 @@ which you can build and check against its own source.
 
 ### 9.2 Intermediate — recover a dynamic JNI registration table
 
-> **📘 Illustrative** — `libsecure.so` does not exist. The listing, the table address `0x00121000`,
-> the three method names and the three function pointers below are constructed. For the **✅ Measured**
+> **Illustrative** — `libsecure.so` does not exist. The listing, the table address `0x00121000`,
+> the three method names and the three function pointers below are constructed. For the **Measured**
 > version of this exact task — a real `JNI_OnLoad`, really decompiled, with a real `RegisterNatives`
-> call at offset `0x6b8` and a real count of 3 — see [§9.0](#90--measured--real-ghidra-output-on-this-chapters-own-target).
+> call at offset `0x6b8` and a real count of 3 — see [§9.0](#90-measured--real-ghidra-output-on-this-chapters-own-target).
 
 **Scenario.** `libsecure.so` exports `JNI_OnLoad` and nothing beginning with `Java_`.
 
 Navigate to `JNI_OnLoad`, set the signature `jint JNI_OnLoad(JavaVM *vm, void *reserved)`, and read:
 
 ```c
-// 📘 Illustrative — constructed listing showing the polished end state.
+// Illustrative — constructed listing showing the polished end state.
 // After retyping, with the JNI archive imported
 jint JNI_OnLoad(JavaVM *vm,void *reserved)
 {
@@ -2589,7 +2589,7 @@ Then in the Listing at `0x00121000`: *Right-click → Data → Create Array…*,
 count 3.
 
 ```
-📘 Illustrative — constructed Listing-pane dump, not a capture from a real session.
+Illustrative — constructed Listing-pane dump, not a capture from a real session.
 
 00121000  JNINativeMethod[3]
   [0] name      -> "check"
@@ -2616,7 +2616,7 @@ about five minutes.
 
 ### 9.3 Advanced — read a native root check and build the bypass
 
-> **📘 Illustrative** — continues the invented `libsecure.so` from §9.2. The listing and the
+> **Illustrative** — continues the invented `libsecure.so` from §9.2. The listing and the
 > `SU_PATHS` contents below are constructed. The *paths themselves* are real ones that real root
 > detectors check (see [37-RootDetection](../37-RootDetection/README.md)); what is invented is that
 > any particular binary contained this array at this address.
@@ -2624,7 +2624,7 @@ about five minutes.
 Navigate to `jni_Native_check` from the previous example.
 
 ```c
-// 📘 Illustrative — constructed listing.
+// Illustrative — constructed listing.
 // After retyping and renaming
 jboolean jni_Native_check(JNIEnv *env,jobject thiz,jobject context)
 {
@@ -2711,7 +2711,7 @@ Interceptor.attach(fgets, {
 Or patch the binary permanently, which is what you would do to produce a modified APK:
 
 ```
-# ✅ Measured — both encodings assembled with the NDK 25.2.9519653 clang and
+# Measured — both encodings assembled with the NDK 25.2.9519653 clang and
 # read back with llvm-objdump -d. These two byte sequences are exact.
 # The ARM64 patch — make the function return 0 immediately.
 # At the function entry:
@@ -2724,7 +2724,7 @@ then on the next instruction `ret`. Then *File → Export Program… → Origina
 modified `.so`, repackage the APK, zipalign and re-sign. See
 [77-UsefulCommands](../77-UsefulCommands/README.md) for the repackage cycle.
 
-> **⚠️ Warning**
+> **Warning**
 > Ghidra's *Export Program → Original File* writes back the modified bytes into a copy of the input
 > file. It does **not** fix up anything else, so if your patch changes instruction lengths (which it
 > cannot on ARM64, where every instruction is four bytes) or adds code, you must handle relocation
@@ -2733,7 +2733,7 @@ modified `.so`, repackage the APK, zipalign and re-sign. See
 
 ### 9.4 Real application — reversing a request-signing routine
 
-> **📘 Illustrative** — "Real application" is this repository's standard heading for the
+> **Illustrative** — "Real application" is this repository's standard heading for the
 > full-workflow example in section 9; here it names a *realistic scenario*, not an audit of a
 > shipping app. `libapi.so`, the offset `0x8340`, and the signing listing below are constructed. The
 > HMAC-over-canonical-string design they depict is genuinely the common pattern — that part is drawn
@@ -2751,7 +2751,7 @@ the API directly from a script.
 **Step 3 — read it in Ghidra.** At `0x108340` (image base `0x100000`), retype and rename:
 
 ```c
-/* 📘 Illustrative — constructed listing. */
+/* Illustrative — constructed listing. */
 jstring jni_NativeSigner_sign(JNIEnv *env,jobject thiz,jstring method,jstring path,
                               jstring body,jlong ts)
 {
@@ -2824,7 +2824,7 @@ abandoning the client-side signature as a security control and enforcing authori
 
 ### 9.5 Enterprise — batch analysis across an application portfolio
 
-> **📘 Illustrative** — the forty-application portfolio and its results are a scenario. The
+> **Illustrative** — the forty-application portfolio and its results are a scenario. The
 > **pipeline itself is real code** you can run: it drives `analyzeHeadless`, which was executed on
 > this machine (§9.0). What is unmeasured is the portfolio it is pointed at, and any throughput or
 > hit-rate figure quoted for one.
@@ -2892,7 +2892,7 @@ The output is a CSV a security team can diff release over release. The interesti
 "what libraries exist" but "**what changed**": a new dangerous import, a library that became
 stripped, a jump in JNI surface. Those deltas are where the review effort goes.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > At portfolio scale, the goal is not to understand every binary. It is to reduce forty applications
 > to the five libraries a human should look at this quarter. Ghidra headless is a filter, and the
 > filter's output quality is what determines whether the human time is well spent.
@@ -3044,7 +3044,7 @@ Ghidra when the work is Android native code and the decompiler matters: it is fr
 the team can have it, its decompiler is genuinely good on ARM64, its type management is excellent, and
 its headless mode makes batch work straightforward. IDA Pro when you need the best-in-class
 disassembler for an awkward target, when you rely on a specific IDA plugin ecosystem, when the binary
-is heavily obfuscated and IDA's analysis simply does better on it, or when you are collaborating with a
+is heavily obfuscated and IDA's analysis does better on it, or when you are collaborating with a
 team standardised on it — and you have the budget. radare2 or rizin when you want something scriptable
 and fast from the command line, are working over SSH on a device, or want to do quick triage without
 launching a JVM.
@@ -3158,7 +3158,7 @@ stop when it is answered.
 
 The second stopping rule is cost-based: if a dynamic experiment would answer the question in ten
 minutes and further static reading would take two hours, stop reading. Reversing an algorithm you can
-simply *call* is a common and expensive mistake.
+*call* is a common and expensive mistake.
 
 The third is confidence-based: if you cannot state the answer without hedging, you have not finished,
 and the fix is usually a dynamic experiment rather than more reading.
@@ -3298,7 +3298,7 @@ frida -U -n com.example.app -q -e \
   runtime flag.
 - **Taking a Ghidra address into a live process without adjusting for the base.** Ghidra's addresses
   are relative to the image base; the runtime base is randomised. Always work in `module+offset`.
-- **Reversing an algorithm you could simply call.** If the question is "what does this produce for
+- **Reversing an algorithm you could call.** If the question is "what does this produce for
   input X", `NativeFunction` answers it in minutes. Static reading is for "how does it work", not "what
   is the answer".
 - **Reporting the existence of a function as a finding.** "The binary contains a function that computes
@@ -3364,7 +3364,7 @@ Work each lab twice. The first pass is "get the answer". The second pass is "sta
 without the word *somehow*, what the tool was doing and why the first approach was slower". The second
 pass is what transfers to real targets.
 
-> **⚠️ Warning**
+> **Warning**
 > Analyse only binaries you have written or are explicitly authorised to examine. Reverse engineering
 > may be restricted by licence terms and by law in your jurisdiction independently of your intent, and
 > the fact that a technique is documented here is not authorisation. See

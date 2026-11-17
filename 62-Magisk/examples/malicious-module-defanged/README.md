@@ -1,6 +1,6 @@
 # `malicious-module-defanged` — a hostile module, neutered
 
-> **⚠️ DO NOT INSTALL THIS ON ANY DEVICE.**
+> **DO NOT INSTALL THIS ON ANY DEVICE.**
 > Not on a test device, not on an emulator, not "just to see". It is defanged, and it is still not
 > something to put on a device: the *point* of the exercise is to catch it by reading, and installing
 > it teaches you nothing you could not learn from `cat`.

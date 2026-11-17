@@ -510,7 +510,7 @@ VAULT: CH67{a_d3p3nd3ncy_1s_n0t_a_g4t3}
 `canonicalEnvironment` is an aggregation of reads. Neither is low. Both break under R8 renaming.
 
 A genuinely low-altitude version of route 2 would hook the *reads* — the `FileReader` on
-`/proc/self/status` and the `File.exists` calls — but note that it **cannot** change the `dbg` term,
+`/proc/self/status` and the `File.exists` calls — but it **cannot** change the `dbg` term,
 because that is read directly from an object field with no interposable call. That limitation is
 itself a finding about the design: one of the three terms is not attackable at seam 2 at all.
 

@@ -368,7 +368,7 @@ adb install -r /tmp/ch67-ladder/out/round2/round2.apk
 Run `r1.js` against round 2.
 
 **Q6.** What happens? Read the Frida console carefully — does your hook still fire? Does the app still
-refuse? Describe the symptom in one sentence, and note that this is **exactly** the symptom described
+refuse? Describe the symptom in one sentence, and confirm that this is **exactly** the symptom described
 in the header of
 [`37-RootDetection/scripts/native-root-bypass.js`](../../37-RootDetection/scripts/native-root-bypass.js).
 
@@ -816,7 +816,7 @@ Native: stat("/system/xbin/su", &st) -------+---> kernel
 ```
 
 They meet **in bionic**, not before. A hook on `java.io.File` sits at the very top of the first path
-and is simply not on the second. A hook in libc is on both.
+and is not on the second. A hook in libc is on both.
 </details>
 
 <details>

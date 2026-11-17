@@ -11,7 +11,7 @@ Paths are stable; line numbers are not, and none are quoted.
 
 | Path | What to read it for |
 |---|---|
-| `art/runtime/art_method.h` | **Normative.** Declares `entry_point_from_quick_compiled_code_` inside `PtrSizedFields`. This pointer is the entire managed-hook mechanism. Note that the field's *offset* depends on pointer size and on the ART version, which is why hard-coding it is the biggest source of breakage in public tooling |
+| `art/runtime/art_method.h` | **Normative.** Declares `entry_point_from_quick_compiled_code_` inside `PtrSizedFields`. This pointer is the entire managed-hook mechanism.the field's *offset* depends on pointer size and on the ART version, which is why hard-coding it is the biggest source of breakage in public tooling |
 | `art/runtime/art_method-inl.h` | The accessors, including the pointer-size handling that makes the offset device-dependent |
 | `art/runtime/entrypoints/quick/quick_trampoline_entrypoints.cc` | The trampolines an entry point can hold — resolution, interpreter bridge, JNI bridge. Knowing these values is how you tell "hooked" from "not yet compiled" |
 | `art/runtime/jni/jni_internal.cc` | **Normative** for `JNI::RegisterNatives`. Shows that the runtime copies the function pointer into its own `ArtMethod`, which is why rewriting the caller's array *after* registration accomplishes nothing |

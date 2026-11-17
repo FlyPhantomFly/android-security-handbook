@@ -343,7 +343,7 @@ the next build is not even that.
 starting here is not wrong.
 
 **A2.** The script throws `ClassNotFoundException` inside `Java.perform` and — this is the part that
-catches people — execution simply stops there; later statements in the same `Java.perform` body never
+catches people — execution stops there; later statements in the same `Java.perform` body never
 run, and Frida does not always make that obvious. Finding the new name in a genuinely obfuscated
 build means tracing by behaviour instead: `frida-trace -j`, or hooking a framework API the check must
 use and taking a backtrace.

@@ -326,7 +326,7 @@ One detail worth knowing if you ever rebuild a `super` image: **every logical pa
 between them. Concatenate partition images without reproducing that and you get something that
 flashes cleanly and does not boot.
 
-### 23. `lpdump` fails on my device but the partitions clearly work. Which do I believe?
+### 23. `lpdump` fails on my device but the partitions plainly work. Which do I believe?
 
 **Believe the kernel.** `dmctl table <name>` reports live device-mapper mappings — what is actually
 serving reads. `lpdump` reports the metadata stored in `super`, which is a *description* of what
@@ -361,12 +361,12 @@ undetectable compromise on every device shipping that bootloader — millions of
 sold, with no recall.
 
 If it requires an already-unlocked bootloader, it is usually **Low**. On an unlocked device the
-attacker can simply flash whatever they like. An exploit that grants what the device already grants is
+attacker can flash whatever they like. An exploit that grants what the device already grants is
 not a vulnerability; it is a complicated way to do something easy.
 
 Two follow-ups that separate a senior analysis from a principal one: does exploitation leave a trace
 (if not, it is also an undetectable-persistence primitive), and does the fix bump the anti-rollback
-index (if not, the vulnerable bootloader can simply be reflashed, and the fix is a speed bump).
+index (if not, the vulnerable bootloader can be reflashed, and the fix is a speed bump).
 
 ### 26. Is an unlockable bootloader a security flaw?
 

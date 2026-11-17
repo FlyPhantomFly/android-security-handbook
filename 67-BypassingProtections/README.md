@@ -46,7 +46,7 @@ Imagine you hire a security guard, give them a clipboard, and tell them: *check 
 and if anything looks wrong, refuse them entry.* Reasonable. Now imagine you do all of that inside
 the visitor's own house. The guard is your employee, but they live in a building the visitor owns.
 The visitor can repaint the walls, replace the clipboard, rewrite the rules on it, replace the guard
-with someone who says "yes" to everything, or simply walk around the guard through a door the guard
+with someone who says "yes" to everything, or walk around the guard through a door the guard
 was never told about.
 
 That is what a client-side security control is. Every root check, every certificate pin, every
@@ -85,17 +85,12 @@ apps you own.
 
 ### 1.3 Scope and ethics, stated once and precisely
 
-This is the chapter where the repository's standing ethics note becomes concrete, so it is stated
-here properly rather than as a disclaimer nobody reads.
+This is the chapter where the repository's standing rules become concrete — see
+[SECURITY.md](../SECURITY.md) for the canonical statement.
 
-> **⚠️ Warning**
 > **Everything in this chapter is for applications you own, or applications you have a written
-> authorisation to test.** That is not a formality. Defeating an access control on software you do
-> not own is unauthorised access under the Computer Fraud and Abuse Act in the United States, the
-> Computer Misuse Act 1990 in the United Kingdom, section 66 of the Information Technology Act 2000
-> in India, and their equivalents nearly everywhere else — **regardless of how trivial the control
-> was, and regardless of whether you kept or used anything you found.** "It was only a boolean" is
-> not a defence. Neither is "I only ran a public Frida script".
+> authorisation to test.** Do not point any of this chapter's tooling at software outside that
+> scope. See [SECURITY.md](../SECURITY.md) for authorised-testing scope.
 
 Three concrete rules, in the order they come up in real work:
 
@@ -134,7 +129,7 @@ hard that evidence is to forge. They do not differ in what they ultimately do wi
 That convergence is what makes a general method possible. You do not need a technique per control.
 You need a technique per **seam**, and there are only five seams.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > A client-side control is a pipeline, not a wall:
 > **input → read → verdict → branch → gated code.**
 > A wall must be climbed at its highest point. A pipeline can be cut anywhere along its length, and
@@ -157,7 +152,7 @@ before you go looking for a script here that lives somewhere else.
 | Hooking mechanics in general | `65-Hooking` | Assumed |
 | **The general bypass methodology, anti-debug, anti-Frida, the escalation ladder** | **This chapter** | — |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > If you arrived here from [53-Frida](../53-Frida/README.md) with the symptom *"I attach and the app
 > dies instantly"*, go straight to [§3.12](#312-timing-is-the-whole-game-init_array-jni_onload-and-why-attach-loses)
 > and then run [`scripts/bypass-triage.py`](scripts/bypass-triage.py). You do not need the rest of
@@ -293,9 +288,9 @@ together:
 | **S4 — branch** | (between C and D) | Inside the process, at the `if` | One decision |
 | **S5 — gated code** | D | Inside the process, at the payload | One call |
 
-> **📖 Definition — altitude**
+> **Definition — altitude**
 > How far from the raw input, and how close to the decision, an intervention sits. **Low altitude**
-> means near the input: broad, robust, invisible to the app, and often heavy-handed. **High
+> means near the input: broad, durable, invisible to the app, and often heavy-handed. **High
 > altitude** means near the decision: surgical, fast, fragile, and easy for the app to notice.
 > "The lowest altitude that works" is this chapter's default rule, and section 3.7 explains why.
 
@@ -391,7 +386,7 @@ Keep this open. Every later subsection refers back to it, and
 | **S4 branch** | Which way the `if` goes | Hook the branch, patch the conditional jump | Very low | Easily, and patching leaves a permanent artefact | One decision |
 | **S5 gated code** | Nothing — you call the payload directly | `Java.use(...).open()`, call the native function through `NativeFunction` | Low, when a reachable entry point exists | Not at all — no control was touched | One call |
 
-> **⚠️ Warning**
+> **Warning**
 > The two cheapest columns to read (S3 and S4) are the two most expensive to rely on. Cost-to-you and
 > robustness are not the same axis, and the table above is deliberately arranged so that you notice
 > the diagonal. Section 3.7 is entirely about that diagonal.
@@ -432,7 +427,7 @@ frida -H 127.0.0.1:1337 -f com.target.app -l agent.js --no-pause
 That last example is the purest illustration of seam 1 in the whole chapter. A port check is not
 bypassed. It is made *true*.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > `resetprop` writes into the properties area — a shared-memory region mapped read-only into every
 > process, backed by `/dev/__properties__`. Because it is shared memory rather than a file, a
 > rewritten property is visible to processes that have already started, and there is nothing in the
@@ -488,7 +483,7 @@ why libc interposition is the default technique and the Java hook is the conveni
 | syscall (seccomp-bpf, `ptrace`, kernel) | Yes | Yes | Yes | Hours to days |
 | Patch the binary | Yes | Yes | Yes | Depends entirely on obfuscation |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Chapter 37 ships [`native-root-bypass.js`](../37-RootDetection/scripts/native-root-bypass.js),
 > which is the reference implementation of libc interposition for root artefacts. Do not rewrite it.
 > Read its design rules — surgical denials, natural-looking failures, never overwrite the caller's
@@ -578,7 +573,7 @@ Java.perform(function () {
     if-eqz v1, :untrusted
 ```
 
-> **⚠️ Warning — the inlining trap**
+> **Warning — the inlining trap**
 > [18-ARM §5.4](../18-ARM/README.md) measured this and it is the most useful negative result in the
 > repository: a native check function was patched to `return 1`, **verified** to return 1, and the
 > gated function still refused — because clang had **inlined** the check, and the patched copy was
@@ -615,7 +610,7 @@ that only exists when the checks genuinely pass — a server-issued token, a Key
 garbage rather than the secret. That is the difference between a **gate** and a **dependency**, and
 it is the single most useful piece of defensive advice in this chapter.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > A gate says *"you may not pass"*. A dependency says *"there is nothing here to take"*.
 > Gates are bypassed. Dependencies must be satisfied.
 > The CTF in [lab-04](labs/lab-04-ctf-the-boolean-that-lied.md) turns on exactly this distinction.
@@ -673,7 +668,7 @@ consumer of that truth — a log line, a telemetry event, a field written earlie
 still holds it. Section 5.3 covers apps that deliberately record the raw signals *before* computing
 the verdict, precisely to catch a seam-3 hook.
 
-> **📖 Definition — the lowest-altitude rule**
+> **Definition — the lowest-altitude rule**
 > *Attack at the lowest altitude that achieves your objective in the time you have.* Start at seam 1
 > or 2. Move up only when the lower seam is unavailable or uneconomic, and record why you moved —
 > the reason is a finding about the app's design.
@@ -726,7 +721,7 @@ therefore what you can triage.
 | **Degrade silently** | continue with wrong data | **Nothing** | **High** — you may not notice for hours | Medium; misfires produce silent corruption for real users |
 | Delay | sleep, then fail later | Confusing; the failure is far from the cause | **High** | Medium |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Silent degradation is the response that will actually cost you an afternoon, and it is the one
 > [`scripts/bypass-triage.py`](scripts/bypass-triage.py) explicitly cannot detect — it says so in its
 > own output. The counter is **differential testing**: run the same flow instrumented and clean, and
@@ -911,7 +906,7 @@ the same reason:** they detect the *mechanism* of hooking rather than the *ident
 You cannot rename your way out of them. When you meet one, the ladder has reached its top and
 [§3.13](#313-when-to-stop-bypassing-and-go-static) applies.
 
-> **⚠️ Warning**
+> **Warning**
 > [53-Frida §5.3](../53-Frida/README.md) carries this warning and it is repeated here because it is
 > the professional heart of the matter: *bypassing every anti-instrumentation control and then
 > reporting "the app is trivially instrumented" is technically true and professionally useless.* The
@@ -963,7 +958,7 @@ implements the `JNI_OnLoad` interception for step 4, and — importantly — **t
 you attached instead of spawning**, because that single mistake accounts for more wasted hours than
 any technical difficulty in this chapter.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > Measured on the i9000S with this chapter's demo app: the tombstone's frame `#01` was
 > `libch67guard.so (JNI_OnLoad+908)`, with frame `#00` being `abort+180` inside libc. Frame `#00` is
 > useless — everything that aborts goes through it. **Frame `#01` is the answer**, because it is the
@@ -996,7 +991,7 @@ dumps."* Here is the decision rule that line implies.
 - The logic is enormous and you only need one branch of it.
 - You are still exploring and do not yet know what you want.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > **Hooking rents the answer. Static analysis buys it.** Rent while you are still deciding what you
 > want. Buy once you know you will need it more than a few times, or once the rent starts rising
 > every round.
@@ -1124,7 +1119,7 @@ technique in this chapter against it and watch them all fail for the right reaso
 self-report as telemetry and gates on a nonce it issued, and its comments say which attack each
 decision does and does not resist.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The ladder's real lesson is not "attackers always win". It is that **rounds 1 to 4 are all the same
 > round** — each buys hours, none changes the outcome — and **round 5 is a different game**. When you
 > write the remediation for a client, do not tell them to add a fifth check. Tell them which decision
@@ -1141,7 +1136,7 @@ decision does and does not resist.
 | System CA store location | `/system/etc/security/cacerts` | Same | Same | Same | **APEX** (`/apex/com.android.conscrypt/`) |
 | `targetSdk` gate on user CAs | 23 and below trust user CAs by default | 24+ do not | 24+ do not | 24+ do not | 24+ do not |
 
-> **⚠️ Warning**
+> **Warning**
 > The APEX row is measured, not assumed: on the repository's API 30 device
 > `/apex/com.android.conscrypt/` exists but has **no `cacerts` directory**, and the live store was
 > `/system/etc/security/cacerts` with 139 files. The move is API 34, not earlier. Check with
@@ -1180,10 +1175,10 @@ TEE or StrongBox, never enters the app's address space, and either produces corr
 not. This is the canonical example of the gate-versus-dependency distinction from
 [§3.5](#35-seam-5--the-gated-code), and it is what a defender should be aiming at.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Take any control you have never seen before and fill in that row. If S3 and S4 are non-empty, it is
 > bypassable at one line and the only questions left are cost and detectability. If S3 and S4 are
-> **empty** — if there is nothing to decide because the protected thing simply does not exist without
+> **empty** — if there is nothing to decide because the protected thing does not exist without
 > the right input — you are looking at a dependency, and you will have to satisfy it rather than
 > defeat it.
 
@@ -1223,7 +1218,7 @@ nothing at all about seam 5, which is where the demo app in this chapter leaks i
 two that move the decision**: make the gated code depend on the check, or move it off the device.
 Everything else buys hours.
 
-> **🔍 Pentester's Note — how to write this into a report**
+> **Pentester's Note — how to write this into a report**
 > When a client asks "what should we do", do not hand them the left column. Hand them the two rows
 > above with their names: *dual-route reading* as the cheap immediate win, and *send the capability,
 > never the permission* as the structural fix. Then say plainly that the rest of the table buys time
@@ -1334,7 +1329,7 @@ code for `REASON_EXIT_SELF`** and **the signal number for `REASON_SIGNALED` / `R
 This is API 30+. On earlier releases the section does not exist and there is no equivalent; the
 script degrades to logcat evidence and says so.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > The label AOSP prints for reason 5 is `APP CRASH(NATIVE)` — **with parentheses inside it**. The
 > obvious regex for the dumpsys line (`reason=(\d+) \(([^)]*)\)`) fails on exactly that record, and
 > the failure is silent: the most interesting death you have parses as reason 0, "no information
@@ -1500,7 +1495,7 @@ Each of these is a genuine finding class, distinct from "the control can be bypa
 | **Pinning bypass leading to credential capture** | Unpin, then read the login request | What is in the traffic |
 | **Silent-degradation misfire** | A false positive quietly corrupts real users' data | Availability and correctness, not confidentiality |
 
-> **⚠️ Warning**
+> **Warning**
 > `53-Frida/scripts/sign-oracle.js` is the reference implementation of the third row and its header
 > makes the point that this chapter should repeat: **a valid signature proves nothing unless an
 > invalid one is also shown to be rejected.** Producing a signed request and having the server accept
@@ -1567,7 +1562,7 @@ anti-Frida check is an hour not spent making the server re-verify. The ladder in
 
 **Now the severity conversation, which is where most reports go wrong.**
 
-> **🔍 Pentester's Note — a bypassed control is not automatically a finding**
+> **Pentester's Note — a bypassed control is not automatically a finding**
 > Ask three questions, in this order, and let the answers set the severity:
 >
 > 1. **What was the control protecting?** If the answer is "a boolean that gates a screen the user
@@ -1605,7 +1600,7 @@ analysis:
 - **To avoid being analysed.** The malware's own anti-analysis: emulator detection, debugger
   detection, and delayed unpacking, which is
   [40-Obfuscation](../40-Obfuscation/README.md)'s subject. The structure is identical to the
-  legitimate case and the seams are the same; the sample is simply on the other side of the table.
+  legitimate case and the seams are the same; the sample is on the other side of the table.
 
 The practical consequence for an analyst: your instinct will be to hook aggressively, and a sample
 that detects it may behave benignly and teach you nothing. Spawn, install early, and prefer seam 1
@@ -1625,7 +1620,7 @@ it, the artefacts are the same list, read in the opposite direction:
 | `ApplicationExitInfo` history | `dumpsys activity exit-info <pkg>` | Repeated `CRASH_NATIVE` at launch is a fingerprint of a fighting app |
 | Magisk / APatch presence | `mount \| grep -E 'magisk\|APatch'` | Rooting stack in use |
 
-> **⚠️ Warning**
+> **Warning**
 > The repository's own device is a live example of why posture must be established first: on the
 > Redmi, `mount | grep cacerts` shows **APatch has replaced `/system/etc/security/cacerts` with a
 > tmpfs** containing an interception CA, while the SELinux context reports `u:r:magisk:s0`. A
@@ -1707,7 +1702,7 @@ will be `a.a.a(Landroid/content/Context;)La/a/b;` — the *shape* survives renam
 | S4 | `if (!x) { finish(); }`, `if (v.trusted) {...} else {...}` |
 | S5 | The method inside the `if` — often the only one doing anything interesting |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `jadx` under-reports its own failures by roughly 30×: on a real 17.5 MB APK its console said
 > `finished with errors, count: 61` while the output tree contained **2,104 refused methods across
 > 1,424 files** ([56-JADX](../56-JADX/README.md) counts the tree, not the summary). If the verdict
@@ -1768,7 +1763,7 @@ invoke-direct {v1, v2, v3}, Ljava/net/InetSocketAddress;-><init>(Ljava/lang/Stri
 .end method
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > `.registers` must still be large enough for any remaining code, and a method that declared a
 > return type must still return one. The classic beginner failure is patching
 > `.method public static isRooted()Z` to `return-void`, which produces a `VerifyError` at class load
@@ -1822,7 +1817,7 @@ if (is_compromised()) { abort(); }
 | Packing | The real library is decrypted at runtime and never on disk | Dump from memory once loaded ([40-Obfuscation](../40-Obfuscation/README.md) ships `frida-dexdump-lite.js`) |
 | Inlining | The check function you patched is not called by anything | Verify at the branch. [18-ARM §5.4](../18-ARM/README.md) measured this exact failure |
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Obfuscation raises the cost of seams **3, 4 and 5** — the ones that need names and structure. It
 > barely touches seams **1 and 2**, because `access()` is still `access()` no matter what the caller
 > is called. That is a second, independent argument for the lowest-altitude rule.
@@ -1932,7 +1927,7 @@ fire and reading `dumpsys activity exit-info`. These are observations, not docum
 | `POISON` — silent degradation | *(no record)* | — | full | Vault returned `ch[CLNTSDBLANSNTALCK]` instead of the real flag |
 | Nothing fired (clean run) | *(no record)* | — | full | Vault returned `CH67{cl13nt_s1d3_b00l3an_1s_n0t_a_l0ck}` |
 
-> **⚠️ Warning — do not read `status` without reading `reason` first**
+> **Warning — do not read `status` without reading `reason` first**
 > The same field means the **exit code** for reason 1 and the **signal number** for reasons 2 and 5.
 > `status=6` after `reason=5` is SIGABRT; `status=6` after `reason=1` would be `System.exit(6)`.
 > Reading it unconditionally is how people conclude that an app "aborted" when it exited cleanly.
@@ -2042,7 +2037,7 @@ frame above it in the source — `Guard.evaluate` — is the verdict. Now you kn
 [§3.7](#37-why-the-verdict-is-usually-the-wrong-seam) tells you to go *down* from there rather than
 hooking either.
 
-> **⚠️ Warning**
+> **Warning**
 > `kpt.block()` keeps the process alive by refusing the kill. That is **not a bypass**. The app is
 > now running in a state its own author considered unsafe: half-initialised, with the gated code
 > still gated, and every subsequent failure attributable to your intervention rather than to the app.
@@ -2105,7 +2100,7 @@ Process.enumerateRanges('r--').forEach(function (r) {
 });
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > `adb shell` is **SELinux-denied** from reading another app's `/proc/<pid>/maps` on Android 13 —
 > measured in this repository, and the reason `19-Memory/examples/fixture-app-maps.txt` is synthetic
 > and labelled as such. Root is required, and root on a device with SELinux enforcing may still need
@@ -2210,7 +2205,7 @@ have it.
 | Response codes from the server | Burp | A server rejecting requests it used to accept is a strong signal |
 | Timing | `am start -W`, or timestamps in logcat | The "delay" response shows up here and nowhere else |
 
-> **⚠️ Warning**
+> **Warning**
 > This is also the technique that catches **your own** mistakes. A hook that corrupts an argument
 > produces exactly the same signature as a poisoned session — correct-looking execution, wrong
 > output. Diff a run with your script loaded but *disabled* (every script in this chapter has an
@@ -2502,7 +2497,7 @@ load-bearing. Flip every boolean — nothing changes. Search the APK for the fla
 endpoint require authentication at all? does it send a *capability* or a *permission*? Those are real
 questions with real answers, and none of them is answered by a hook. That is the point.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Compare the two apps' diffs, not their features. They run the same seven checks. One of them keeps
 > the secret in `Vault.BLOB` and gates it with an `if`; the other does not have the secret at all.
 > Every technique in this chapter is a way of getting past an `if`.
@@ -2564,7 +2559,7 @@ The first asks ART whether a **JDWP** debugger is attached. The second asks the 
 
 **Q. Describe the five seams of a client-side control and give the cost and detectability of each.**
 Input, read, verdict, branch, gated code. Input is device-wide, nearly undetectable, expensive to set
-up once and free afterwards. Read is process-scoped, robust against renaming, detectable only by
+up once and free afterwards. Read is process-scoped, survives renaming, detectable only by
 counter-instrumentation. Verdict and branch are one-liners that are easily detected and break on
 every release. Gated code is undetectable because no control is touched, but requires a reachable
 entry point. Default to the lowest that works.
@@ -2624,7 +2619,7 @@ every other.
 **Q. Argue the business case for and against spending an engineering quarter on client-side
 resilience.**
 **For:** against unattended, scaled fraud, cost is the correct currency; an automation pipeline that
-must be re-engineered every release may simply move to a softer target. Some contractual and
+must be re-engineered every release may move to a softer target. Some contractual and
 regulatory regimes require demonstrable controls. And resilience buys detection time even when it
 does not prevent.
 **Against:** it is a treadmill with no terminal state; the same quarter spent on server-side
@@ -2806,10 +2801,10 @@ adb forward --remove-all          # if you created any
   Root detection, pinning, tamper checks, anti-debug and Play Integrity differ in how they gather
   evidence and not at all in what they do with it.
 - **Five seams, five costs.** Seam 1 (input) is device-wide and nearly invisible. Seam 2 (read) is
-  process-scoped and robust. Seams 3 and 4 (verdict, branch) are one-liners that are easily detected
+  process-scoped and durable. Seams 3 and 4 (verdict, branch) are one-liners that are easily detected
   and break every release. Seam 5 (gated code) touches no control at all.
 - **The lowest altitude that works is the right one.** Not because it is elegant, but because it is
-  robust against renaming, invisible to counter-instrumentation, and — most importantly — it teaches
+  survives renaming, invisible to counter-instrumentation, and — most importantly — it teaches
   you what the app actually cares about.
 - **Timing decides everything about the native tier.** `.init_array` runs inside `dlopen`;
   `JNI_OnLoad` runs inside `System.loadLibrary`. Both are before any Java. **Spawn, never attach**,

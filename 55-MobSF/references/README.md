@@ -2,7 +2,7 @@
 
 Annotated. Every entry says what it is *for*, and — where it matters — what it will not tell you.
 
-> **⚠️ Note on provenance.** MobSF was **not run** while this chapter was written; see
+> **Note on provenance.** MobSF was **not run** while this chapter was written; see
 > [README §1.6](../README.md#16-installation-reality--mobsf-was-not-run-here). Where this chapter
 > describes MobSF's behaviour it is describing the project's own documentation and source layout,
 > labelled `EXPECTED SHAPE`. Where it quotes a number, that number came from a tool that really ran

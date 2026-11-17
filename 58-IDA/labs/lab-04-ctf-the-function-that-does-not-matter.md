@@ -54,7 +54,7 @@ You may use either build. `libsession.so` (stripped) is the honest challenge; `l
 makes the listings readable while you learn. Flags 1, 2, 3 and 5 are solvable from the stripped build
 alone, and doing so is worth the extra difficulty.
 
-> **⚠️ Warning**
+> **Warning**
 > Every address in this lab is specific to one build. Yours will differ if you use a different NDK, a
 > different API level, or a different optimisation level. **The flags are not addresses** — every one
 > is an invariant fact — precisely so the challenge survives a rebuild. If a hint quotes an address,
@@ -234,7 +234,7 @@ expectation, then count. The gap is the finding.
 "$NDKBIN/llvm-readelf" -x .rodata /tmp/ch58/libsession.so
 ```
 
-You are looking for a run of bytes that is not ASCII, not obviously a table, and referenced by exactly
+You are looking for a run of bytes that is not ASCII, not visibly a table, and referenced by exactly
 one function.
 
 <details>
@@ -345,7 +345,7 @@ EOF
 Build it against the same sources for your device's ABI, push both to a directory of your own under
 `/data/local/tmp`, and run with `LD_LIBRARY_PATH=.`.
 
-> **⚠️ Warning**
+> **Warning**
 > Use a directory name nobody else will pick — other chapters in this repository put workspaces under
 > `/data/local/tmp` and one of them was live while this lab was written. **Remove yours when you are
 > done, and remove only yours.**

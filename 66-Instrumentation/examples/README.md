@@ -4,8 +4,9 @@ Sources only. **This directory ships no binaries**: no `.apk`, no `.dex`, no `.c
 `build-instrumentation-fixtures.sh` builds everything **out of tree**, into `$OUTDIR` (default
 `${TMPDIR:-/tmp}/ch66-build`), and generates its two throwaway signing keys there as well.
 
-**Authorised testing only.** `vault-target` holds fixture secrets and `vault-probe` reads another
-package's private data by design. Install them on a device you own and run `--uninstall` afterwards.
+`vault-target` holds fixture secrets and `vault-probe` reads another package's private data by
+design. Install them on a device you own and run `--uninstall` afterwards. See
+[SECURITY.md](../../SECURITY.md) for authorised-testing scope.
 
 ---
 

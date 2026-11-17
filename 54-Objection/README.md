@@ -58,7 +58,7 @@ same script again and again:
 None of these is hard. All of them are *the same every time*. Writing them out by hand on
 each engagement is not craftsmanship; it is retyping.
 
-> **📖 Definition — Objection**
+> **Definition — Objection**
 > Objection is a Python command-line program that injects one large, pre-written Frida agent
 > into a target process and then gives you an interactive prompt (a REPL — a Read-Eval-Print
 > Loop, a prompt that reads a line you type, does what it says, prints the result, and asks
@@ -90,7 +90,7 @@ Here is the sentence this chapter exists to justify, taken from
 Read that again, because it is the whole chapter compressed into two clauses. Objection
 trades **knowledge for speed**. That is not a criticism; it is a description. Every tool that
 provides a default is making that trade on your behalf, and most of the time the trade is
-correct — you do not want to understand your compiler's register allocator in order to
+correct — you do not want to understand your compiler's register allocator to
 compile a program.
 
 The trade goes wrong in exactly one situation, and it is a situation testers find themselves
@@ -101,7 +101,7 @@ thirteen hard-coded paths in `SecurityUtil.isRooted()`, it runs entirely in Java
 the four-line Frida script that defeats it" is worth something, because it tells them what to
 change.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Objection is a multi-tool with the blades already open. It is the right thing to reach for
 > when you do not yet know which blade you need, and the wrong thing to still be holding when
 > you have found out. The moment your question changes from *"is there anything here?"* to
@@ -160,7 +160,7 @@ The measurements were taken against an application **built for this chapter** �
 | Device | Redmi **`M2101K6P`** (`sweetin`), MIUI 12.5, **Android 11 / API 30**, arm64-v8a, rooted (Magisk), SELinux Enforcing |
 | Target | `com.pentest.ch54.target`, built by [`examples/build.sh`](examples/build.sh), installed via the root path after `INSTALL_FAILED_USER_RESTRICTED` |
 
-> **⚠️ Warning — how these sessions were driven, and why it matters to you**
+> **Warning — how these sessions were driven, and why it matters to you**
 > On this Windows host, `objection ... explore` **cannot run without a real terminal**. The
 > REPL is constructed *before* any command executes, and `prompt_toolkit` aborts when standard
 > input is not a console. Every session below was therefore driven through Objection's own
@@ -224,7 +224,7 @@ sketches:
   Objection's own `env` command reports `heap: 7644640` on the reference device. That is
   memory the app did not allocate, in a runtime the app does not know exists.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > The `runtime` field of that same measurement reads `QJS` — **QuickJS**, not V8. Frida
 > defaults to QuickJS on Android because it is far smaller and starts faster. It is also
 > slower for heavy loops, which is why a `memory search` over a large process in Objection is
@@ -316,7 +316,7 @@ The practical consequences are worth stating plainly because each one surprises 
 3. **Your footprint is fixed and large.** Anything measuring how much of the process changed
    — an integrity check, an anti-tamper routine, a memory-scanning defence — sees the whole
    agent, not the one command you ran. This is why
-   [53's references](../53-Frida/references/README.md) note that Objection "changes more of
+   [53's references](../53-Frida/references/README.md)Objection "changes more of
    the process than a targeted script".
 4. **A bug anywhere in the bundle can break your session**, including in code paths for a
    platform you are not testing.
@@ -359,7 +359,7 @@ sessions, five minutes apart, with the identical command typed in both:
 Both sessions ran the same command against the same app on the same device and produced
 opposite results. Nothing in Objection's output distinguishes the two cases.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Before every Objection session that involves hooks — as opposed to pure filesystem
 > browsing — run `adb shell am force-stop <package>` first. It costs one second and it
 > converts an ambiguous default into a known one: Objection will spawn, and your hooks will
@@ -407,7 +407,7 @@ The layout you will find, with the parts that matter:
 | `api/rpc.py` | The headless HTTP bridge, `POST|GET /rpc/invoke/<method>` |
 | `state/*.py` | Connection, device, job and filesystem state singletons |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `commands/android/` is **small**. Measured on 1.11.0: `hooking.py` is 358 lines,
 > `heap.py` 167, `keystore.py` 46, `pinning.py` **26**, `root.py` **25**. The Python side is
 > nearly empty because it does nothing except call one function and tabulate the answer. All
@@ -558,7 +558,7 @@ implementations respectively:
 **Three** implementations. That number is the subject of the next section, and it is smaller
 than almost anyone expects.
 
-> **⚠️ Warning**
+> **Warning**
 > `jobs kill` unloads the hooks, but it cannot undo side effects. If a job wrote a file,
 > changed a proxy setting, or cleared the KeyStore, killing it changes nothing about that.
 > `android keystore clear` in particular is irreversible and there is no confirmation prompt.
@@ -619,7 +619,7 @@ taxonomy that [37-RootDetection §2.2](../37-RootDetection/README.md) defines:
 
 Three partial coverages and nine misses. This is not a criticism of Objection — the tool
 never claimed otherwise, and its command help says "**Attempt** to disable root detection".
-It is a correction to the folklore, which treats the command as comprehensive.
+It is a correction to the folklore, which treats the command as a full bypass.
 
 #### 3.5.1 Four specific gaps you will hit this month
 
@@ -671,7 +671,7 @@ I CH54: VERDICT score=0/5 rooted=false
 That is a finding in its own right and it belongs to [37 §3.14](../37-RootDetection/README.md),
 but it has an immediate consequence for this chapter:
 
-> **⚠️ Warning — the no-op that looks exactly like a success**
+> **Warning — the no-op that looks exactly like a success**
 > On this device, running `android root disable` changes the verdict from 0/5 to 0/5. The
 > command prints a job identifier and reports success. **You cannot tell "the bypass worked"
 > from "there was nothing to bypass".** Objection gives you no way to distinguish them, and
@@ -756,7 +756,7 @@ attach-versus-spawn hazard as §2.4, showing up not as "the check already happen
 hook is now unreachable" — and it is why `adb shell am force-stop` before connecting is the
 single cheapest reliability improvement available to an Objection user.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Take the shape of this result rather than its exact numbers. The numbers are specific to
 > one device, one Android version and one deliberately-constructed app. The *shape* — some
 > checks flip, some are outside the envelope, some are inside the envelope and still do not
@@ -780,7 +780,7 @@ to find out which check fires.
 
 What you must not do is *report* either outcome. A success is not a finding; it is a hint.
 [37's own FAQ](../37-RootDetection/faq.md) puts the rule in one line: "Use it as a
-thirty-second probe. If it works, note that the app's protection is Java-only and move on. If
+thirty-second probe. If it works,the app's protection is Java-only and move on. If
 it does not, run the tracer."
 
 ### 3.6 `android sslpinning disable`, hook by hook
@@ -807,7 +807,7 @@ default machinery. Hook 1 covers the "trust everything" `SSLContext` idiom. Hook
 cover OkHttp. Hooks 4 and 7 cover two specific cross-platform frameworks (Appcelerator
 Titanium and a Cordova/PhoneGap plugin) and will never fire on a native app.
 
-> **⚠️ Warning — hook 3 is a time bomb, and it is worth understanding why**
+> **Warning — hook 3 is a time bomb, and it is worth understanding why**
 > Look at the overload signature Objection asks for:
 > `certificatePinner.check$okhttp.overload("java.lang.String", "u15")`.
 > `u15` is not a type. It is an **R8-obfuscated class name** from one particular build of one
@@ -839,7 +839,7 @@ every process, and `SSLContext` likewise. The hooks really did install. But the 
 nothing whatever about whether the app pins, whether it makes TLS connections, or whether
 anything was bypassed.
 
-> **🔍 Pentester's Note — the three-line rule**
+> **Pentester's Note — the three-line rule**
 > Those three lines will appear for essentially **every** Android application you ever run
 > this command against, pinned or not, networked or not. Treat them as confirmation that the
 > agent is alive, and as nothing else. The lines that carry real information are the ones
@@ -944,10 +944,10 @@ signatures**, in the form you need to write `.overload("java.lang.String")` in a
 script. That is Objection at its best — it is doing the tedious part of the job that precedes
 writing your own code.
 
-> **⚠️ Warning — `list classes` means *loaded*, not *present***
+> **Warning — `list classes` means *loaded*, not *present***
 > These commands read the runtime's class table. A class that the app has not touched yet is
 > not there. If you connect, enumerate, and conclude that a class does not exist, you may
-> simply have looked before the app loaded it. This is [53 §7.4.2](../53-Frida/README.md)'s
+> have looked before the app loaded it. This is [53 §7.4.2](../53-Frida/README.md)'s
 > ClassLoader problem, and Objection inherits it completely. Drive the app to the screen you
 > care about *first*, then enumerate. Cross-check against a static class list from
 > [56-JADX](../56-JADX/README.md) — 56 explicitly names Objection's enumerator as the useful
@@ -1015,7 +1015,7 @@ The consequences are practical and people get them wrong constantly:
 ### 3.8 Filesystem, heap, KeyStore, memory and SQLite
 
 The rest of the command surface, in one pass. These are the commands where Objection is
-simply *convenient* — there is little to misunderstand, and the time saved is real.
+*convenient* — there is little to misunderstand, and the time saved is real.
 
 **Filesystem.** `ls`, `cd`, `pwd`, `file cat`, `file download`, `file upload`, `rm`. Objection
 starts you in the app's private directory and every operation runs **as the app's UID**, from
@@ -1051,7 +1051,7 @@ no confirmation and no undo.** [49-KeyStore §7.8](../49-KeyStore/README.md) cov
 aliases mean and — critically — why listing an alias tells you nothing about whether the key
 material is extractable. On a device with hardware-backed keys it is not.
 
-> **⚠️ Warning**
+> **Warning**
 > `android keystore clear` on a real user's device destroys data that may be unrecoverable —
 > encrypted database keys, credentials, device-bound tokens. There is no prompt. On a shared
 > or personal device this is a destructive action with no undo. Do not type it to see what
@@ -1071,7 +1071,7 @@ than a specific answer.
 **local copy**, and can sync changes back with `--sync`. Understand the "local copy" part: you
 are querying a snapshot, and by default your writes go nowhere.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > [33-Storage](../33-Storage/README.md) measured that deleted rows survive in the SQLite
 > **write-ahead log**: a logout that deleted two rows left all four secrets readable in a
 > 61,832-byte `-wal` file while SQL reported them gone. `sqlite connect` queries the database
@@ -1124,7 +1124,7 @@ What it costs you — and these are not Objection's fault, they are the gadget's
 | App bundles / splits | You must handle every split, or the app crashes on a missing library |
 | The process is named `Gadget` | You connect with `-g Gadget`, **not** the package name |
 
-> **⚠️ Warning — `patchapk` depends on `apktool`, and that is where it fails**
+> **Warning — `patchapk` depends on `apktool`, and that is where it fails**
 > `patchapk` shells out to `apktool` to decode and rebuild resources. The overwhelming
 > majority of `patchapk` failures are apktool failures on some resource in a large modern
 > app, reported in apktool's vocabulary rather than Objection's, and they have nothing to do
@@ -1178,7 +1178,7 @@ Three sharp edges, all measured while writing this chapter:
   `getattr(rpc, method)(*post_data.values())`, so your JSON *keys are ignored* and only the
   order of the values matters. `{"c": "..."}` and `{"anything": "..."}` behave identically.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > API mode is how you make Objection reproducible. A REPL session is a story you tell about
 > what you did; a shell script full of `curl` calls is an experiment somebody else can re-run.
 > [51 §7.8](../51-DynamicAnalysis/README.md)'s runbook asks you to record every mutation you
@@ -1225,13 +1225,13 @@ the time of writing; the *rule* in the last column is what generalises:
 | 1.12.x | 17.x | 17.x | Works | The pairing 1.12 was built for |
 | any | 16.x | 16.x, different ABI | Fails at inject | 64-bit server cannot inject a 32-bit process |
 
-> **⚠️ Warning — the rule that actually saves you the afternoon**
+> **Warning — the rule that actually saves you the afternoon**
 > **Pin all three, and derive the server version from the host, never the other way round.**
 > `frida --version` on your workstation is the authority; download the `frida-server` binary
 > whose version string equals it exactly, for the ABI of the *process* you are attacking (not
 > merely of the device — see [53 §7.1.1](../53-Frida/README.md)). Then pin `objection` in the
 > same `requirements.txt`. Upgrading one of the three because pip suggested it is how a
-> working setup becomes a broken one overnight — and note that Objection *actively* suggests
+> working setup becomes a broken one overnight — and confirm that Objection *actively* suggests
 > this on every single run, printing "A newer version of objection is available!" before it
 > does anything else. Resist it mid-engagement.
 
@@ -1379,7 +1379,7 @@ effective and why they are the two hooks that fire on essentially every app. The
 Play-Services-updatable copy) — an app bundling its own Conscrypt is not covered by these two
 hooks at all.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > `TrustManagerImpl` moved between Android versions and Objection's own comments record the
 > archaeology: the `verifyChain` hook cites NCC Group's 2017 network-security-config research
 > and SenseP­ost's 2018 follow-up, and `checkTrustedRecursive` cites a 2018 Mediaservice post.
@@ -1510,7 +1510,7 @@ The detection consequences follow directly:
 - **Memory-footprint heuristics** — an app that measures its own JS-adjacent heap or scans for
   large anonymous RW regions has a much easier time with a 7.6 MB agent than with a 200 KB one.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > If an app behaves normally under a small hand-written Frida script and dies under Objection,
 > do not conclude the app has "anti-Objection" logic. The far likelier explanation is that
 > something in the megabyte of agent you did not need — an iOS module, an unrelated hook —
@@ -1532,7 +1532,7 @@ requirements directly. The controls it is used to evaluate:
 | MASVS-RESILIENCE-1/2/3/4 | `android root disable` — and its limits are the point | [37](../37-RootDetection/README.md), [38](../38-TamperDetection/README.md) |
 | MASVS-PRIVACY-1 | `android clipboard monitor`, `android ui screenshot` | [33](../33-Storage/README.md) |
 
-> **⚠️ Warning**
+> **Warning**
 > MASVS-RESILIENCE is the row where tool-driven testing produces the worst reports. The
 > control is not "the app cannot be instrumented" — no app can achieve that against a
 > determined attacker with root. The control is about *raising cost*. A report that says
@@ -1832,7 +1832,7 @@ works, that was it.
 process was spawned fresh, and the app still knows it is rooted. This is §3.5's coverage table
 in the flesh. There is no Objection-level fix. **This is the exit.**
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Failures 3 and 4 look *identical* from Objection's output — both are "it said it worked and
 > nothing happened". `force-stop` and reconnect is the one-minute experiment that separates
 > them, and it should be the first thing you try, every time, before you start theorising
@@ -1859,7 +1859,7 @@ class_methods` to get exact signatures, run `android hooking generate simple` to
 scaffold, then open an editor. [53 §7.3](../53-Frida/README.md) covers building an agent
 library so this handoff gets cheaper every time you make it.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Objection answers *"is there anything here?"*. Frida answers *"what exactly is here, and
 > why?"*. Both questions are worth asking, and they are worth asking in that order — running
 > Objection first is efficient, not lazy. Reaching for a hand-written script before you know
@@ -2229,7 +2229,7 @@ done > "triage-$PKG.json"
 
 That file is evidence. A scrollback is a memory.
 
-> **⚠️ Warning**
+> **Warning**
 > `android hooking list activities` reads the **package manager's** view. It sees
 > manifest-declared components only. [29-BroadcastReceivers](../29-BroadcastReceivers/README.md)
 > measured that **299 of 431** distinct broadcast actions registered by third-party processes
@@ -2279,7 +2279,7 @@ which is a statement about your tooling. It is: "root detection is implemented o
 Java layer and is not defeated by stock instrumentation tooling; defeating it required
 *<whatever it required>*", which is a statement about the app.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Some apps crash the instant Objection injects, while a 40-line Frida script attaches
 > cleanly. That is usually not a targeted anti-Objection defence — it is a megabyte of agent
 > and 7.6 MB of heap tripping a heuristic that a small script does not. Reaching for the
@@ -2319,7 +2319,7 @@ four possible reasons.**
 (1) The app pins somewhere Objection does not hook — native TLS, `network_security_config`
 `<pin-set>`, a WebView, or a bundled Conscrypt. (2) The proxy is not actually configured, or
 the app ignores the system proxy. (3) The connection was already established before you
-hooked. (4) There is no TLS traffic on the path you exercised at all. Note that Objection's
+hooked. (4) There is no TLS traffic on the path you exercised at all.Objection's
 output cannot distinguish any of these, which is the point.
 
 **Q. Why does `android hooking list classes` return classes that are not in the APK, and miss
@@ -2400,7 +2400,7 @@ package crossed a major version and no longer speaks to the deployed `frida-serv
 symptom is a connect-time failure naming major versions. If instead connect succeeds and
 commands fail, Objection's agent is now mismatched with the server's JS API. Either way the
 fix is to move all three together, and the process fix is to pin them so `--upgrade` cannot
-move one alone. Note that Objection prints an upgrade advertisement on **every** run, which
+move one alone.Objection prints an upgrade advertisement on **every** run, which
 is what causes this.
 
 ### Principal Engineer

@@ -8,11 +8,11 @@
 
 > **Provenance.** Ghidra **is** installed on the machine this chapter was written on (12.1.2 PUBLIC,
 > Java 24.0.2) and was run headless against the chapter's own target, so the tool behaviour this lab
-> relies on is **✅ Measured**. Any decompiler listing quoted below as an *expected result* is
-> **📘 Illustrative** — it shows the shape to look for, not a capture from a specific binary, and
+> relies on is **Measured**. Any decompiler listing quoted below as an *expected result* is
+> **Illustrative** — it shows the shape to look for, not a capture from a specific binary, and
 > your addresses and variable names will differ. Build the real target with
 > [`../examples/build.sh`](../examples/build.sh) and check your findings against its source. See
-> [the chapter's provenance statement](../README.md#-read-this-before-you-read-anything-else-what-is-measured-here-and-what-is-not).
+> [the chapter's provenance statement](../README.md#read-this-before-you-read-anything-else-what-is-measured-here-and-what-is-not).
 
 ---
 
@@ -344,7 +344,7 @@ In Ghidra:
 Or from the command line, once you know the addresses:
 
 ```bash
-# host — dump the bytes at a file offset. Note that Ghidra shows VIRTUAL
+# host — dump the bytes at a file offset.Ghidra shows VIRTUAL
 # addresses; convert to a file offset with readelf's program headers.
 readelf -l "$SO" | head -20
 xxd -s <file_offset> -l 32 "$SO"
@@ -520,7 +520,7 @@ Then write three short paragraphs:
 
 The heuristic in the sample script is deliberately crude. Loosen it: drop the vowel test, lower the
 minimum run length to 8, and print everything for keys where the count of printable runs jumps. Or use
-`xortool` if you have it. Or simply note that the decode loop in Ghidra shows you the key directly —
+`xortool` if you have it. Or read the decode loop in Ghidra, which shows you the key directly —
 that is Route B leaking into Route A, which is fine as long as you notice it happening.
 </details>
 

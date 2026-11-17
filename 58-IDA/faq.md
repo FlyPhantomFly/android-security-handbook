@@ -203,7 +203,7 @@ does not restate the argument. Lab 03 §5 gives a minimal header to start from.
 
 ---
 
-### 14. My headless script reports the library has eleven functions. It clearly has more.
+### 14. My headless script reports the library has eleven functions. It plainly has more.
 
 You forgot `ida_auto.auto_wait()`.
 

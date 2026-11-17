@@ -239,7 +239,7 @@ nm -D --defined-only raw/lib/arm64-v8a/libsigner.so | head -20
 readelf --dyn-syms raw/lib/arm64-v8a/libsigner.so | grep FUNC | head
 ```
 
-You should find `JNI_OnLoad` and nothing else useful. Note that `native_sign`, `native_verify` and
+You should find `JNI_OnLoad` and nothing else useful.`native_sign`, `native_verify` and
 `native_info` are `static` in C++ terms, so they are not in the dynamic symbol table at all.
 
 Write down what a purely static analyst knows at this point: that the library exists, that it links
@@ -452,7 +452,7 @@ Java.perform(function () {
 });
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > Route B must run on a thread attached to the VM, which is why it is inside `Java.perform`. Getting
 > the signature wrong here is a segmentation fault, not an exception — `exceptions: 'propagate'` gives
 > you a fighting chance of seeing it as a JS error instead.

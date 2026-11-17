@@ -55,16 +55,16 @@ adb shell /data/local/tmp/ch59_ctfvault
 adb shell /data/local/tmp/ch59_ctfvault somekey
 ```
 
-> **✅ Measured** — built with `aarch64-linux-android21-clang` (NDK 25.2.9519653) at
+> **Measured** — built with `aarch64-linux-android21-clang` (NDK 25.2.9519653) at
 > `-O2 -Wall -Wextra -pie -Wl,-z,max-page-size=16384`, zero warnings, and executed on the AVD
 > `sdk_gphone16k_x86_64` (Android 15 / API 35, x86_64, 16 KiB pages) through
 > `libndk_translation.so`. With no arguments it prints a usage line and a hint; with any argument
 > tried so far it prints `vault sealed`.
 
-> **⚠️ On the state of this chapter**
+> **On the state of this chapter**
 > radare2 was **not installed** on the machine where this chapter was written, so every `r2` command
-> below is **📘 Unverified**. Every stated fact about the binary and its behaviour on a device is
-> **✅ Measured** and says so. If a command behaves differently, trust the tool.
+> below is **Unverified**. Every stated fact about the binary and its behaviour on a device is
+> **Measured** and says so. If a command behaves differently, trust the tool.
 
 ---
 
@@ -103,7 +103,7 @@ Open these only when stuck. Each costs you nothing but the satisfaction.
 Start with no analysis at all. What does the binary tell you about itself for free?
 
 ```
-# 📘 Unverified
+# Unverified
 rabin2 -I ~/ch59-build/ctfvault
 rabin2 -qz ~/ch59-build/ctfvault      # strings
 rabin2 -qi ~/ch59-build/ctfvault      # imports
@@ -125,7 +125,7 @@ decides.
 Disassemble the function that *calls* the others and read the order of operations:
 
 ```
-# 📘 Unverified
+# Unverified
 r2 ~/ch59-build/ctfvault
 [0x0]> aa
 [0x0]> pdf @ sym.vault_open
@@ -151,7 +151,7 @@ strings -n 4 ~/ch59-build/ctfvault | grep -i xbin
 
 Now: does that file exist on your device?
 
-> **✅ Measured** — on the AVD `sdk_gphone16k_x86_64`, `/system/xbin/su` **exists**:
+> **Measured** — on the AVD `sdk_gphone16k_x86_64`, `/system/xbin/su` **exists**:
 > `-rwsr-x--- 1 root shell 51224`. The stock Google emulator image ships it. So the probe fires,
 > `vault_open` returns 0 at its first branch, and the licence check is never reached.
 
@@ -165,7 +165,7 @@ verifier and it opens for **any** key.
 
 Do the second one and look carefully at what it prints.
 
-> **✅ Measured** — with both `vault_probe_environment` and `vault_verify_token` patched to return
+> **Measured** — with both `vault_probe_environment` and `vault_verify_token` patched to return
 > constants, running with the key `wrongkey` prints `vault open:` followed by **42 bytes of
 > unprintable binary noise** — high-byte and control characters, not text. It is not the flag and it
 > is not close to the flag. (The literal bytes are deliberately not reproduced in this document;
@@ -179,7 +179,7 @@ Why would a full bypass produce garbage? What is the flag being decrypted *with*
 <summary>Hint 5 — the reveal function</summary>
 
 ```
-# 📘 Unverified
+# Unverified
 [0x0]> pdf @ sym.vault_reveal
 ```
 
@@ -209,7 +209,7 @@ In `vault_reveal`, look for three shift amounts applied in sequence to one regis
 Search for these:
 
 ```
-# 📘 Unverified -- endianness matters; /v4 handles it for you
+# Unverified -- endianness matters; /v4 handles it for you
 [0x0]> /v4 0x01000193
 [0x0]> /v4 0x811c9dc5
 ```
@@ -226,7 +226,7 @@ FNV-1a is a hash. It is not invertible. You cannot compute the key from the targ
 But you were told the search space. Look again at the string the program prints when run with no
 arguments:
 
-> **✅ Measured** — `rabin2 -qz` / `strings` reports the string
+> **Measured** — `rabin2 -qz` / `strings` reports the string
 > `licence keys are five lowercase letters`.
 
 Five lowercase letters is 26<sup>5</sup> = **11,881,376** candidates. That is seconds in C and well
@@ -259,13 +259,13 @@ Do not read this until you have solved it or genuinely given up.
 ### Step 1 — orientation, no analysis
 
 ```
-# 📘 Unverified
+# Unverified
 $ rabin2 -I ~/ch59-build/ctfvault
 $ rabin2 -qz ~/ch59-build/ctfvault
 $ rabin2 -qi ~/ch59-build/ctfvault
 ```
 
-> **✅ Measured** — the binary is **not stripped**, and `llvm-nm` reports four `vault_` functions:
+> **Measured** — the binary is **not stripped**, and `llvm-nm` reports four `vault_` functions:
 >
 > ```
 > 0000000000004914 T vault_open
@@ -286,7 +286,7 @@ something opens, something reveals. Note immediately that **`vault_reveal` is se
 ### Step 2 — why every key fails
 
 ```
-# 📘 Unverified
+# Unverified
 [0x0]> aa
 [0x0]> pdf @ sym.vault_open
 ```
@@ -297,7 +297,7 @@ probe is clean does it call `vault_verify_token`.
 
 The probe checks `access("/system/xbin/su", F_OK)`.
 
-> **✅ Measured** — that file exists on the AVD used here (`-rwsr-x--- 1 root shell 51224`), so the
+> **Measured** — that file exists on the AVD used here (`-rwsr-x--- 1 root shell 51224`), so the
 > probe returns 1 and the vault is sealed regardless of the key. The correct key alone is rejected.
 
 That is **Silver**.
@@ -309,7 +309,7 @@ Patch both functions to return constants. Using the encodings verified in
 `mov w0,#0` = `00 00 80 52`, `ret` = `c0 03 5f d6`:
 
 ```
-# 📘 Unverified
+# Unverified
 $ cp ~/ch59-build/ctfvault ~/ch59-build/cv.both
 $ r2 -w ~/ch59-build/cv.both
 [0x0]> e io.cache=1
@@ -319,7 +319,7 @@ $ r2 -w ~/ch59-build/cv.both
 [0x0]> wci
 ```
 
-> **✅ Measured** — the full truth table, all variants built from the shipped source and executed on
+> **Measured** — the full truth table, all variants built from the shipped source and executed on
 > the AVD:
 >
 > | Binary | `key=wrongkey` | `key=rizin` |
@@ -339,7 +339,7 @@ That is **Bronze**, and it is why Bronze is not a solve.
 ### Step 4 — read `vault_reveal`
 
 ```
-# 📘 Unverified
+# Unverified
 [0x0]> pdf @ sym.vault_reveal
 ```
 
@@ -357,7 +357,7 @@ In `vault_verify_token`:
 - `0x811C9DC5` and `0x01000193` are the **FNV-1a 32-bit** offset basis and prime.
 - The comparison target is the constant built by a `mov`/`movk` pair just before the `cmp`/`cset`.
 
-> **✅ Measured** — the target constant in the shipped build is **`0x6DC666D5`**.
+> **Measured** — the target constant in the shipped build is **`0x6DC666D5`**.
 
 In `vault_reveal`, the shift sequence 13 / 17 / 5 on a single 32-bit register is **xorshift32**, in
 its canonical form:
@@ -394,7 +394,7 @@ for t in itertools.product(string.ascii_lowercase, repeat=5):
         break
 ```
 
-> **✅ Measured** — this recovers the key **`rizin`**.
+> **Measured** — this recovers the key **`rizin`**.
 
 That is **Platinum** territory: you now have the key without having patched anything.
 
@@ -405,7 +405,7 @@ The probe still fires on a rooted device or an AVD with `su` present. Two honest
 **Route A — patch only the probe.** It does not touch the decryption path at all:
 
 ```
-# 📘 Unverified
+# Unverified
 [0x0]> wa mov w0, 0; ret @ sym.vault_probe_environment
 ```
 
@@ -414,7 +414,7 @@ then run with the real key.
 **Route B — run it where the probe does not fire**, i.e. a device with no `su` at
 `/system/xbin/su`.
 
-> **✅ Measured** — with the probe patched and the key `rizin`, on the AVD:
+> **Measured** — with the probe patched and the key `rizin`, on the AVD:
 >
 > ```
 > vault open: R2CTF{gr4mm4r_n0t_l1st_p4tch_th3_d3c1s10n}
@@ -479,7 +479,7 @@ that `vault_reveal` indexes; find the `adrp`/`add` pair that materialises its ad
 `.rodata` and look for the 42 bytes that are not printable text.
 
 ```
-# 📘 Unverified
+# Unverified
 [0x0]> iS~rodata
 [0x0]> px 128 @ <rodata address>
 [0x0]> axt @@ str.*                 # what references what

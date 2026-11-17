@@ -100,7 +100,7 @@ jadx -d out target.apk
 java -Xmx3g -cp "/c/Program Files/jadx/lib/jadx-gui-1.5.3-all.jar" jadx.cli.JadxCLI -d out target.apk
 ```
 
-> **⚠️ Check the tree before you trust it.** If `jadx` printed `finished with errors, count: N`,
+> **Check the tree before you trust it.** If `jadx` printed `finished with errors, count: N`,
 > every refused class produced no findings *because it could not be read*. Count the tree:
 > `grep -rl 'JADX ERROR' out/sources | wc -l`. Chapter 56 measured the console under-reporting by
 > **30×**.

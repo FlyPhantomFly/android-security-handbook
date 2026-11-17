@@ -31,7 +31,7 @@ to symbol lookup, and it fails *silently*: no match and no indication that a mat
 This lab makes you produce that number for an app of your own, and then go get the part the static
 half cannot see.
 
-> **⚠️ Warning — scope and ethics.** Use an application **you own**, installed on **your own device**,
+> **Warning — scope and ethics.** Use an application **you own**, installed on **your own device**,
 > or a well-known deliberately-vulnerable training app. Reverse engineering is contractually and
 > statutorily contextual — see README §1.6, which names the three separate axes. A lab suggesting a
 > target is not authorisation for it.
@@ -46,7 +46,7 @@ export S=<your-device-serial>          # from `adb devices -l`
 adb devices -l                         # confirm which devices are attached
 ```
 
-> **⚠️ Two devices, one silent failure.** If more than one device is attached, `adb` fails loudly —
+> **Two devices, one silent failure.** If more than one device is attached, `adb` fails loudly —
 > which is good behaviour. **Frida does not.** `frida.get_usb_device()` returns the first USB-type
 > device it enumerates, and while writing this chapter that was an emulator rather than the phone
 > the artefacts came from. Every runtime measurement would have been about a different ABI, API level
@@ -200,7 +200,7 @@ statement would have been "I measured nothing".
 
 </details>
 
-> **🔍 Pentester's Note — read the module path.** `base.apk!/lib/arm64-v8a/libelements.so` — the `!`
+> **Pentester's Note — read the module path.** `base.apk!/lib/arm64-v8a/libelements.so` — the `!`
 > means the library is mapped **directly out of the APK** (`extractNativeLibs="false"`) and does not
 > exist as a file under `/data/app/.../lib/arm64/`. Looking for that file, and not finding it, reads
 > as "the library is absent". It is not; it never gets extracted.
@@ -337,7 +337,7 @@ is unused. [56-JADX](../../56-JADX/README.md) established five checks that must 
 | 4 | Is it native? | you already know — that is why you are here |
 | 5 | Do you have every split APK? | Part 1 |
 
-> **🔍 Pentester's Note.** Check 1 matters more than it looks. jadx's console reported
+> **Pentester's Note.** Check 1 matters more than it looks. jadx's console reported
 > `finished with errors, count: 61` on a real 17.5 MB APK while the output tree contained **2,104
 > refused methods across 1,424 files** — a 30× under-report. Count the tree, never the summary.
 
@@ -425,7 +425,7 @@ export DEXDUMP=/path/to/build-tools/35.0.1/dexdump
 export LLVM_NM=/path/to/ndk/toolchains/llvm/prebuilt/<host>/bin/llvm-nm
 ```
 
-On Windows, note that `dexdump.exe` **cannot read a DEX from inside an APK** — it fails with
+On Windows,`dexdump.exe` **cannot read a DEX from inside an APK** — it fails with
 `Failed anonymous mmap(...): Invalid argument` and prints `Processing 'base.apk'...` anyway. The
 script already extracts every `classes*.dex` to a real file first, which is why it works.
 

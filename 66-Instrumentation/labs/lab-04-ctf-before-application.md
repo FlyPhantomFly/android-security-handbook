@@ -16,7 +16,7 @@
 [Lab 03](lab-03-ordering-and-vantage.md), all three actually done rather than read ·
 [../README.md §3.6–§3.9](../README.md)
 
-> **⚠️ Warning — deliberately vulnerable application**
+> **Warning — deliberately vulnerable application**
 > `labs/ctf-vault/` builds an application that is **designed to give up its secrets**. It is a lab
 > fixture and nothing else. Install it only on a device you own, and uninstall it the moment you are
 > finished:
@@ -186,7 +186,7 @@ grep -n -A20 'BLOB_1\|KEY_1' smali/com/pentest/ch66/ctf/Secrets.smali
 `CtfApp.onCreate()` sets that field to `null`.
 
 Lab 03 measured where `Instrumentation.onCreate()` falls between those two events. The window is
-about three milliseconds wide and it is entirely deterministic — you are not racing, you are simply
+about three milliseconds wide and it is entirely deterministic — you are not racing, you are
 either inside the window or outside it.
 
 **The failure mode is the thing to notice.** Put your read in `onStart()` and you get:
@@ -352,7 +352,7 @@ In `onStart()`, after waiting for the app's completion marker:
   (d) read the fragment-3 field;
   (e) assemble and `finish()`.
 
-Note that (a) and (b) must both be in `onCreate`, and (c) and (d) must both be after the wait, and
+(a) and (b) must both be in `onCreate`, and (c) and (d) must both be after the wait, and
 the wait must be on the marker set when startup *completes*.
 </details>
 

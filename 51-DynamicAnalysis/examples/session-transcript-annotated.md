@@ -163,7 +163,7 @@ com.udroid.portinstall flags=[ SYSTEM DEBUGGABLE HAS_CODE ALLOW_CLEAR_USER_DATA 
 debuggable on a retail device**. That is a device-posture finding and it belongs in a report about the
 device, not about any app.
 
-**Note the discrepancy with `adb jdwp`**, which returned one pid: the other four were simply not
+**Note the discrepancy with `adb jdwp`**, which returned one pid: the other four were not
 running. `adb jdwp` enumerates debuggable **processes**; the loop enumerates debuggable **packages**.
 Run both.
 
@@ -195,7 +195,7 @@ run-as: package not debuggable: com.vendor.fieldapp
    message says `not an application`, which reads exactly like `not debuggable` to anyone skimming.
    **The rule is `FLAG_DEBUGGABLE` *and* an application uid**, not just the flag.
 3. The SELinux context is `u:r:runas_app:s0:c150,c256,c512,c768` — **not** the app's own domain.
-   `run-as` transitions to a dedicated domain, so it reads the data directory without simply "being"
+   `run-as` transitions to a dedicated domain, so it reads the data directory without "being"
    the app.
 
 > **On the four MCS categories.** Chapters 21 and 22 give an app's MCS pair as `c[appId & 0xff]` and

@@ -108,7 +108,7 @@ Two separate things are going on.
 **It is not an app.** Your shell's parent is `adbd`, not `zygote`. There is no ART runtime, no
 `Application` object, no package record — and therefore **no `targetSdkVersion`**. Every behaviour
 change Android gates on `targetSdk` (scoped storage, background service limits, non-SDK interface
-restrictions) simply does not apply to a process with no package.
+restrictions) does not apply to a process with no package.
 
 **It is privileged.** UID 2000 is shared with `com.android.shell`, a `PRIVILEGED` system package in
 `/system/priv-app/Shell`. Framework permission checks are made against the *UID*, so the `sh`
@@ -146,7 +146,7 @@ they do not even need a key.
 mutual certificate authentication, the certificates are enrolled through a SPAKE2 exchange keyed on
 a six-digit code shown on the device, and the port is random and advertised over mDNS.
 
-Either way, turn it off when you are done. And note that mDNS advertisement means a debuggable
+Either way, turn it off when you are done. mDNS advertisement means a debuggable
 device announces itself to the whole local network — worth knowing before you enable it in a
 client's office.
 

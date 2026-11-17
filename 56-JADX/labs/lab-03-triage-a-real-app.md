@@ -7,7 +7,7 @@
 [10 — APK Internals](../../10-APK-Internals/README.md).
 An APK you are permitted to analyse, jadx, Python 3, and about 4 GB of free disk.
 
-> **⚠️ Scope first.** Use an app you own, an app from a bug bounty programme whose scope you have
+> **Scope first.** Use an app you own, an app from a bug bounty programme whose scope you have
 > read, a deliberately vulnerable training app, or an open-source app from F-Droid. Nothing in this
 > lab requires a *particular* app; it requires a *realistically sized* one, which means something
 > above roughly 10 MB.

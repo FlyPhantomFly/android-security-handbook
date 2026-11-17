@@ -41,7 +41,7 @@ adb devices -l
 You want at least one target. Two with opposite configurations is much better — a retail phone and
 an emulator will do, and their differences are the whole point of §6.
 
-> **⚠️ Nothing in this lab changes a device.** Every check is read-only. In particular you will
+> **Nothing in this lab changes a device.** Every check is read-only. In particular you will
 > **not** run `adb tcpip`, and you will **not** modify `/data/misc/adb`. If an instruction ever
 > seems to require it, you have misread it.
 
@@ -88,16 +88,16 @@ cat /proc/net/tcp /proc/net/tcp6 2>/dev/null \
   | awk '$4=="0A" {print $2}' | awk -F: '{printf "%d\n", strtonum("0x" $2)}' | sort -un
 ```
 
-> **🔬 Measured, and the reason this lab insists on it.** An Android emulator listens on 5555 with
+> **Measured, and the reason this lab insists on it.** An Android emulator listens on 5555 with
 > `service.adb.tcp.port` **unset** — its `adbd` is put into TCP mode by the emulator itself, not by
 > the property trigger. An earlier version of this chapter's posture script read only the properties
 > and reported "not exposed" for a device with an open, unauthenticated debug port.
 >
 > **A listening socket beats a property.** Always check both.
 
-### ✅ Checkpoint 2
+### Checkpoint 2
 
-Your table is complete, and you have a list of listening ports. If 5555 is in it, note that now.
+Your table is complete, and you have a list of listening ports. If 5555 is in it,now.
 
 ---
 
@@ -201,7 +201,7 @@ ls -l /proc/$(pidof adbd)/fd | grep usb-ffs
 **Those two file descriptors are the entire USB transport.** Every 24-byte header you decoded in
 Lab 01 was written into `ep2` with an ordinary `write()`.
 
-### ✅ Checkpoint 3
+### Checkpoint 3
 
 You can state where `adbd`'s binary lives, which domain it runs in, which two capabilities it keeps
 in its bounding set and why, and which two file descriptors carry the USB transport.
@@ -246,7 +246,7 @@ Access Control that you will find on a phone, and it has a direct practical cons
 
 ### 4.2 With root — metadata only
 
-> **⚠️ Never copy key material anywhere.** Not into a report, not into a ticket, not into a
+> **Never copy key material anywhere.** Not into a report, not into a ticket, not into a
 > screenshot, not into a repository. A public key plus its comment identifies an authorised host and
 > the comment is attacker-controllable text. Record **counts and timestamps**.
 
@@ -311,7 +311,7 @@ settings get global adb_allowed_connection_time
 
 Default is 604800000 ms — seven days. A key not used within that window is dropped.
 
-### ✅ Checkpoint 4
+### Checkpoint 4
 
 - You attempted the read as `shell`, it failed, and you found the AVC that explains it.
 - You recorded a **count** of authorised keys and a `lastConnection` timestamp.
@@ -441,7 +441,7 @@ Fill this in from your own measurements:
 | Runtime permissions pre-granted | | |
 | Can be revoked by the user | | |
 
-### ✅ Checkpoint 5
+### Checkpoint 5
 
 Write the sentence you would put in a report to explain why an `am start` result from `adb shell`
 does not prove an app can do the same. Then write the sentence you would use to explain why, on a
@@ -482,7 +482,7 @@ Reference output from two such targets is in
 [`../examples/posture-measured.txt`](../examples/posture-measured.txt). Only **three** fields move
 the severity, and `adb_enabled` — the one everybody quotes — is not among them.
 
-### ✅ Checkpoint 6
+### Checkpoint 6
 
 Name the three fields.
 
@@ -502,14 +502,14 @@ for s in "shell:" "shell,v2,raw:id" "exec:id" "sync:" "jdwp" "track-jdwp" \
 done
 ```
 
-> **⚠️ Do not add `root:`, `unroot:`, `tcpip:`, `usb:`, `remount:` or `reboot:`.** They are not
+> **Do not add `root:`, `unroot:`, `tcpip:`, `usb:`, `remount:` or `reboot:`.** They are not
 > queries. They execute. `tcpip:` in particular would create exactly the exposure you are supposed
 > to be measuring.
 
 Record the results. On a device where `exec:` is available but `shell:` is not, or where
 `framebuffer:` answers, you have learned something about how that endpoint is configured.
 
-### ✅ Checkpoint 7
+### Checkpoint 7
 
 A service table, produced with no side effects, and a written justification for each service you
 chose to exclude.
@@ -572,7 +572,7 @@ network reachability, persistence, and who holds the keys** — none of which is
 
 </details>
 
-### ✅ Checkpoint 8
+### Checkpoint 8
 
 Your three findings differ in severity, and each one states the device role explicitly in its first
 sentence.

@@ -19,7 +19,7 @@ sending it as one fails in four specific ways:
 - **The item count is not a finding count.** 39 items became **8 findings** after validation here.
   Fifteen were rejected outright, six were merged into other findings, and eleven were the report's
   own scorecard restating its other sections.
-- **Some of it is simply wrong**, including in the reassuring direction. The same report claimed the
+- **Some of it is wrong**, including in the reassuring direction. The same report claimed the
   app does not implement certificate pinning. It does — one grep proves it.
 - **It has no limits section**, so the reader cannot tell what was not examined. Nothing in the
   report says that 69% of the broadcast surface is invisible to it, or that a split APK would have

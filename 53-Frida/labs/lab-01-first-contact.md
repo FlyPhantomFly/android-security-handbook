@@ -103,7 +103,7 @@ public class App extends Application {
         super.attachBaseContext(base);
         Log.i(TAG, "STAGE 2: attachBaseContext");
         // This is where a packer would decrypt its DEX and where anti-debug
-        // checks live. Note that no Activity exists yet.
+        // checks live.no Activity exists yet.
         Secrets.deriveStartupKey();
     }
 

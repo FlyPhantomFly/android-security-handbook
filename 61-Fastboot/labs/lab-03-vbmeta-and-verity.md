@@ -9,7 +9,7 @@
 **You need:** `python3`. Parts 1–4 need a `vbmeta.img`, obtainable from a rooted device, an emulator,
 or any OEM factory image download. Part 5 needs a rooted device or emulator.
 
-> **⚠️ Nothing in this lab flashes anything.** You will produce a modified `vbmeta.img` on your host
+> **Nothing in this lab flashes anything.** You will produce a modified `vbmeta.img` on your host
 > in Part 3. **Do not flash it.** The lab's entire purpose is to show you why you would not want to,
 > and the file exists so you can measure it rather than believe a claim about it.
 
@@ -196,7 +196,7 @@ sign that you do not.
 No — and the distinction is deliberate and useful.
 
 `required_libavb_version` is a **compatibility floor**: the minimum libavb version a *verifier* needs
-in order to parse this image correctly. `release_string` records which avbtool *produced* it.
+to parse this image correctly. `release_string` records which avbtool *produced* it.
 
 A 1.3.0 tool that emitted only 1.0-era features correctly declares a 1.0 floor, so a device with an
 older libavb can still verify it. This is forward-compatibility done properly: the producer states

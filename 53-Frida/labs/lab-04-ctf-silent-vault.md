@@ -359,7 +359,7 @@ The Java gate compares your input's hash against `Keys.get()`. If you can see th
 
 - Enumerate loaders ([§7.4.2](../README.md#742-failure-2--classnotfoundexception-and-the-classloader-problem)).
 - Obtain a factory bound to the `InMemoryDexClassLoader`.
-- Hook `open` and force it to run regardless of `finalCheck`, or simply read what it returns when
+- Hook `open` and force it to run regardless of `finalCheck`, or read what it returns when
   `finalCheck` is made to return `true`.
 
 ### Path C — Recover the JNI registration and neutralise `finalCheck`
@@ -419,7 +419,7 @@ You need either the right input, or the value the right input must hash to.
 
 `acc = (acc * 31) ^ (c & 0xff)`, starting from `0x1337`. It is fully determined and reversible
 character by character if you work backwards from the target, or you can search over short inputs
-directly. Neither is brute force over a keyspace; both are arithmetic. Note that `Keys.get()` gives
+directly. Neither is brute force over a keyspace; both are arithmetic.`Keys.get()` gives
 you the target directly, so you only need to solve for one value.
 </details>
 

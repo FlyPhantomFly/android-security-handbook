@@ -3,11 +3,11 @@
 Real questions, answered directly. Including the ones people are embarrassed to ask.
 
 > **Provenance.** Ghidra **is** installed here (12.1.2 PUBLIC, Java 24.0.2) and was run headless
-> against this chapter's own target, so tool behaviour described below is **✅ Measured**. The worked
-> scenarios in [README §9](README.md#9-examples) are **📘 Illustrative**: `libcrypto_helper.so`,
+> against this chapter's own target, so tool behaviour described below is **Measured**. The worked
+> scenarios in [README §9](README.md#9-examples) are **Illustrative**: `libcrypto_helper.so`,
 > `libsecure.so` and `libapi.so` do not exist, and **the 32-byte "AES key" in README §9.1 is
 > invented** — it is not a key recovered from any application. See
-> [README.md](README.md#-read-this-before-you-read-anything-else-what-is-measured-here-and-what-is-not).
+> [README.md](README.md#read-this-before-you-read-anything-else-what-is-measured-here-and-what-is-not).
 
 ---
 
@@ -246,7 +246,7 @@ team can have it; its ARM64 decompiler is genuinely good; its type management is
 headless mode makes batch work straightforward.
 
 IDA Pro when you need the best-in-class disassembler on an awkward target, when you depend on a
-specific plugin, when the binary is heavily obfuscated and IDA's analysis simply does better, or when
+specific plugin, when the binary is heavily obfuscated and IDA's analysis does better, or when
 your team is standardised on it — and you have the budget.
 
 radare2 or rizin when you want something fast and scriptable from the command line, are working over
@@ -379,7 +379,7 @@ compiling the output.
 
 And frequently you should not reimplement it at all. If the question is "what does this produce for
 input X", calling the real function with Frida's `NativeFunction` answers it in minutes and cannot be
-wrong, because you are running the actual code. Reversing an algorithm you could simply call is a
+wrong, because you are running the actual code. Reversing an algorithm you could call is a
 common and expensive mistake.
 
 ---

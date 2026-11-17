@@ -1,6 +1,6 @@
 # An annotated fastboot session, on the wire
 
-> **⚠️ THIS TRANSCRIPT IS RECONSTRUCTED, NOT CAPTURED.**
+> **THIS TRANSCRIPT IS RECONSTRUCTED, NOT CAPTURED.**
 >
 > No device was put into fastboot mode while writing chapter 61, and no destructive fastboot command
 > was executed against anything. Every byte below is derived from three sources that *were* examined
@@ -219,7 +219,7 @@ D>  OKAY
 ##  in the host binary.
 ```
 
-> **⚠️ `DONT_CARE` does not mean zeros**
+> **`DONT_CARE` does not mean zeros**
 > A `DONT_CARE` chunk says "I decline to describe this range", and the device may legitimately skip
 > it — leaving whatever was on flash before. Flashing a sparse image therefore does **not** guarantee
 > the undescribed ranges are erased. For a factory image that is fine, because the filesystem
@@ -397,7 +397,7 @@ D>  OKAY
 ##  and a warning screen appears for a few seconds at every boot.
 ```
 
-> **⚠️ The relock trap**
+> **The relock trap**
 > Going back is symmetric and also wipes — but the order matters and getting it wrong is how devices
 > are lost. **Flash the full stock factory image, boot it, confirm it works, and only then
 > `flashing lock`.** Relocking while a patched boot image is present gives a locked bootloader that

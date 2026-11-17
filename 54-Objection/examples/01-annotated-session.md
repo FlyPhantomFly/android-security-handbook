@@ -372,7 +372,7 @@ jobs list
 ```
 
 **Annotation.** Two jobs, two implementations each — the `(int)` and `(String)` overloads
-again. Note that a `watch` and a `set return_value` are both live on the same method
+again.a `watch` and a `set return_value` are both live on the same method
 simultaneously; Objection allows this and warns about nothing. They compose in installation
 order.
 

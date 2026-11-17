@@ -10,7 +10,7 @@
 
 ---
 
-## ⚠ Read this before you read anything else: what is measured here and what is not
+## Read this before you read anything else: what is measured here and what is not
 
 This repository's rule is that claims are measured, not recited. This chapter is a partial exception
 and it says so up front, because a fabricated tool transcript would be worse than an honest gap.
@@ -34,13 +34,13 @@ The consequence is stated plainly and applied consistently:
 
 | Marker | Meaning |
 |---|---|
-| **✅ Measured** | Produced by running something on this machine or on an attached device. The command, the output and the device are named. |
-| **📘 Unverified** | Transcribed from radare2's own documentation, its built-in help, and its source. It is believed correct and it has **not** been executed here. Treat the exact spelling of output as illustrative. |
+| **Measured** | Produced by running something on this machine or on an attached device. The command, the output and the device are named. |
+| **Unverified** | Transcribed from radare2's own documentation, its built-in help, and its source. It is believed correct and it has **not** been executed here. Treat the exact spelling of output as illustrative. |
 
-Every radare2 command in this chapter is **📘 Unverified**. Everything about the *binaries* — their
+Every radare2 command in this chapter is **Unverified**. Everything about the *binaries* — their
 sizes, section layouts, symbol counts, instruction encodings, the disassembly listings, the patch
 byte sequences, the timings, and the behaviour of the patched programs on a real device — is
-**✅ Measured**, using the Android NDK's LLVM tools and an attached Android 15 emulator, and each such
+**Measured**, using the Android NDK's LLVM tools and an attached Android 15 emulator, and each such
 claim names how it was obtained.
 
 That split is deliberate and it is more useful than it sounds. The hard part of this chapter is not
@@ -49,7 +49,7 @@ question am I asking of it". Those facts are measured. The letters you type are 
 labs are built so that a reader who installs radare2 can execute every one of them and see for
 themselves.
 
-> **⚠️ Warning**
+> **Warning**
 > If you find a command in this chapter that behaves differently from what is written, **the tool is
 > right and this chapter is wrong.** Fix it here. radare2's command set moves quickly, and the
 > radare2/rizin fork means two closely-related tools with diverging spellings. Section 3.14 covers
@@ -94,7 +94,7 @@ That is not a reverse engineering problem. It is a **data processing** problem t
 involve binaries, and it wants a data processing tool: something with no GUI, no start-up cost, and a
 text interface you can put in a loop.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Ghidra is a workshop: you carry the object into it, set it on the bench, and work on it for a day.
 > radare2 is a set of hand tools on a belt: you take the tool to the object, do one thing, and move
 > on. Neither is better. You would not rebuild an engine with a multitool, and you would not carry a
@@ -111,11 +111,11 @@ More specifically for Android: sometimes the binary you want is **on the phone**
 there at runtime, and it will not survive being copied off. A library decrypted into
 `/data/data/<pkg>/files` by a packer, a `dex` file materialised by an in-memory loader, a `.so`
 dropped by a first-stage payload. radare2 builds for `aarch64` Android and runs on the device itself,
-which is a capability its graphical competitors simply do not have. Section 7.4 covers this.
+which is a capability its graphical competitors do not have. Section 7.4 covers this.
 
 ### What radare2 is
 
-> **📖 Definition**
+> **Definition**
 > **radare2** (usually written `r2`) is a free and open-source reverse-engineering *framework*: a
 > library (`r_core` and around twenty sibling libraries) plus a set of command-line programs built on
 > it. The best-known program is the interactive shell, also called `r2`, but the framework also ships
@@ -127,7 +127,7 @@ feature bolted on; it is a set of libraries with a shell wrapped around them. Th
 most of what people find strange about it, including the command language, and it is why `r2pipe`
 (section 3.11) feels less like an API and more like talking to the program in its own language.
 
-> **📖 Definition**
+> **Definition**
 > **rizin** is a fork of radare2 created in late 2020 by a group of former radare2 contributors, with
 > different governance and an explicit emphasis on API stability and documentation. **Cutter**, the
 > graphical front end, followed rizin. The two projects remain deeply similar — the command grammar
@@ -148,7 +148,7 @@ three letters mean you also already know `afn`, `afi`, `aflj` and `afl~Java_` wi
 That is why section 3.2 is the longest subsection in this chapter, and why the first lab does nothing
 but teach the grammar. Everything else follows from it.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The single most common failure mode with this tool is treating it as a command list to be looked up
 > each time. People who do that stay slow forever and eventually go back to a GUI. People who spend
 > one focused hour on the grammar are productive for the rest of their career. Chapter 59's first lab
@@ -169,7 +169,7 @@ already asks radare2 for.
    Section 3.7 explains what `axt` actually does and where it is blind.
 3. **Working on the device.** Nothing else in this repository's toolchain runs on the phone.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > The right question is never "should I use radare2 or Ghidra?" It is "is my question about *one*
 > function or about *many* files?" Many files, or no display: radare2. One function, read carefully,
 > with a decompiler: [Ghidra](../57-Ghidra/README.md) or [IDA](../58-IDA/README.md). The two-step of
@@ -281,7 +281,7 @@ analysis when your question did not need any.**
 Here is the scale of what the right box has to chew through, measured on the libraries this chapter
 uses as its corpus:
 
-> **✅ Measured** — libraries pulled with `adb pull` from the attached AVD `sdk_gphone16k_x86_64`
+> **Measured** — libraries pulled with `adb pull` from the attached AVD `sdk_gphone16k_x86_64`
 > (Android 15 / API 35), then measured on the host with `llvm-readelf` and `llvm-nm` from NDK
 > 25.2.9519653. `.text bytes` is the section's size field; instruction count is exact for AArch64
 > because every instruction is four bytes.
@@ -332,7 +332,7 @@ done
 including `libcrypto.so`, `libsqlite.so`, `libicui18n.so`, `libhwui.so` and the 21 MB
 `libLLVM_android.so` — is stripped down to `.dynsym`.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Check before you assume. This chapter's first draft asserted that all eleven were stripped, because
 > the check had only been run over the x86_64 half of the corpus; running it over the whole corpus
 > contradicted that. It is a small thing, and it is the exact shape of the mistake that makes people
@@ -347,7 +347,7 @@ exactly that absence.
 instructions — behind 364 exported names.** That is one name per roughly 4,554 bytes of machine code.
 `libhwui.so` on x86_64 is worse in absolute terms: 6.3 MB of code behind 1,080 names.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > Those ratios are the whole cost model. When a tool "analyses" a stripped library it is not reading
 > names; it is *inventing* them, by finding the 400,000 instructions, deciding which addresses are
 > function entry points, and grouping the rest into basic blocks. The `.dynsym` table gives it a few
@@ -425,7 +425,7 @@ an AppImage. `r2pipe`, the Python binding used throughout section 3.11, is a sep
 python3 -m pip install r2pipe
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > `pip install r2pipe` installs a *client*. It does not install radare2. The module works by
 > launching `r2` as a subprocess and talking to it over pipes, so a machine with `r2pipe` and no `r2`
 > will import successfully and then fail at `r2pipe.open()`. That is a confusing failure and it is
@@ -447,7 +447,7 @@ safety property and it catches everyone once.
 | `r2 -i script.r2 libfoo.so` | Run a script file, then drop to the shell | Reproducible setup |
 | `r2 -d <program>` | Open under the debugger | Section 7 |
 
-> **⚠️ Warning**
+> **Warning**
 > `r2 -w` edits the file you named, immediately, with no undo and no backup. There is no "save"
 > step — `wa` writes through to disk the moment you press Enter. Always work on a copy. Every
 > patching example in this chapter copies the file first, and lab 03 makes the copy the first
@@ -499,7 +499,7 @@ There are about a dozen you will use. Learn these and you have the map.
 | `q` | **q**uit | Leave |
 | `?` | help | Append to *anything* to get help for that subtree |
 
-> **🧠 Mental Model**
+> **Mental Model**
 > `?` is not a command, it is a **suffix that means "explain this prefix"**. `?` alone lists the root
 > verbs. `a?` lists everything under `a`. `af?` lists everything under `af`. `afl?` explains the
 > variants of `afl`. This is the single most valuable key in the tool: you never need to remember a
@@ -565,7 +565,7 @@ These attach to almost any command in any tree.
 | `,` | Output as a table, with sortable columns | Interactive browsing of large lists |
 | `?` | Help for this prefix | Discussed above |
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > The `*` suffix is the mechanism behind most serious radare2 automation, and it exists because of
 > the framework design in section 2. `f*` emits every flag as a series of `f name size addr`
 > commands. Feed that text into a different r2 session and that session now has your names. There is
@@ -580,7 +580,7 @@ This is the part that separates people who find radare2 clumsy from people who f
 cursor back.
 
 ```
-# 📘 Unverified -- disassemble the function at that symbol without moving the cursor
+# Unverified -- disassemble the function at that symbol without moving the cursor
 pdf @ sym.lt_verify_license
 ```
 
@@ -599,13 +599,13 @@ Variants worth knowing:
 **`@@` — the iterator.** This is radare2's `for` loop and it is the reason the tool scales.
 
 ```
-# 📘 Unverified -- run pdf once for every discovered function
+# Unverified -- run pdf once for every discovered function
 pdf @@ fcn.*
 
-# 📘 Unverified -- print the disassembly around every cross-reference to an import
+# Unverified -- print the disassembly around every cross-reference to an import
 pd 5 @@= `axt sym.imp.access ~[1]`
 
-# 📘 Unverified -- run a command once per flag matching a glob
+# Unverified -- run a command once per flag matching a glob
 afi @@ sym.Java_*
 ```
 
@@ -643,13 +643,13 @@ Now re-read the commands that [39-EmulatorDetection](../39-EmulatorDetection/REA
 opaque:
 
 ```
-# 📘 Unverified -- from 39-EmulatorDetection section 8.4
+# Unverified -- from 39-EmulatorDetection section 8.4
 is~system_property                      # symbols, grepped for system_property
 axt sym.imp.__system_property_get       # every xref TO that import
 iz~qemu,goldfish,ranchu                 # data strings containing any of three words
 pdf @ sym.check_env                     # disassemble that function, cursor unchanged
 
-# 📘 Unverified -- from 37-RootDetection section 8.4
+# Unverified -- from 37-RootDetection section 8.4
 iz~su                                   # data strings containing "su"
 ii~access                               # imports containing "access"
 afl~Java_                               # discovered functions whose name contains Java_
@@ -677,7 +677,7 @@ is modal on the cursor.
 | `s+` | Redo |
 | `s entry0` | The entry point |
 
-> **🧠 Mental Model**
+> **Mental Model**
 > If you take one thing from this section: **radare2 is a text editor whose document is a binary.**
 > There is a cursor (`s`), a way to look at the document through different renderings (`p`), a way to
 > modify it (`w`), a way to search (`/`), a way to bookmark (`f`), and a way to repeat an action over
@@ -687,11 +687,11 @@ is modal on the cursor.
 
 Here is the orientation sequence on the chapter's own target library, `libr2target.so`, which
 [`examples/01-r2-target.c`](examples/01-r2-target.c) builds. Every command is
-**📘 Unverified**; every *fact about the binary* underneath it is **✅ Measured** with `llvm-readelf`,
+**Unverified**; every *fact about the binary* underneath it is **Measured** with `llvm-readelf`,
 `llvm-nm` and `llvm-objdump`, and is reproduced from those measurements.
 
 ```
-# 📘 Unverified -- commands; the facts they report are measured, see below
+# Unverified -- commands; the facts they report are measured, see below
 $ r2 libr2target.so
 [0x00001914]> iI          # what am I looking at?
 [0x00001914]> iE          # what does it export?
@@ -702,7 +702,7 @@ $ r2 libr2target.so
 [0x00001914]> pdf @ sym.lt_gate
 ```
 
-> **✅ Measured** — the exported symbols of `libr2target.so`, built with
+> **Measured** — the exported symbols of `libr2target.so`, built with
 > `aarch64-linux-android21-clang` from NDK 25.2.9519653 at `-O2 -Wall -Wextra` (zero diagnostics),
 > read with `llvm-nm -D --defined-only`:
 
@@ -715,7 +715,7 @@ $ r2 libr2target.so
 0000000000001a5c T main
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > Those addresses are from **one** build. Editing a comment in the source, changing compiler
 > version, or changing flags will move every one of them. Read the addresses out of your own
 > build — `examples/build.sh` prints them in its report — rather than copying them from
@@ -726,7 +726,7 @@ That listing is what `iE` reports and what seeds `afl`. Note what is **absent**:
 therefore never reaches `.dynsym`. It exists, it is reachable from Java, and no symbol lists it.
 Section 3.10 is about finding things like it.
 
-> **✅ Measured** — `llvm-readelf -S`, the sections that matter:
+> **Measured** — `llvm-readelf -S`, the sections that matter:
 
 | Section | Address | File offset | Size | Flags |
 |---|---|---|---|---|
@@ -778,12 +778,12 @@ The combination that matters for Android triage is `rabin2 -I` plus `rabin2 -l`,
 they answer "what is this and what does it depend on" in a single millisecond-scale call:
 
 ```bash
-# 📘 Unverified -- the two-command orientation for any unknown .so
+# Unverified -- the two-command orientation for any unknown .so
 rabin2 -I lib/arm64-v8a/libfoo.so
 rabin2 -l lib/arm64-v8a/libfoo.so
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `rabin2 -I` reports the hardening flags — `nx`, `canary`, `pic`, `relro`. On Android these are
 > almost always all enabled because the NDK enables them by default, so a library where one is
 > **missing** is interesting: it usually means a hand-rolled build system, a very old prebuilt, or a
@@ -792,7 +792,7 @@ rabin2 -l lib/arm64-v8a/libfoo.so
 
 ### 3.5 Flags — the naming layer, and why `sym.imp.` looks the way it does
 
-> **📖 Definition**
+> **Definition**
 > A **flag** in radare2 is a name bound to an address, with a size. Flags live in **flag spaces**,
 > which are namespaces. Everything radare2 knows the name of is a flag: symbols, strings, sections,
 > functions, imports, your own annotations.
@@ -819,7 +819,7 @@ dynamic linker put the real `access`. `sym.imp.access` names *that stub*. This i
 `axt sym.imp.access` works as a "find every call site" query: every call in the library goes through
 the one stub, so cross-references to the stub are the complete call list within this binary.
 
-> **✅ Measured** — this is visible in the chapter's own target. `llvm-objdump -d` on
+> **Measured** — this is visible in the chapter's own target. `llvm-objdump -d` on
 > `libr2target.so` shows `lt_probe_paths` calling the stub, not libc:
 >
 > ```
@@ -837,7 +837,7 @@ the ratio as two numbers.
 You can create flags yourself, and you should:
 
 ```
-# 📘 Unverified -- naming what you have understood is how analysis accumulates
+# Unverified -- naming what you have understood is how analysis accumulates
 f my.rootcheck 0 @ 0x190c          # bind a name to an address
 afn probe_su_paths @ 0x190c        # rename the *function* at that address
 f-  my.rootcheck                   # remove it
@@ -851,7 +851,7 @@ That last line is how you carry a day's work from one binary to another, or into
 This is the subsection where radare2's reputation for speed is either earned or squandered, and it
 is the one the rest of this repository points at.
 
-> **📖 Definition**
+> **Definition**
 > **Analysis** in radare2 means turning an undifferentiated array of bytes into a *program*:
 > deciding which bytes are instructions, where functions start and end, which instructions branch to
 > which, and which addresses reference which others. None of this is recorded in a stripped ELF. All
@@ -871,7 +871,7 @@ The `a` family is a ladder, and you choose a rung:
 | `af` | analyse function | Analyse **only** the function at the cursor | Tiny |
 | `aef` | ESIL emulate function | Symbolic/concrete emulation of one function | Expensive, per-function |
 
-> **🧠 Mental Model**
+> **Mental Model**
 > `aaa` is not a magic word that means "get ready". It is a *purchase*. You are buying a complete
 > call graph and cross-reference database, and the price scales with the size of `.text`. If your
 > question does not need a call graph, you are paying for nothing. If it does, `aaa` is cheap
@@ -899,7 +899,7 @@ It can report the cost of the one step every analyser must pay regardless of des
 instruction in `.text` once — measured with `llvm-objdump`, which does a linear sweep and nothing
 else. That is a **floor**, not an estimate of `aaa`:
 
-> **✅ Measured** — `llvm-objdump -d <file> | wc -l`, wall-clock, on the host (Windows, Git Bash).
+> **Measured** — `llvm-objdump -d <file> | wc -l`, wall-clock, on the host (Windows, Git Bash).
 > Each figure is a single run.
 
 | Library | Arch | Disassembly lines | Time | Lines/second |
@@ -910,7 +910,7 @@ else. That is a **floor**, not an estimate of `aaa`:
 | `libicui18n.so` | AArch64 | 420,696 | 1,583 ms | ~266,000 |
 | `libLLVM_android.so` | x86_64 | 2,551,900 | 9,089 ms | ~281,000 |
 
-> **⚠️ Warning**
+> **Warning**
 > Do not read that table as "radare2 analyses `libsqlite.so` in 1.5 seconds". It is not radare2 and
 > it is not analysis — it is a different program performing the *cheapest possible subset* of the
 > work. What the table legitimately establishes is the shape of the cost: **linear in `.text` size,
@@ -928,7 +928,7 @@ else. That is a **floor**, not an estimate of `aaa`:
   project (`Ps`), rather than re-running it every session.
 - **`af` on one function is essentially instant**, and answers most "what does this do" questions.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The workflow that actually gets used: `rabin2 -i *.so | grep` across the corpus to find the three
 > interesting files; open one of those three in `r2`; `s` to the interesting symbol; `af` then `pdf`.
 > Full `aaa` gets run when — and only when — you need cross-references across the whole binary,
@@ -941,7 +941,7 @@ repository promised you, and it is genuinely the highest-value single command in
 security work.
 
 ```
-# 📘 Unverified -- the promised one-liners, now readable
+# Unverified -- the promised one-liners, now readable
 axt sym.imp.__system_property_get     # every property read       (39-EmulatorDetection 8.4)
 axt sym.imp.abort                     # every abort() call site   (67-BypassingProtections 8.4)
 axt sym.imp.access                    # every filesystem probe
@@ -965,7 +965,7 @@ statically.** An indirect call through a register — `blr x8` — has no static
 loads a function pointer from a table and calls it, the call site does not appear in `axt`'s output
 for the target.
 
-> **✅ Measured** — this is not hypothetical, and the chapter's own target demonstrates it. Every
+> **Measured** — this is not hypothetical, and the chapter's own target demonstrates it. Every
 > JNI call in `JNI_OnLoad` is an indirect call through the `JNIEnv` function table. From
 > `llvm-objdump -d libr2target.so`:
 >
@@ -982,11 +982,11 @@ for the target.
 > No cross-reference analysis will tell you that `0x1a44` calls `RegisterNatives`, because the
 > instruction says `blr x8` and nothing more. What tells you is the **constant `1720`**, which is
 > `0x6b8`, which is `RegisterNatives`'s fixed offset in the JNI function table. Reading that
-> constant is the skill. Note that this independently confirms the JNI table offsets given in
+> constant is the skill.this independently confirms the JNI table offsets given in
 > [57-Ghidra](../57-Ghidra/README.md) §3.8 — `0x30` for `FindClass`, `0x6b8` for `RegisterNatives` —
 > measured here from a different direction.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The general rule, and it applies to every static tool including the expensive ones: **a static
 > cross-reference graph is a lower bound.** Everything reached through a function pointer, a vtable,
 > a jump table, `dlsym`, or JNI dispatch is missing from it. When a static tool tells you a function
@@ -1026,7 +1026,7 @@ data somewhere structurally odd.
 **A measured warning about strings**, which is the most valuable single finding in this chapter and
 which section 5.3 develops fully:
 
-> **✅ Measured** — [`examples/01-r2-target.c`](examples/01-r2-target.c) hides the path
+> **Measured** — [`examples/01-r2-target.c`](examples/01-r2-target.c) hides the path
 > `/system/xbin/su` by XOR-ing it with `0xA7` at compile time and decoding it at runtime. Built at
 > **`-O2`**, the string is *plainly visible* in the binary:
 >
@@ -1101,7 +1101,7 @@ registers, stack, symbols, hexdump — closer to what a graphical debugger looks
 split panes, `X` closes one, `Tab` cycles. It is most useful when debugging (section 7), where you
 genuinely want to watch four things at once.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The two-key sequence worth building into muscle memory is `VV` on a function you have just found,
 > then `x` on any call to see who else reaches it. That loop — look at the shape, jump to a caller,
 > look at that shape — is how you build a mental map of an unfamiliar library in ten minutes without
@@ -1115,7 +1115,7 @@ being clear about which is which will save you time.
 **What works:**
 
 ```bash
-# 📘 Unverified -- DEX metadata via rabin2
+# Unverified -- DEX metadata via rabin2
 rabin2 -I classes.dex        # header: version, checksum, endianness
 rabin2 -c classes.dex        # class list with method signatures
 rabin2 -s classes.dex        # symbols: methods and fields
@@ -1137,7 +1137,7 @@ auto-detection did not.
 | Cross-references across the Java/native boundary do not exist | radare2 will not connect a `native` method declaration in DEX to its implementation in a `.so` |
 | Obfuscated DEX is as unreadable here as anywhere | Chapters [40](../40-Obfuscation/README.md), [41](../41-ProGuard/README.md) and [42](../42-R8/README.md) apply unchanged |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The honest position: **use [JADX](../56-JADX/README.md) for DEX.** radare2's DEX support earns its
 > place in exactly two situations. First, batch metadata extraction — `rabin2 -c` across a thousand
 > APKs to find which ones declare a class matching a pattern is fast and scriptable in a way that
@@ -1149,7 +1149,7 @@ auto-detection did not.
 
 ### 3.11 `r2pipe` — scripting, and the design idea behind it
 
-> **📖 Definition**
+> **Definition**
 > **`r2pipe`** is a family of small libraries (Python, JavaScript, Go, Rust, Ruby and more) that
 > launch `r2` as a child process, write commands to its standard input, and read the output back.
 > There is no C API binding, no FFI, and no serialisation format to learn: you send the same text you
@@ -1159,7 +1159,7 @@ That sounds primitive. It is in fact the design's biggest strength, and it follo
 `j` suffix in section 3.2:
 
 ```python
-# 📘 Unverified (r2pipe not installed here) -- the entire API, essentially
+# Unverified (r2pipe not installed here) -- the entire API, essentially
 import r2pipe
 r2 = r2pipe.open("libfoo.so")
 r2.cmd("aa")                       # send a command, get text back
@@ -1203,7 +1203,7 @@ Two complete, runnable scripts ship with this chapter:
 Both degrade honestly: if `r2pipe` or `r2` is missing they say so and exit non-zero rather than
 producing an empty result that looks like a clean scan.
 
-> **⚠️ Warning**
+> **Warning**
 > A batch script that silently reports "no findings" when the tool failed to load is worse than no
 > script, because it produces a false negative that looks like evidence. Both scripts here check for
 > the tool first and fail loudly. When you write your own, do the same — and make the failure mode
@@ -1235,7 +1235,7 @@ no-ops without you needing to know the encoding or the length. `wao ret1` makes 
 
 **The AArch64 encodings you will use by hand**, all verified:
 
-> **✅ Measured** — assembled with `aarch64-linux-android21-clang -c -x assembler-with-cpp` from NDK
+> **Measured** — assembled with `aarch64-linux-android21-clang -c -x assembler-with-cpp` from NDK
 > 25.2.9519653 and read back with `llvm-objdump -d`:
 
 | Instruction | Bytes (little-endian file order) | Word |
@@ -1252,7 +1252,7 @@ and look them up is a patching section you will not use.
 So "make this function return true" is:
 
 ```
-# 📘 Unverified -- three equivalent spellings of the same patch
+# Unverified -- three equivalent spellings of the same patch
 r2 -w libfoo.so
 [0x0]> s sym.lt_verify_license
 [0x0]> wa mov w0, 1; ret          # assemble
@@ -1264,7 +1264,7 @@ r2 -w libfoo.so
 binary, which is most of the time — but the moment you write a script that opens the file with
 Python, or you use `-n` to skip parsing, you own the translation.
 
-> **✅ Measured** — on the chapter's `r2gate` executable, `llvm-readelf -S` reports:
+> **Measured** — on the chapter's `r2gate` executable, `llvm-readelf -S` reports:
 >
 > ```
 > .text   PROGBITS   0000000000004794   000794   000288   AX
@@ -1280,7 +1280,7 @@ offset)**, computed per section, because different sections can have different d
 radare2 prints both columns side by side, which is why doing it inside radare2 is safer than doing it
 by hand.
 
-> **⚠️ Warning**
+> **Warning**
 > On Android there is a further step that has nothing to do with radare2: a patched `.so` inside an
 > APK invalidates the APK signature, so the app will not install until you re-sign it. See
 > [10-APK-Internals](../10-APK-Internals/README.md) and
@@ -1311,7 +1311,7 @@ covered in [70-VulnerabilityResearch](../70-VulnerabilityResearch/README.md).
 **`rafind2`** searches files for patterns without opening a session — the binary-aware `grep`.
 
 ```bash
-# 📘 Unverified -- find a byte pattern across a whole directory of libraries
+# Unverified -- find a byte pattern across a whole directory of libraries
 rafind2 -x 'c0035fd6' -r lib/
 rafind2 -s '/system/xbin/su' -r lib/
 rafind2 -Z -r lib/                       # print printable strings, like strings(1)
@@ -1355,7 +1355,7 @@ flowchart TD
    JVM. For many people this is the most pleasant way to consume both projects.
 4. **Follow whichever your tutorials use** until the grammar is second nature, then stop caring.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The decompiler question is worth being direct about. Base radare2 ships `pdc`, a
 > "pseudo-decompiler" that is a prettified rendering of the disassembly rather than a real
 > decompiler — it does no type inference or control-flow structuring worth the name. If you want real
@@ -1385,7 +1385,7 @@ help. These are the ones that come up on Android work.
 | `io.cache` | **Cache writes in memory instead of touching the file** |
 | `dbg.profile` | A debug profile file for setting up the target environment |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `e io.cache=1` is the safety net that `r2 -w` lacks. With it set, writes go to an in-memory overlay:
 > you can patch, disassemble to check your work, patch again, and only commit with `wci` when
 > satisfied. Turn it on before any patching session. It converts "irreversible file edit" into
@@ -1410,7 +1410,7 @@ comparison in [57-Ghidra](../57-Ghidra/README.md) §3.16 from the other side; re
 | Analysis stability across versions | The command set moves; scripts break between releases | Pin a version in CI |
 | Learning curve | Real, and front-loaded | Budget the hour; lab 01 is that hour |
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Reduced to one sentence each: **radare2 answers questions about *many* binaries, or about a binary
 > on a machine with no display. [Ghidra](../57-Ghidra/README.md) answers questions about *one*
 > function, carefully, for free. [IDA](../58-IDA/README.md) answers the questions the other two
@@ -1439,14 +1439,14 @@ the NDK's linker. Android's own view of them lives in
 | `Elf64_Dyn` (in `.dynamic`) | `DT_NEEDED`, `DT_SONAME`, `DT_INIT_ARRAY` | `il`, `id` |
 | `Elf64_Rela` | Relocation targets | `ir` |
 
-> **✅ Measured** — the `DT_NEEDED` list of the chapter's target, which is what `rabin2 -l` prints,
+> **Measured** — the `DT_NEEDED` list of the chapter's target, which is what `rabin2 -l` prints,
 > read with `llvm-readelf -d`: the library depends on `libc.so` and `libdl.so`, both of which appear
 > in `llvm-strings` output as the only two `lib*.so` strings in the file.
 
 The one that repays understanding is `DT_INIT_ARRAY`, because it is where code runs *before* anything
 you were looking at.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `iS~init_array`, which [67-BypassingProtections](../67-BypassingProtections/README.md) §8.4 uses,
 > is asking a specific question: **does this library run code at load time, before `JNI_OnLoad` and
 > before any Java code calls into it?** Functions in `.init_array` execute when the dynamic linker
@@ -1480,7 +1480,7 @@ struct JNINativeInterface {
 Because the order is fixed and every entry is one pointer wide, an offset *is* a function name. The
 four reserved slots at the start are why `GetVersion` is at `0x20` rather than `0x00`.
 
-> **✅ Measured** — from `llvm-objdump -d libr2target.so`, the two offsets this chapter's target
+> **Measured** — from `llvm-objdump -d libr2target.so`, the two offsets this chapter's target
 > actually uses, both confirming [57-Ghidra](../57-Ghidra/README.md) §3.8's table:
 >
 > | Instruction | Offset | Decimal | Function |
@@ -1516,7 +1516,7 @@ Three pointers, twenty-four bytes on a 64-bit target. That fixed shape is what m
 findable in a binary, and it is what [`scripts/r2-jni-inventory.py`](scripts/r2-jni-inventory.py)
 looks for.
 
-> **✅ Measured** — in the chapter's target the table is a single entry. `llvm-objdump` shows
+> **Measured** — in the chapter's target the table is a single entry. `llvm-objdump` shows
 > `JNI_OnLoad` materialising its address with `adrp x2, 0x2000` followed by `add x2, x2, #2984`,
 > giving `0x2ba8`; `llvm-readelf -S` places `.data.rel.ro` at `0x2ba0` with size `0x20`. The table
 > therefore sits eight bytes into `.data.rel.ro`. `llvm-strings` confirms the two strings it points
@@ -1540,7 +1540,7 @@ The `sym.imp.` distinction in section 3.5 is a fact about `bionic`'s dynamic lin
 compiles to a branch to a PLT stub; the stub loads a pointer from the GOT and jumps through it; the
 linker fills the GOT entry in, either eagerly or on first use depending on the binding mode.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > This is also the mechanism that makes PLT/GOT hooking possible, which is what several hooking
 > frameworks in [65-Hooking](../65-Hooking/README.md) do: overwrite the GOT entry and every future
 > call through the stub goes to you. From radare2's side the useful consequence is the one in section
@@ -1558,7 +1558,7 @@ linker fills the GOT entry in, either eagerly or on first use depending on the b
 | `libr/esil/` | The ESIL emulator |
 | `libr/arch/p/arm/`, `libr/arch/p/dalvik/` | Architecture plugins |
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > `cmd_anal.c` is worth ten minutes even if you never write C, because it shows that `aaa` is
 > literally a *macro*: a fixed sequence of smaller analysis commands, each of which you can run
 > individually. Once you have seen that, "which part of `aaa` do I actually need" stops being a
@@ -1618,7 +1618,7 @@ entry, both of which are enumerable.
 **"I XORed my strings, so `strings` will not find them."** This is the measured finding from section
 3.8 and it is worth stating as a rule:
 
-> **⚠️ Warning**
+> **Warning**
 > **A compile-time-constant obfuscation is not obfuscation; it is a comment to the optimiser.** If
 > both the ciphertext and the key are constants known at compile time, clang at `-O2` is entitled to
 > evaluate your decode loop during compilation and store the plaintext. It did exactly that here:
@@ -1628,7 +1628,7 @@ entry, both of which are enumerable.
 
 The fix is to make the key opaque to the optimiser, and it was verified:
 
-> **✅ Measured** — [`examples/02-r2-target-hardened.c`](examples/02-r2-target-hardened.c) declares
+> **Measured** — [`examples/02-r2-target-hardened.c`](examples/02-r2-target-hardened.c) declares
 > the key `static volatile unsigned char`. Built at `-O2` with the same compiler and flags,
 > `llvm-strings -n 4 | grep -iE 'xbin|/system'` produces **no output**, and `llvm-objdump` confirms
 > the decode loop survived — vectorised into `dup v0.8b` and `eor v0.8b, v0.8b, v1.8b`, but present,
@@ -1639,7 +1639,7 @@ it will read back, which breaks the constant-folding chain. This is the same rea
 [19-Memory](../19-Memory/README.md) applies to scrubbing secrets with a `volatile` loop, and the same
 class of finding: **a standard defensive idiom that the optimiser is allowed to delete.**
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > This gives you a fast, high-value check to run on any app that claims native string protection:
 > run `strings` on the shipped library and look for the very things it was protecting. When it hits,
 > it is a genuine finding with a clean explanation and a one-line remediation, and it is
@@ -1664,7 +1664,7 @@ had **inlined** the check, so the patched standalone copy was called by nothing.
 
 This chapter measured a second, independent mechanism producing the identical symptom.
 
-> **✅ Measured** — the target `r2gate` (AArch64, built with
+> **Measured** — the target `r2gate` (AArch64, built with
 > `-O2 -pie -Wl,-z,max-page-size=16384`) was pushed to the AVD `sdk_gphone16k_x86_64` (Android 15 /
 > API 35, x86_64, running the AArch64 binary through `libndk_translation.so`) and run in four
 > variants. `lt_verify_license` accepts the key `radare2`; `lt_probe_paths` checks for
@@ -1706,7 +1706,7 @@ $ ls -l /system/xbin/su
 
 So `lt_verify_license` was never reached. The patch was correct, applied, and irrelevant.
 
-> **⚠️ Common Confusion — this fires from `adb shell`, and *not* from an app.**
+> **Common Confusion — this fires from `adb shell`, and *not* from an app.**
 > The probe above ran as uid 2000, which is in the `shell` group. `/system/xbin` is
 > `drwxr-x--- root:shell`, so an app cannot traverse it at all. Measured on the same AVD, same
 > minute:
@@ -1724,7 +1724,7 @@ So `lt_verify_license` was never reached. The patch was correct, applied, and ir
 > [39-EmulatorDetection](../39-EmulatorDetection/README.md) measured the same shell-versus-app gap in
 > the property namespace.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > **The function with the security-sounding name is rarely the security boundary.** The boundary is
 > wherever the *decision* is made, and the decision is usually a `cbz` in a caller you have not
 > looked at yet. Before patching anything, run `axt` on it and read the caller. If you cannot explain
@@ -1738,7 +1738,7 @@ Two failure mechanisms, same symptom, recorded together:
 
 | Mechanism | Where measured | Tell |
 |---|---|---|
-| The check was **inlined**, so the standalone copy is dead | [18-ARM](../18-ARM/README.md) §5.4 | `axt` on the function returns few or no callers, yet the logic clearly runs |
+| The check was **inlined**, so the standalone copy is dead | [18-ARM](../18-ARM/README.md) §5.4 | `axt` on the function returns few or no callers, yet the logic demonstrably runs |
 | The check is **short-circuited** by an earlier guard | This chapter, §5.4 | `axt` finds the caller; reading the caller shows an earlier `bl` and a `cbz` |
 
 Both are diagnosed the same way: **read the caller before you patch the callee.**
@@ -1756,7 +1756,7 @@ Described as classes, with no invented identifiers.
 | Weak or homebrew crypto | `iz` shows no standard constants, `ii` shows no crypto imports, yet the app claims encryption | [34-Cryptography](../34-Cryptography/README.md) |
 | Unsafe library loading | `dlopen` on a path under app-writable storage | [17-Libraries](../17-Libraries/README.md) |
 
-> **⚠️ Warning**
+> **Warning**
 > **Never report a memory-safety finding from static reading alone**, whether the reading was
 > assembly or decompiled C. Section 3.7's blind spots mean you may be wrong about reachability, and
 > [70-VulnerabilityResearch](../70-VulnerabilityResearch/README.md) measured that the *same* heap
@@ -1806,7 +1806,7 @@ ls target_extracted/lib/
 # arm64-v8a  armeabi-v7a  x86_64
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > `lib/arm64-v8a/libfoo.so` and `lib/armeabi-v7a/libfoo.so` are **different binaries** from the same
 > source. Analyse the one the device under test actually loads. Confirm with
 > `adb shell getprop ro.product.cpu.abi`, and confirm again at runtime by reading `/proc/<pid>/maps`.
@@ -1832,7 +1832,7 @@ This is the sequence to run on any unknown library, in this order, with the reas
 also what [17-Libraries](../17-Libraries/README.md) §"open in Ghidra, IDA or radare2" is pointing at.
 
 ```
-# 📘 Unverified -- the standard opening, ~5 seconds, no analysis
+# Unverified -- the standard opening, ~5 seconds, no analysis
 [0x0]> iI       # arch, bits, stripped, PIC, canary, NX
 [0x0]> il       # what it links against
 [0x0]> ii       # what it imports -- capabilities
@@ -1860,7 +1860,7 @@ Two registration mechanisms, two very different search problems.
 **Static registration.** The C function is named by a mangled convention and exported, so it appears
 in `.dynsym` and `iE` lists it.
 
-> **✅ Measured** — `llvm-nm -D` on the chapter's target shows
+> **Measured** — `llvm-nm -D` on the chapter's target shows
 > `Java_com_pentest_ch59_Native_staticCheck`, which decodes as class
 > `com.pentest.ch59.Native`, method `staticCheck`.
 
@@ -1872,7 +1872,7 @@ hex digits.**
 
 A measured detail that will otherwise confuse you:
 
-> **✅ Measured** — the JNI entry point in this chapter's target compiles to exactly one
+> **Measured** — the JNI entry point in this chapter's target compiles to exactly one
 > instruction:
 >
 > ```
@@ -1895,12 +1895,12 @@ A measured detail that will otherwise confuse you:
 | Read `JNI_OnLoad` and follow the `RegisterNatives` argument | `pdf @ sym.JNI_OnLoad` | Definitive, but manual |
 | Hook it at runtime | [Frida](../53-Frida/README.md); section 7.2 | Definitive and easy. Prefer this |
 
-> **✅ Measured** — in the chapter's target the giveaway strings are exactly what section 4.3
+> **Measured** — in the chapter's target the giveaway strings are exactly what section 4.3
 > predicts. `llvm-strings` output contains, adjacent in `.rodata`:
 > `com/pentest/ch59/Native`, `(Ljava/lang/String;)I`, `dynGate`. The name of the C function that
 > implements it, `dyn_gate`, appears only in `.symtab` and is absent from the stripped build.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > A JNI type signature is a uniquely greppable shape: it begins with `(`, contains only the letters
 > `ZBCSIJFDV`, `L...;` and `[`, and ends with `)` plus one type. `iz~^\(` is close to a perfect
 > detector for "this library registers natives dynamically", and it costs nothing because it needs no
@@ -1927,7 +1927,7 @@ that mean something specific in a *security* context.
 
 The `movk` pattern is worth internalising because it is how you find magic constants:
 
-> **✅ Measured** — the licence comparison in this chapter's target, from `llvm-objdump -d`:
+> **Measured** — the licence comparison in this chapter's target, from `llvm-objdump -d`:
 >
 > ```
 >     1974: 08 57 8e 52   mov    w8, #29368
@@ -1953,7 +1953,7 @@ The `movk` pattern is worth internalising because it is how you find magic const
 > you the algorithm without reading the loop**, and here it tells you the check is FNV-1a against a
 > single target hash, which is the whole of lab 04's puzzle.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Keep a list of well-known constants and search for them with `/x`. FNV-1a's `0x01000193`, SHA-256's
 > `0x6a09e667`, MD5's `0x67452301`, CRC-32's `0xedb88320`, AES's S-box first bytes `637c777b`. One
 > `/x` hit identifies an algorithm in a stripped binary in under a second, and
@@ -1976,7 +1976,7 @@ The tell that costs nothing: **compare `iE` count against `afl` count.** A libra
 anything, is packed — the real code has not been decoded yet, and no amount of static analysis will
 find it.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Every obfuscation trades *your* time against the *device's* time. Anything the CPU must execute
 > must first be decoded into a form the CPU accepts, and that form is readable at the moment it
 > exists. If static analysis is defeated, the answer is not more static analysis — it is to let the
@@ -1992,7 +1992,7 @@ find it.
 Every static-to-dynamic handover on Android is this one calculation, and getting it wrong is the most
 common error at the boundary.
 
-> **📖 Definition**
+> **Definition**
 > A shared library is compiled **position-independent**: its symbols have addresses relative to the
 > start of the library, not absolute addresses. At load time the dynamic linker maps it at some base
 > address. The runtime address of a function is therefore **load base + static offset**, and the load
@@ -2020,7 +2020,7 @@ Interceptor.attach(target, {
 });
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > A static address pasted straight into `Interceptor.attach` will point at an unmapped page or, far
 > worse, at valid-but-unrelated memory. The second case does not crash; it produces confident,
 > completely wrong output. Always go through `Module.base`.
@@ -2062,7 +2062,7 @@ Java.perform(hookRegisterNatives);
 The output is a list of `name signature -> library+offset` lines, and the offset is exactly what you
 type after `s` in radare2. That is the loop: runtime tells you *where*, radare2 tells you *what*.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `RegisterNatives` is index 215 in the `JNINativeInterface` table, which is offset `215 * 8 =
 > 1720 = 0x6b8` on a 64-bit target — **the same `0x6b8` measured in section 4.2's disassembly.** The
 > index form and the offset form are the same fact, and seeing that they agree is a good check that
@@ -2075,7 +2075,7 @@ type after `s` in radare2. That is the loop: runtime tells you *where*, radare2 
 
 ### 7.3 r2frida — radare2 driving a live process
 
-> **📖 Definition**
+> **Definition**
 > **r2frida** is a radare2 IO plugin that makes a live [Frida](../53-Frida/README.md) session look
 > like a file. Once opened, the *entire* radare2 command set operates on the target process's memory:
 > `pd` disassembles live code, `px` dumps live memory, `s` seeks within the process, and `w` writes
@@ -2120,7 +2120,7 @@ The capabilities that justify installing it:
   reverse-engineering question into an experiment: rather than reasoning about what
   `lt_verify_license` accepts, call it with candidate keys and read the return value.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > r2frida is the answer to "the static file is not the code that runs". Packers, self-modifying
 > code, JIT and runtime string decryption all defeat file-based analysis and all are transparent to
 > it, because you are reading memory after the runtime did the work. Its cost is that it inherits
@@ -2154,7 +2154,7 @@ adb shell /data/local/tmp/r2 -v
 **`r2pm -ci r2frida` on the host, targeting the device** — section 7.3, which needs nothing on the
 device except frida-server.
 
-> **⚠️ Warning**
+> **Warning**
 > Two environment traps this repository has already measured, both of which apply to anything you
 > push to a device:
 >
@@ -2172,7 +2172,7 @@ device except frida-server.
 >   `int main(void){return 42;}` exits **139**. This chapter's own test binary is built with that
 >   flag, which is why it runs.
 
-> **✅ Measured** — the AArch64 test binary for this chapter, built with
+> **Measured** — the AArch64 test binary for this chapter, built with
 > `-Wl,-z,max-page-size=16384`, pushed to `/data/local/tmp` on the AVD `sdk_gphone16k_x86_64`
 > (x86_64, API 35, 16 KiB pages confirmed by `getconf PAGE_SIZE` returning `16384`), executed
 > successfully and produced `gate=0`. An AArch64 ELF running on an x86_64 emulator is
@@ -2207,16 +2207,16 @@ but in practice on Android the combination that works is **r2frida for live memo
 [Frida](../53-Frida/README.md) for interception. The native debugger comes into its own on
 device-local ELF executables rather than on app processes.
 
-> **⚠️ Warning**
+> **Warning**
 > Attaching any `ptrace`-based debugger sets `TracerPid` in `/proc/<pid>/status` to a non-zero value,
 > and any app with meaningful anti-tamper reads it. The app may exit — or, far worse, silently switch
 > to a decoy code path and cost you an afternoon. See
-> [38-TamperDetection](../38-TamperDetection/README.md). Also note that a process can only be traced
+> [38-TamperDetection](../38-TamperDetection/README.md). A process can only be traced
 > by one tracer at a time, so Frida and a debugger contend.
 
 ### 7.6 ESIL — emulation without a device
 
-> **📖 Definition**
+> **Definition**
 > **ESIL** (Evaluable Strings Intermediate Language) is radare2's intermediate representation: every
 > instruction is translated into a small stack-machine expression string, which radare2 can then
 > *evaluate*. Its purpose is the same as Ghidra's P-Code — write analysis once, run it on every
@@ -2243,7 +2243,7 @@ to the end, read the plaintext out of ESIL memory.
 annotates each instruction with the values it computed, so opaque predicates and constant-folded
 arithmetic become visible in comments without you doing anything.
 
-> **⚠️ Warning**
+> **Warning**
 > ESIL emulation stops being useful the moment the function calls libc, makes a syscall, or reads
 > device state — which real string decryptors often do deliberately, precisely to defeat emulation.
 > When it works it is excellent; when it does not, it fails confusingly rather than cleanly. Budget a
@@ -2281,7 +2281,7 @@ for f in x/lib/arm64-v8a/*.so; do rabin2 -qz "$f" 2>/dev/null | sed "s|^|$(basen
 [`scripts/so-corpus-stats.sh`](scripts/so-corpus-stats.sh) is the version that produced this
 chapter's section 2 table.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Run `rabin2 -qz` before anything else, every time. Strings are free, they need no analysis, and on
 > a typical Android library they tell you the app's whole intent: endpoint URLs, the crypto library's
 > version banner, log messages naming internal class names, the name of the commercial protection
@@ -2314,7 +2314,7 @@ self-inflicted wound.
 | Which strings look like keys? | `iz~=` (base64 padding) or `izq | grep -E '^[A-Za-z0-9+/]{32,}='` |
 | Is this constant present? | `/x 9301000` for FNV-1a's prime, little-endian |
 
-> **⚠️ Warning**
+> **Warning**
 > Byte-pattern searches must respect **endianness**. AArch64 is little-endian, so the constant
 > `0x01000193` sits in the file as `93 01 00 01`, and searching for `01000193` finds nothing. This
 > catches everybody. `/v4 0x01000193` searches for a 4-byte *value* with endianness handled, which is
@@ -2326,7 +2326,7 @@ Consolidated, with the source chapter named, so that this section is the single 
 are honoured.
 
 ```
-# 📘 Unverified -- root detection  (37-RootDetection section 8.4)
+# Unverified -- root detection  (37-RootDetection section 8.4)
 r2 -A libintegrity.so
 [0x0]> iz~su                       # strings containing "su"
 [0x0]> ii~access                   # the filesystem-probe import
@@ -2336,7 +2336,7 @@ r2 -A libintegrity.so
 ```
 
 ```
-# 📘 Unverified -- emulator detection  (39-EmulatorDetection section 8.4)
+# Unverified -- emulator detection  (39-EmulatorDetection section 8.4)
 r2 -A libsec.so
 [0x0]> is~system_property
 [0x0]> axt sym.imp.__system_property_get     # every property read, at once
@@ -2345,7 +2345,7 @@ r2 -A libsec.so
 ```
 
 ```
-# 📘 Unverified -- anti-tamper responses  (67-BypassingProtections section 8.4)
+# Unverified -- anti-tamper responses  (67-BypassingProtections section 8.4)
 r2 -A libguard.so
 [0x0]> is~JNI_OnLoad
 [0x0]> iS~init_array               # does code run at load time?
@@ -2358,7 +2358,7 @@ API call.** Find the *responses* — `abort`, `exit`, `_exit`, `raise`, `pthread
 backwards to the branches that reach them. That is faster than finding the checks, because there are
 usually many checks and few responses.
 
-> **⚠️ Warning**
+> **Warning**
 > Recall section 3.7's second blind spot and section 5.4's measurement. `axt sym.imp.abort` finds
 > call sites; it does not tell you which ones execute, and it will miss any response dispatched
 > through a function pointer. And a check whose *response* is not a call at all — a value quietly
@@ -2393,8 +2393,8 @@ radare2 will not do this for you (section 3.10). The workflow is manual and shor
 
 ## 9. Examples
 
-Five graded examples. Every radare2 command is **📘 Unverified**; every stated fact about a binary is
-**✅ Measured** by the means named.
+Five graded examples. Every radare2 command is **Unverified**; every stated fact about a binary is
+**Measured** by the means named.
 
 ### 9.1 Simple — is there a root check in this library?
 
@@ -2410,7 +2410,7 @@ rabin2 -qE libtarget.so | grep -i 'Java_'
 Interpretation: strings naming su paths plus an `access` import plus a `Java_*` export whose name
 contains `isRooted` is a root check, and you have not decoded an instruction.
 
-> **✅ Measured** — run against this chapter's own target at `-O2`, the first command **hits**:
+> **Measured** — run against this chapter's own target at `-O2`, the first command **hits**:
 > `llvm-strings -n 4 libr2target.so | grep xbin` prints `/system/xbin/su`, despite the source
 > XOR-encrypting that string. Section 3.8 explains why, and it is the finding, not an accident of the
 > example.
@@ -2418,7 +2418,7 @@ contains `isRooted` is a root check, and you have not decoded an instruction.
 ### 9.2 Intermediate — enumerate every call site of an import
 
 ```
-# 📘 Unverified
+# Unverified
 $ r2 libtarget.so
 [0x0]> aa                                  # cheap analysis is enough for xrefs to imports
 [0x0]> ii~access                           # confirm the import exists
@@ -2430,7 +2430,7 @@ The last line is the grammar from section 3.2 doing real work: `axt` produces li
 column 1 (the addresses), backticks substitute that list, `@@=` iterates over it, and `pd 8` runs at
 each. One line replaces a manual loop.
 
-> **✅ Measured** — the ground truth in this chapter's target is a single call site.
+> **Measured** — the ground truth in this chapter's target is a single call site.
 > `llvm-objdump -d libr2target.so` shows exactly one `bl` to `access@plt`, at `0x192c`, inside
 > `lt_probe_paths`:
 >
@@ -2445,7 +2445,7 @@ each. One line replaces a manual loop.
 Section 6.3's problem, solved statically as far as it can be, then finished at runtime.
 
 ```
-# 📘 Unverified -- the static half
+# Unverified -- the static half
 [0x0]> iE                                  # only JNI_OnLoad? then registration is dynamic
 [0x0]> iz~^\(                              # JNI signatures: they all start with "("
 [0x0]> iz                                  # read the neighbourhood: the method name is adjacent
@@ -2453,7 +2453,7 @@ Section 6.3's problem, solved statically as far as it can be, then finished at r
 [0x0]> aa; pdf @ sym.JNI_OnLoad            # read it and find the RegisterNatives argument
 ```
 
-> **✅ Measured** — the static half succeeds completely on this chapter's target, and each step's
+> **Measured** — the static half succeeds completely on this chapter's target, and each step's
 > ground truth was established with LLVM tools:
 >
 > | Step | Measured result |
@@ -2475,7 +2475,7 @@ Section 6.3's problem, solved statically as far as it can be, then finished at r
 This is section 5.4's measurement rebuilt as a worked example, because the *process* is the lesson.
 
 ```
-# 📘 Unverified -- the naive attempt, which any tutorial would tell you to make
+# Unverified -- the naive attempt, which any tutorial would tell you to make
 $ cp r2gate r2gate.patched
 $ r2 -w r2gate.patched
 [0x0]> e io.cache=1                     # safety net, section 3.15
@@ -2486,7 +2486,7 @@ $ r2 -w r2gate.patched
 [0x0]> wci                              # commit the cache to the file
 ```
 
-> **✅ Measured** — the patch applies correctly. `llvm-objdump -d` on the patched file at the
+> **Measured** — the patch applies correctly. `llvm-objdump -d` on the patched file at the
 > function's address shows exactly what was intended:
 >
 > ```
@@ -2500,12 +2500,12 @@ $ r2 -w r2gate.patched
 The diagnosis is one command:
 
 ```
-# 📘 Unverified -- who calls the thing I patched, and what do they do with the result?
+# Unverified -- who calls the thing I patched, and what do they do with the result?
 [0x0]> axt sym.lt_verify_license
 [0x0]> pdf @ sym.lt_gate
 ```
 
-> **✅ Measured** — `lt_gate` calls `lt_probe_paths` first and returns 0 if it fires
+> **Measured** — `lt_gate` calls `lt_probe_paths` first and returns 0 if it fires
 > (`bl 0x4824` then `cbz w0, 0x48c8`), and the probe fires because
 > **the AVD ships `/system/xbin/su`** (`-rwsr-x--- 1 root shell 51224`). Patching the probe instead
 > produces `gate=1` with the correct key. The full four-variant truth table is in section 5.4.
@@ -2543,10 +2543,10 @@ work through 6.3 MB of code. [57-Ghidra](../57-Ghidra/README.md) §3.16 routes t
 exactly that reason, and section 3.6's floor measurements are the honest way to think about the
 difference.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Add a hash column and keep the CSVs. Across a portfolio the same vendor SDK appears in many apps
 > with an identical `.so`; deduplicating by hash routinely cuts a 400-file corpus to 60 distinct
-> binaries. The single highest-leverage improvement you can make to a triage script is
+> binaries. The single highest-value improvement you can make to a triage script is
 > `sha256` plus `sort -u`, and [`scripts/r2-triage.py`](scripts/r2-triage.py) emits it.
 
 ---
@@ -2862,7 +2862,7 @@ reproducible.
 ### Before you start
 
 **radare2 must be installed.** As stated at the top of this chapter, it was not installed on the
-machine where this was written, so every command is marked **📘 Unverified**. Install it first
+machine where this was written, so every command is marked **Unverified**. Install it first
 (section 3.1), and treat any discrepancy as a bug in this chapter.
 
 Build the targets:
@@ -2877,7 +2877,7 @@ cd 59-radare2/examples
 chapter uses, in both `-O0` and `-O2` variants so that lab 02 can reproduce the string-folding
 measurement. It builds **out of tree** — the repository ships sources, never binaries.
 
-> **⚠️ Warning**
+> **Warning**
 > Lab 03 and lab 04 involve patching binaries and running them on a device. Push only to
 > `/data/local/tmp`, use a test device or an emulator, and clean up afterwards — each lab ends with a
 > cleanup step. Do not run these against an app you do not own. See the ethics note in

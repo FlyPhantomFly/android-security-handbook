@@ -350,7 +350,7 @@ print("BLOB   =", base64.b64encode(ct).decode())
 print("IV_B64 =", base64.b64encode(iv).decode())
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > Run this from a scratch directory outside the repository. It writes nothing itself, but Python
 > writes `__pycache__` for anything it *imports*, and build artefacts do not belong in the repo.
 
@@ -471,8 +471,8 @@ nsenter --mount=/proc/$PID/ns/mnt -- cat /system/etc/hosts
 `/proc/1/mountinfo`? What does the second answer tell you about mount propagation between the app's
 namespace and init's?
 
-**Q8.** Force-stop the app and start it again. Is your mount still there? Explain the result — and
-note that this is the reason the ordering in the solutions below matters.
+**Q8.** Force-stop the app and start it again. Is your mount still there? Explain the result — and note
+why the ordering in the solutions below matters.
 
 ```bash
 # adb shell as root — clean up before you continue

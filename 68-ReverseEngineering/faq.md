@@ -60,7 +60,7 @@ journal entry. The machinery is a scaling technique.
 **4. Why does it matter whether I write the refutation before or after the experiment? Same result
 either way.**
 
-It is not the same result, and this is the single highest-leverage habit in the chapter.
+It is not the same result, and this is the single highest-value habit in the chapter.
 
 Run the command first and you will interpret almost any output as consistent with what you already
 believed. Zero call sites becomes "it must be called through a function pointer". A hook that does

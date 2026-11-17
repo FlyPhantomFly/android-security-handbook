@@ -51,7 +51,7 @@ the messages you care about — but only the ones addressed to legal. If finance
 miss it.
 
 You could **change legal's address book** so that letters intended for finance are delivered to your
-desk instead. Nothing about the letters changes; nobody is watching you; you simply redirected a
+desk instead. Nothing about the letters changes; nobody is watching you; you redirected a
 relationship. But if finance and legal are in the same room and hand each other paper directly, there
 is no address book entry to change.
 
@@ -100,7 +100,7 @@ app sends home. With hooking, you borrow the app's own crypto and read the plain
 
 ### 1.4 What a hook actually is — the definition this chapter defends
 
-> **📖 Definition — Hook.** A *hook* is a modification to a running program that causes control to
+> **Definition — Hook.** A *hook* is a modification to a running program that causes control to
 > reach code the program's author did not write, at a point of your choosing, without changing the
 > program on disk.
 
@@ -125,7 +125,7 @@ This distinction is the spine of the chapter and it is why [Lab 04](labs/lab-04-
 grades a bypass as Silver and reserves Gold for the solution that *learns the secret and then does not
 need the hook at all*.
 
-> **⚠️ Warning.** Only hook software you built or are explicitly authorised to test. Every fixture in
+> **Warning.** Only hook software you built or are explicitly authorised to test. Every fixture in
 > this chapter is built from source that ships alongside it, precisely so that no third-party
 > application is ever instrumented in the course of learning.
 
@@ -200,7 +200,7 @@ and easy for the app to protect. At the bottom, one libc function — used by ev
 process, catches every caller including ones you did not know about, and drowns you in noise.
 
 The five hook points are shaded because from the app's point of view they are all attacker-controlled
-modifications to its own address space. Note that **there is no trust boundary anywhere inside the
+modifications to its own address space.**there is no trust boundary anywhere inside the
 app process box.** Every layer above the kernel line is in the same address space, with the same
 credentials, and any code in that space can modify any other. That single fact explains why
 in-process anti-hooking checks can always, in principle, be defeated — a point
@@ -371,7 +371,7 @@ Three consequences that matter enormously for hooking:
 | The return address lives in a **register**, not on the stack, on entry | At the first instruction of a function, `x30` holds the caller. This is why a hook installed at offset 0 can identify its caller for free |
 | Arguments are in `x0`–`x7` at the moment of entry | A hook at offset 0 sees the arguments without touching the stack. A hook at offset 8 may not — the prologue may already have moved them |
 
-> **🧠 Mental Model.** A function call is a **branch plus a promise**: the promise is the calling
+> **Mental Model.** A function call is a **branch plus a promise**: the promise is the calling
 > convention, which says where the arguments are, where the return value goes, and which registers
 > the callee may destroy. A hook slips between the branch and the promise. Everything that goes wrong
 > in hooking goes wrong because the hook broke part of the promise.
@@ -407,7 +407,7 @@ as scratch, which is exactly what the 16-byte absolute jump does:
 
 Every production hooking engine uses this pattern or a variant of it, for this reason.
 
-> **⚠️ Warning.** The licence applies **at the function entry boundary only**. If you install a hook
+> **Warning.** The licence applies **at the function entry boundary only**. If you install a hook
 > in the *middle* of a function, `x16` may well be live — the compiler is free to use it as an
 > ordinary temporary there. A mid-function hook must save and restore it.
 
@@ -545,7 +545,7 @@ there, you have not hooked an instruction, you have corrupted two.
 
 This is the one that requires understanding rather than care.
 
-> **📖 Definition — PC-relative.** An instruction is *PC-relative* when its effect depends on the
+> **Definition — PC-relative.** An instruction is *PC-relative* when its effect depends on the
 > address at which it executes. Move it and it means something different, silently.
 
 The AArch64 PC-relative forms are: `adr`, `adrp`, `ldr` (literal), `b`, `bl`, `b.cond`, `cbz`/`cbnz`,
@@ -598,7 +598,7 @@ This chapter's engine relocates `adrp` and **refuses** everything else, and the 
 behaviour for a teaching implementation. Silently copying a `b` produces a branch to the wrong place;
 the failure appears far from the cause.
 
-> **🔍 Pentester's Note.** When Frida's `Interceptor.attach()` throws *"unable to intercept function
+> **Pentester's Note.** When Frida's `Interceptor.attach()` throws *"unable to intercept function
 > at 0x…; please file a bug"*, this is what happened. Its relocator met a form it could not move.
 > Run [`scripts/hookability.py`](scripts/hookability.py) on the symbol and you will usually see
 > exactly which instruction, before you ever attach.
@@ -636,7 +636,7 @@ in-order core with a shallow prefetch queue, a call boundary between the write a
 different microarchitecture, a hotter loop, or a second thread already executing inside the patched
 range would change the answer — non-deterministically, which is the worst kind of bug to own.
 
-> **🧠 Mental Model.** Cache maintenance is not an optimisation you can skip when it appears to work.
+> **Mental Model.** Cache maintenance is not an optimisation you can skip when it appears to work.
 > It is the difference between "correct" and "happened to work on the chip I tested". This chapter
 > tried to catch it failing, did not, and reports both halves rather than repeating folklore in
 > either direction.
@@ -729,7 +729,7 @@ precisely; over-claiming here is a common way to lose a developer's trust.
 ### 3.7 Hook type 4 — symbol interposition
 
 `LD_PRELOAD` names a library the dynamic linker loads *first*, so its symbols win during resolution.
-No code and no table is overwritten after the fact; the table is simply *initialised* to your
+No code and no table is overwritten after the fact; the table is *initialised* to your
 definition.
 
 **On Android this almost never applies to app processes,** and the reason is structural: apps are not
@@ -747,7 +747,7 @@ The Android-native replacement is **Zygisk**, which injects into Zygote itself s
 inherits the injection. That is [62-Magisk](../62-Magisk/README.md)'s subject, and its
 `hookJniNativeMethods()` API is a direct pointer at hook type 5.
 
-> **🔬 Under the Hood.** Interposition and PLT hooking act on **the same pointer at different times**.
+> **Under the Hood.** Interposition and PLT hooking act on **the same pointer at different times**.
 > Interposition decides what the GOT slot is *initialised* to during relocation; a PLT hook decides
 > what it *becomes* afterwards. The last writer wins, and the last writer is whoever is still running.
 
@@ -810,7 +810,7 @@ void *r = mmap((void *)want, PAGE, PROT_READ | PROT_WRITE,
 unmaps whatever was already there. With the search, the trampoline landed **10,004 bytes** below the
 target.
 
-> **⚠️ Warning.** Never use bare `MAP_FIXED` for a trampoline. If a library's text, the heap, or a
+> **Warning.** Never use bare `MAP_FIXED` for a trampoline. If a library's text, the heap, or a
 > thread stack occupies the address, `MAP_FIXED` destroys it without asking, and the process dies
 > later, elsewhere, for no visible reason.
 
@@ -875,7 +875,7 @@ polish:
    in §3.9.
 3. **It handles concurrency**, which §3.10 explains this chapter's engine does not.
 
-> **🔍 Pentester's Note.** This is why *"unable to intercept function at 0x…; please file a bug"* is
+> **Pentester's Note.** This is why *"unable to intercept function at 0x…; please file a bug"* is
 > a meaningful message rather than a defect. Gum's relocator met an instruction it could not move.
 > Run `python3 -B scripts/hookability.py lib.so --symbol name -v` and it will usually name the exact
 > word — before you attach, and without needing a device.
@@ -999,7 +999,7 @@ which is a nice illustration that the feature is applied per translation unit.
 | `MAP_FIXED_NOREPLACE` available | Linux 4.17+, so most API 28+ devices | Makes trampoline placement reliable |
 | BTI in platform binaries | 31+ on supporting hardware | Prologues may open with a landing pad you must preserve |
 
-> **⚠️ Warning.** The API 29 row is the one that breaks tools. A Frida script with a hard-coded
+> **Warning.** The API 29 row is the one that breaks tools. A Frida script with a hard-coded
 > `ArtMethod` offset is the single largest source of "works on my phone" breakage in public tooling,
 > because ART updates independently of the platform version string.
 
@@ -1390,7 +1390,7 @@ they change is the **value** of doing so: a KeyStore key cannot be lifted and re
 server-issued nonce means every forged request needs a live, instrumented device rather than a script
 anyone can run.
 
-> **🧠 Mental Model.** Hooking makes the difference between *secret* and *capability* concrete. A
+> **Mental Model.** Hooking makes the difference between *secret* and *capability* concrete. A
 > hard-coded HMAC key is a **secret**, and once extracted it is gone forever, for every user. A
 > KeyStore key is a **capability**, usable only on the compromised device, only while the attacker has
 > code running. Design so that a compromise is a capability, not a secret.
@@ -1494,7 +1494,7 @@ action, in which case the finding is the unprotected action, not the bypassable 
 | **MASVS-CRYPTO-2** | Key management: hooking demonstrates the difference between "key cannot be extracted" and "key cannot be misused" |
 | **MASTG-TEST-0083 / 0084** (Android anti-reversing) | The test procedures where hooking is the tool |
 
-> **⚠️ Warning.** MASVS-RESILIENCE controls are explicitly **defence in depth**. The standard itself
+> **Warning.** MASVS-RESILIENCE controls are explicitly **defence in depth**. The standard itself
 > states they are only in scope where the threat model includes a compromised device. Reporting
 > "the app can be hooked" as a finding against an app with no resilience requirement is noise. Report
 > what the hook *proved*.
@@ -1570,7 +1570,7 @@ Two hook points, and they are not equivalent:
 - `LoginActivity.onLoginClicked` → **the consumer.** Hook it and only this path changes, but it
   *definitely* changes.
 
-> **🔍 Pentester's Note.** When a producer hook does not work, move to the consumer. When a consumer
+> **Pentester's Note.** When a producer hook does not work, move to the consumer. When a consumer
 > hook works but there are twelve consumers, move to the producer. The oscillation between these two
 > is most of practical hooking.
 
@@ -1674,7 +1674,7 @@ That last row matters more than it looks. A hook at `+0` sees `x0` as the caller
 arguments into callee-saved registers it would not. **Hook at offset 0 unless you have a reason not
 to**, precisely so the calling convention still tells you where the arguments are.
 
-> **🧠 Mental Model.** A top byte of `0xb0`, `0xf0`, `0x90` or `0xd0` on an AArch64 word is almost
+> **Mental Model.** A top byte of `0xb0`, `0xf0`, `0x90` or `0xd0` on an AArch64 word is almost
 > always `adrp`. Learning to spot that one family by eye turns "I need to run a tool" into "that one
 > needs relocating" — and `adrp` is the form you will meet in nearly every `-fPIC` prologue.
 
@@ -1854,7 +1854,7 @@ inline    installed       412     openat(/apex/com.android.art/...)
 An installed layer with zero hits is a **finding**: the call came from somewhere you did not expect.
 The 412-versus-3 ratio in the last two rows is the noise cost of hooking low, in one number.
 
-> **⚠️ Warning.** This script was **not executed** while writing this chapter, because the attached
+> **Warning.** This script was **not executed** while writing this chapter, because the attached
 > device is unrooted with no `frida-server`. It is reviewed code, not measured output, and its header
 > says so. Everything in this chapter that *was* measured shows numbers.
 
@@ -1947,7 +1947,7 @@ consequence is that the chapter's central claims — relocation, range, cache be
 inlining — are *measurements* rather than restatements. If a rooted device had been attached, most of
 them would have been one-line Frida calls and the numbers would have been someone else's.
 
-> **🔍 Pentester's Note.** This workflow also applies directly when the target *is* an app you can
+> **Pentester's Note.** This workflow also applies directly when the target *is* an app you can
 > build: put the hook in a `JNI_OnLoad` in your own library and load it from the app. No root, no
 > Frida, and the hook is inside the process from the earliest moment a library can be.
 
@@ -2064,10 +2064,10 @@ llvm-readelf -l libnative.so | grep GNU_RELRO
 llvm-readelf --relocs libnative.so | grep JUMP_SLOT
 ```
 
-> **⚠️ Warning.** An imported `mprotect` is not evidence of anti-tamper. Every JIT, every garbage
+> **Warning.** An imported `mprotect` is not evidence of anti-tamper. Every JIT, every garbage
 > collector and every library that ships its own allocator imports it. `hook-surface.sh`'s tamper
 > section is labelled "leads, not findings" for exactly this reason. This repository has a recorded
-> case of a detector that agreed with its author about 18 of 18 samples and was simply wrong; if a
+> case of a detector that agreed with its author about 18 of 18 samples and was wrong; if a
 > detector never disagrees with you, suspect the detector.
 
 ### 8.5 Java-side hook points from the APK

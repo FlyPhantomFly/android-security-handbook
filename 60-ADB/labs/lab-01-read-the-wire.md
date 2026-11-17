@@ -51,7 +51,7 @@ adb devices -l
 If you have no emulator, you can still do **every part of this lab except §5**, using a physical
 device over USB.
 
-> **⚠️ Do not run `adb tcpip` on a phone you care about** to complete §5. Turning USB debugging into
+> **Do not run `adb tcpip` on a phone you care about** to complete §5. Turning USB debugging into
 > a network service on whatever network the device joins next is a real, persistent exposure. Use an
 > emulator, or skip §5 and come back to it when you have a spare device.
 
@@ -139,7 +139,7 @@ XOR with all-ones is just a bitwise NOT, so you can do it a nibble at a time: `4
 python3 -B ../examples/decode_header.py --explain 4f50454e01000000000000001100000025060000b0afbab1
 ```
 
-### ✅ Checkpoint 2
+### Checkpoint 2
 
 You should be able to say, without looking anything up:
 
@@ -192,7 +192,7 @@ the zero checksum on a 395-byte payload — see §4.
 
 </details>
 
-### ✅ Checkpoint 3
+### Checkpoint 3
 
 Six correct out of six. If (b) tripped you up, re-read §3.3 of the chapter: `A_OKAY` genuinely does
 double duty and the header cannot distinguish the two uses.
@@ -241,7 +241,7 @@ python3 -B ../scripts/adb-mini-client.py --port 5555 --service "shell:id" -v 2>&
 
 Every incoming message should show `cksum=0x00000000`, including the ones with payloads.
 
-### ✅ Checkpoint 4
+### Checkpoint 4
 
 Write one sentence explaining, to a colleague who has read `protocol.txt` and believes the field is
 a CRC32, what you have just measured and what the consequence is. (Consequence: there is no
@@ -318,7 +318,7 @@ python3 -B ../scripts/adb-mini-client.py --port 5555 --service "definitelynotase
 You should see `>> A_OPEN` followed immediately by `<< A_CLSE` with `arg0=0x00000000`, and nothing
 else. No error string, no error code.
 
-### ✅ Checkpoint 5
+### Checkpoint 5
 
 - Your eight-message table is complete and correct.
 - You can state why message 6 is mandatory rather than polite.
@@ -354,7 +354,7 @@ print(s.recv(1024))
 "
 ```
 
-### ✅ Checkpoint 6
+### Checkpoint 6
 
 Explain the difference between the two protocols in one sentence each, and name which one
 `protocol.txt` documents and which one `SERVICES.TXT` documents.

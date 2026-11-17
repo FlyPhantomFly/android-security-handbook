@@ -80,7 +80,7 @@ struct amessage { uint32 command, arg0, arg1, data_length, data_check, magic; };
 | `dev:<path>` | open a device node |
 | `sink:` / `source:` | bandwidth test |
 
-⚠ `root:`, `unroot:`, `tcpip:`, `usb:`, `remount:`, `reboot:` **take effect immediately.**
+`root:`, `unroot:`, `tcpip:`, `usb:`, `remount:`, `reboot:` **take effect immediately.**
 
 ---
 
@@ -272,7 +272,7 @@ printf '0009host:kill'       | nc 127.0.0.1 5037
 | `host:kill` | stop the server |
 | `host:transport-any` / `host:transport:<serial>` | bind this socket to a device |
 
-⚠ Port 5037 is bound to loopback and has **no authentication**. Any local process can drive every
+Port 5037 is bound to loopback and has **no authentication**. Any local process can drive every
 attached device.
 
 ---

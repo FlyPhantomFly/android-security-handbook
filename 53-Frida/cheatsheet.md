@@ -66,7 +66,7 @@ adb shell "su 0 /data/local/tmp/frida-server --version"   # AVD form; Magisk: su
 means the server binary is newer than the image's linker. Measured on `sdk_gphone16k_x86_64`,
 Android 15 / API 35, x86_64. **Not a root problem** — `su 0 id` returns 0 — and **`frida-ps -U`
 still lists processes** while it is happening. Match the build to the image, or use gadget.
-Full disclosure: [README §top](README.md#-read-this-before-you-install-anything-frida-server-does-not-run-on-every-image).
+Full disclosure: [README §top](README.md#read-this-before-you-install-anything-frida-server-does-not-run-on-every-image).
 
 ```bash
 frida -U -f <pkg> -q --no-pause -e \

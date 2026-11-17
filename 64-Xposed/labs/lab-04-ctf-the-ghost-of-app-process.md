@@ -24,8 +24,9 @@ Your rules of engagement cover the application and the test device. They do not 
 Your job is to decide whether that sentence is true, and to write what you find in a form the
 development team can act on.
 
-> **⚠️ Authorised testing only.** VaultPay is a lab application you build from the source in this
-> file. It targets nothing you do not own. Do not point any of this at real software.
+> VaultPay is a lab application you build from the source in this file. It targets nothing you do
+> not own. Do not point any of this at real software. See [SECURITY.md](../../SECURITY.md) for
+> authorised-testing scope.
 
 ---
 
@@ -228,7 +229,7 @@ adb logcat -d -s VAULTPAY
 
 ---
 
-## 🥉 Bronze — release the credential
+## Bronze — release the credential
 
 **Objective:** make `releaseCredential` return the flag.
 
@@ -278,7 +279,7 @@ Three ways to the flag:
 
 ---
 
-## 🥈 Silver — how many of the four can fire?
+## Silver — how many of the four can fire?
 
 **Objective:** call `Flag.silver(n)` with the correct `n` for **your** device, and get the flag.
 
@@ -326,7 +327,7 @@ noticed.**
 
 ---
 
-## 🥇 Gold — the baseline that never existed
+## Gold — the baseline that never existed
 
 **Objective:** call `Flag.gold(realSize, checksThatFire)` with the true values for your device.
 
@@ -380,7 +381,7 @@ constant" — there is no constant that is right — it is **report the value an
 population data decide**, which is what `examples/XposedDetector.java`'s
 `appProcessLooksReplaced()` does and says so in its comment.
 
-**And note that you solved Gold with `ls` and arithmetic.** No root, no module, no Frida, no hook.
+**You solved Gold with `ls` and arithmetic.** No root, no module, no Frida, no hook.
 The strongest finding in this CTF required no instrumentation at all, which is the same shape as
 [65-Hooking](../../65-Hooking/README.md)'s CTF reserving Gold for the solution that learns the secret
 and then does not need the hook.
@@ -389,7 +390,7 @@ and then does not need the hook.
 
 ---
 
-## 🏆 Platinum — write the report
+## Platinum — write the report
 
 **Objective:** no flag string. Produce the finding.
 

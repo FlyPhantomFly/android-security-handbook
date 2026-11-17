@@ -25,8 +25,8 @@ them, and recover the flag.
 
 **Flag format:** `CH54{...}`
 
-> **⚠️ Authorised testing only.** You build this application yourself, from sources you write in
-> Part 0. Nothing here is pointed at third-party software.
+> You build this application yourself, from sources you write in Part 0. Nothing here is pointed
+> at third-party software. See [SECURITY.md](../../SECURITY.md) for authorised-testing scope.
 
 ---
 
@@ -290,7 +290,7 @@ Hooking a method that already ran and whose result was cached in a static change
 This is failure mode 3 (chapter §7.3) in its hardest form: not merely "you attached late" but
 "the decision is *cached*", so re-triggering the Activity does not re-run the check.
 
-**The reason the flag is not simply "hook the gate" is that the gate is a memory of a decision,
+**The reason the flag is not "hook the gate" is that the gate is a memory of a decision,
 not a decision.**
 </details>
 
@@ -509,7 +509,7 @@ Produce a document containing:
    but the class was not the decider", "the hook installed too late", and "the hook was never
    applicable".
 4. **Three routes**, with which need spawn and which do not.
-5. **The remediation you would give the developer** — and note that "these defences worked
+5. **The remediation you would give the developer** — and confirm that "these defences worked
    against a stock tool" is not the same as "these defences work". You defeated all four in an
    afternoon.
 

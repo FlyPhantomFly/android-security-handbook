@@ -16,7 +16,7 @@
 [09 — Android App Internals](../../09-Android-App-Internals/README.md) for `ActivityThread` ·
 [60 — ADB](../../60-ADB/README.md) for what the shell UID can reach
 
-**Authorised testing only.**
+See [SECURITY.md](../../SECURITY.md) for authorised-testing scope.
 
 ---
 
@@ -286,7 +286,7 @@ to rule out is your own timing. Practical defences:
 - Always report the negative *with* the wait condition attached, so a reviewer can judge it.
 
 Against a real target you do not control, you have no marker to wait on. Use
-`getTargetContext().registerComponentCallbacks`, `waitForIdleSync()`, or simply `startActivitySync()`
+`getTargetContext().registerComponentCallbacks`, `waitForIdleSync()`, or `startActivitySync()`
 the app's launcher activity and read afterwards — by then `Application.onCreate` has certainly
 completed.
 
@@ -364,7 +364,7 @@ ua.shell.readProcModules virtio_snd 45056 0 - Live 0x000000000000
 Every path that was `EACCES` sixty lines earlier came back. `UiAutomation.executeShellCommand()` does
 not run in this process; the system runs it, as **uid 2000**.
 
-> **⚠️ This invalidates measurements silently, which is the worst kind of invalidation.**
+> **This invalidates measurements silently, which is the worst kind of invalidation.**
 > A detection probe written as an instrumentation that reaches for `executeShellCommand` because it
 > is convenient has measured the **shell's** vantage, and nothing in its output distinguishes the two
 > sources. The app you are assessing has no `UiAutomation`. It cannot list `/data/local/tmp`, cannot

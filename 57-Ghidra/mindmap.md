@@ -10,10 +10,10 @@ hypothesis wants a runtime confirmation. The branches below correspond to the se
 [the chapter README](README.md).
 
 > **Provenance.** Ghidra **is** installed here (12.1.2 PUBLIC) and was run against this chapter's own
-> target — the JNI offsets shown below, including `RegisterNatives` at `0x6b8`, are **✅ Measured**.
-> The worked scenarios in README §9 are **📘 Illustrative**, staged on libraries that do not exist;
+> target — the JNI offsets shown below, including `RegisterNatives` at `0x6b8`, are **Measured**.
+> The worked scenarios in README §9 are **Illustrative**, staged on libraries that do not exist;
 > **the "AES key" in README §9.1 is invented, not recovered.** Full statement:
-> [README.md](README.md#-read-this-before-you-read-anything-else-what-is-measured-here-and-what-is-not).
+> [README.md](README.md#read-this-before-you-read-anything-else-what-is-measured-here-and-what-is-not).
 
 ```mermaid
 mindmap
@@ -124,7 +124,7 @@ mindmap
       trusting C over the disassembly
       not fixing types then blaming the tool
       taking a ghidra address into a live process raw
-      reversing an algorithm you could simply CALL
+      reversing an algorithm you could CALL
       reporting a function existing as if it were a finding
 ```
 
@@ -144,4 +144,4 @@ mindmap
 | What it cannot tell you | Which code runs, what values are, what the compiler discarded, and what the author meant. |
 | Where it degrades | Precisely where an adversary puts the code you most want to read. |
 | Choosing a tool | Triage in radare2, work in Ghidra, open IDA for the one function that defeats both. |
-| Common mistakes | Wrong ABI, unloaded library, trusting the C, and reversing what you could simply call. |
+| Common mistakes | Wrong ABI, unloaded library, trusting the C, and reversing what you could call. |

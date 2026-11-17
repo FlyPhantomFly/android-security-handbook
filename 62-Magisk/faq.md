@@ -171,7 +171,7 @@ certificate through a mount Magisk did not make, which is exactly what
 
 An OTA writes a new boot image. Yours was patched; the new one is not. On A/B devices the update is
 written to the *inactive* slot and the device switches to it at reboot, so your patched image is
-simply no longer the one being booted.
+no longer the one being booted.
 
 Two workable approaches:
 
@@ -214,7 +214,7 @@ This confusion is common enough that this repository's own posture script has a 
 `06-Android-Architecture/scripts/device-posture.sh --test-device` suppresses exactly this class of
 result, and prints "YOUR OWN TEST DEVICE — methodology, not a finding" against the rows it would
 otherwise report. Use it, and adopt the same discipline in your notes: a control you deliberately
-removed in order to test is not a weakness you discovered.
+removed to test is not a weakness you discovered.
 
 What *is* a finding, in this area:
 
@@ -275,7 +275,7 @@ There is **no code signing, no review, no permission model, no sandbox and no re
 modules. Installing one gives its author a root shell that runs at every boot, at `post-fs-data`,
 before zygote, before any application and before anything that could log it.
 
-The realistic threat is not an obviously hostile module; it is a popular, genuinely useful module
+The realistic threat is not a blatantly hostile module; it is a popular, genuinely useful module
 changing hands, or its author's account being compromised, and version 4.3 containing eleven lines
 that 4.2 did not.
 

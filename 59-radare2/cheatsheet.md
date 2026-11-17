@@ -1,7 +1,7 @@
 # 59 — radare2 cheat sheet
 
-> Every radare2 command here is **📘 Unverified** — radare2 was not installed on the machine where
-> this chapter was written. Byte encodings, ELF facts and device behaviour are **✅ Measured**.
+> Every radare2 command here is **Unverified** — radare2 was not installed on the machine where
+> this chapter was written. Byte encodings, ELF facts and device behaviour are **Measured**.
 > See [README.md](README.md) for the full statement.
 
 ---
@@ -177,7 +177,7 @@ single PLT stub, so xrefs to the stub are a complete local call list.
 > `r2 -w` edits the file immediately with no undo and no backup. **Copy first**, and set
 > `e io.cache=1` before touching anything.
 
-### AArch64 patch encodings — ✅ Measured
+### AArch64 patch encodings — Measured
 
 | Instruction | Bytes (file order) | Word |
 |---|---|---|
@@ -346,7 +346,7 @@ done | grep -iE 'su\b|magisk|frida|http://'
 
 ---
 
-## JNI offsets — ✅ Measured
+## JNI offsets — Measured
 
 The JNI specification fixes the table order, so **an offset is a function name**.
 

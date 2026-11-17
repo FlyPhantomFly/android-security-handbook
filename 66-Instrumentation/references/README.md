@@ -35,7 +35,7 @@ labelled as derived from behaviour rather than quoted.
 
 | Source | Why |
 |---|---|
-| Android Developers — `Instrumentation` API reference | The canonical description of every method in §3.1. Note that its `onCreate` javadoc is the one §3.6 contradicts with measurements |
+| Android Developers — `Instrumentation` API reference | The canonical description of every method in §3.1.its `onCreate` javadoc is the one §3.6 contradicts with measurements |
 | Android Developers — `<instrumentation>` manifest element | Attribute list and API levels for §3.2 |
 | Android Developers — "Test apps on Android" | The developer-facing framing: how Gradle, `androidTest` source sets and `testInstrumentationRunner` fit together |
 | AndroidX Test library documentation | `AndroidJUnitRunner`, `InstrumentationRegistry`, Espresso, UiAutomator, Orchestrator — the stack in §3.15 |

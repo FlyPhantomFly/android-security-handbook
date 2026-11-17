@@ -23,7 +23,8 @@ By the end you will be able to:
    and cannot answer.
 4. Articulate the rule for choosing between them, and defend it to a sceptical colleague.
 
-> **⚠️ Authorised testing only.** Uses `examples/target-app/`, built for this chapter.
+> Uses `examples/target-app/`, built for this chapter. See [SECURITY.md](../../SECURITY.md) for
+> authorised-testing scope.
 
 ---
 

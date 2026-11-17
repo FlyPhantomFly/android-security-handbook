@@ -194,13 +194,13 @@ I VaultMain    : isUnlocked -> false  successes=0  failures=1  auditRecords=3
 ```
 
 **Task 1.1.** Note the ordering. `AuditProvider.onCreate` ran **first**, before anything in
-`MainActivity`. Write down which entry point a module would need in order to hook something that
+`MainActivity`. Write down which entry point a module would need to hook something that
 happens there. (Answer: not `Application.onCreate` — `handleLoadPackage`.)
 
 **Task 1.2.** Press Unlock three more times with a wrong PIN. What happens on the fourth? Which field
 holds that state, and is it a `static`?
 
-> **⚠️ If `adb install` fails with `INSTALL_FAILED_USER_RESTRICTED`,** push and install as root:
+> **If `adb install` fails with `INSTALL_FAILED_USER_RESTRICTED`,** push and install as root:
 > ```bash
 > adb push app-debug.apk /data/local/tmp/vault.apk
 > adb shell "su -c 'pm install -r /data/local/tmp/vault.apk'"    # or: su 0 pm install -r ...
@@ -236,7 +236,7 @@ enc=[0x55,0x5F,0x59,0x5C,0x40,0x1B,0x0C,0x18,0x01,0x19]
 print(''.join(chr(b^0x6D) for b in enc))"
 ```
 
-> **🔍 That you *can* do this is the point.** XOR-encoding a constant is not encryption; it costs a
+> **That you *can* do this is the point.** XOR-encoding a constant is not encryption; it costs a
 > static analyst about ninety seconds. But note what it *does* buy the developer: it removes the PIN
 > from `strings app-debug.apk`, which defeats the laziest possible search. The honest severity of
 > "secret is XOR-encoded rather than encrypted" is Low on its own and irrelevant next to the fact
@@ -262,7 +262,7 @@ dependencies {
 }
 ```
 
-> **⚠️ `compileOnly`, never `implementation`.** The framework supplies `de.robv.android.xposed.*` at
+> **`compileOnly`, never `implementation`.** The framework supplies `de.robv.android.xposed.*` at
 > runtime inside the target process. A module that packages its own copy calls its *own*
 > `XposedBridge`, a different class from the one LSPosed loaded, and every hook goes into nothing.
 > The symptom is a module that loads cleanly, throws nothing, logs nothing and hooks nothing.

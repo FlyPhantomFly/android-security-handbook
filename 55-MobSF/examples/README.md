@@ -3,7 +3,7 @@
 Six files. Two are fixtures you feed to the scripts, two are unedited tool output, and two are the
 deliverables a scanner run is supposed to end in.
 
-> **⚠️ Warning — read this before quoting anything here**
+> **Warning — read this before quoting anything here**
 > **MobSF was not run while this chapter was written.** Docker's Linux engine does not start on the
 > authoring machine and MobSF is not installed as a Python package; the evidence is in
 > [README §1.6](../README.md#16-installation-reality--mobsf-was-not-run-here). The two `.json` files
@@ -114,7 +114,7 @@ Then the ledger — which is the *human* pass, and the only one that produces fi
 **Eight findings from thirty-nine report items, and two of the eight are things the scan never
 mentioned.** That ratio, not the scan's item count, is what the engagement produced.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > The survival rate is a property of the *pairing* — this rule set against this application — and not
 > a property of MobSF. Run it on a well-built app with three components and it will be higher; run it
 > on a 200-component enterprise app and it will be far lower, because the exported-component rules

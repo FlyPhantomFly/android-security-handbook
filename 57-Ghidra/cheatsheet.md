@@ -4,10 +4,10 @@ Printable. No prose. See [README.md](README.md) for why each of these works.
 
 > **Provenance.** Ghidra **is** installed on the machine this chapter was written on (12.1.2 PUBLIC,
 > Java 24.0.2) and was run headless against the chapter's own target — so the commands, menu paths
-> and JNI offsets here are **✅ Measured** unless noted. What is **📘 Illustrative** is the *sample
+> and JNI offsets here are **Measured** unless noted. What is **Illustrative** is the *sample
 > data* in the README's section 9: `libcrypto_helper.so`, `libsecure.so` and `libapi.so` do not
 > exist, and **the 32-byte "AES key" in README §9.1 is invented, not recovered from any app.** Never
-> quote it as a finding. Full statement: [README.md](README.md#-read-this-before-you-read-anything-else-what-is-measured-here-and-what-is-not).
+> quote it as a finding. Full statement: [README.md](README.md#read-this-before-you-read-anything-else-what-is-measured-here-and-what-is-not).
 
 ---
 
@@ -129,9 +129,9 @@ jstring Java_com_example_Crypto_decrypt(JNIEnv *env, jobject thiz, jstring input
 
 Or click `param_1` → `Ctrl+L` → `JNIEnv *`.
 
-### Function table offsets (64-bit; index × 8) — ✅ Measured
+### Function table offsets (64-bit; index × 8) — Measured
 
-> **✅ Measured** — `0x30` `FindClass`, `0xa8` `NewGlobalRef`, `0x108` `GetMethodID`, `0x538`
+> **Measured** — `0x30` `FindClass`, `0xa8` `NewGlobalRef`, `0x108` `GetMethodID`, `0x538`
 > `NewStringUTF`, `0x558` `GetArrayLength`, `0x5c0` `GetByteArrayElements` and `0x6b8`
 > `RegisterNatives` were all read off real Ghidra 12.1.2 decompiler output for this chapter's own
 > `libreference.so` (README §9.0). The rest follow from the same fixed JNI index × 8 rule.
@@ -362,7 +362,7 @@ iface.dispose()
 | "What syscalls does it make?" | `strace` |
 | "What is in the Java layer?" | [JADX](../56-JADX/README.md) |
 | "Quick look, over SSH, no JVM" | [radare2](../59-radare2/README.md) |
-| "This function's decompilation is hopeless" | [IDA Pro](../58-IDA/README.md) — sometimes simply better |
+| "This function's decompilation is hopeless" | [IDA Pro](../58-IDA/README.md) — sometimes better |
 | "Is this library even loaded?" | `adb shell cat /proc/<pid>/maps` |
 
 ---

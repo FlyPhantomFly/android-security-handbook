@@ -190,7 +190,7 @@ mkdir -p /tmp/dexes && unzip -o -j CMPen-Android-App-v1.2.apk 'classes*.dex' -d 
 # now: what does a CONFIGURED pin value look like, exactly?
 ```
 
-> **⚠️ `grep sha256/` alone is not the answer.** That substring is OkHttp's own parser constant and
+> **`grep sha256/` alone is not the answer.** That substring is OkHttp's own parser constant and
 > it hits on essentially every application that uses OkHttp. The distinguishing feature is what
 > follows it: a base64-encoded SHA-256 digest is **43 characters plus one `=`**. Build the regex from
 > that fact. [36-CertificatePinning §8.2](../../36-CertificatePinning/README.md#82-doing-it-by-hand)
@@ -511,7 +511,7 @@ cipher.doFinal(Base64.decode(b64ct, 0))
 | **Bonus:** a fifth item, from anywhere in the report, that you can show is wrong — with evidence | 10 |
 | **Penalty:** any report line quoted in your write-up that you did not verify | −10 each |
 
-**Total 110.** Note that the write-ups are worth 45 of it, and that the penalty exists. A CTF that
+**Total 110.** The write-ups are worth 45 of it, and the penalty exists. A CTF that
 rewards only flag recovery teaches flag recovery.
 
 ---

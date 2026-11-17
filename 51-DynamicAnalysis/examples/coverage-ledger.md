@@ -101,7 +101,7 @@ by a third-party application"*. Those are different claims and only the first is
 
 | Bucket | Meaning | Rows | What to do about it |
 |---|---|---|---|
-| **A** | Reachable, I simply did not | none | Free coverage. Drive it |
+| **A** | Reachable, I did not | none | Free coverage. Drive it |
 | **B** | Reachable, but needs state I did not have | none | Get the state, or record why not |
 | **C** | Not reachable from the UI path driven | 3 | Start it explicitly — **only against an app you own** |
 | **D** | Not reachable by a user at all | 4 | Trigger it deliberately: `am broadcast`. Same caveat |

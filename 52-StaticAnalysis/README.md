@@ -50,7 +50,7 @@ never took in front of you, but tells you nothing about what actually happens wh
 Those two methods are dynamic analysis and static analysis. Neither is a substitute for the other,
 and the entire professional skill is knowing which question belongs to which.
 
-> **📖 Definition**
+> **Definition**
 > **Static analysis** is the examination of a program's *artefacts* — its files, its bytecode, its
 > resources, its manifest — without executing it. **Dynamic analysis** is the examination of a
 > program's *behaviour* while it runs. The distinguishing feature of static analysis is not that it
@@ -98,7 +98,7 @@ JWT-shaped rule because it genuinely *is* signed JSON. Not one of them was a mis
 Every rule fired correctly. The tool was answering "does this look like a credential", and the
 question that mattered was "is this a credential", and those are different questions.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > A static analyser is a metal detector on a beach. It is extremely good at telling you where the
 > metal is. It has no opinion about whether you have found a Roman coin or a bottle cap, and the
 > ratio on a real beach is roughly a hundred bottle caps to one coin. The skill being taught in this
@@ -123,7 +123,7 @@ What the method owns, and none of those chapters owns:
    clean sweep is never reported as a clean application.
 5. **Honest severity** — a string in a DEX is not a finding. Reachability decides.
 
-> **⚠️ Warning**
+> **Warning**
 > If you are here for manifest auditing, library fingerprinting, or deobfuscation, you are in the
 > wrong chapter and the right chapters are linked above. This chapter deliberately does not re-teach
 > them, and its tooling deliberately does not re-implement theirs.
@@ -331,7 +331,7 @@ all of which have bitten real analysts:
   hang. `04-Java/scripts/dump-strings.py` validates the claim against the file size before allocating,
   and says so in its error message.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Do your unpacking in a container or a throwaway directory, and never in your home directory. This
 > is not paranoia about malware; it is about the boring case where `apktool` writes 40,000 files
 > where you did not expect them.
@@ -356,7 +356,7 @@ that position, **when** you can skip it, **where** its output goes, and **how** 
 2. **Analysing only `base.apk`.** App Bundle delivery splits an application across
    `base.apk`, `split_config.arm64_v8a.apk`, `split_config.en.apk` and any number of dynamic feature
    modules. Native libraries live in the ABI split. An inventory built from `base.apk` alone reports
-   zero `.so` files and is simply wrong.
+   zero `.so` files and is wrong.
 3. **Analysing a file someone emailed you.** It may be the wrong version, the wrong flavour, or
    modified.
 
@@ -431,7 +431,7 @@ unzip -l target.apk | grep -E 'META-INF/.*\.version$' | wc -l
 | Twelve `classes*.dex` files | An ordinary large app | Nothing special, but remember each DEX has its own string table |
 | A large, high-entropy `.bin`/`.dat`/`.jar` in `assets/` | Possibly an encrypted payload | Entropy alone proves nothing — see the warning below |
 
-> **⚠️ Warning**
+> **Warning**
 > **High entropy is not evidence of encryption.** Compressed data, PNGs, ZIPs, ML model weights and
 > font atlases are all high entropy. The signal is *entropy plus context*: a high-entropy asset
 > **plus** an unusually small DEX **plus** an `<application android:name>` you do not recognise
@@ -469,7 +469,7 @@ aapt2 dump xmltree --file AndroidManifest.xml target.apk > manifest-aapt2.txt
 python3 -B ../04-Java/scripts/dump-strings.py target.apk --min-len 8 > strings.txt
 ```
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > jadx is a native launcher on Windows, and on this machine `jadx` on `PATH` was the GUI binary: it
 > detached, printed four log lines, exited 0, and produced no output directory. The CLI lives inside
 > the shipped jar. If a decompile "succeeds" instantly and produces nothing, that is what happened:
@@ -571,7 +571,7 @@ failure of the sweep; it is a failure to have a stage six.
 
 **What.** Convert hits into **leads**, rank them, and attach a next step to each.
 
-> **📖 Definition**
+> **Definition**
 > A **hit** is one match on one line of one file. A **lead** is one distinct value or construct,
 > with every site it appears at attached to it. The distinction is the whole of triage.
 
@@ -667,7 +667,7 @@ The four holes:
 4. **Framework callbacks and native code.** A lambda handed to the framework, or a method bound with
    `RegisterNatives`, is called from somewhere your tree does not contain.
 
-> **⚠️ Warning**
+> **Warning**
 > Never write "unreachable" in a report on the strength of a static closure. Write **"no static path
 > found"**, list the four holes you checked, and — if it matters to the severity — settle it
 > dynamically with a hook that either fires or does not.
@@ -739,7 +739,7 @@ device gave 1,151 / 1,281 / 1,290 registrations.
 a `.so`'s dynamic symbol table and no `Java_*` symbols at all is the signature, and
 `17-Libraries/scripts/lib-inventory.sh` prints exactly that warning when it sees it.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Static analysis draws the map. Dynamic analysis drives the roads. The map shows roads nobody drives
 > and — this is the part people forget — **the driver keeps finding roads the map does not have**,
 > because on Android roads are built at runtime.
@@ -800,7 +800,7 @@ The same lead scored **0.45 (MEDIUM)** in an earlier build of this tool, when th
 −0.30 rather than −0.45. The number moved because the model was wrong, and it was possible to *see*
 that it was wrong because the terms are printed. A single opaque score would have moved silently.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > These weights are **judgements, not measurements**, and this section says so rather than dressing
 > them up. They were tuned against two real trees until the ordering matched what a human triager
 > did by hand. Tune yours against your own corpus. What must not change is that the terms are
@@ -825,7 +825,7 @@ On the 20,091-file commercial application in §9.4, the package classifier produ
       unknown        10840    (54%)
 ```
 
-**More than half the tree is neither obviously the app nor obviously a library.** That is not a
+**More than half the tree is neither recognisably the app nor recognisably a library.** That is not a
 defect in the classifier; it is what a modern APK contains. Four things land in "unknown", and they
 need four different responses:
 
@@ -853,8 +853,8 @@ python3 -B scripts/static-sweep.py ./out --app-package com.vendor.hrapp
 grep -rn 'package com.vendor.internal' out/sources/ | head -3   # found a second root
 ```
 
-> **🔍 Pentester's Note**
-> This is the highest-leverage ten minutes in the whole pipeline on a large app, and almost nobody
+> **Pentester's Note**
+> This is the highest-value ten minutes in the whole pipeline on a large app, and almost nobody
 > spends it. Every lead in an unrecognised app-owned package is currently scoring `+0.05` when it
 > should be scoring `+0.25`, which is the difference between LOW and MEDIUM — and MEDIUM is where the
 > best lead in §9.4 turned out to be.
@@ -961,7 +961,7 @@ Two properties of that code matter to you:
   attributes. `10-APK-Internals`' CTF is built on exactly that: a widened stride, deliberately chosen
   to be a different primitive from `32-Manifest`'s `rawValue`/`typedValue` trick.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > This is why "the manifest says X" is a weaker sentence than it looks. The strong sentence is
 > "`aapt2 dump xmltree` and `apktool` agree that the manifest says X, and `dumpsys package` on a
 > device confirms the platform applied it."
@@ -1005,7 +1005,7 @@ There are two ways a `native` Java method gets an implementation:
 | `RegisterNatives` | Nothing. The mapping is a `JNINativeMethod[]` array passed at runtime, usually from `JNI_OnLoad` | **No** |
 
 `ClassLinker::LinkCode` consults the registered map first and falls back to `dlsym` on the mangled
-name. So an app that wants its native surface hidden simply registers it, and your `readelf` output
+name. So an app that wants its native surface hidden registers it, and your `readelf` output
 is empty of `Java_*` symbols while the app has twenty native methods.
 
 This is the source of the blind spot in §3.9. It is also the reason
@@ -1114,7 +1114,7 @@ The pinning row is the one to internalise, and this repository has the number.
 layers of surface. A static review that reports "the app implements certificate pinning" because it
 found `CertificatePinner` in the class list is wrong roughly two times in three.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The inverse error is just as common and more embarrassing: concluding "no pinning" from the absence
 > of a `TrustManager`, when the pins are declared in `res/xml/network_security_config.xml`. Static
 > analysis has to check every layer before it may make a negative claim, and the layers live in four
@@ -1285,7 +1285,7 @@ is scope: if this token permits only reading published translation bundles, the 
 Informational; if it permits writing them, an attacker can change every string the app displays,
 which is a High." Then go and check, or ask the client to.
 
-> **⚠️ Warning**
+> **Warning**
 > Do not exercise a credential you found unless the engagement scope says in writing that you may.
 > Reading a secret and using a secret are different authorisations, and the second one is where
 > testers get into trouble.
@@ -1388,7 +1388,7 @@ grep -rnEi '(staging|preprod|uat|sandbox|qa)[0-9]*\.[a-z0-9-]+\.[a-z]{2,}' out/s
 python3 -B scripts/static-sweep.py ./out --app-package com.vendor.hrapp | grep NET-04
 ```
 
-Note that this is a **MEDIUM**-confidence rule and it produced the best lead in the whole run.
+this is a **MEDIUM**-confidence rule and it produced the best lead in the whole run.
 
 **Dynamic detection.** None, usually — the production build never contacts these hosts, so a proxy
 log will never show them. **This is a finding only static analysis can produce**, which is worth
@@ -1523,7 +1523,7 @@ looking for:
 3. "No obfuscation / no root detection / no pinning" reported as vulnerabilities. They are
    observations about missing hardening, and most programmes say so in their policy.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Before submitting anything from a static pass, run your own kill list against it and put the
 > answers *in the submission*. "This is in the app's own package (`com/vendor/pay/`), reachable from
 > the exported `CheckoutActivity`, and here is the request it signs" converts a five-minute triage
@@ -1597,7 +1597,7 @@ flags=[ DEBUGGABLE HAS_CODE ALLOW_CLEAR_USER_DATA ALLOW_BACKUP ]
 Not about this string at all — but the same command, in the same minute, converted a *different*
 lead from "the manifest claims" into "the platform enforces".
 
-> **🧠 Mental Model**
+> **Mental Model**
 > jadx tells you what the code *means*. dexdump tells you what the code *is*. The string table tells
 > you what the code *contains*. `dumpsys` tells you what the platform *did*. Reach for the cheapest
 > one that can settle your question, and reach for the authoritative one before you write it down.
@@ -1619,7 +1619,7 @@ The last row is worth a note in a report's methodology section: names like `bArr
 invention, not the developer's. Quoting them as if they were the app's identifiers is a small
 credibility leak that reviewers notice.
 
-> **⚠️ Warning**
+> **Warning**
 > `jadx --show-bad-code` (or `-f`) will emit output for classes it could not decompile properly. It
 > is useful for orientation and dangerous in evidence. If a finding depends on a method jadx flagged,
 > the evidence is the Smali.
@@ -1727,10 +1727,10 @@ restart this pipeline at stage 3 with the dumped DEX. The success criterion for 
 concrete: jadx opens your dump and you can see classes whose names match the manifest's component
 names.
 
-> **⚠️ Warning**
+> **Warning**
 > "Few classes plus a big asset" is also what a legitimate Unity or Flutter app looks like. Check the
 > framework markers *first* — `assets/bin/Data/`, `flutter_assets/`, `libil2cpp.so`, `libhermes.so`
-> — because the response is completely different: a Unity app is not packed, its code simply is not
+> — because the response is completely different: a Unity app is not packed, its code is not
 > in the DEX and never was.
 
 ### 6.7 The finding a static pass can make that dynamic analysis was supposed to own
@@ -1758,7 +1758,7 @@ asymmetry that decides which tool to reach for:
   observed that the app also refuses to display it until a counter reaches 256; dynamic observed the
   gate and would never have known the value was a plain constant sitting in the string table.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > When a target's secret is a constant, static analysis is faster than any hook you can write. Check
 > the string table *first*, always. It costs one command and it occasionally ends the engagement's
 > hardest question in the first ten minutes.
@@ -1790,7 +1790,7 @@ instrumentation itself.
 | "This code has no static caller" | "Does it ever run?" | A hook that either fires or does not |
 | "A remote-config flag guards this" | "What does the server send?" | Capture the config response |
 
-> **⚠️ Warning — this device cannot answer trust-store questions**
+> **Warning — this device cannot answer trust-store questions**
 > The test device's system CA store has been replaced by APatch with a tmpfs containing 139
 > certificates, including an interception CA. **A successful intercept here does not prove an app
 > trusts user-installed CAs**, because the proxy CA is in the *system* store. Run
@@ -1928,7 +1928,7 @@ entirely:
 - **Anything about builds you cannot run**, including the one the client shipped last quarter.
 - **Evidence that outlives the device.** A hash and a line number are still checkable next year.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Use **dynamic analysis to understand** and **static analysis to be exhaustive**, in that order,
 > whenever both are available. [40-Obfuscation](../40-Obfuscation/README.md) §6.1 phrases the same
 > rule from the other side, and it is the single most transferable sentence in either chapter.
@@ -2159,7 +2159,7 @@ ls gradle/verification-metadata.xml gradle/dependency-locks/ 2>/dev/null
 ./gradlew :app:dependencies --configuration releaseRuntimeClasspath > deps.txt
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > Source access changes what you can see and **does not replace analysing the artefact**.
 > `manifestPlaceholders` and `buildConfigField` substitute values at build time, so the source can
 > contain `${API_KEY}` while the shipped APK contains the key. Audit the built artefact; use the
@@ -2192,7 +2192,7 @@ sweep you just ran covered a rounding error of the program. Say so in the limits
 `RegisterNatives` and is not enumerable from the file at all (§4.4). That is a blind-spot entry, and
 the only way to enumerate it is the recorder in §7.2.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > No `readelf` on this machine? The Android NDK ships the LLVM binutils, and they are drop-in:
 > `.../ndk/25.2.9519653/toolchains/llvm/prebuilt/<host>/bin/llvm-readelf`.
 > `17-Libraries/scripts/lib-inventory.sh` already falls back through
@@ -2409,7 +2409,7 @@ In the CTF this is the answer. **In a commercial report it is Informational**, b
 protects nothing. Encoding is not encryption, and the correct sentence is "a value the developer
 appears to have intended to obscure is recoverable in one command", not "hardcoded secret found".
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > This is the most common inflation in mobile reporting. `base64` in a DEX gets written up as a
 > "hardcoded credential" hundreds of times a year. Decode it before you name it, and then ask what
 > it protects.
@@ -2596,7 +2596,7 @@ and a map of the vendor's non-production estate handed to anyone who unzips the 
 depends on whether those hosts are reachable and whether they hold real data, which is a question for
 the client and for DNS, not for a decompiler.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > **Confidence orders your queue; it does not rank importance.** The tool was right that the
 > cleartext URLs were the most *format-certain* matches. It has no way to know that seven of them
 > are logging documentation and one MEDIUM row is a map of the client's internal estate. That
@@ -2867,7 +2867,7 @@ a validator, and the validators removed 3,591 of 7,346 raw hits on one tree.
 it a resource, which silently changed the score of every lead in the report. Anchor to the tree roots
 your tools actually produce: `res/`, `resources/res/`, `assets/`.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > All five bugs shared one property: **the tool kept running and produced output that looked right.**
 > That is the failure mode to design against. Print your counts — files scanned, hits, kills,
 > demotions — every run, because a count that suddenly changes is how you notice a classifier broke.
@@ -2925,7 +2925,7 @@ All four labs use the same two scripts and no others. Lab 3 additionally uses
 text names alternatives if you do not have that one. Lab 2 ships its own tree in the lab file, so it
 needs no target at all. Lab 4 is self-contained.
 
-> **⚠️ Warning**
+> **Warning**
 > Only run any of this against applications you own or have written permission to test. On a shared
 > or daily-driver device, pull and analyse — do not install, broadcast, or modify state. Every
 > command in these labs that touches a device is read-only unless the lab says otherwise in bold.

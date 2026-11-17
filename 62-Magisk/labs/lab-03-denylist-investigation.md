@@ -39,14 +39,14 @@ And the technique that establishes all of it is one command: `nsenter` into the 
 namespace and look at the same paths the app looks at. Chapter §7.2 calls it "the single most useful
 diagnostic in this chapter". This lab is where you learn to trust it.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Two processes on the same device, at the same instant, asking `stat("/system/bin/su")`, can get
 > different answers. Not "sometimes", not "with a race" — deterministically, by design, because the
 > path is resolved against each process's own mount namespace. Until that sentence feels obvious
 > rather than surprising, root hiding will keep producing results that look like magic. It is not
 > magic; it is `CLONE_NEWNS`, and containers are built on the same primitive.
 
-> **🔍 Boundary note**
+> **Boundary note**
 > This lab is about **mount namespaces and module mechanics**. The catalogue of root *detection*
 > techniques, and how to defeat each of them, belongs to
 > [37-RootDetection](../../37-RootDetection/README.md) — go there for the checks themselves. Here,
@@ -100,7 +100,7 @@ command -v nsenter >/dev/null 2>&1 || NS="/data/adb/magisk/busybox nsenter"
 echo "using: $NS"
 ```
 
-> **📖 Definition — mount namespace**
+> **Definition — mount namespace**
 > A per-process view of the filesystem hierarchy. Processes in the same mount namespace see the same
 > set of mounts; a process in its own namespace can add or remove mounts without any other process
 > noticing. Created with `unshare(CLONE_NEWNS)` or `clone(CLONE_NEWNS)`. The identity of a process's
@@ -590,9 +590,9 @@ the usual innocent answer; do not report them as findings.)
 **Q7.** Now the question that matters for detection: a stock, unrooted device has a certain number
 of mounts with a certain shape. Your app's namespace has had mounts *removed*. Is the result
 identical to a stock device's namespace, or merely free of Magisk's additions? How would you find
-out, and what would you need in order to be certain?
+out, and what would you need to be certain?
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Q7 is the whole modern detection game in one question. Detection has moved from "is `su` present"
 > to "does this namespace look like a namespace that was never modified". The second is much harder
 > to satisfy, because removing a mount is not the same as never having made it — reference counts,

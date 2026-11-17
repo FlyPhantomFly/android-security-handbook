@@ -29,7 +29,7 @@ Five things static analysis structurally cannot observe:
 
 You are going to turn those from a list into a paragraph about *one specific app*, with counts.
 
-> **⚠️ Warning — device etiquette**
+> **Warning — device etiquette**
 > Part B spawns an application under an instrumentation tool. Do this on a device you own, with an
 > app you are permitted to test. On a shared or daily-driver phone, prefer a training app you
 > installed yourself. Nothing in this lab installs, broadcasts or modifies state; if your variation
@@ -404,8 +404,8 @@ above are bounded by that window and should not be read as proofs of absence.
 
 | Symptom | Cause | Fix |
 |---|---|---|
-| The recorder reports zero receivers on an app that obviously has them | You attached instead of spawning | `frida -U -f <pkg> … --no-pause` |
-| `addAction` grep finds nothing but the app clearly listens | Actions passed as constants or built by concatenation | Use the both-forms grep in A.3; concatenated actions are only recoverable at runtime |
+| The recorder reports zero receivers on an app that visibly has them | You attached instead of spawning | `frida -U -f <pkg> … --no-pause` |
+| `addAction` grep finds nothing but the app still listens | Actions passed as constants or built by concatenation | Use the both-forms grep in A.3; concatenated actions are only recoverable at runtime |
 | RegisterNatives section is empty | Symbol stripped, or the app has no native code | Distinguish the two. Empty because absent ≠ empty because unmeasured |
 | Your gap set is empty | The app is simple, or your window was too short | Report the window length; a two-minute window proves very little |
 | The limits section reads like a template | You wrote it before collecting the numbers | Write it last, from the numbers |

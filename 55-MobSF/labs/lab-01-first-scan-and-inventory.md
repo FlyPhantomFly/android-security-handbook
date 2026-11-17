@@ -62,7 +62,7 @@ adb pull /data/app/~~AbC==/com.example.target-XyZ==/base.apk .
 sha256sum base.apk | tee -a evidence/hashes.txt
 ```
 
-> **⚠️ Do not skip the hash.** A finding backed by "file X, SHA-256 …" can be re-checked by anyone, a
+> **Do not skip the hash.** A finding backed by "file X, SHA-256 …" can be re-checked by anyone, a
 > year later, with no device. A finding backed by "I looked at the app on Tuesday" cannot.
 
 ### 2.2 A report
@@ -161,7 +161,7 @@ unzip -l base.apk | grep -cE 'META-INF/.*\.version$'               # library ver
 | No `lib/` at all in a big app | The native code ships in an **ABI split** you were not given |
 | A large high-entropy `.bin`/`.dat` in `assets/` | *Possibly* an encrypted payload — and entropy alone proves nothing |
 
-> **⚠️ High entropy is not evidence of encryption.** Compressed data, PNGs, ZIPs, ML model weights
+> **High entropy is not evidence of encryption.** Compressed data, PNGs, ZIPs, ML model weights
 > and font atlases are all high entropy. The signal is entropy **plus** context: a high-entropy asset
 > **plus** an unusually small DEX **plus** an `<application android:name>` you do not recognise
 > **plus** a `System.loadLibrary` in that class. Any one alone is nothing.

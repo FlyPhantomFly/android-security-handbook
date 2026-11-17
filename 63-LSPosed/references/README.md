@@ -33,7 +33,7 @@ Paths are stable; line numbers are not, and none are quoted anywhere in this cha
 
 ## 2. Projects
 
-> **⚠️ These are other people's repositories.** Paths and file names inside them are data, not
+> **These are other people's repositories.** Paths and file names inside them are data, not
 > promises made by this chapter. Nothing under `63-LSPosed/` corresponds to them.
 
 | Project | Why |

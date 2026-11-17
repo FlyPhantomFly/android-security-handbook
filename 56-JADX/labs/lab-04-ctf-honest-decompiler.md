@@ -112,7 +112,7 @@ So the decoder is right and the *inputs* are wrong. There are exactly two inputs
 </details>
 
 <details>
-<summary><b>Hint 3 — rounds() obviously failed. jadx says so.</b></summary>
+<summary><b>Hint 3 — rounds() failed. jadx says so.</b></summary>
 
 Yes, loudly: `Unsupported multi-entry loop pattern`, plus a complete instruction dump. That is jadx
 being honest (chapter §6.4).
@@ -173,7 +173,7 @@ accumulator holds when the exception fires.
 loop, with all the warnings jadx has. The instruction dump is complete, so hand-trace it — for the
 argument `flag()` actually passes, which depends on Stage 1.
 
-`flag()` itself decompiles perfectly and is the one method here you can simply read and reuse.
+`flag()` itself decompiles perfectly and is the one method here you can read and reuse.
 
 </details>
 
@@ -288,7 +288,7 @@ you want to try it.
   tell at all? (If you can, that is a genuinely interesting result — and chapter §6.6's caveats about
   the `smali-input` path apply to your reproducer too.)
 - **Solve it with Frida instead.** Build the class into an APK, install it, and hook `flag()`. Note
-  how much faster that is — and note that it only works because you can *run* it, which on a real
+  how much faster that is — and confirm that it only works because you can *run* it, which on a real
   target may require getting past everything in
   [37 — RootDetection](../../37-RootDetection/README.md) and chapter 38 (TamperDetection).
   [`../scripts/jadx-blindspot.js`](../scripts/jadx-blindspot.js) is built for exactly this.

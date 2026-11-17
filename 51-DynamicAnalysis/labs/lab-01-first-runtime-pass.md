@@ -23,7 +23,7 @@ Five artefacts. If you finish with fewer, the lab is not done.
 | `evidence/s01/COVERAGE.md` | Stage 0 |
 | `finding.md` | Stages 7–8, one validated finding — or a written statement that you found none, with the coverage figure attached |
 
-> **⚠️ Warning — device etiquette**
+> **Warning — device etiquette**
 > If this is your own daily driver, **observe only**. Every command below is read-only except the two
 > marked **[MUTATES]**, and both are paired with a reversal. Do not instrument, modify or repackage a
 > third-party application you were not authorised to touch. The chapter's own worked example was

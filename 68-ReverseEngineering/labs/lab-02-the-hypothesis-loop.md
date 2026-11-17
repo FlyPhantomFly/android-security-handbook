@@ -27,7 +27,7 @@ The fixture is small enough that a determined reader could brute-force it in an 
 value here is entirely in the method, and the method is what transfers to a target where brute force
 is not available.
 
-> **🧠 Mental Model.** In a healthy investigation **most hypotheses die.** If yours mostly survive,
+> **Mental Model.** In a healthy investigation **most hypotheses die.** If yours mostly survive,
 > you are writing hypotheses too weak to be refuted, and you are accumulating beliefs rather than
 > knowledge. This lab has four hypotheses. Three of them are wrong.
 
@@ -57,7 +57,7 @@ python3 -B ../scripts/re-journal.py --file lab02.json ask \
     "What decides whether the vault opens?"
 ```
 
-> **⚠️ Still do not open `examples/libinvestigate.c`.** Part 7 tells you when. Reading it now converts
+> **Still do not open `examples/libinvestigate.c`.** Part 7 tells you when. Reading it now converts
 > a three-hour investigation into a ten-minute reading comprehension exercise, and you will not
 > notice what you lost.
 
@@ -187,7 +187,7 @@ python3 -B ../scripts/re-journal.py --file lab02.json verdict H2 refuted \
   --note "control is anti-correlated with the outcome, not merely decoupled"
 ```
 
-> **🔍 Pentester's Note.** This is the **decoupled control** from §5.3, and it is where a large
+> **Pentester's Note.** This is the **decoupled control** from §5.3, and it is where a large
 > fraction of real "successful bypasses" come from. A tester who hooks `iv_check_license` and forces
 > `return 1` sees `license : accepted`, writes "licence check bypassed", and has changed a log line.
 > The vault never opened. Chapter 18 measured the same failure with a patch that provably worked
@@ -329,7 +329,7 @@ valueSize:      1,
 frida -D <serial> -n <process> -l ../scripts/dataflow-watch.js
 ```
 
-> **⚠️ A limitation, measured and not worked around.** On the Redmi this chapter was written against,
+> **A limitation, measured and not worked around.** On the Redmi this chapter was written against,
 > the vendor build blocks `execve` under `/data/local/tmp`, so the fixture runs only via
 > `/system/bin/linker64` — and `frida -f /data/local/tmp/ch68/investigate` fails with
 > `unable to locate Android dynamic linker`. **The fixture-spawn path for `dataflow-watch.js` is

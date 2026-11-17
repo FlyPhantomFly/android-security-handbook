@@ -1,6 +1,6 @@
 # Fastboot — Cheat Sheet
 
-> **⚠️ Commands marked D are DESTRUCTIVE. Two marked B can BRICK a device.**
+> **Commands marked D are DESTRUCTIVE. Two marked B can BRICK a device.**
 > Nothing on this page should be typed against a device that is not yours.
 
 ---

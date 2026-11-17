@@ -55,7 +55,7 @@ Record the output. This lab was written against:
 model=i9000S   Android 13 / API 33   arm64-v8a   Enforcing   not rooted   no frida-server
 ```
 
-> **⚠️ `ApplicationExitInfo` is API 30+.** On API 29 and below the `dumpsys activity exit-info`
+> **`ApplicationExitInfo` is API 30+.** On API 29 and below the `dumpsys activity exit-info`
 > section does not exist and this lab's central evidence source is unavailable. The triage script
 > detects that and says so; if you are on an older device, you can still do steps 1–3 and the logcat
 > half of steps 4–6.
@@ -178,7 +178,7 @@ device the answer is no. You can make it genuinely yes without root and without 
 adb reverse tcp:27042 tcp:27042
 ```
 
-> **🧠 Mental Model**
+> **Mental Model**
 > This is a seam-1 attack **in reverse**. Normally you change the world so a check passes; here you
 > change the world so a check fires. Anything you can do in one direction you can do in the other,
 > and that is what makes a control testable at all.
@@ -260,7 +260,7 @@ bug". Find it in [`scripts/bypass-triage.py`](../scripts/bypass-triage.py). Name
 for each why an ordinary bug produces it.
 
 **Q18.** Is that list safe? Construct a scenario in which a protection deliberately throws one of
-those exception types in order to look like a bug. How would you tell?
+those exception types to look like a bug. How would you tell?
 
 ### Step 7 — the other trap: state that persists
 

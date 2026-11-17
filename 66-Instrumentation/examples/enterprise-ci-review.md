@@ -7,8 +7,8 @@
 **Read [../README.md §5](../README.md) first.** This file is the checklist with the commands
 attached; the reasoning behind each item is in §5.1 to §5.4.
 
-**Authorised testing only.** Everything here is read-only reconnaissance against repositories,
-pipelines and artefact stores you are contracted to review.
+Everything here is read-only reconnaissance against repositories, pipelines and artefact stores
+you are contracted to review. See [SECURITY.md](../../SECURITY.md) for authorised-testing scope.
 
 ---
 

@@ -44,7 +44,7 @@ investigation.**
 | [67 — Bypassing Protections](../67-BypassingProtections/README.md) | The bypass methodology, the five seams, when to stop *hooking* | Yes — this chapter owns when to stop *understanding*, which is a different question |
 | [55 — MobSF](../55-MobSF/README.md) · [54 — Objection](../54-Objection/README.md) | Reading an automated tool's output as a queue of leads | Yes |
 
-> **⚠️ Warning.** If you are here to learn a tool, you are in the wrong chapter, and there are ten
+> **Warning.** If you are here to learn a tool, you are in the wrong chapter, and there are ten
 > better ones a click away. What follows contains almost no new tool syntax. It is about what you do
 > between the commands: what you were trying to find out, why you ran that one, what the result
 > licenses you to believe, and how you know when you are finished.
@@ -154,7 +154,7 @@ they usually measure diameter and conductivity, and that a machine returning you
 certainly rejected it at the acceptor rather than at the dispenser. That reasoning is not evidence.
 It is the thing that tells you which experiment to run next.
 
-> **📖 Definition — reverse engineering.** *Reverse engineering* is the process of recovering a
+> **Definition — reverse engineering.** *Reverse engineering* is the process of recovering a
 > description of how a system works from the system itself, rather than from a description supplied
 > by its author. In this chapter the system is an Android application: a compiled artefact plus the
 > runtime behaviour it produces on a device. The recovered description is not the original source
@@ -166,7 +166,7 @@ say "get the whole program back". Both of those are things you may end up doing;
 activity. The activity is **recovering enough of a description to answer a question, and knowing how
 much you have recovered.**
 
-> **🧠 Mental Model.** Reverse engineering is not translation, it is **investigation**. A translator
+> **Mental Model.** Reverse engineering is not translation, it is **investigation**. A translator
 > is finished when every line has been converted. An investigator is finished when the question is
 > answered and the answer survives an attempt to break it. Those are different finish lines, they
 > arrive at wildly different times, and mistaking the first for the second is the single most
@@ -240,7 +240,7 @@ look at.** Not when the app is understood — apps are never understood — and 
 
 ### 1.5 The unit of work is the hypothesis, not the file
 
-> **📖 Definition — hypothesis.** A *hypothesis* here is a statement about the target that could be
+> **Definition — hypothesis.** A *hypothesis* here is a statement about the target that could be
 > false, phrased so that some observation you can actually make would show it to be false. "The app
 > checks the licence" is not a hypothesis; nothing would refute it. "The `PREMIUM` string in
 > `LicenseManager` is compared against user input on the path that unlocks the export button" is a
@@ -298,7 +298,7 @@ not.
 | `84f7a024` | Redmi `M2101K6P` (`sweetin`) | Android 11 / **API 30** | `arm64-v8a` | 4096 | Yes (`su -c id` → `uid=0`, context `u:r:magisk:s0`) | **Running** |
 | `emulator-5554` | `sdk_gphone16k_x86_64` | Android 15 / **API 35** | `x86_64` | **16384** | Yes, but **`su 0 <cmd>` only** — `su -c` fails with `invalid uid/gid '-c'` | **No process** |
 
-> **⚠️ Warning — a third device is now in play.** This repository's measurements come from two
+> **Warning — a third device is now in play.** This repository's measurements come from two
 > physical phones: the Redmi `M2101K6P` above, and an `i9000S` (Android 13 / API 33, Enforcing,
 > **not rooted, no frida-server**). The two get swapped without warning — chapter 52 watched the
 > Redmi vanish from `adb devices` mid-session and be replaced by the `i9000S`. The API 35 emulator
@@ -486,7 +486,7 @@ chapter raises and none owns — *how much is this observation worth?*
 - **Tier 6, controlled experiment**, is the only tier that supports a causal claim. You changed one
   input, the outcome changed, and you changed it back and it changed back.
 
-> **🧠 Mental Model.** Tiers 1–3 tell you what to *believe provisionally*. Tiers 4–6 tell you what to
+> **Mental Model.** Tiers 1–3 tell you what to *believe provisionally*. Tiers 4–6 tell you what to
 > *write down*. A finding that rests entirely on tier 3 is a finding that rests on a tool's
 > reconstruction, and you should say so in the report rather than let the reader assume otherwise.
 
@@ -607,7 +607,7 @@ stopping. Every pathology in §11 traces back to a missing Stage 0.
 | **Bounded** | Answering it requires understanding the whole program | "How does the app work?" | "What decides whether the Export button is enabled?" |
 | **Falsifiable** | Every outcome confirms it | "Does the app protect its data?" | "Is the vault key derived from user input, or hard-coded in the artefact?" |
 
-> **📖 Definition — scope, for an investigation.** The *scope* is the set of questions you have
+> **Definition — scope, for an investigation.** The *scope* is the set of questions you have
 > agreed to answer, plus the set of actions you are permitted to take while answering them. It is
 > not the same as the app. An engagement scoped to "the payment flow" does not license reverse
 > engineering the analytics SDK because it looked interesting.
@@ -623,7 +623,7 @@ without paying". That is a goal, not a question. It decomposes into:
 Four questions, each with a terminal state, each individually cheap. Compare that with the
 undecomposed goal, which has no first command.
 
-> **🔍 Pentester's Note.** Write the questions in the same file you will write the answers in, and
+> **Pentester's Note.** Write the questions in the same file you will write the answers in, and
 > timestamp them. When the report is due, the file *is* the methodology section — you will not have
 > to reconstruct what you did from shell history, which is a reconstruction that is always wrong in
 > the same flattering direction. [`scripts/re-journal.py`](scripts/re-journal.py) mechanises exactly
@@ -674,7 +674,7 @@ The acquisition checklist, in full:
 | Native ABIs present | `unzip -l base.apk \| grep '\.so'` | Assuming a library is absent when it is in a split or downloaded |
 | Compressed or mapped | `unzip -v base.apk \| grep lib/` | Missing that libs are mapped from the APK (`extractNativeLibs=false`) |
 
-> **⚠️ Warning.** Record the hash and version *in the notes file*, not just in your shell history.
+> **Warning.** Record the hash and version *in the notes file*, not just in your shell history.
 > Every claim in your report is a claim about a specific build. Six weeks later, when the developer
 > says "we fixed that", the hash is what makes the conversation short.
 
@@ -737,7 +737,7 @@ and sometimes the only option — but every finding from it is a claim about the
 report has to say so. "The app contains a hard-coded key" is defensible from static evidence alone.
 "The app uses a hard-coded key" is not.
 
-> **🔬 Under the Hood.** Triage is where you decide what *kind* of thing the artefact is, and there
+> **Under the Hood.** Triage is where you decide what *kind* of thing the artefact is, and there
 > is a fast structural check most people skip. Compare the count of classes in the DEX against the
 > count of files jadx produced. [56 — JADX](../56-JADX/README.md) measured jadx's console reporting
 > `finished with errors, count: 61` while the output tree contained **2,104 refused methods across
@@ -831,7 +831,7 @@ zero becomes "it must be called through a function pointer", a hook that does no
 hook must be wrong". Both of those are sometimes true. Deciding *in advance* which result kills the
 hypothesis is what stops them from being infinitely available excuses.
 
-> **🧠 Mental Model.** A hypothesis without a written refutation test is a wish. You can tell the
+> **Mental Model.** A hypothesis without a written refutation test is a wish. You can tell the
 > difference in one question: *what result would make me abandon this?* If you cannot answer, you are
 > not investigating, you are looking for support.
 
@@ -857,7 +857,7 @@ correct next move is to design a sharper one rather than to squint at the result
 
 Two properties matter when choosing what to do next, and people optimise the wrong one.
 
-> **📖 Definition — decisive.** An experiment is *decisive* for a hypothesis if at least one of its
+> **Definition — decisive.** An experiment is *decisive* for a hypothesis if at least one of its
 > possible outcomes rules the hypothesis out. An experiment whose every outcome is compatible with H
 > is not an experiment, it is an activity.
 
@@ -895,7 +895,7 @@ whether the vault opens. Four experiments are available:
 The 40-second option is decisive and 20× cheaper than the next cheapest. It is also the one that
 almost nobody runs first, because reading feels like the responsible thing to do.
 
-> **⚠️ Warning — the patching trap, already measured here.** [18 — ARM](../18-ARM/README.md) §5.4
+> **Warning — the patching trap, already measured here.** [18 — ARM](../18-ARM/README.md) §5.4
 > patched `lc_verify_signature` to `return 1`, **verified it returning 1**, and the gated function
 > still refused — because clang had inlined the check and the patched copy was called by nothing.
 > That is a patch that provably works against a function that provably does not matter. Counting call
@@ -906,7 +906,7 @@ almost nobody runs first, because reading feels like the responsible thing to do
 **What it produces:** a claim that survives, because two independent sources agree; or a discovered
 error, because they do not.
 
-> **📖 Definition — independent, for evidence.** Two sources are *independent* if an error in one
+> **Definition — independent, for evidence.** Two sources are *independent* if an error in one
 > would not produce the same error in the other. Reading jadx output and then reading the same
 > method's Smali is *not* two independent sources of "what this method does" — but it is two
 > independent sources of "did jadx reconstruct this correctly", which is a different question.
@@ -928,7 +928,7 @@ does not.** Chapter 51 found the manifest listing four components and the device
 listing three, and the entire coverage-percentage argument falls out of which one you let define the
 denominator.
 
-> **🧠 Mental Model.** When two independent sources agree, you have a finding. When they disagree,
+> **Mental Model.** When two independent sources agree, you have a finding. When they disagree,
 > you have a *better* finding — you have discovered that one of your instruments is wrong about this
 > target, which is more valuable than the original question and is exactly the kind of thing that
 > ends up in a report's most-read paragraph.
@@ -958,7 +958,7 @@ matching C function named after it, so you look up the name and continue reading
 supported by [16 — JNI](../16-JNI/README.md)'s mangling rules, which are correct, and it is wrong
 about real applications almost all of the time.
 
-> **🔬 Under the Hood — the two binding mechanisms.** A `native` method can be bound to an
+> **Under the Hood — the two binding mechanisms.** A `native` method can be bound to an
 > implementation two ways. **Discovery binding** happens lazily on first call: ART looks for an
 > exported symbol whose name is the mangled form of the Java method, and this is the case the phone
 > book model describes. **Explicit binding** happens when native code calls `RegisterNatives`,
@@ -1029,7 +1029,7 @@ nothing about *when it is called and with what*, and that is usually the half th
 actually about. Chapter 57's own §1 makes this point from the other side — you will read three
 native functions, and knowing which three is a managed-side question.
 
-> **🔍 Pentester's Note.** When you find a native method whose symbol does not exist, that is a
+> **Pentester's Note.** When you find a native method whose symbol does not exist, that is a
 > *positive* observation, not a dead end. It tells you the binding is explicit, which tells you
 > `JNI_OnLoad` or an `.init_array` constructor runs registration code, which tells you exactly where
 > to look next and gives you a hook point that catches every binding at once. The absence of the
@@ -1100,7 +1100,7 @@ consequences, all of which change how you investigate:
 3. **Therefore: never reason from what the developer must have written.** Reason from what the
    artefact says. Tier 1 inference tells you where to look; it does not tell you what is there.
 
-> **⚠️ Warning.** Findings that depend on optimiser behaviour are **compiler-version-dependent**. The
+> **Warning.** Findings that depend on optimiser behaviour are **compiler-version-dependent**. The
 > inlining above happened with NDK r25c clang at `-O2`. A different NDK, a different optimisation
 > level, or LTO can all change it. If a finding rests on "the check is inlined", say which build you
 > observed it in — and be aware that the developer's release build may differ from yours.
@@ -1142,7 +1142,7 @@ APKs. That was a lie: `getPackageInfo` is how every SDK reads its own `versionNa
 matched on that alone. Splitting every pattern into STRONG/WEAK and anchoring the regexes brought it
 to a defensible **13 of 18**.
 
-> **🧠 Mental Model.** **If a detector agrees with you about every sample, suspect the detector.** A
+> **Mental Model.** **If a detector agrees with you about every sample, suspect the detector.** A
 > tool that never says "no" has not been shown to be able to. Before trusting a detector, run it
 > against something you know is negative and confirm it stays quiet.
 
@@ -1180,7 +1180,7 @@ this cost real time while writing the chapter.
    quoting, `PATH` shadowing and multiple attached devices account for more lost hours than
    anti-analysis does.
 
-> **🔬 Under the Hood.** Chapter 09 found that `adb shell` does not preserve quoting, so
+> **Under the Hood.** Chapter 09 found that `adb shell` does not preserve quoting, so
 > `run su -c "ls -ldZ …"` reached the device as `su -c ls -ldZ …` and `su -c` executed only `ls`.
 > Compounding it, `|| echo "(no root)"` could never fire because a pipeline's exit status is the last
 > command's. **Both root sections were silently broken and looked fine.** That is the archetype:
@@ -1221,7 +1221,7 @@ and the difference is a report that claims something you never established. Pers
 treat it as a deliverable, because on a repeat engagement against the same app it is worth more than
 the report.
 
-> **📖 Definition — the residue.** The *residue* is everything you saw and chose not to pursue. It is
+> **Definition — the residue.** The *residue* is everything you saw and chose not to pursue. It is
 > not failure; it is the honest boundary of your coverage, and it is the difference between "I found
 > no evidence of X" and "I did not look for X".
 
@@ -1278,7 +1278,7 @@ false positives — and **none** yielded wholesale recovery. What does survive i
 names**, structurally, because R8 renames JVM members and a property is not one. Promise the reader
 that and no more.
 
-> **🔍 Pentester's Note — absence under obfuscation.** [56 — JADX](../56-JADX/README.md) established
+> **Pentester's Note — absence under obfuscation.** [56 — JADX](../56-JADX/README.md) established
 > the rule this chapter leans on constantly: *"I grepped the decompiled output and found nothing" is
 > a statement about your grep, not about the app*, and it lists **five checks** that must pass before
 > absence is evidence — see its `faq.md` question 14 and README §6.10. Under obfuscation the rule is
@@ -1311,7 +1311,7 @@ The box is therefore not "how long I am allowed" but **"how long before I am req
    established which fields" is frequently a complete enough answer to act on.
 4. **Is this question still the one I was asked?** Drift is silent and constant.
 
-> **⚠️ Warning.** The most expensive failure is not stopping too early. It is continuing on a
+> **Warning.** The most expensive failure is not stopping too early. It is continuing on a
 > question that was already answered well enough, while a question nobody has touched sits in the
 > scope document. Coverage across the brief usually beats depth on one item — and the residue list
 > (§3.17) is what makes that trade visible instead of accidental.
@@ -1400,7 +1400,7 @@ Notice that the limits paragraph contains the sentence a careless report would o
 enforcement was not tested* — and that including it makes the finding more credible rather than less.
 A reader who has to discover your limits for themselves stops trusting the parts you got right.
 
-> **⚠️ Warning — a bypassed control is not a finding.**
+> **Warning — a bypassed control is not a finding.**
 > [67](../67-BypassingProtections/README.md) owns this argument and it is worth carrying: "I disabled
 > root detection with Frida" describes your tooling, not the app's security posture. The finding is
 > whatever the control was protecting, reached and demonstrated.
@@ -1409,7 +1409,7 @@ A reader who has to discover your limits for themselves stops trusting the parts
 
 The last deliverable, and the one that separates a professional report from a confident one.
 
-> **📖 Definition — residue.** The *residue* is the written set of things you noticed, could have
+> **Definition — residue.** The *residue* is the written set of things you noticed, could have
 > pursued, and did not — plus the things you were structurally unable to see.
 
 Two categories, and both belong in the report:
@@ -1434,7 +1434,7 @@ Two categories, and both belong in the report:
 Those numbers are the argument. A report that does not mention them implies a completeness that no
 method delivers, and the implication is the dishonest part — not the gap, which is unavoidable.
 
-> **🧠 Mental Model.** Coverage is a fraction and the numerator is the easy half.
+> **Mental Model.** Coverage is a fraction and the numerator is the easy half.
 > [51](../51-DynamicAnalysis/README.md) measured the same session at **67% or 50%** depending on
 > whether the device or the artefact defined the denominator — and the flattering number came from
 > letting the thing being measured choose. The residue list is what stops you doing that silently.
@@ -1452,7 +1452,7 @@ true — and the exact circumstances in which it stops being true — are in `ar
 Three specific claims made earlier in this chapter are cashed out below, and each one is a claim you
 will be asked to defend.
 
-> **⚠️ Warning.** AOSP **file paths** are stable across releases and safe to cite. **Line numbers are
+> **Warning.** AOSP **file paths** are stable across releases and safe to cite. **Line numbers are
 > not**, and neither are exact function signatures across major versions. This section names files
 > and functions, never line numbers — and where a structure's layout matters, it says which release
 > the description is written against.
@@ -1499,7 +1499,7 @@ argument signature appended — and asks each loaded shared library for that sym
 that makes `Java_com_example_Foo_bar` work without any registration code, and it is the *only* path a
 symbol-based static tool can see.
 
-> **🔬 Under the Hood.** The mangling rules that construct that name are
+> **Under the Hood.** The mangling rules that construct that name are
 > [16 — JNI](../16-JNI/README.md)'s territory, and there is a correction recorded there worth
 > repeating because it silently breaks home-made mangling code: `$` becomes `_00024` — an escape
 > `_0` followed by **four** hex digits — not `_0024`.
@@ -1806,7 +1806,7 @@ it is frequently misused.
 | **MASVS-RESILIENCE-4** | Difficulty of comprehension | The only control this chapter's activity is directly measured against |
 | **MASTG-TEST** procedures for reverse engineering | Methodology | The MASTG describes *procedures*; §3 is the decision framework for choosing among them |
 
-> **⚠️ Warning — the resilience trap.** MASVS-RESILIENCE controls are explicitly **defence in depth
+> **Warning — the resilience trap.** MASVS-RESILIENCE controls are explicitly **defence in depth
 > against a client-side attacker**, and the standard says so. A resilience finding is never a
 > substitute for a MASVS-AUTH or MASVS-CRYPTO finding. "The app can be reverse engineered" is not a
 > vulnerability; it is a property of every application ever shipped. What you report is what the
@@ -1917,7 +1917,7 @@ result   : CH68{ev1dence_b3ats_a_good_story}
 
 One line of output settles what four hours of reading would have argued about.
 
-> **🧠 Mental Model.** The four representations do not disagree — they answer different questions.
+> **Mental Model.** The four representations do not disagree — they answer different questions.
 > Tier 2 says what is named. Tier 3 says what a tool thinks the code means. Tier 4 says what the code
 > is. Tier 5 says what it did. When two of them appear to conflict, one of them was answering a
 > question you did not ask.
@@ -2082,7 +2082,7 @@ The resolution is a **liveness check**: run the *same instrument* against a targ
 signal exists. Chrome produced 78 calls and 509 bindings with the identical script, so the hook
 works, so the silence was real.
 
-> **🧠 Mental Model.** **A void run and a clean negative produce identical reports.**
+> **Mental Model.** **A void run and a clean negative produce identical reports.**
 > [51](../51-DynamicAnalysis/README.md)'s most valuable result was a failure of exactly this kind —
 > `am start` was absorbed by a pending permission dialog, all nine capture channels went silent, and
 > the report looked exactly like a well-behaved app doing nothing wrong. Every dynamic session needs a
@@ -2135,7 +2135,7 @@ completeness: page-granular monitoring produces false positives from unrelated a
 page, and any consumer that reads the value before you arm the watch is missed. Both belong in the
 residue.
 
-> **⚠️ Warning.** `MemoryAccessMonitor` works by making pages inaccessible and handling the fault. On
+> **Warning.** `MemoryAccessMonitor` works by making pages inaccessible and handling the fault. On
 > a page that also holds hot data this is extremely slow and can change timing enough to alter the
 > app's behaviour — which makes it, briefly, a different program. If a result only appears under the
 > monitor, treat it as inconclusive until reproduced another way.
@@ -2161,7 +2161,7 @@ about something else. [40 — Obfuscation](../40-Obfuscation/README.md) ships bo
 header explains why validating candidates against the DEX header's structural invariants matters:
 a bare search for `dex\n` in a live process returns hundreds of false positives.
 
-> **🔍 Pentester's Note.** The third question has an adversarial edge. If your hook reports a value
+> **Pentester's Note.** The third question has an adversarial edge. If your hook reports a value
 > that contradicts everything else you know, consider that something else is hooked — including by the
 > app itself. Self-hooking as an anti-analysis measure is real, and the tell is a method whose
 > entry point does not point into its own OAT or into the JIT cache.
@@ -2193,7 +2193,7 @@ taken with `-U` would have been about a different device, a different ABI (`x86_
 `arm64-v8a`), a different API level (35 versus 30) and a different page size (16 KiB versus 4 KiB) —
 and would have been silently correlated against static evidence from the phone.
 
-> **⚠️ Warning.** `-U` is not target selection; it means "the first USB-type device Frida
+> **Warning.** `-U` is not target selection; it means "the first USB-type device Frida
 > enumerates". With one device attached it is correct by accident. **Always pass `-D <serial>`**, and
 > record the serial in the journal next to the measurement. The same applies to `adb`: with two
 > devices attached, an unqualified `adb shell` fails loudly, which is *better* behaviour than
@@ -2281,7 +2281,7 @@ python3 -B scripts/boundary-map.py base.apk --unresolved
 python3 -B scripts/boundary-map.py base.apk --json > native-surface.json
 ```
 
-> **⚠️ Warning — what this measurement does NOT establish.** An unresolvable method is not proof of
+> **Warning — what this measurement does NOT establish.** An unresolvable method is not proof of
 > `RegisterNatives`. It has four possible causes and the script says so rather than picking one: the
 > binding is explicit; the library lives in a split or is downloaded; the library is for a different
 > ABI; or the method belongs to a class that is never loaded. Distinguishing them requires §7.1.
@@ -2331,7 +2331,7 @@ llvm-objdump -d libtarget.so | sed -n '/<iv_open_vault>:/,/^$/p' | grep -E 'cmp|
 
 The third is the practical form of §6.3's rule that constants survive inlining while names do not.
 
-> **⚠️ Warning — the `(@plt)?` is not decoration, and leaving it out breaks this chapter's own
+> **Warning — the `(@plt)?` is not decoration, and leaving it out breaks this chapter's own
 > showcase experiment.** `llvm-objdump` renders a call routed through the Procedure Linkage Table as
 > `bl 0x1ac0 <iv_derive_seed@plt>`. The obvious pattern `bl.*<iv_derive_seed>` requires the `>`
 > immediately after the name and therefore **reports zero for a function that is definitely called.**
@@ -2390,7 +2390,7 @@ push to `C:/Program Files/Git/data/local/tmp/y`, and the error is
 scoped to the adb invocation**, because exporting it globally breaks the Windows-hosted clang, which
 needs the conversion.
 
-> **🔍 Pentester's Note.** Both of these are environment defects that masquerade as target
+> **Pentester's Note.** Both of these are environment defects that masquerade as target
 > properties. Before concluding anything surprising about an app, run the same command against a
 > target whose answer you already know. That is the liveness check from §7.2, applied to static
 > tooling — and it is why the corpus run was caught in minutes rather than published.
@@ -2428,7 +2428,7 @@ llvm-objdump -d libinvestigate.so | grep -B4 -A4 'adrp.*0x1' | grep -A2 '<iv_ban
 `iv_banner` returns it, `iv_banner` gates nothing, and running the program shows it printed on
 **every** invocation including failures. The string is a decoy.
 
-> **🧠 Mental Model.** The value of this example is the gap between a true observation and a useful
+> **Mental Model.** The value of this example is the gap between a true observation and a useful
 > one. "The binary contains `CH68{...}`" is true, took two seconds, and is wrong as a finding. One
 > more question — *what reads it* — converts it into the correct finding, which is that the visible
 > secret is not the secret.
@@ -2502,7 +2502,7 @@ There is the decision — three instructions, no function, no symbol. §6.3's ru
 function `gate_is_open` does not exist in the binary, but its constant `0xbd` survived inlining.
 
 The remaining question is *what writes that byte*, and control-flow analysis will not answer it.
-Nothing in `iv_open_vault`'s call graph obviously produces it; the write happens in
+Nothing in `iv_open_vault`'s call graph visibly produces it; the write happens in
 `iv_derive_seed`, which returns a status nobody checks and does not return the seed at all.
 
 **Data-flow approach.** Hook the producer, learn the address, watch the address:
@@ -2587,7 +2587,7 @@ applied to my own measurement. It was worth running: an earlier draft of this ta
    saw 509 bindings and knows nothing about paths not exercised in a 25-second window. The union is
    larger than either and is still not the whole program.
 
-> **🔍 Pentester's Note.** The honest write-up of this is *"at least 509 native entry points are bound
+> **Pentester's Note.** The honest write-up of this is *"at least 509 native entry points are bound
 > at startup, of which 6 were discoverable by symbol lookup in `base.apk`; six further APKs were not
 > analysed"*. Every clause is load-bearing, and the last one is the residue.
 
@@ -2631,7 +2631,7 @@ measurement that gets omitted, and omitting it is how a true number becomes a mi
   corpus deliberately: it is a stub, a sweep of it finds nothing, and "nothing" is not a result.
 - **It is one device, one ABI, one point in time.** Version numbers were not pinned per-app.
 
-> **⚠️ Warning.** A corpus figure of "12.9%" is quotable and therefore dangerous. Quote it with its
+> **Warning.** A corpus figure of "12.9%" is quotable and therefore dangerous. Quote it with its
 > denominator — *of methods declared native in `base.apk`, matched against symbols exported by arm64
 > libraries in the same file* — or do not quote it. This is [51](../51-DynamicAnalysis/README.md)'s
 > denominator argument arriving in a static measurement, and the discipline is identical: **refuse to
@@ -2843,7 +2843,7 @@ Build the fixture first:
 cd examples && ./build.sh
 ```
 
-> **⚠️ Warning — scope and ethics.** Labs 01 and 03 ask you to analyse a real application. Use an
+> **Warning — scope and ethics.** Labs 01 and 03 ask you to analyse a real application. Use an
 > application **you own** — one you installed, on your own device — or a well-known
 > deliberately-vulnerable training app. Do not analyse an app you were not authorised to analyse
 > because a lab suggested it. §1.6 covers the licence, statute and authorisation axes; they are three

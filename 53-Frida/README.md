@@ -17,7 +17,7 @@ miniature Frida), so 65 is depth rather than a gate; [63-LSPosed](../63-LSPosed/
 
 ---
 
-## ⚠ Read this before you install anything: `frida-server` does not run on every image
+## Read this before you install anything: `frida-server` does not run on every image
 
 This repository's rule is that claims are measured, not recited. This chapter's mechanism is sound
 everywhere, but **the reference device this repository was written against cannot run
@@ -55,7 +55,7 @@ recorded independently from the sessions behind chapters
 [75](../75-InterviewQuestions/README.md) and [76](../76-CheatSheets/README.md). This chapter was
 the one place it was missing.
 
-> **🔍 Pentester's Note — the trap inside the trap.** `frida-ps -U` **still enumerates processes** on
+> **Pentester's Note — the trap inside the trap.** `frida-ps -U` **still enumerates processes** on
 > this device. The failure appears only on attach. If you test Frida with `frida-ps`, you will
 > conclude it works and then spend an hour debugging a script that was never going to run. This is
 > the general rule, and it is worth more than the specific bug: **test a capability with the
@@ -71,7 +71,7 @@ the one place it was missing.
 | Need the *finding*, not the tool | Most chapters that used to hard-require this one now name it **"Useful alongside"** and state the non-Frida route: [36-CertificatePinning](../36-CertificatePinning/README.md), [37-RootDetection](../37-RootDetection/README.md), [38-TamperDetection](../38-TamperDetection/README.md), [39-EmulatorDetection](../39-EmulatorDetection/README.md), [40-Obfuscation](../40-Obfuscation/README.md), [43-WebView](../43-WebView/README.md), [48-Biometrics](../48-Biometrics/README.md) |
 | Want the other instrument | [63-LSPosed](../63-LSPosed/README.md) hooks Java from inside Zygote and does not use this binary at all; §7.9 there is the honest Frida-versus-LSPosed decision |
 
-> **⚠️ Warning — do not read this as "Frida is broken".** Frida works, and works well, on a very
+> **Warning — do not read this as "Frida is broken".** Frida works, and works well, on a very
 > large number of setups; this is one named, reproducible, version-specific failure on recent API-35
 > x86_64 images, not a retraction of the chapter. §3.13 is the full failure-mode table, and this row
 > is only the one you are most likely to meet first. If your `frida-server` starts and
@@ -119,7 +119,7 @@ That is the entire argument for runtime instrumentation. Static analysis tells y
 state, the real server responses, and the real obfuscation already unwound by the runtime that has to
 execute it.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Static analysis is reading a recipe. Dynamic instrumentation is standing in the kitchen with your
 > hand on the chef's wrist, able to see every ingredient going into the pot, able to swap the salt for
 > sugar, and able to ask the chef to make you one extra portion using ingredients you supply. The
@@ -142,7 +142,7 @@ vendor shipped. Every hash check the app performs on itself still passes.
 
 ### What Frida is, in one paragraph
 
-> **📖 Definition**
+> **Definition**
 > **Frida** is a dynamic binary instrumentation (DBI) toolkit. It injects a small native library
 > containing a complete JavaScript engine into a target process, and gives that JavaScript engine a
 > set of bindings that let it read and write the process's memory, intercept and replace functions,
@@ -156,7 +156,7 @@ a mechanism for **running your code inside someone else's process**. Everything 
 bridge, `Interceptor`, Objection, every SSL-pinning bypass script you have ever copied — is built on
 top of that one capability.
 
-> **📖 Definition**
+> **Definition**
 > **Dynamic Binary Instrumentation (DBI)** means modifying the behaviour of a program while it runs,
 > by operating on its compiled form in memory, without recompiling it from source and usually without
 > modifying the file on disk. Contrast with *static binary rewriting*, which edits the file, and with
@@ -326,8 +326,8 @@ Read the table below with the diagram beside you:
 | Agent connects back | Session appears, script never runs | Rare; usually a seccomp filter or an app-installed `libc` hook interfering with `socket()` |
 | Script load | `ReferenceError` / `Error: unable to find export` | Your script's problem, not Frida's |
 
-> **🔬 Under the Hood**
-> The reason the target does not simply die when you `ptrace`-attach and rewrite its program counter
+> **Under the Hood**
+> The reason the target does not die when you `ptrace`-attach and rewrite its program counter
 > is that the helper **saves and restores the full register set**. The hijacked thread is executing
 > some ordinary function — perhaps blocked in `epoll_wait`. The helper snapshots `x0`–`x30`, `sp`,
 > `pc` and `pstate` (on arm64), points `pc` at code it controls, lets it run, and then writes the
@@ -371,7 +371,7 @@ When you **spawn** (`-f <package>`), Frida arranges for the process to be create
 before a single line of the app's own code executes. Your script runs, installs its hooks, and only
 then does the app start.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Default to `-f`. Always. There is essentially no downside except that the app restarts. If you find
 > yourself using `-n` it should be a deliberate decision — for example because you want to inspect
 > the state of an app you have already driven through a login flow by hand, using `Java.choose` to
@@ -384,7 +384,7 @@ zygote itself so that it can catch the newly forked child in the window between 
 the child and the child running the app's code. The child is suspended there; the agent is injected;
 your script loads; `%resume` releases it.
 
-> **⚠️ Warning**
+> **Warning**
 > Because spawning touches zygote, a badly-timed abort during spawn can leave zygote instrumented and
 > the device in a strange state where every newly launched app is slow or hangs. If the device starts
 > behaving oddly after Frida crashes, kill `frida-server` and reboot before you spend an hour
@@ -459,7 +459,7 @@ repackage the APK, which:
   it exists);
 - may break app-bundle split APKs unless you handle every split.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > `frida-server` is a burglar with lock picks: the house is untouched, but you need the skill and the
 > tools (root). The `gadget` is a burglar who convinces the homeowner to install a new front door with
 > a second keyhole: no picking required, but the door is visibly different and anyone who checks the
@@ -511,7 +511,7 @@ Useful `frida-server` flags:
 | `--directory <dir>` | Where the agent `.so` files are unpacked | Defeats path-based detection |
 | `-P <file>` | Write a PID file | Scripting |
 
-> **⚠️ Warning**
+> **Warning**
 > A version mismatch between the host `frida` Python package and the device `frida-server` produces
 > the single most common Frida error, and the message is clear but people ignore it. Pin both. In a
 > team, put `frida==16.5.9` in a `requirements.txt` and check the matching server binary into your
@@ -546,7 +546,7 @@ ptrace(PTRACE_ATTACH, pid, 0, 0);
 waitpid(pid, &status, 0);              /* target now stopped */
 ```
 
-> **📖 Definition**
+> **Definition**
 > **`ptrace`** is a Linux system call that lets one process (the *tracer*) observe and control another
 > (the *tracee*): read and write its memory and registers, intercept its signals, and single-step it.
 > It is the mechanism behind `gdb`, `strace` and every native debugger on Linux. A process can have
@@ -586,7 +586,7 @@ makes the target call `mmap` for it, by hijacking a thread:
    address of freshly allocated `PROT_READ|PROT_WRITE|PROT_EXEC` memory *inside the target*.
 5. Restore the original bytes.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > On modern arm64 Android, allocating `rwx` memory is increasingly restricted, and W^X policies
 > (write XOR execute) mean a page is normally either writable or executable, not both. Frida deals
 > with this by allocating `rw`, writing, then `mprotect`ing to `r-x` — the same dance every JIT
@@ -691,7 +691,7 @@ block-beta
 | QuickJS (default) | Fast | Interpreted; slow for tight loops | Low | Everyday hooking, most agents |
 | V8 | Slower | JIT-compiled; far faster in hot code | High | Stalker post-processing, heavy string/crypto work in JS |
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > Your script does **not** run on the app's threads by default. It runs on `gum-js-loop`. But when a
 > hook fires, the `onEnter`/`onLeave` callback executes **synchronously on the app's thread**, inside
 > the JS engine, with the JS lock held. That is why a slow `onEnter` slows the app, why blocking in a
@@ -716,10 +716,10 @@ block-beta
 7. `resume(pid)` is called — by `%resume` in the REPL, automatically by `frida ... --no-pause`, or by
    `device.resume(pid)` in a Python script.
 
-> **🔍 Pentester's Note**
-> `frida -U -f com.example --pause` (older syntax) or simply not passing `--no-pause` leaves the app
+> **Pentester's Note**
+> `frida -U -f com.example --pause` (older syntax) or not passing `--no-pause` leaves the app
 > suspended so that you can type into the REPL before it runs. Use this when you want to explore
-> before deciding what to hook. Combine with `Java.perform` — but note that at the earliest spawn
+> before deciding what to hook. Combine with `Java.perform` — but at the earliest spawn
 > point, very few app classes are loaded yet, so `Java.use("com.example.Foo")` will throw
 > `ClassNotFoundException`. Hook something that runs later (see §3.9's classloader section) rather
 > than trying to resolve app classes at time zero.
@@ -820,7 +820,7 @@ custom `Application`:
 .end method
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > If the class already has a `<clinit>`, you must **merge** your two instructions into the existing
 > one and raise `.locals` if needed — you cannot have two static constructors. Getting this wrong
 > produces a `VerifyError` at class load, which manifests as the app dying instantly with a stack
@@ -849,7 +849,7 @@ is "a Java app" — the interesting parts of a hardened app are always in `libna
 `Interceptor` installs **inline hooks**. Understanding what that means physically is what separates
 someone who can fix their own hook from someone who Googles the error.
 
-> **📖 Definition**
+> **Definition**
 > An **inline hook** (also called a *detour* or *trampoline hook*) modifies the first few instructions
 > of a function in memory so that they jump to your code instead. The overwritten instructions are
 > copied to a separate buffer, adjusted for their new address, and followed by a jump back — so that
@@ -948,7 +948,7 @@ Interceptor.replace(isRooted, new NativeCallback(function (ctx) {
 | Multiple hooks on one function | Yes, they stack | No, one replacement |
 | Undo | `listener.detach()` / `Interceptor.detachAll()` | `Interceptor.revert(addr)` |
 
-> **⚠️ Warning**
+> **Warning**
 > `Interceptor.replace` with a wrong signature is a segfault, not an exception. If the real function
 > is `int f(const char*, size_t)` and you declare `['pointer']`, the second argument register holds
 > garbage from your perspective and the stack may be misaligned on return. Verify the signature from
@@ -1006,7 +1006,7 @@ Interceptor.attach(site, function () {
 });
 ```
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > `args[0]` is a convenience that reads the first argument register for you *assuming you attached at
 > the function entry* and *assuming the standard AAPCS64 calling convention with integer/pointer
 > arguments*. It is wrong for floating-point arguments (those are in `v0`–`v7`), wrong for large
@@ -1060,7 +1060,7 @@ while (!node.isNull()) {
 }
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > Reading an unmapped address throws a JavaScript exception (`Error: access violation accessing
 > 0x...`) rather than crashing — Frida installs a memory-access trap for this. **Writing** to a
 > read-only page throws too. But calling a `NativeFunction` with a bad pointer executes real code in
@@ -1119,7 +1119,7 @@ new NativeFunction(addr, 'int', ['pointer'], {
 });
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `exceptions: 'steal'` is the difference between "my script threw an error" and "the app died and I
 > lost my session". When you are probing a function whose signature you are unsure of, set it. When
 > you have verified the signature and want maximum speed, unset it.
@@ -1142,7 +1142,7 @@ const SSL_CTX_set_verify = new NativeFunction(
 SSL_CTX_set_verify(sslCtx, 1, myVerify);
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > A `NativeCallback` is garbage-collected like any JS object. If the only reference to it is a local
 > variable that goes out of scope, and the native side still holds the pointer, you get a crash later
 > at a completely unrelated point. **Always keep a module-level reference** to every `NativeCallback`
@@ -1206,7 +1206,7 @@ function strToPattern(s) {
 
 #### 3.6.6 `Module` — the loaded-library view
 
-> **📖 Definition**
+> **Definition**
 > A **module** in Frida is a loaded ELF object: a `.so` file mapped into the process, or the main
 > executable itself. Each has a base address, a size, a filesystem path, and export/import/symbol
 > tables.
@@ -1236,7 +1236,7 @@ m.enumerateSymbols();
 Module.getGlobalExportByName("open");              // replaces Module.findExportByName(null, ...)
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > Frida 17 reorganised this API. Scripts written for 16.x that call
 > `Module.findExportByName(null, "open")` may fail on 17.x with a deprecation error or a missing
 > function. This is the **second** most common "it worked yesterday" problem after version mismatch.
@@ -1339,7 +1339,7 @@ Interceptor.attach(Module.findExportByName("libc.so", "open"), {
 | `Backtracer.ACCURATE` | Follows frame pointers / unwind info | High — no false frames | Slower | Code compiled with frame pointers or with `.eh_frame` present |
 | `Backtracer.FUZZY` | Scans the stack for values that *look like* return addresses | Noisy — includes stale frames | Faster | Optimised/stripped code where ACCURATE returns one frame or nothing |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > If `Backtracer.ACCURATE` returns a single frame, do not conclude the function was called from
 > nowhere. Release Android native code is routinely built with `-fomit-frame-pointer`. Switch to
 > `FUZZY`, accept that some entries are garbage, and correlate the plausible ones against the module
@@ -1374,7 +1374,7 @@ the host side.
 
 ### 3.7 `Stalker` — instruction-level tracing
 
-> **📖 Definition**
+> **Definition**
 > **`Stalker`** is Frida's dynamic recompiler. When you "follow" a thread, Stalker takes each basic
 > block that thread is about to execute, copies it into a scratch buffer, optionally instruments it,
 > and runs the copy instead of the original. Because it controls every block transition, it can
@@ -1499,7 +1499,7 @@ Tunables:
 | `Stalker.queueDrainInterval` | 250 (ms) | How often the buffer is flushed |
 | `Stalker.trustThreshold` | 1 | How many times a block must be seen unchanged before its compiled form is trusted and reused. Set to `-1` to never trust (needed for self-modifying code), `0` to always trust |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The killer application of Stalker in mobile work is **finding the check you cannot find**. Take a
 > coverage trace while the app succeeds, take another while it fails (root detected, pin mismatch,
 > licence invalid), and diff the sets of executed basic blocks. The blocks present in exactly one run
@@ -1592,7 +1592,7 @@ Point 3 is where [13-ART](../13-ART/README.md) pays off.
 
 #### 3.9.2 How a Java hook is installed, at the ART level
 
-> **📖 Definition**
+> **Definition**
 > **`ArtMethod`** is the C++ struct ART uses to represent a single Java method. It holds the declaring
 > class, the method index, the access flags, and — critically — two entry points: the *interpreter*
 > entry point and the *quick compiled code* entry point. Calling a Java method ultimately means
@@ -1630,7 +1630,7 @@ Consequences you can predict from that mechanism, which is exactly the point of 
 | Hooks survive across `Java.perform` calls | The change is in the runtime's metadata, not in your JS scope |
 | A hook installed before the class is loaded is impossible | There is no `ArtMethod` yet to modify |
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > ART's inline caches and its JIT complicate this further. A method that has been JIT-compiled has a
 > quick entry point pointing into the JIT code cache. The bridge handles the common cases, but if you
 > hook a method that is extremely hot, you may see the hook fire for a while and then stop, or fire
@@ -1660,7 +1660,7 @@ Java.performNow(function () {
 | Use at script top level | **Yes — this is the normal case** | Only if you know the VM is ready |
 | Use inside `Interceptor.onEnter` | Risky — deferral can outlive the call | **Yes** — this is what it is for |
 
-> **⚠️ Warning**
+> **Warning**
 > Calling `Java.perform` at the very top of a spawn-time script is correct and normal, but the
 > callback may run before your target app classes exist. Wrapping `Java.use("com.example.Foo")` in
 > `Java.perform` does **not** guarantee `Foo` is loaded — it guarantees the *VM* is usable. See
@@ -1736,7 +1736,7 @@ Java.perform(function () {
 });
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > Inside `implementation`, calling `this.encrypt(...)` invokes the **original** method — the bridge
 > temporarily restores the saved `ArtMethod` around the call. Calling `Crypto.encrypt(...)` on the
 > class wrapper from an instance context, or calling the method on another instance you obtained
@@ -1801,7 +1801,7 @@ Type strings for `.overload()`:
 | Any class | fully-qualified dotted name |
 | Nested class `Outer.Inner` | `'com.example.Outer$Inner'` |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Array signatures use JVM descriptor syntax with **dots**, not slashes: `'[Ljava.lang.String;'`,
 > not `'[Ljava/lang/String;'`. That single detail costs people twenty minutes regularly. The
 > semicolon at the end is required.
@@ -1849,7 +1849,7 @@ Java.perform(function () {
 });
 ```
 
-> **🧠 Mental Model**
+> **Mental Model**
 > When the bridge frustrates you, remember that it is just a convenience layer over reflection. Any
 > field or method you cannot reach through `Java.use` you can reach through
 > `Field.setAccessible(true)` and `Field.get(obj)`, driven from Frida. The bridge is a shortcut, not
@@ -1888,7 +1888,7 @@ Java.perform(function () {
 });
 ```
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > `Java.choose` walks the ART heap. On modern ART this uses the heap-walking support in `libart.so`
 > and requires suspending the world briefly. It is slow on a large heap and it only finds objects
 > that are **currently reachable and of exactly that class or a subclass**. It will not find an object
@@ -1989,7 +1989,7 @@ on path: DexPathList[[zip file "/data/app/.../base.apk"], ...]
 
 The class exists in the APK. JADX shows it. And `Java.use` cannot find it. Why?
 
-> **📖 Definition**
+> **Definition**
 > A **`ClassLoader`** is the object responsible for finding and defining classes. An Android app has a
 > hierarchy: the boot classloader (framework classes), the app's `PathClassLoader` (classes from
 > `base.apk`), and possibly extra loaders created at runtime — `DexClassLoader` for downloaded or
@@ -2066,7 +2066,7 @@ Java.perform(function () {
 });
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > `Java.enumerateClassLoaders` also tells you *how many* loaders exist. A stock app has two or three.
 > An app with eight or twelve loaders, several of them `InMemoryDexClassLoader`, is telling you it
 > unpacks code at runtime — which means static analysis of `base.apk` will not show you the real
@@ -2160,7 +2160,7 @@ print(script.exports_sync.list_classes("crypto"))
 sys.stdin.read()
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > Frida renames RPC exports between conventions: JavaScript `listClasses` is Python `list_classes`.
 > Also, older code uses `script.exports.list_classes(...)`; Frida 16 introduced
 > `script.exports_sync` and `script.exports_async` and deprecated the bare `exports`. If your
@@ -2256,7 +2256,7 @@ frida -U -f com.example.app -l _agent.js --no-pause
 error reports a `.ts` line number, and with `-c` minifies. `-w` watches and rebuilds on save, which
 combined with Frida's script reloading gives you a very fast edit-test loop.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Treat your agents as a **library**, not as a pile of gists. A mature Android tester has one repo
 > with modules for crypto logging, network logging, pinning bypass, root bypass, storage tracing and
 > an intent logger, each independently switchable through `rpc.exports`, all compiled into one agent.
@@ -2307,7 +2307,7 @@ script.on("message", on_message)
 | `type: "error"` | Uncaught JS exception | `description`, `stack`, `fileName`, `lineNumber` |
 | `data` (2nd param) | `send(payload, arrayBuffer)` | Raw bytes, out of band |
 
-> **⚠️ Warning**
+> **Warning**
 > `recv(...).wait()` blocks the JavaScript thread. If you call it from inside an `Interceptor.onEnter`
 > that fires on the app's main thread, you have frozen the UI until the host replies. That is
 > sometimes exactly what you want (an interactive "allow/deny" prompt), and sometimes an ANR. Know
@@ -2409,7 +2409,7 @@ defineHandler({
 });
 ```
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The workflow that pays off: run `frida-trace -i "*" -I "libtarget.so"` for five seconds while you
 > press the button of interest, note which handlers fired, `Ctrl-C`, then delete every handler
 > directory except the interesting ones and re-run. You have gone from "a stripped library with 800
@@ -2513,7 +2513,7 @@ This is the table to keep beside you. Every row is a real, frequent problem with
 | Attach hangs then times out | `dlopen`/`android_dlopen_ext` hooked by the app; or linker namespace refusal | Try gadget mode; or `frida-server --directory` under a path the app can load |
 | `Java.use` throws `ClassNotFoundException` for a class you can see in JADX | Class is in a different `ClassLoader`, or not loaded yet | `Java.enumerateClassLoaders` + `Java.classFactory.loader`; or hook `ClassLoader.loadClass` |
 | Hook installs without error but never fires | Method inlined by ART or removed/inlined by R8; or the code runs in another process | `Java.deoptimizeEverything()`; hook the caller; check `frida-ps -Ua` for `:remote` processes |
-| Hook fires at first, then stops | ART JIT-compiled the method with the hook bypassed, or another script re-hooked it | `Java.deoptimizeEverything()`; ensure only one script hooks the method |
+| Hook fires at first, then stops | ART JIT-compiled the method with the hook bypassed, or another script re-hooked it | `Java.deoptimizeEverything()`; make sure only one script hooks the method |
 | `Error: expected a pointer` | You passed a JS number or string where a `NativePointer` was required | `ptr(x)` |
 | Random crash minutes after installing a `NativeCallback` | The callback was garbage-collected while native code still held the pointer | Keep a module-scope reference |
 | Stack overflow inside a Java hook | You called the method on the wrapper instead of `this` | Use `this.method(...)` |
@@ -2521,10 +2521,10 @@ This is the table to keep beside you. Every row is a real, frequent problem with
 | Script works with `-f`, not with `-n` | The code ran before you attached | Always use `-f` |
 | Everything works on the emulator, nothing on the phone | Emulator detection changed the app's code path, or ABI mismatch | Test on hardware; see [39-EmulatorDetection](../39-EmulatorDetection/README.md) |
 | `frida-server` dies seconds after starting | Killed by a low-memory killer, an app's watchdog, or a Magisk module conflict | Run with `-D`, check `logcat`, check `dmesg` |
-| `CANNOT LINK EXECUTABLE … empty/missing DT_HASH/DT_GNU_HASH … (new hash type from the future?)`, after several hundred `unused DT entry` linker warnings | The `frida-server` binary was built with a toolchain **newer than the image's dynamic linker**. Not a root problem — `su 0 id` still returns uid 0. Measured on `sdk_gphone16k_x86_64`, Android 15 / API 35, x86_64 | Match the server build to the image, or use [frida-gadget](#25-the-no-root-path-frida-gadget). **`frida-ps -U` still lists processes when this is happening** — see [the callout at the top of this chapter](#-read-this-before-you-install-anything-frida-server-does-not-run-on-every-image) |
+| `CANNOT LINK EXECUTABLE … empty/missing DT_HASH/DT_GNU_HASH … (new hash type from the future?)`, after several hundred `unused DT entry` linker warnings | The `frida-server` binary was built with a toolchain **newer than the image's dynamic linker**. Not a root problem — `su 0 id` still returns uid 0. Measured on `sdk_gphone16k_x86_64`, Android 15 / API 35, x86_64 | Match the server build to the image, or use [frida-gadget](#25-the-no-root-path-frida-gadget). **`frida-ps -U` still lists processes when this is happening** — see [the callout at the top of this chapter](#read-this-before-you-install-anything-frida-server-does-not-run-on-every-image) |
 | Hooks work but the app's network still bypasses your proxy | Native TLS stack (Flutter, Cronet, BoringSSL statically linked) | Hook `SSL_CTX_set_custom_verify` / `SSL_read`/`SSL_write` natively; see [36](../36-CertificatePinning/README.md) |
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > The "hook installed but never fires" case deserves one more paragraph because two completely
 > different mechanisms produce it. **R8 inlining** ([42-R8](../42-R8/README.md)) happens at build
 > time: the method you are hooking no longer exists in the DEX; its body was copied into every caller.
@@ -2597,7 +2597,7 @@ The path is:
 8. When your code calls `this.bar(x + 1)`, the bridge restores the saved `ArtMethod` state, invokes
    the method normally via `CallNonvirtual<Type>Method`, and re-applies the replacement.
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > Step 8 is not free and it is not perfectly re-entrant. If two threads are inside the same hooked
 > method at the same time and both call the original, the save/restore dance must be serialised. This
 > is one of the sources of the rare "hook works, then intermittently doesn't" behaviour on heavily
@@ -2738,7 +2738,7 @@ int main(int argc, char **argv) {
 }
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > This will not work unmodified against a real Android app on a recent device: the linker namespace
 > will refuse to load a library from `/data/local/tmp`, `dlopen` is not directly in `libdl.so` on all
 > versions, and ASLR plus different libc builds between your process and the target break the
@@ -2769,7 +2769,7 @@ Frida is a research tool, but the technique is the technique. Real-world abuse p
   signature algorithm. This is the single highest-value offensive use of Frida in the fraud world:
   you do not break the crypto, you *borrow* it.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > That last pattern is also the most persuasive thing you can put in a report. Do not write "the
 > request signing algorithm can be reversed". Write: "using the app's own signing routine, invoked
 > through instrumentation, we generated valid signed requests for arbitrary account identifiers
@@ -2806,7 +2806,7 @@ will meet all of them.
 | JNI `RegisterNatives` monitoring | Frida's Java hooks change entry points | Hardest case; often needs a custom Frida build |
 | Timing checks around sensitive functions | Hooks add microseconds | Minimise work in hooks; use `CModule`; hook the clock |
 
-> **⚠️ Warning**
+> **Warning**
 > Do not treat this table as a checklist to defeat during a client engagement without discussing it.
 > Bypassing every anti-instrumentation control and then reporting "the app is trivially instrumented"
 > is technically true and professionally useless. The finding is *what you could do once inside* —
@@ -2908,7 +2908,7 @@ if (sym !== null) {
 }
 ```
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > If `Module.findExportByName` returns `null` for a `Java_*` symbol that must exist, the app used
 > `RegisterNatives` in `JNI_OnLoad` instead of relying on name-based lookup. That is deliberate: it
 > hides the mapping from `nm`/`readelf`. Hook `RegisterNatives` itself to recover it — the script for
@@ -2975,7 +2975,7 @@ done
 | Anti-hook integrity checks | Interceptor's byte patches are detected | Hook the checker, or use Stalker which does not patch the original |
 | R8 method inlining | Your target method does not exist | Hook callers |
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Obfuscation is a tax on *reading*. Instrumentation is a way of *watching*. Any obfuscation strong
 > enough to stop you watching would also stop the CPU executing. This is why the standard workflow
 > against a heavily obfuscated app is not "decompile harder" — it is "hook the framework boundary".
@@ -3022,7 +3022,7 @@ each one makes the next one meaningful.
 This is the single most common first-day failure, and the error message tells you exactly what is
 wrong if you read it.
 
-> **⚠️ Warning**
+> **Warning**
 > The `frida` Python package on your workstation and the `frida-server` binary on the device implement
 > two ends of one wire protocol. That protocol changes between **major** versions. If the host is
 > 17.x and the device is 16.x, every command fails with `unable to communicate with remote
@@ -3068,7 +3068,7 @@ frida-ps -U | head
 frida-ps -Uai | head          # -a installed apps, -i include not-running
 ```
 
-> **⚠️ Warning — `frida-ps -U` is not a proof that Frida works.** Run the server in the foreground
+> **Warning — `frida-ps -U` is not a proof that Frida works.** Run the server in the foreground
 > once, before you daemonise it, and read what it prints:
 >
 > ```bash
@@ -3082,7 +3082,7 @@ frida-ps -Uai | head          # -a installed apps, -i include not-running
 > a `frida-server` built with a toolchain newer than the image's linker — **and `frida-ps -U` on the
 > same device still enumerates processes.** The failure surfaces only on attach. The full disclosure,
 > including what still works and where to go instead, is
-> [at the top of this chapter](#-read-this-before-you-install-anything-frida-server-does-not-run-on-every-image).
+> [at the top of this chapter](#read-this-before-you-install-anything-frida-server-does-not-run-on-every-image).
 >
 > On a Magisk device the `su -c '…'` form above is correct; on the AVD, `su` takes `su 0 <cmd>` and
 > rejects `-c`. Both forms appear in this chapter deliberately.
@@ -3150,7 +3150,7 @@ dmesg -w | grep -i avc &
 #   scontext=u:r:shell:s0 tcontext=u:object_r:shell_data_file:s0 tclass=file
 ```
 
-The usual causes and their fixes are enumerated below. Note that `setenforce 0` is listed last on
+The usual causes and their fixes are enumerated below.`setenforce 0` is listed last on
 purpose: it changes the device's behaviour globally and can itself change what the app under test
 does, which contaminates your findings.
 
@@ -3215,7 +3215,7 @@ app. Before writing the finding up, run `cmd package compile --reset com.example
 app, and confirm the vulnerability still exists in the app's normal compilation state. A finding that
 only reproduces under a modified runtime configuration will be — correctly — rejected by a developer.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Write the mechanism in the report, not the tool. "The PIN is validated client-side in
 > `com.example.auth.PinValidator.check(String)`, whose boolean return governs the transition to the
 > authenticated activity; because the check is entirely local, any code executing in the app's process
@@ -3391,7 +3391,7 @@ export function onModuleLoad(pattern: RegExp, cb: (m: Module) => void): void {
 }
 ```
 
-> **🧠 Mental Model**
+> **Mental Model**
 > Treat `null` from a symbol lookup the way you treat `null` from a database query: an expected
 > result that your code handles, not an error. The difference between a script that works on your
 > phone and a script that works on the client's phone is almost entirely made of these guards.
@@ -3550,7 +3550,7 @@ whether respawning changes the answer, and whether forcing interpretation change
 
 #### 7.4.1 Failure 1 — the method was inlined
 
-**Symptom.** `Java.use(...).method.implementation = ...` runs without error. The app clearly executes
+**Symptom.** `Java.use(...).method.implementation = ...` runs without error. The app still executes
 the logic — the login succeeds, the signature is computed — but your `console.log` never appears.
 Sometimes it appears for the first few calls and then stops.
 
@@ -3662,7 +3662,7 @@ Java.perform(function () {
 });
 ```
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > `cmd package compile -m verify -f` is preferable to `Java.deoptimizeEverything()` for one
 > non-obvious reason: it changes the state of the app **on disk before the process starts**, so the
 > app is interpreted from its very first instruction, including everything in `<clinit>` and
@@ -3832,7 +3832,7 @@ Java.perform(function () {
 Full, hardened versions of both patterns are in
 [`scripts/class-enumerator.js`](scripts/class-enumerator.js).
 
-> **⚠️ Warning**
+> **Warning**
 > Do not leave `Java.classFactory.loader` permanently reassigned. Every subsequent `Java.use` in your
 > script — including inside modules you did not write — resolves through it. A pinning-bypass module
 > that suddenly cannot find `javax.net.ssl.SSLContext` is almost always the victim of another module
@@ -3911,7 +3911,7 @@ Java.perform(function () {
 });
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > Inside an overload's `implementation`, call the original as `ov.apply(this, arguments)` or
 > `this.check.apply(this, arguments)`. Writing `C.check(...)` — using the class wrapper rather than
 > `this` — re-enters your own hook and produces a stack overflow that looks, confusingly, like a crash
@@ -4067,7 +4067,7 @@ Only after excluding all four should you consider the remaining causes, roughly 
 | The app **is** detecting Frida | See [§5.3](#53-detection-and-its-limits); look for the process dying, not for the hook silently failing |
 | Two scripts are hooking the same method and one overwrote the other | Load one script at a time |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > "The app detects Frida" is the conclusion you reach *last*, not first, and the evidence for it is
 > qualitatively different: the process dies, exits, shows a dialog, or silently changes behaviour.
 > Detection does not usually produce a hook that installs cleanly and never fires — that is inlining.
@@ -4129,7 +4129,7 @@ if (check !== null) {
 }
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > The `NativeCallback` object must stay reachable from JavaScript for as long as native code may call
 > it. If you write `Interceptor.replace(addr, new NativeCallback(...))` inside a function and the only
 > reference goes out of scope, the JS garbage collector may free the trampoline while the app still
@@ -4284,7 +4284,7 @@ Memory.scanSync(range.base, range.size, "50 4b 03 04")
   .forEach(m => console.log(`${m.address} size=${m.size}`));
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > `Memory.scanSync` over the whole address space of a modern app will scan hundreds of megabytes on
 > the JavaScript thread and will trigger an ANR. Always filter the range list first — anonymous `rw-`
 > only, and skip ranges larger than, say, 64 MiB unless you have a reason. The async `Memory.scan`
@@ -4339,7 +4339,7 @@ Interceptor.attach(Module.findExportByName("libc.so", "open"), {
 | `Backtracer.ACCURATE` | Follows frame pointers / unwind tables (`.eh_frame`, ARM EHABI) | The target was built with frame pointers or has unwind info | Frame-pointer-omitted release builds, hand-written assembly, obfuscated/packed code |
 | `Backtracer.FUZZY` | Scans the stack for values that *look like* return addresses into known modules | Almost always produces something | Produces **false frames** — stale return addresses from earlier calls left on the stack |
 
-> **🧠 Mental Model**
+> **Mental Model**
 > `ACCURATE` is a witness statement: correct, or absent. `FUZZY` is a search of the wastebasket: you
 > find real receipts mixed with old ones, and you must judge which are current. Start with `ACCURATE`.
 > If it returns one frame or none, switch to `FUZZY` and treat the result as a list of *candidates* to
@@ -4487,7 +4487,7 @@ Java.perform(function () {
 });
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > Every call into Java must happen on a thread attached to the VM, inside `Java.perform`. Calling
 > `Signer.hmac(...)` from an `Interceptor.onEnter` on an arbitrary native thread without
 > `Java.perform` will abort the process with `JNI DETECTED ERROR IN APPLICATION: a thread is
@@ -4617,7 +4617,7 @@ Stalker.follow(Process.getCurrentThreadId(), {
 });
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > `iterator.keep()` must be called for every instruction you do not deliberately remove. Forget it and
 > the instruction vanishes from the recompiled block, which changes the program's behaviour in ways
 > that are extremely hard to debug. Also: never call `console.log` from a callout on a hot path — the
@@ -4821,7 +4821,7 @@ adb install base.debuggable.apk
 | `frida-apk --debuggable` | No | **Yes** | Partially | Low |
 | Magisk module running `frida-server` | Yes (Magisk) | No | Yes | Low, persistent |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > On a real engagement, do the gadget build **once**, early, and keep it. The moment you need it you
 > will be under time pressure, and `apktool` will have failed on some resource in the app you cannot
 > immediately fix. Discovering that on day four is painful; discovering it on day one is a scheduling
@@ -4926,8 +4926,8 @@ for so in raw/lib/*/*.so; do
 done
 ```
 
-> **🔍 Pentester's Note**
-> If `nm` shows **no** `Java_*` symbols but the app clearly has `native` methods, the app used
+> **Pentester's Note**
+> If `nm` shows **no** `Java_*` symbols but the app declares `native` methods, the app used
 > `RegisterNatives` in `JNI_OnLoad` to bind them at runtime. That is a deliberate obfuscation choice
 > and it means the mapping from Java method to native function exists only in memory. Recover it with
 > [`scripts/native-tracer.js`](scripts/native-tracer.js), which hooks `RegisterNatives` and prints the
@@ -5010,7 +5010,7 @@ done
 | `dl_iterate_phdr` | Walking loaded modules from native code, bypassing `/proc` | Hook `dl_iterate_phdr` itself |
 | `inotify_*` | Watching its own files for modification | Irrelevant to Frida; targets file patching |
 
-> **⚠️ Warning**
+> **Warning**
 > A clean grep does **not** prove the app has no detection. String encryption ([40-Obfuscation](../40-Obfuscation/README.md))
 > hides all of the constants above, and native detection compiled with inlined string literals may not
 > produce a greppable `strings` hit either. Absence of evidence here is weak evidence of absence. What
@@ -5649,7 +5649,7 @@ runs/20250805T101200Z/
 └── blob-00002.bin
 ```
 
-> **🧠 Mental Model**
+> **Mental Model**
 > The difference between a test and an experiment is the manifest. A test tells you what happened
 > once. An experiment records the conditions precisely enough that someone else — or you, after the
 > app has shipped three more versions — can reproduce it or explain why it no longer reproduces. On
@@ -5812,7 +5812,7 @@ applies to `Memory.alloc` results passed to native code that stores them.
 Search memory. The key must exist as bytes in a readable page while it is in use, even if it is derived
 in native code and zeroed afterwards. I enumerate anonymous `rw-` ranges with `Process.enumerateRanges`
 — anonymous because heap and JNI buffers are not file-backed — filter out anything implausibly large,
-and `Memory.scan` for structural markers: PEM headers, ASN.1 prefixes, base64 alphabets, or simply
+and `Memory.scan` for structural markers: PEM headers, ASN.1 prefixes, base64 alphabets, or
 high-entropy runs of the right length. Then I trigger the operation repeatedly and diff the hits to
 find which candidate changes with the input. In parallel I hook the primitives the code must
 eventually call: `HMAC_Init_ex`, `EVP_EncryptInit_ex` and friends in `libcrypto.so` are exported even
@@ -6021,7 +6021,7 @@ Work each lab twice. The first pass is "make it work". The second pass is "expla
 and without the word *somehow*, why the first attempt failed". The second pass is the one that
 transfers to real targets.
 
-> **⚠️ Warning**
+> **Warning**
 > Everything in these labs is to be performed against applications you have written or are explicitly
 > authorised to test. Instrumenting an application you do not own may be a criminal offence in your
 > jurisdiction regardless of your intent, and the fact that the technique is documented here is not
@@ -6259,7 +6259,7 @@ The full printable version is [`cheatsheet.md`](cheatsheet.md). Condensed:
 | `Ch0pin/medusa` | A modular Frida framework organised by capability |
 | Codeshare (`frida --codeshare <user>/<script>`) | Community scripts; read them before running them, since they execute in your target |
 
-> **⚠️ Warning**
+> **Warning**
 > `frida --codeshare` downloads and executes someone else's JavaScript inside the process you are
 > testing, on a device you probably have root on. Read the script first. This is the same trust
 > decision as `curl | sh`, and it deserves the same suspicion.

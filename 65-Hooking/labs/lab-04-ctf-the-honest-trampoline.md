@@ -75,7 +75,7 @@ strings $OUT/libvault.so | grep -Ei 'pin|flag|CH65|[0-9]{4}'
 Measured: nothing useful. Only symbol names (`vault_pin_ok`, `g_pin_key`, `FLAG_ENC`). The strings
 are stored encoded and decoded at runtime.
 
-> **🔬 Under the Hood.** The first version of this challenge stored the key as `#define PIN_KEY 0x5A`
+> **Under the Hood.** The first version of this challenge stored the key as `#define PIN_KEY 0x5A`
 > and was trivially broken: clang at `-O2` saw a constant array XORed with a constant key, folded the
 > whole loop at compile time, and emitted `"1379-alp"` and `"CH65{got_slot_beats_text_checksu"`
 > directly into `.rodata`. **The optimiser deobfuscated it.** The shipped version stores the keys as
@@ -223,7 +223,7 @@ The Gold tier is the point of the whole chapter. A hook that bypasses a check gi
 A hook that **tells you what the check wanted** gives you the input, and an input is a finding you can
 put in a report, hand to a developer, and reproduce without a tool.
 
-> **🧠 Mental Model.** Hooking is an instrumentation technique. It proves behaviour; it is not itself
+> **Mental Model.** Hooking is an instrumentation technique. It proves behaviour; it is not itself
 > a finding. "I bypassed the PIN check with a hook" is a statement about your toolkit. "The PIN is
 > `1379-alpha`, hard-coded in the library, and here is the byte offset" is a statement about the
 > product.
@@ -324,7 +324,7 @@ verification needs an attestation the device cannot forge — hardware-backed at
 demonstrating exactly this.
 
 **2. What would defeat the PLT/GOT solution?**
-Extend the checksum to cover the GOT. Or, more simply, resolve `strcmp` once with
+Extend the checksum to cover the GOT. Or resolve `strcmp` once with
 `dlsym(RTLD_NEXT, "strcmp")`, cache the pointer, and validate it with `dladdr` — a pointer that does
 not resolve into a mapped library is a loud signal. Simplest of all: do not call `strcmp`. A
 hand-written comparison loop inside the same translation unit is a direct branch with no table entry

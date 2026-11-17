@@ -35,9 +35,9 @@ the grep is *correct*, the tool is *working*, and the answer is *worthless*, bec
 `const/16 v0, #int 8192` survives compilation. Someone who greps and finds nothing has learned
 something about `javac`, not about the app.
 
-> **🧠 Mental Model.** The scoring here encodes one rule: **a finding is a claim plus the strength of
+> **Mental Model.** The scoring here encodes one rule: **a finding is a claim plus the strength of
 > its support.** Strip the second half and you have not simplified the finding, you have removed the
-> part a reader needs in order to act on it correctly.
+> part a reader needs to act on it correctly.
 
 ---
 
@@ -105,7 +105,7 @@ Bonus points:
 **Maximum: 125.** A perfect score on the six claims alone is 60. The flag is 15. **More than half the
 points are for method.**
 
-> **⚠️ The trap in the rubric.** "Correct answer, tier overstated" scores **−5** — worse than a wrong
+> **The trap in the rubric.** "Correct answer, tier overstated" scores **−5** — worse than a wrong
 > answer honestly caveated. That is deliberate and it mirrors reality: a client who finds out your
 > confident claim rested on a decompiler's guess stops trusting the four findings you got right.
 
@@ -263,7 +263,7 @@ adb -s <serial> shell "LD_LIBRARY_PATH=/data/local/tmp/ch68 \
 Or, with no device, solve it entirely on paper: reconstruct the recurrence, solve for the gate
 constant, then decode the masked bytes yourself with the seed as the mask.
 
-> **⚠️ The decoy.** There is a `CH68{...}` string in `.rodata` and it is **not** the flag. Submitting
+> **The decoy.** There is a `CH68{...}` string in `.rodata` and it is **not** the flag. Submitting
 > it scores **0** for the flag and **−5** on Claim 1, because it means the tier-2 observation was
 > read as a tier-5 one. That is exactly the error the whole CTF is built to catch, and it is the same
 > error as chapter 47's `FLAG_SECURE` grep: a correct search producing a worthless answer.
@@ -402,7 +402,7 @@ the source review passes.
 CH68{ev1dence_b3ats_a_good_story}
 ```
 
-Key: `measure`. Note that the fixture's own gate constant was chosen to make that word work — which
+Key: `measure`.the fixture's own gate constant was chosen to make that word work — which
 is a small joke and also the chapter's argument.
 
 </details>
@@ -419,7 +419,7 @@ is a small joke and also the chapter's argument.
 | **0–29** | Re-read §2.3 and redo lab 02. The tiers are the whole skill |
 | **Negative** | You answered confidently from tier 1–2 evidence. Better than it feels: you now know the failure mode by name |
 
-> **🔍 Pentester's Note.** A negative score here is genuinely common among people who are good at
+> **Pentester's Note.** A negative score here is genuinely common among people who are good at
 > tools. Finding things is the easy half; knowing what a finding is worth is what separates a report
 > a client can act on from a list of true statements.
 

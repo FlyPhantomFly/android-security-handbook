@@ -22,9 +22,9 @@ code carefully encrypts, and that the optimiser puts back in plaintext.** That o
 on its own, because it is a real finding you can take to a real client, and because almost everybody
 believes the opposite.
 
-> **⚠️ On the state of this chapter**
+> **On the state of this chapter**
 > radare2 was **not installed** on the machine where this was written. Every `r2`/`rabin2` command is
-> **📘 Unverified**. Every stated fact about a binary is **✅ Measured** with the NDK's LLVM tools and
+> **Unverified**. Every stated fact about a binary is **Measured** with the NDK's LLVM tools and
 > says so. Where a measurement was taken with `llvm-readelf`/`llvm-nm`/`llvm-objdump` rather than
 > with `rabin2`, that is stated — the two read the same ELF structures, but you should know which
 > produced the number in front of you.
@@ -84,7 +84,7 @@ adb pull /system/lib64/arm64/libsqlite.so libsqlite-arm64.so
 adb pull /system/lib64/arm64/libcrypto.so libcrypto-arm64.so
 ```
 
-> **✅ Measured** — the device used for this chapter was the AVD `sdk_gphone16k_x86_64`,
+> **Measured** — the device used for this chapter was the AVD `sdk_gphone16k_x86_64`,
 > Android 15 / API 35, `ro.product.cpu.abilist = x86_64,arm64-v8a`, `getconf PAGE_SIZE = 16384`.
 > Both `/system/lib64/` (x86_64) and `/system/lib64/arm64/` (AArch64) exist on it.
 
@@ -96,7 +96,7 @@ unzip -o target.apk -d ~/ch59-corpus/apk/
 ls ~/ch59-corpus/apk/lib/
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > Only use APKs you own or that are published as deliberately-vulnerable training targets. See the
 > ethics note in [68-ReverseEngineering](../../68-ReverseEngineering/README.md).
 
@@ -109,7 +109,7 @@ ls ~/ch59-corpus/apk/lib/
 `rabin2` is radare2's ELF parser as a standalone program. It never analyses code.
 
 ```bash
-# 📘 Unverified
+# Unverified
 rabin2 -I ~/ch59-corpus/libsqlite.so     # arch, bits, stripped, hardening
 rabin2 -l ~/ch59-corpus/libsqlite.so     # DT_NEEDED
 rabin2 -S ~/ch59-corpus/libsqlite.so     # sections
@@ -124,7 +124,7 @@ Time each one. They should all complete in well under a second, including on a 2
 The reason is in the ELF layout: parsing structure means reading a few headers and walking two or
 three tables, and those tables are small relative to the code.
 
-> **✅ Measured** — these are the real numbers for the corpus this chapter used, obtained with
+> **Measured** — these are the real numbers for the corpus this chapter used, obtained with
 > `llvm-readelf` and `llvm-nm` from NDK 25.2.9519653. `.text bytes` is the section's size field;
 > the instruction count is exact for AArch64 because instructions are four bytes.
 >
@@ -163,7 +163,7 @@ cd 59-radare2/scripts
 ./so-corpus-stats.sh ~/ch59-corpus
 ```
 
-> **✅ Measured** — this script was run against the corpus above and reproduced the table exactly.
+> **Measured** — this script was run against the corpus above and reproduced the table exactly.
 > It prefers `rabin2` when radare2 is installed and **falls back to `llvm-readelf`** when it is not,
 > which is how the chapter's numbers were produced on a machine with no radare2.
 
@@ -209,7 +209,7 @@ time rabin2 -qi ~/ch59-corpus/libsqlite.so
 Record both numbers. The ratio is your cost model, and it is the number you should quote when someone
 asks why you did not just analyse everything.
 
-> **✅ Measured (a floor, not `aaa`)** — this chapter could not time `aaa`, because radare2 was not
+> **Measured (a floor, not `aaa`)** — this chapter could not time `aaa`, because radare2 was not
 > installed. It measured instead the one step any analyser must pay — decoding every instruction in
 > `.text` exactly once — using `llvm-objdump -d`, which does a linear sweep and nothing else:
 >
@@ -303,12 +303,12 @@ strings -n 4 libr2hardened.so   | grep -i xbin      # -O2, volatile key
 Or with radare2:
 
 ```
-# 📘 Unverified
+# Unverified
 $ r2 -q -c 'iz~xbin' ~/ch59-build/libr2target.so
 $ r2 -q -c 'iz~xbin' ~/ch59-build/libr2target-O0.so
 ```
 
-> **✅ Measured** — with `llvm-strings` from NDK 25.2.9519653:
+> **Measured** — with `llvm-strings` from NDK 25.2.9519653:
 >
 > | Build | Source | `grep xbin` |
 > |---|---|---|
@@ -326,7 +326,7 @@ build sees it working and ships the plaintext.
 ### 4.3 — Find out why
 
 ```
-# 📘 Unverified
+# Unverified
 $ r2 ~/ch59-build/libr2target.so
 [0x0]> s sym.lt_probe_paths
 [0x0]> af
@@ -335,7 +335,7 @@ $ r2 ~/ch59-build/libr2target.so
 
 Count the instructions in `lt_probe_paths` and look for the XOR loop.
 
-> **✅ Measured** — from `llvm-objdump -d libr2target.so`. The entire function:
+> **Measured** — from `llvm-objdump -d libr2target.so`. The entire function:
 >
 > ```
 > 000000000000190c <lt_probe_paths>:
@@ -366,7 +366,7 @@ optimiser doing exactly its job. It just happens to delete a security control.
 ### 4.4 — Confirm the fix
 
 ```
-# 📘 Unverified
+# Unverified
 $ r2 ~/ch59-build/libr2hardened.so
 [0x0]> s sym.lt_probe_paths_hardened
 [0x0]> af
@@ -381,7 +381,7 @@ change is one word:
 static volatile unsigned char g_xor_key = 0xA7;
 ```
 
-> **✅ Measured** — in the hardened `-O2` build the loop survives, vectorised but real:
+> **Measured** — in the hardened `-O2` build the loop survives, vectorised but real:
 >
 > ```
 >     ldrb  w8, [x8, #...]        ; load the volatile key
@@ -394,7 +394,7 @@ static volatile unsigned char g_xor_key = 0xA7;
 `volatile` forbids the compiler from assuming a load returns the value last stored, which is
 precisely the assumption constant folding needs. Removing it breaks the fold chain.
 
-> **⚠️ What this does NOT buy**
+> **What this does NOT buy**
 > The string is now absent from the *file*. It is present in *memory* whenever the function runs.
 > Anyone with Frida, r2frida or a core dump reads it trivially. This raises the cost of a `strings`
 > sweep from zero to "attach a debugger" — a rate limiter, not a boundary. Do not ship a secret to a
@@ -427,25 +427,25 @@ precisely the assumption constant folding needs. Removing it breaks the fold cha
 ### 5.1 — Statically registered methods
 
 ```
-# 📘 Unverified
+# Unverified
 $ r2 ~/ch59-build/libr2target.so
 [0x0]> iE~Java_
 ```
 
-> **✅ Measured** — `llvm-nm -D --defined-only` reports exactly one:
+> **Measured** — `llvm-nm -D --defined-only` reports exactly one:
 > `Java_com_pentest_ch59_Native_staticCheck` at `0x19cc`, which decodes to class
 > `com.pentest.ch59.Native`, method `staticCheck`.
 
 Now disassemble it:
 
 ```
-# 📘 Unverified
+# Unverified
 [0x0]> s sym.Java_com_pentest_ch59_Native_staticCheck
 [0x0]> af
 [0x0]> pdf
 ```
 
-> **✅ Measured** — the entire function is **one instruction**:
+> **Measured** — the entire function is **one instruction**:
 >
 > ```
 > 00000000000019cc <Java_com_pentest_ch59_Native_staticCheck>:
@@ -462,14 +462,14 @@ the branch. This is extremely common in optimised builds and it wastes a lot of 
 The library also registers a method at run time, and no symbol names it.
 
 ```
-# 📘 Unverified
+# Unverified
 [0x0]> iE                    # is JNI_OnLoad here but Java_* missing for some methods?
 [0x0]> iz~^\(                # JNI signatures all start with "("
 [0x0]> iz                    # read the neighbourhood
 [0x0]> iS~data.rel.ro        # where the table usually lives
 ```
 
-> **✅ Measured** — the whole of `.rodata` is fifty bytes and contains, in order:
+> **Measured** — the whole of `.rodata` is fifty bytes and contains, in order:
 >
 > ```
 > /system/xbin/su
@@ -490,14 +490,14 @@ The library also registers a method at run time, and no symbol names it.
 ### 5.3 — Find the `RegisterNatives` call
 
 ```
-# 📘 Unverified
+# Unverified
 [0x0]> aa
 [0x0]> pdf @ sym.JNI_OnLoad
 ```
 
 Look for indirect calls: `ldr` of a constant offset from a pointer, then `blr`.
 
-> **✅ Measured** — from `llvm-objdump -d`:
+> **Measured** — from `llvm-objdump -d`:
 >
 > ```
 >     19dc: ldr   x8, [x0]

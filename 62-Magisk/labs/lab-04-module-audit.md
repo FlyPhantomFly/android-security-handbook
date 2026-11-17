@@ -18,7 +18,7 @@ archives with the message: *"these are the ones I use, they're all fine."*
 Your job is to decide, with evidence, whether each may be installed on a device that will later hold
 an authorised client's test data — and to write the finding for the one that may not.
 
-> **⚠️ Do not install any of these on a device.** Everything in this lab is done on the host, from
+> **Do not install any of these on a device.** Everything in this lab is done on the host, from
 > the archive. That constraint is not a safety rail added on top of the exercise; it *is* the
 > exercise. The only moment at which you get to make this decision is before installation.
 
@@ -43,7 +43,7 @@ revocation.** Installing one grants its author a root shell that executes at eve
 `post-fs-data`, before zygote, before any application, before any security software, and before any
 logging you control. The entire control is a human reading a shell script.
 
-The realistic threat is not somebody writing an obviously hostile module and posting it. It is:
+The realistic threat is not somebody writing a blatantly hostile module and posting it. It is:
 
 - a genuinely useful, popular module **changing hands**, and version 4.3 containing eleven lines
   that version 4.2 did not;
@@ -287,7 +287,7 @@ like? Why is knowing that as important as knowing what a dirty one looks like?
 **Q10.** The script prints a HIGH count and then says explicitly that the count is "not a verdict".
 Argue for and against having it print a verdict. Then state which you would ship, and why.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Notice which of the hostile behaviours the script catches by **pattern** and which it catches by
 > **structure**. `curl` in a boot script is a pattern match — trivially evaded by using a different
 > downloader, or by writing the bytes with `dd`, or by having the payload arrive through a socket
@@ -315,7 +315,7 @@ asked "was this module ever installed here", what would you look for? Some behav
 artefacts that outlive the module directory — that is the entire point of them.
 
 **Q12.** Which of the twelve behaviours **survives removal of the module**? For each, say what the
-device owner would have to do beyond `touch /data/adb/modules/devoptimizer/remove` in order to be
+device owner would have to do beyond `touch /data/adb/modules/devoptimizer/remove` to be
 clean. This is the difference between "uninstalled" and "remediated", and clients ask about it.
 
 ---
@@ -325,14 +325,14 @@ clean. This is the difference between "uninstalled" and "remediated", and client
 **Q13.** `post-fs-data.sh` fetches a payload from the network and executes it. You have read every
 byte of the archive. What fraction of the code that will run on the device have you read?
 
-**Q14.** List everything you would need in order to answer "what does this module actually do" for a
+**Q14.** List everything you would need to answer "what does this module actually do" for a
 fetch-at-boot module. Include at least: what you would capture, from where, and what you would still
 be unable to conclude afterwards.
 
 **Q15.** A module you audit today passes cleanly. It auto-updates. Describe the control that makes
 today's audit still meaningful next month, and be specific about who does what and when.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > A static audit answers "what is in this archive". It does not answer "what will run on the
 > device", and for any module that fetches, decodes, or branches on device state, those two questions
 > have different answers. Say which one you answered. A report that claims the second while having

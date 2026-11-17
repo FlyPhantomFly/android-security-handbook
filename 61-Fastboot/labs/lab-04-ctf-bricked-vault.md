@@ -56,7 +56,7 @@ You should have six files:
 trap actually traps, verifies that part 4's token is not stored anywhere in the files, and cleans up.
 The output is deterministic, so every student's images are byte-identical.
 
-> **⚠️ Everything here is a file.** Nothing is bootable, nothing is signed with any real key, and
+> **Everything here is a file.** Nothing is bootable, nothing is signed with any real key, and
 > nothing can be flashed to anything. Do not connect a device. The whole point of this CTF is that
 > the entire skill set transfers without hardware at risk.
 
@@ -377,7 +377,7 @@ survive being locked.
 APN61{SPARSE_BYTE123_ALIGNED_RELOCK}
 ```
 
-Note that PART4 is `RELOCK`, not `LOCK` — the token is the *operation*, which is a relock. If you
+PART4 is `RELOCK`, not `LOCK` — the token is the *operation*, which is a relock. If you
 answered `LOCK` you identified the right command; the briefing asked for the verb of what the
 technician was doing, which was putting the device back.
 

@@ -57,7 +57,7 @@ chmod +x lsposed-footprint.sh
 adb devices -l
 ```
 
-> **⚠️ If more than one device is attached, pass `--serial` to everything.** A silent wrong-device
+> **If more than one device is attached, pass `--serial` to everything.** A silent wrong-device
 > attach is the worst kind of error, because every subsequent measurement is internally consistent
 > and about the wrong target. This repository has a recorded case of `frida.get_usb_device()`
 > returning an emulator while a phone was attached, and the whole corpus that came out of it was
@@ -123,7 +123,7 @@ uid=0(root) gid=0(root) groups=0(root),1004(input),1007(log),1011(adb),... conte
 The device is rooted. The first command says it is not, in a way that looks exactly like the message
 an unrooted device produces if you are skimming.
 
-> **⚠️ The AOSP emulator's `su` takes a uid as its first argument.** `su 0 <command>` runs as root;
+> **The AOSP emulator's `su` takes a uid as its first argument.** `su 0 <command>` runs as root;
 > `su -c <command>` is parsed as "run as the user named `-c`" and fails. Magisk's `su` on a physical
 > device takes `-c`. A chapter in this repository nearly recorded a rooted emulator as unrooted on
 > exactly this basis, and it is worth internalising because the same class of mistake — a tool
@@ -173,7 +173,7 @@ resetprop
 Magisk 30.7. **Zygisk requires Magisk 24 or later**, so on version alone this device could run
 LSPosed. Section 3 asks whether it is actually turned on.
 
-> **🔍 Note the applet list.** `magisk --list` printed `su` and `resetprop`. That is what the binary
+> **Note the applet list.** `magisk --list` printed `su` and `resetprop`. That is what the binary
 > can be invoked as, not what is enabled. Do not read it as a feature list.
 
 ---
@@ -216,7 +216,7 @@ adb -s <serial> shell 'su 0 sh -c "grep -icE \"zygisk\" /proc/<pid>/maps"'
 Zero. Nothing named `zygisk` is mapped into Zygote. Combined with the absent settings row, the
 conclusion is safe: **Zygisk is off on this device, and therefore LSPosed cannot be running on it.**
 
-> **⚠️ Watch the quoting.** The inner pattern uses **double** quotes. Writing
+> **Watch the quoting.** The inner pattern uses **double** quotes. Writing
 > `grep -icE 'zygisk|magisk' ...` inside a `su 0 sh -c '...'` terminates the outer single quote
 > early, and the device shell then reads `|` as a **pipe** — turning your grep into
 > `grep -icE zygisk` piped into `magisk`. The error message that comes back is
@@ -302,7 +302,7 @@ permissions**, 183 granted at install and 16 runtime permissions pre-granted `SY
 Every published root-detection list you will read was written from `adb shell`. Most of them are
 therefore describing a viewpoint no application has.
 
-**Task 5.1.** Note that `/system/xbin/su` is readable by `shell` and mode `4750 root:shell` — the
+**Task 5.1.** `/system/xbin/su` is readable by `shell` and mode `4750 root:shell` — the
 group is literally `shell`. Predict what an app uid sees. Then measure it in section 6.
 
 ---
@@ -493,7 +493,7 @@ adb -s <serial> shell am start -n com.pentest.ch63.probe/.ProbeActivity
 adb -s <serial> logcat -d -s CH63PROBE
 ```
 
-> **⚠️ If `adb install` fails with `INSTALL_FAILED_USER_RESTRICTED`** — a MIUI behaviour this
+> **If `adb install` fails with `INSTALL_FAILED_USER_RESTRICTED`** — a MIUI behaviour this
 > repository has hit repeatedly — push the APK and install it as root instead:
 > ```bash
 > adb push app-debug.apk /data/local/tmp/probe.apk

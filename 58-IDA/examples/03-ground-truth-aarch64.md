@@ -3,7 +3,7 @@
 This file is the answer key for every lab in chapter 58, and it is the standard against which you
 judge **any** disassembler, including IDA.
 
-> **📖 Definition**
+> **Definition**
 > **Ground truth** is a fact established by a method that cannot be wrong about it. Here, the compiler
 > produced the bytes, so the compiler's own object-code dump is authoritative about what the bytes
 > are. A disassembler is a *reader* of those bytes and can disagree with them. When it does, the
@@ -26,7 +26,7 @@ OUTDIR=/tmp/ch58 ./build.sh          # writes /tmp/ch58/ground-truth.txt
 | Warnings | **zero**, from both source files |
 | Date measured | 2026-08-15 |
 
-> **⚠️ Warning**
+> **Warning**
 > The addresses below are from *one* build. Rebuild with a different NDK, a different API level, or a
 > different `-O` level and every address changes, and some of the *shapes* change too. Never quote an
 > address from this file at a target; quote the shape and re-derive the address. That is the whole
@@ -170,7 +170,7 @@ Twenty-four bytes that read as zero in a hex dump. A tool that applies relocatio
 you three function pointers; one that does not shows you nothing and you conclude the table is empty.
 **Check which yours does before you conclude anything about a table.**
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > This `blr` only exists because `digest_table` is non-`const` and an exported setter
 > (`session_set_digest`) can write to it. On the first build of this fixture the table was
 > `static const`, and clang proved its contents and turned every indirect call into a direct one —
@@ -197,7 +197,7 @@ Two things to notice. `if (opcode < 0)` compiled to `tbnz w1, #31` — a **sign-
 comparison against zero. And `return session_slow_path(...)` compiled to `b`, not `bl` plus `ret`:
 `session_slow_path` will return straight to `session_dispatch`'s caller.
 
-In a listing that looks like the function simply stops. In a call graph it is still an edge. Tools
+In a listing that looks like the function stops. In a call graph it is still an edge. Tools
 differ on whether they draw it, and on whether they treat the target as a separate function or as
 more of this one.
 
@@ -221,7 +221,7 @@ more of this one.
 never reach the digest table, so all four collapse into the shared error return — which is the fourth
 `00` in the second byte table.
 
-> **🧠 Mental Model**
+> **Mental Model**
 > `session_step` exists **twice** in this binary, in two different shapes, from one piece of source.
 > Any statement of the form "the decompiler shows you the source" is false, and this is the cheapest
 > available demonstration. What a decompiler shows you is *a* source program that would compile to
@@ -335,7 +335,7 @@ tester
 That second string is `ch58_hex`'s digit table, and finding it is the fastest route to the hex encoder
 in this binary — no instruction reading required, just cross-references from the data.
 
-> **⚠️ Warning — this construct nearly did not survive its own fixture**
+> **Warning — this construct nearly did not survive its own fixture**
 > `session_reveal` carries `__attribute__((noinline))`, and it is load-bearing. Without it, clang
 > inlined the decoder, constant-folded the XOR at compile time, proved the comparison in
 > `session_seal` is always true, and **deleted both encoded arrays and the whole decode path as
@@ -346,7 +346,7 @@ in this binary — no instruction reading required, just cross-references from t
 > no fixture. It was caught by dumping `.rodata` and noticing the arrays were absent — which is the
 > same discipline the chapter asks of you. README §11.4 records it.
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > The absence is itself the finding. A native library with almost no strings has encoded them, and
 > that tells you something about the target before you read a line of code. The counter-technique is
 > to dump strings from process memory after decoding, not from the file — see

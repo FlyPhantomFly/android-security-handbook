@@ -142,7 +142,7 @@ WARNINGS:
       into its callers and this standalone copy is dead.
 ```
 
-> **⚠️ Warning.** "0 callers" is not proof of inlining. A library legitimately exports functions for
+> **Warning.** "0 callers" is not proof of inlining. A library legitimately exports functions for
 > *other* libraries to call, and those calls are invisible in this file. The signal is strong when
 > you also know that a caller in the *same* file makes the decision — which is exactly the
 > `lic_open_feature` case. Read the caller, do not just count.
@@ -227,7 +227,7 @@ adb shell am force-stop com.your.own.testapp
 `-m verify` produces **no compiled code**. Every method runs in the interpreter, every dispatch goes
 through the entry point, and every managed hook that was silently bypassed starts firing.
 
-> **🔍 Pentester's Note.** When a managed hook does not fire, run that command *before* you debug
+> **Pentester's Note.** When a managed hook does not fire, run that command *before* you debug
 > anything else. It costs one command and thirty seconds, and it resolves three of 13-ART's four
 > documented causes.
 
@@ -297,7 +297,7 @@ almost every interesting internal check — are invisible to `dlsym` entirely. Y
 `module_base + file_offset`, which means you must first establish the module base at runtime and the
 offset statically, and the two must be for **the same build**.
 
-> **🧠 Mental Model.** `dlsym` answers "what did the author publish?". It does not answer "what
+> **Mental Model.** `dlsym` answers "what did the author publish?". It does not answer "what
 > functions exist?". Static analysis answers the second question; only the running process answers
 > where they landed.
 
@@ -329,7 +329,7 @@ offset statically, and the two must be for **the same build**.
 ### 5.1 The event already happened
 
 This is the failure that produces the most confident wrong conclusions, because everything about the
-hook is correct and the output is simply empty.
+hook is correct and the output is empty.
 
 A native library can act before you can possibly attach:
 
@@ -434,7 +434,7 @@ When a hook does not do what you expected, work down this list. It is ordered by
    Find the consumer.
 7. **Only now** suspect the hooking engine.
 
-> **🔍 Pentester's Note.** Steps 1 and 2 are the ones people skip, and they are the two that
+> **Pentester's Note.** Steps 1 and 2 are the ones people skip, and they are the two that
 > distinguish every subsequent branch. Instrument your instrumentation.
 
 ---

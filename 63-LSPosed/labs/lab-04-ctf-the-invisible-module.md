@@ -341,7 +341,7 @@ reason, or does it accept a token?
 **Silver is complete** when the three hooks work *and* you have written that accounting. The
 accounting is the deliverable; the hooks are the easy part.
 
-> **🧠 Mental Model.** Silver is the arms race, and the arms race is
+> **Mental Model.** Silver is the arms race, and the arms race is
 > [67-BypassingProtections](../../67-BypassingProtections/README.md)'s subject. It works, it is
 > expensive, it is brittle, and it scales linearly with the defender's effort. Gold is what you reach
 > for when you notice that.
@@ -369,7 +369,7 @@ somewhere else would look like to them?
 D4's contribution is that there is no cached boolean to pre-fill and no separate producer method to
 hook. `Sentinel.instrumented(...)` is called from inside `open()` on every call.
 
-So: what does `open()` actually need in order to return the flag? Look at `flag(token)` again. Is the
+So: what does `open()` actually need to return the flag? Look at `flag(token)` again. Is the
 flag a secret the *application* holds, or a value the application *computes*?
 
 </details>
@@ -519,7 +519,7 @@ the CTF app does *right*.
 
 | Wrong turn | Response |
 |---|---|
-| "I hooked `Sentinel.instrumented` to return false" | Good — that is a legitimate Silver-grade path and it works. Now note that it is a hook, and ask what D2 would have seen if `open()` had thrown its own `Throwable` after calling it |
+| "I hooked `Sentinel.instrumented` to return false" | Good — that is a legitimate Silver-grade path and it works. It is still a hook, though — ask what D2 would have seen if `open()` had thrown its own `Throwable` after calling it |
 | "I hooked `expected()` and read the return value" | Also legitimate, and faster than decoding by hand. But now ask: did you need the device at all? |
 | "I patched the APK" | Different chapter — [18-ARM §5](../../18-ARM/README.md) and [10-APK-Internals](../../10-APK-Internals/README.md). It works and it invalidates the signature, which is exactly the trade this chapter's §1.2 describes |
 | "The defences are unrealistic" | They are the four best in-process checks in chapter §5.5's "what does work" list. They are more than most shipping applications have |

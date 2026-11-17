@@ -466,7 +466,7 @@ for f in djRsMWQ0dDM= X2IzZjByMw== X3kwdQ== X3IzcDBydA==; do printf '%s' "$(echo
 > grep -rl 'registerReceiver\|Class.forName\|DexClassLoader\|loadLibrary' out/sources/ | wc -l   # 0
 > ```
 
-Note that "zero blind-spot markers" is itself a claim worth verifying by hand, and that the
+"zero blind-spot markers" is itself a claim worth verifying by hand, and that the
 verification is one command. A report that asserts it without running that command has asserted
 something it did not check.
 

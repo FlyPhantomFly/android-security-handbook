@@ -2,7 +2,7 @@
 
 Dense reference. Prose lives in [README.md](README.md).
 
-**⚠ Two-tier marking.** Rows marked **[M]** are measured on `sdk_gphone16k_x86_64`, Android 15 /
+**Two-tier marking.** Rows marked **[M]** are measured on `sdk_gphone16k_x86_64`, Android 15 /
 API 35, Magisk 30.7 — see README §7.1. Rows marked **[D]** are documentation-derived from the
 framework's published design and the AOSP it modified; classic Xposed was **not installed anywhere**
 and no session with it was fabricated.

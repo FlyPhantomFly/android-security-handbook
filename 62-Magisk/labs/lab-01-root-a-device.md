@@ -22,7 +22,7 @@ and why Step 6 tests in RAM before Step 7 writes anything.
 This lab is not a tutorial you can skim. Two of its steps are irreversible, and one of them can leave
 you holding a device that does not boot and cannot be recovered by any software you own.
 
-> **⚠️ Warning — what "irreversible" means here, concretely**
+> **Warning — what "irreversible" means here, concretely**
 >
 > 1. **Unlocking the bootloader erases every byte of user data on the device.** Not "resets the
 >    launcher" — the userdata partition is wiped, and on modern devices the disk encryption key is
@@ -42,7 +42,7 @@ you holding a device that does not boot and cannot be recovered by any software 
 >    the OEM-unlocking toggle permanently greyed out. There is no legitimate way past that, and this
 >    lab ends there for that device.
 
-> **⚠️ Warning — whose device**
+> **Warning — whose device**
 > Do this only on a device that is **yours**, that you bought for testing, that holds no personal
 > accounts, and that you can afford to lose entirely. Never on a client device. Never on the phone
 > you use for banking. Never on a device you borrowed. If the only Android device you have is your
@@ -111,7 +111,7 @@ time.
 | Huawei (recent) | **Not usable** | Unlock codes no longer issued |
 | A device that is your only phone | **Do not** | See the warning above |
 
-> **🔍 Pentester's Note**
+> **Pentester's Note**
 > Buy the device the *client's users* have, not the device that is easiest to root. If the target
 > app's user base is on mid-range Samsungs, a rooted Pixel tells you how the app behaves on a Pixel.
 > In practice most practices keep both: an easily-rooted reference device for instrumentation, and a
@@ -152,7 +152,7 @@ Read the three values that decide whether this lab can proceed:
 | `ro.boot.flash.locked` | `1` | `0` means already unlocked |
 | `sys.oem_unlock_allowed` | `0` until you enable it; must become `1` | If it stays `0` after enabling the developer-options toggle, and the toggle is greyed out, **this device cannot be unlocked**. Stop here |
 
-> **🔬 Under the Hood**
+> **Under the Hood**
 > `ro.boot.*` properties are not set by Android. The bootloader passes them to the kernel on the
 > command line (or in bootconfig on newer devices), and `init` copies them into the property area.
 > That is why they are *evidence* rather than *configuration* — and also why `resetprop` can rewrite
@@ -227,7 +227,7 @@ You will also now see a warning screen for a few seconds at every boot saying th
 unlocked and the device cannot be trusted. That screen is not a bug and cannot be removed on most
 devices without patching the bootloader, which is out of scope and a bad idea.
 
-> **⚠️ Warning**
+> **Warning**
 > Do **not** re-lock the bootloader later while a patched boot image is flashed. A locked bootloader
 > verifies the boot image against the OEM key; a patched image fails that check; and a device that
 > fails verification at a locked bootloader will not boot and, on many models, will not offer a way
@@ -261,7 +261,7 @@ sha256sum boot.img init_boot.img 2>/dev/null | tee "$EV/stock-image-hashes.txt"
 Keep the whole factory image. It is your recovery path, and you will want it in six months when the
 device bootloops after an OTA.
 
-> **⚠️ Warning**
+> **Warning**
 > A boot image from a different build **will** produce a bootloop or a device that cannot mount
 > `/data`, because the ramdisk contains version-specific `init` behaviour and, on some devices, the
 > AVB descriptors chain to it. "Close enough" is not a thing here. If the fingerprint you recorded
@@ -333,7 +333,7 @@ sha256sum patched.img init_boot.img | tee -a "$EV/patched-image-hashes.txt"
 ls -la patched.img init_boot.img
 ```
 
-**Q4.** Compare the sizes and hashes of the stock and patched images. The hash differs, obviously.
+**Q4.** Compare the sizes and hashes of the stock and patched images. The hash differs, as it must.
 Is the size the same, larger, or smaller — and can you explain the direction of the change from what
 you know `magiskboot` inserts and how it recompresses the ramdisk?
 
@@ -369,7 +369,7 @@ adb shell "su -c 'magisk -v'"                 # e.g. 27.0:MAGISK
 
 The first `su` invocation raises a grant prompt on the device screen. Accept it.
 
-> **⚠️ The outer double quotes are not decoration.** `adb shell` joins its arguments with spaces
+> **The outer double quotes are not decoration.** `adb shell` joins its arguments with spaces
 > before the device sees them, so `adb shell su -c 'magisk -v'` arrives as `su -c magisk -v`, the <!-- lint:allow SU-DASH-C SU-DASH-C-BARE -- the broken form, quoted as the counter-example this warning teaches -->
 > `-v` is eaten by **`su`**, and you get *su's* version string believing it to be Magisk's. On an
 > AOSP emulator, `su` takes a uid rather than `-c` — use `adb shell "su 0 magisk -v"` there.
@@ -381,7 +381,7 @@ The first `su` invocation raises a grant prompt on the device screen. Accept it.
 | Does not boot; screen stays black or loops | Wrong image, wrong build, or wrong device | **Hold power for 10–20 s to force off.** The device boots stock on the next power-up. Nothing was written |
 | `fastboot boot` returns `FAILED (remote: 'unknown command')` or similar | Your OEM disabled RAM-booting | See the note below |
 
-> **⚠️ Warning — when `fastboot boot` is unavailable**
+> **Warning — when `fastboot boot` is unavailable**
 > Several OEMs disable `fastboot boot`. On those devices you have no free test, and flashing is the
 > only path. Before you flash: confirm the full stock factory image is downloaded and extracted on
 > the host, confirm you can enter fastboot mode with a hardware key combination (so you are not
@@ -498,7 +498,7 @@ ever need to run it, and understand the `-w` flag:
 cat flash-all.sh
 ```
 
-> **⚠️ Warning**
+> **Warning**
 > `flash-all.sh` normally contains `fastboot -w update image-<device>-<build>.zip`. The `-w` **wipes
 > userdata**. If you want to recover a bootlooping device *without* losing its data, remove the `-w`.
 > If the bootloop is caused by something in `/data` (a bad module, for instance), you need the wipe.
