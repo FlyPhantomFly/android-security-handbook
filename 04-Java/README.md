@@ -1689,8 +1689,8 @@ The following are recurring, reportable patterns rather than individual reports:
 
 > **Warning.** Demonstrating impact with a live third-party key means spending someone's money or
 > touching someone's data. Stay inside the programme's scope document, make the smallest possible
-> proof, and never enumerate. The legal framing in the repository
-> [README](../README.md#legal-and-ethical-scope) applies to all of this.
+> proof, and never enumerate. The legal framing in [SECURITY.md](../SECURITY.md) applies to all of
+> this.
 
 ### 5.5 How pentesters test the Java layer
 
