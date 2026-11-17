@@ -60,7 +60,7 @@ echo
 rm -rf "$OUTDIR"; mkdir -p "$OUTDIR/gen" "$OUTDIR/classes" "$OUTDIR/rescomp"
 
 keytool -genkeypair -keystore "$(p "$OUTDIR/debug.ks")" -storepass android -keypass android \
-    -alias ch41ctf -dname "CN=CH41 CTF,O=Android Pentesting Notes" \
+    -alias ch41ctf -dname "CN=CH41 CTF,O=Android Security Handbook" \
     -validity 10000 -keyalg RSA -keysize 2048 >/dev/null 2>&1 \
     || { echo "error: keytool failed"; exit 2; }
 

@@ -1,6 +1,6 @@
 /*
  * ============================================================================
- * CoroutinesDemo.kt — chapter 05 (Kotlin), Android Pentesting Notes
+ * CoroutinesDemo.kt — chapter 05 (Kotlin), Android Security Handbook
  * ============================================================================
  *
  * WHAT THIS FILE DOES

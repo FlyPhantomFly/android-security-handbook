@@ -62,7 +62,7 @@ in the open. Stages 1 to 4 are unaffected. Do stage 5 later on a machine where y
 
 ```bash
 # host / WSL — from the chapter's scripts directory
-cd /path/to/Android-Pentesting-Notes/02-Linux-Basics/scripts
+cd /path/to/Android-Security-Handbook/02-Linux-Basics/scripts
 sh ctf-setup.sh build
 ```
 

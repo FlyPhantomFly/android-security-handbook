@@ -3589,6 +3589,6 @@ is described instead.
 
 ---
 
-*Chapter 15 of the Android Pentesting Notes. Written to the contract in
+*Chapter 15 of the Android Security Handbook. Written to the contract in
 [STYLE-GUIDE.md](../STYLE-GUIDE.md).*
 

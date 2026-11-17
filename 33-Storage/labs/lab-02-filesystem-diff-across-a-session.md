@@ -52,7 +52,7 @@ The repository ships **sources, never APKs**. Build them out of tree:
 
 ```bash
 # host
-cd Android-Pentesting-Notes/33-Storage
+cd Android-Security-Handbook/33-Storage
 chmod +x examples/build.sh
 ./examples/build.sh --install
 ```

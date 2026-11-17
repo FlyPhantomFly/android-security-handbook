@@ -88,7 +88,7 @@ DIST_KS="$OUTDIR/ctf-dist.ks"
 make_key() {
     [ -f "$1" ] && return 0
     keytool -genkeypair -keystore "$(p "$1")" -storepass android -keypass android \
-        -alias "$2" -dname "CN=$3,O=Android Pentesting Notes" \
+        -alias "$2" -dname "CN=$3,O=Android Security Handbook" \
         -validity 10000 -keyalg RSA -keysize 2048 >/dev/null 2>&1 \
         || { echo "error: keytool failed -- is a JDK on PATH?"; exit 2; }
 }

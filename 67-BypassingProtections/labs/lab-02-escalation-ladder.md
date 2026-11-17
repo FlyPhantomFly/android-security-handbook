@@ -71,7 +71,7 @@ Windows/Git-Bash path conversion, the throwaway signing key, and the OEM install
 ```bash
 # host
 cp "$OLDPWD"/67-BypassingProtections/examples/build.sh /tmp/ch67-ladder/build-ladder.sh 2>/dev/null \
-  || cp ~/Android-Pentesting-Notes/67-BypassingProtections/examples/build.sh /tmp/ch67-ladder/build-ladder.sh
+  || cp ~/Android-Security-Handbook/67-BypassingProtections/examples/build.sh /tmp/ch67-ladder/build-ladder.sh
 ```
 
 You will point it at a directory you create per round. Read the script's header once before you use

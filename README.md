@@ -1,4 +1,4 @@
-# Android Pentesting Notes
+# Android Security Handbook
 
 These notes teach Android security from first principles, for two readers at once: the beginner
 who has never opened a terminal, and the working pentester who wants the machine underneath the

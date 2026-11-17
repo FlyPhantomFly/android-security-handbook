@@ -318,7 +318,7 @@ root; one optional sec` |
 | 20 | [Lab 03 — Breaking a client-side integrity gate](../../20-Security-Architecture/labs/lab-03-integrity-gate-bypass.md) | Intermediate | `a working Frida setup ([53 — Frida] (../../53-Frida/README.md)), Android Studio or a Gradle` |
 | 20 | [Lab 04 — CTF: The Lying Phone](../../20-Security-Architecture/labs/lab-04-ctf-the-lying-phone.md) | CTF | `[Lab 03] (lab-03-integrity-gate-bypass.md), [53 — Frida] (../../53-Frida/README.md),` |
 | 22 | [Lab 03 — MCS and App-vs-App Isolation](../../22-SELinux/labs/lab-03-mcs-and-app-isolation.md) | Intermediate | `# host (needs a rooted device for frida-server)` |
-| 23 | [Lab 03 — Borrowing a privileged app's permissions](../../23-Permissions/labs/lab-03-confused-deputy.md) | Advanced | `frida -U -n com.vendor.settings -l ~/Android-Pentesting-Notes/23-Permissions/scripts/hook-permission-checks.js` |
+| 23 | [Lab 03 — Borrowing a privileged app's permissions](../../23-Permissions/labs/lab-03-confused-deputy.md) | Advanced | `frida -U -n com.vendor.settings -l ~/Android-Security-Handbook/23-Permissions/scripts/hook-permission-checks.js` |
 | 23 | [Lab 04 — CTF: The Borrowed Key](../../23-Permissions/labs/lab-04-ctf-the-borrowed-key.md) | CTF | `frida -U -n com.ardent.helper \` |
 | 24 | [Lab 01 — Map the IPC Surface](../../24-IPC/labs/lab-01-map-the-ipc-surface.md) | Beginner | `frida -U -f $PKG -l ../scripts/trace-ipc.js` |
 | 24 | [Lab 02 — The Abstract Socket](../../24-IPC/labs/lab-02-abstract-socket.md) | Intermediate | `frida -U -f com.iplab.victim -l ../scripts/trace-ipc.js` |

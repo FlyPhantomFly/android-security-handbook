@@ -48,7 +48,7 @@ wrong report:
 
 ```bash
 # host
-cd Android-Pentesting-Notes/28-Services/examples/attacker-app
+cd Android-Security-Handbook/28-Services/examples/attacker-app
 ls
 ```
 

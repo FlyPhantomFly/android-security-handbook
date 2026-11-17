@@ -83,7 +83,7 @@ Build the probe now, so it is ready when you need it:
 
 ```bash
 # host
-cd ~/Android-Pentesting-Notes/23-Permissions/examples/probe-app
+cd ~/Android-Security-Handbook/23-Permissions/examples/probe-app
 export ANDROID_SDK_ROOT="$HOME/Android/Sdk"
 ./build-probe.sh
 adb install -r out/probe-app.apk
@@ -156,7 +156,7 @@ ls dumps | wc -l
 
 ```bash
 # host — use the chapter's reader so requested/held stay separate
-cd ~/Android-Pentesting-Notes/23-Permissions
+cd ~/Android-Security-Handbook/23-Permissions
 for f in ~/lab-23-03/dumps/*.txt; do
     echo "=== $(basename "$f" .txt)"
     python3 -B scripts/grant-state.py "$f" --json 2>/dev/null \
@@ -254,7 +254,7 @@ apktool d -f VendorSettings.apk -o out-vendorsettings/
 
 ```bash
 # host
-cd ~/Android-Pentesting-Notes/23-Permissions
+cd ~/Android-Security-Handbook/23-Permissions
 M=~/lab-23-03/out-vendorsettings/AndroidManifest.xml
 
 # 32: the declaration audit and the targetSdk version matrix
@@ -357,7 +357,7 @@ The fix is `checkCallingPermission`, which explicitly tests `pid != Process.myPi
 
 ```bash
 # host
-frida -U -n com.vendor.settings -l ~/Android-Pentesting-Notes/23-Permissions/scripts/hook-permission-checks.js
+frida -U -n com.vendor.settings -l ~/Android-Security-Handbook/23-Permissions/scripts/hook-permission-checks.js
 ```
 
 The script flags every `OrSelf` call with a stack trace and prints
@@ -379,7 +379,7 @@ This is the step that makes the finding defensible, and the step most reports sk
 
 ```bash
 # host
-cd ~/Android-Pentesting-Notes/23-Permissions/examples/probe-app
+cd ~/Android-Security-Handbook/23-Permissions/examples/probe-app
 ```
 
 Edit [`../examples/probe-app/AndroidManifest.xml`](../examples/probe-app/AndroidManifest.xml) and
@@ -533,7 +533,7 @@ A model opening paragraph:
 ```bash
 # host
 adb uninstall com.probe.unprivileged
-cd ~/Android-Pentesting-Notes/23-Permissions/examples/probe-app && rm -rf out/
+cd ~/Android-Security-Handbook/23-Permissions/examples/probe-app && rm -rf out/
 ```
 
 If you changed any setting during testing — through the deputy or otherwise — change it back and

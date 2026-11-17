@@ -83,7 +83,7 @@ mechanism you have not built.
 
 ```bash
 # host
-CH46="path/to/Android-Pentesting-Notes/46-Tokens"      # adjust
+CH46="path/to/Android-Security-Handbook/46-Tokens"      # adjust
 WORK="$HOME/ch46-gauntlet"                             # OUTSIDE any repository
 
 python3 -B "$CH46/labs/gauntlet/issuer.py" --workdir "$WORK" --init

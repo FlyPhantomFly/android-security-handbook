@@ -131,7 +131,7 @@ fi
 mkdir -p "$OUT_DIR" || die "cannot create $OUT_DIR"
 
 case "$(cd "$OUT_DIR" && pwd)" in
-    *Android-Pentesting-Notes*)
+    *Android-Security-Handbook*)
         die "refusing to build inside the repository: $OUT_DIR
      .class/.jar/.dex are build artefacts and must never be committed.
      Pass --out with a path outside the repo, or omit --out entirely." ;;

@@ -249,7 +249,7 @@ say "zipalign and sign"
 KEYSTORE="$OUTDIR/debug.keystore"
 keytool -genkeypair -v -keystore "$(p "$KEYSTORE")" -storepass android \
     -keypass android -alias ch73 -keyalg RSA -keysize 2048 -validity 365 \
-    -dname "CN=ch73-lab, OU=labs, O=android-pentesting-notes, C=GB" \
+    -dname "CN=ch73-lab, OU=labs, O=android-security-handbook, C=GB" \
     >/dev/null 2>&1 || die "keytool failed"
 
 APK="$OUTDIR/chain-target.apk"

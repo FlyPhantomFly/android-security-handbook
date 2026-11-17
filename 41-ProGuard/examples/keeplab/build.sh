@@ -106,7 +106,7 @@ mkdir -p "$OUTDIR/gen" "$OUTDIR/classes" "$OUTDIR/rescomp"
 # --------------------------------------------------------------------------- #
 KS="$OUTDIR/debug.ks"
 keytool -genkeypair -keystore "$(p "$KS")" -storepass android -keypass android \
-    -alias ch41 -dname "CN=CH41 Keep Lab,O=Android Pentesting Notes" \
+    -alias ch41 -dname "CN=CH41 Keep Lab,O=Android Security Handbook" \
     -validity 10000 -keyalg RSA -keysize 2048 >/dev/null 2>&1 \
     || { echo "error: keytool failed -- is a JDK on PATH?"; exit 2; }
 

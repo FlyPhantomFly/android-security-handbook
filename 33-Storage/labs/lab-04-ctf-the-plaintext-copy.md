@@ -77,7 +77,7 @@ it: everything below is yours to create, in a scratch directory of your own, out
 ```bash
 # host
 mkdir -p ~/ch33-ctf
-cp -r Android-Pentesting-Notes/33-Storage/examples/* ~/ch33-ctf/
+cp -r Android-Security-Handbook/33-Storage/examples/* ~/ch33-ctf/
 ls ~/ch33-ctf
 ```
 
@@ -248,7 +248,7 @@ a device and a package name.
 
 ```bash
 # host
-cd Android-Pentesting-Notes/33-Storage
+cd Android-Security-Handbook/33-Storage
 ./scripts/storage-map.sh com.pentest.ch33.vault
 ./scripts/storage-map.sh com.pentest.ch33.vault --media
 ```

@@ -722,14 +722,14 @@ keytool -genkeypair -v \
   -keyalg RSA -keysize 2048 \
   -validity 10000 \
   -storepass androidlab -keypass androidlab \
-  -dname "CN=APK Lab, OU=Research, O=Android Pentesting Notes, L=NA, ST=NA, C=NA"
+  -dname "CN=APK Lab, OU=Research, O=Android Security Handbook, L=NA, ST=NA, C=NA"
 ```
 
 Expected:
 
 ```
 Generating 2,048 bit RSA key pair and self-signed certificate (SHA384withRSA) with a validity of 10,000 days
-	for: CN=APK Lab, OU=Research, O=Android Pentesting Notes, L=NA, ST=NA, C=NA
+	for: CN=APK Lab, OU=Research, O=Android Security Handbook, L=NA, ST=NA, C=NA
 [Storing lab.keystore]
 ```
 
@@ -799,7 +799,7 @@ Verified using v3.1 scheme (APK Signature Scheme v3.1): false
 Verified using v4 scheme (APK Signature Scheme v4): false
 Verified for SourceStamp: false
 Number of signers: 1
-Signer #1 certificate DN: CN=APK Lab, OU=Research, O=Android Pentesting Notes, L=NA, ST=NA, C=NA
+Signer #1 certificate DN: CN=APK Lab, OU=Research, O=Android Security Handbook, L=NA, ST=NA, C=NA
 Signer #1 certificate SHA-256 digest: 8cf434b679466ffaf6604dda0962588df47edf3570611c6fb0d96081e698d9d9
 Signer #1 certificate SHA-1 digest: 8a5c663daf52ab31ad8bc10551ca916563aa137e
 Signer #1 certificate MD5 digest: 3ec50a68607191e834f586893d7eafad

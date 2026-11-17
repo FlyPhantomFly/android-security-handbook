@@ -126,7 +126,7 @@ mkkey() {
     local ks="$1" alias="$2"
     [ -f "$ks" ] && return 0
     keytool -genkeypair -keystore "$(p "$ks")" -storepass android -keypass android \
-        -alias "$alias" -dname "CN=CH66 $alias,O=Android Pentesting Notes" \
+        -alias "$alias" -dname "CN=CH66 $alias,O=Android Security Handbook" \
         -validity 10000 -keyalg RSA -keysize 2048 >/dev/null 2>&1 \
         || { echo "error: keytool failed for $alias"; exit 2; }
     echo "generated signing key $alias at $ks"

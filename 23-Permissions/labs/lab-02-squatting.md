@@ -70,7 +70,7 @@ adb devices
 
 ```bash
 # host — build all four
-cd ~/Android-Pentesting-Notes/23-Permissions/examples/squat-pair
+cd ~/Android-Security-Handbook/23-Permissions/examples/squat-pair
 ./build-squat-pair.sh
 ```
 
@@ -389,7 +389,7 @@ The victim's exported provider is guarded by a permission the **attacker** owns,
 
 ```bash
 # host
-cd ~/Android-Pentesting-Notes/23-Permissions
+cd ~/Android-Security-Handbook/23-Permissions
 adb shell pm list permissions -f -g > /tmp/perms.txt
 python3 -B scripts/permission-audit.py \
         --manifest examples/squat-pair/victim-suite-AndroidManifest.xml \
@@ -630,7 +630,7 @@ adb shell pm list permissions -f -g | grep READ_NOTES
 # (no output)
 
 # host — remove the build output and the throwaway keys from the repository
-cd ~/Android-Pentesting-Notes/23-Permissions/examples/squat-pair
+cd ~/Android-Security-Handbook/23-Permissions/examples/squat-pair
 rm -rf out/
 ```
 

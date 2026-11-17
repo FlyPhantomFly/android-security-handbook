@@ -69,8 +69,8 @@ That directory is deliberately *not* inside this repository, so a relative path 
 will not find the chapter's scripts. Record where you cloned the repository, in the same shell:
 
 ```bash
-# host / WSL — point REPO at your clone of Android-Pentesting-Notes
-export REPO=~/Android-Pentesting-Notes
+# host / WSL — point REPO at your clone of Android-Security-Handbook
+export REPO=~/Android-Security-Handbook
 
 # Verify: this must print the script's path, not an error
 ls "$REPO/01-Computer-Science-Basics/scripts/hexdump-header.py"

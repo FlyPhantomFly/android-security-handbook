@@ -56,7 +56,7 @@ OUT="${1:-$(pwd)/r8-demo-build}"
 
 # --- refuse to pollute the notes repository ---------------------------------
 if [ -f "$(dirname "$OUT")/STYLE-GUIDE.md" ] || \
-   printf '%s' "$OUT" | grep -qi "Android-Pentesting-Notes"; then
+   printf '%s' "$OUT" | grep -qi "Android-Security-Handbook"; then
     echo "REFUSING: $OUT is inside the notes repository." >&2
     echo "Build artefacts (.dex, .jar, .class) must never be committed." >&2
     echo "Pass an output directory outside the repo, e.g. /tmp/r8-demo" >&2

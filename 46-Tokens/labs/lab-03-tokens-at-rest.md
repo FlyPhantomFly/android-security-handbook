@@ -67,7 +67,7 @@ reason:
 
 ```bash
 # host
-CH46="path/to/Android-Pentesting-Notes/46-Tokens"
+CH46="path/to/Android-Security-Handbook/46-Tokens"
 bash "$CH46/scripts/token-storage-sweep.sh" com.example.app
 ```
 

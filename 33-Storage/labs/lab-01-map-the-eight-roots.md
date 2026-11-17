@@ -112,7 +112,7 @@ On the reference device those return `M2101K6P`, `11`, `30`, `file`, `encrypted`
 
 ```bash
 # host
-cd Android-Pentesting-Notes/33-Storage
+cd Android-Security-Handbook/33-Storage
 chmod +x scripts/storage-map.sh
 ./scripts/storage-map.sh --help
 ```

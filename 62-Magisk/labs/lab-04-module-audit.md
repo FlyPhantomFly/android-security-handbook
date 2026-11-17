@@ -68,7 +68,7 @@ must never be committed.
 ```bash
 # host
 WORK=$(mktemp -d)
-REPO=<path-to>/Android-Pentesting-Notes/62-Magisk
+REPO=<path-to>/Android-Security-Handbook/62-Magisk
 echo "working in $WORK"
 
 for m in system-ca-module pentest-prep-module malicious-module-defanged; do

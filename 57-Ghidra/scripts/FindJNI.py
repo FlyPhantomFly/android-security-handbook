@@ -38,7 +38,7 @@
 #   Jython 2.7 (Ghidra's bundled Python). Avoid f-strings and Python 3 syntax.
 #
 # @category Android.JNI
-# @author Android-Pentesting-Notes
+# @author Android-Security-Handbook
 
 import re
 

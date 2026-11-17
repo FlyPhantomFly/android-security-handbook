@@ -31,7 +31,7 @@ cd examples
 ```
 
 Put the output **outside the repository**. Compiled libraries are build
-artefacts; nothing under `Android-Pentesting-Notes/` should ever be one.
+artefacts; nothing under `Android-Security-Handbook/` should ever be one.
 
 If the script cannot find your NDK, set one of `ANDROID_HOME`, `NDK_HOME` or
 `NDK_BIN` and try again. There is no substitute: a host `gcc` produces a glibc

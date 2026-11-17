@@ -248,7 +248,7 @@ permissions it does not qualify for, and permissions that do not exist on the te
 
 ```bash
 # host
-python3 -B ~/Android-Pentesting-Notes/23-Permissions/scripts/grant-state.py chrome.txt
+python3 -B ~/Android-Security-Handbook/23-Permissions/scripts/grant-state.py chrome.txt
 ```
 
 Compare its four counts with the ones you computed by hand. They should agree. If they do not,
@@ -367,7 +367,7 @@ That is worth internalising, because it bounds what a custom permission can ever
 
 ```bash
 # host
-cd ~/Android-Pentesting-Notes/23-Permissions
+cd ~/Android-Security-Handbook/23-Permissions
 python3 -B scripts/permission-audit.py --manifest examples/weak-permissions-AndroidManifest.xml
 ```
 

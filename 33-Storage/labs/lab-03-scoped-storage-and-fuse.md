@@ -60,7 +60,7 @@ finding.
 
 ```bash
 # host
-cd Android-Pentesting-Notes/33-Storage
+cd Android-Security-Handbook/33-Storage
 ./examples/build.sh --install
 adb shell dumpsys package com.pentest.ch33.vault | grep -m1 userId=
 ```

@@ -104,7 +104,7 @@ LOCKED="$(adb shell dumpsys trust 2>/dev/null | tr -d '\r' | grep -o 'deviceLock
 # --- build, strictly out of tree ------------------------------------------------------------------
 WORKDIR="${WORKDIR:-$(mktemp -d 2>/dev/null || mktemp -d -t ch48)}"
 case "$WORKDIR" in
-    *Android-Pentesting-Notes*) die "refusing to build inside the repository ($WORKDIR)";;
+    *Android-Security-Handbook*) die "refusing to build inside the repository ($WORKDIR)";;
 esac
 cleanup_host() { rm -rf "$WORKDIR"; }
 trap 'cleanup_host' EXIT

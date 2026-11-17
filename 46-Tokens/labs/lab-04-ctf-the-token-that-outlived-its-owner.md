@@ -62,7 +62,7 @@ on a mechanism you have not constructed.
 
 ```bash
 # host
-CH46="path/to/Android-Pentesting-Notes/46-Tokens"
+CH46="path/to/Android-Security-Handbook/46-Tokens"
 WORK="$HOME/ch46-ctf"                                  # OUTSIDE any repository
 
 python3 -B "$CH46/labs/gauntlet/issuer.py" --workdir "$WORK" --init

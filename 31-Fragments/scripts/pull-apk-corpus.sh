@@ -49,7 +49,7 @@ if [ "${1:-}" = "-s" ]; then ADB="adb -s $2"; fi
 
 mkdir -p "$OUT" || exit 2
 case "$OUT" in
-    *Android-Pentesting-Notes*)
+    *Android-Security-Handbook*)
         echo "refusing to write APKs inside the repository -- pick a directory outside it"
         exit 2 ;;
 esac

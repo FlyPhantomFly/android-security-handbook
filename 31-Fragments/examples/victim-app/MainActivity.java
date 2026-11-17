@@ -39,7 +39,7 @@ public class MainActivity extends Activity {
         t.setTextSize(16f);
         t.setText("CH31 victim app\n\n"
                 + "This app is deliberately vulnerable. It is a lab target for\n"
-                + "chapter 31 (Fragments) of the Android Pentesting Notes.\n\n"
+                + "chapter 31 (Fragments) of the Android Security Handbook.\n\n"
                 + "The secret lives in a private file. The intended way to see it\n"
                 + "is the login screen below, which wants a four digit PIN.\n\n"
                 + "Two other Activities reach Fragments by class name and are the\n"

@@ -128,7 +128,7 @@ mkdir -p "$OUTDIR"
 KS="$OUTDIR/debug.ks"
 if [ ! -f "$KS" ]; then
     keytool -genkeypair -keystore "$(p "$KS")" -storepass android -keypass android \
-        -alias ch67 -dname "CN=CH67 Lab,O=Android Pentesting Notes" \
+        -alias ch67 -dname "CN=CH67 Lab,O=Android Security Handbook" \
         -validity 10000 -keyalg RSA -keysize 2048 >/dev/null 2>&1 \
         || { echo "error: keytool failed - is a JDK on PATH?"; exit 2; }
     echo "generated throwaway signing key at $KS"

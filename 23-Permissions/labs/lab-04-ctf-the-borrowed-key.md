@@ -145,7 +145,7 @@ decision and the decision was no. Format it as `ARDENT{<permission name>}`.
 ```bash
 # host
 adb shell dumpsys package com.ardent.vault > vault.txt
-python3 -B ~/Android-Pentesting-Notes/23-Permissions/scripts/grant-state.py vault.txt
+python3 -B ~/Android-Security-Handbook/23-Permissions/scripts/grant-state.py vault.txt
 ```
 
 ### The trap
@@ -286,7 +286,7 @@ owns it:
 adb shell pm list permissions -f -g | grep -A4 'ardent.suite.permission.READ_VAULT'
 adb shell dumpsys package permission com.ardent.suite.permission.READ_VAULT
 
-cd ~/Android-Pentesting-Notes/23-Permissions
+cd ~/Android-Security-Handbook/23-Permissions
 python3 -B scripts/permission-audit.py \
         --manifest ~/ctf-borrowed-key/vault/AndroidManifest.xml
 #   verdicts : UNOWNED 1
@@ -468,7 +468,7 @@ Watch it live:
 
 ```bash
 frida -U -n com.ardent.helper \
-      -l ~/Android-Pentesting-Notes/23-Permissions/scripts/hook-permission-checks.js
+      -l ~/Android-Security-Handbook/23-Permissions/scripts/hook-permission-checks.js
 ```
 
 The script prints `callingUid=… myUid=…  <-- NO BINDER TRANSACTION IN PROGRESS` whenever the two
@@ -547,7 +547,7 @@ exercise it for you and return the result.
 
 ```bash
 adb shell dumpsys package com.ardent.helper > helper.txt
-python3 -B ~/Android-Pentesting-Notes/23-Permissions/scripts/grant-state.py helper.txt
+python3 -B ~/Android-Security-Handbook/23-Permissions/scripts/grant-state.py helper.txt
 ```
 
 Look at what it *holds* and ask which of those you could not obtain yourself.
@@ -560,7 +560,7 @@ Look at what it *holds* and ask which of those you could not obtain yourself.
 Then look at what it exposes:
 
 ```bash
-python3 -B ~/Android-Pentesting-Notes/21-App-Sandbox/scripts/manifest-exposure.py \
+python3 -B ~/Android-Security-Handbook/21-App-Sandbox/scripts/manifest-exposure.py \
         out-helper/AndroidManifest.xml --verdict WIDENED
 ```
 
@@ -608,7 +608,7 @@ adb shell pm list permissions -f -g | grep -i ardent
 # (no output)
 
 # host — no build artefacts left in the repository
-cd ~/Android-Pentesting-Notes/23-Permissions
+cd ~/Android-Security-Handbook/23-Permissions
 rm -rf examples/squat-pair/out examples/probe-app/out
 ```
 

@@ -123,7 +123,7 @@ info "device: ${SERIAL:-<only attached>}  model=$MODEL  api=$SDKV"
 [ -n "$OUT_DIR" ] || OUT_DIR="${TMPDIR:-/tmp}/ch64-corpus"
 mkdir -p "$OUT_DIR" || die "cannot create $OUT_DIR"
 case "$(cd "$OUT_DIR" && pwd)" in
-    *Android-Pentesting-Notes*)
+    *Android-Security-Handbook*)
         die "refusing to write APKs inside the repository: $OUT_DIR
      .apk is on the artefact blocklist and this repo ships sources only." ;;
 esac

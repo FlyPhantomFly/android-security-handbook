@@ -637,7 +637,7 @@ def analyse(path, dump_length, read_length, offset, quiet, verify):
 def main(argv=None):
     parser = argparse.ArgumentParser(
         description="Annotated hex dump with automatic ELF / DEX / ZIP header "
-                    "decoding. Chapter 01 of the Android Pentesting Notes.",
+                    "decoding. Chapter 01 of the Android Security Handbook.",
         epilog="Do lab-01-binary-hex-endianness.md by hand first; this script "
                "is for checking your answers, not replacing them.")
     parser.add_argument("files", nargs="+", help="one or more files to inspect")

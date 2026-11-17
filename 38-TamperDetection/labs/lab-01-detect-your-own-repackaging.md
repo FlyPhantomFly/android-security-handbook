@@ -285,7 +285,7 @@ OUTDIR=/tmp/ch38 ./build.sh --repack
           between the entries and the central directory, and rewriting the
           zip discards it automatically.
 built /tmp/ch38/repacked.apk
-    Signer #1 certificate DN: CN=CH38 Repackager, O=Android Pentesting Notes
+    Signer #1 certificate DN: CN=CH38 Repackager, O=Android Security Handbook
     Signer #1 certificate SHA-256 digest: e9ff1d0f2f5df217eb9ac4bf150d07cb393f2f2d81ccebef448eda82e00385d7
 ```
 

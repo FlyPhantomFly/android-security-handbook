@@ -45,7 +45,7 @@ set -euo pipefail
 OUT="${1:-$(pwd)/ctf-build}"
 
 if [ -f "$(dirname "$OUT")/STYLE-GUIDE.md" ] || \
-   printf '%s' "$OUT" | grep -qi "Android-Pentesting-Notes"; then
+   printf '%s' "$OUT" | grep -qi "Android-Security-Handbook"; then
     echo "REFUSING: $OUT is inside the notes repository." >&2
     echo "Build artefacts must never be committed. Choose a path outside the repo." >&2
     exit 2

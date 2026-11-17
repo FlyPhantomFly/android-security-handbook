@@ -432,7 +432,7 @@ adb shell pm path com.some.package
 adb pull /data/app/.../base.apk target.apk
 
 # host — score it without decompiling
-python3 ../Android-Pentesting-Notes/05-Kotlin/scripts/detect-kotlin.py target.apk
+python3 ../Android-Security-Handbook/05-Kotlin/scripts/detect-kotlin.py target.apk
 
 # host — then confirm with jadx
 jadx --no-res -d apk_out target.apk

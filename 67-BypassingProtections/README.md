@@ -3003,6 +3003,6 @@ related-chapters table.
 
 ---
 
-*Chapter 67 of the Android Pentesting Notes. Everything here is for applications you own or are
+*Chapter 67 of the Android Security Handbook. Everything here is for applications you own or are
 contracted to test. Measured on a physical i9000S, Android 13 / API 33 — every claim in this chapter
 is labelled either as something that was measured on that device or as something that was not.*

@@ -149,7 +149,7 @@ broken verifier and the correct verifier that ship with the chapter, so you can 
 
 ```bash
 # host — get the verifiers
-CH46="path/to/Android-Pentesting-Notes/46-Tokens"      # adjust
+CH46="path/to/Android-Security-Handbook/46-Tokens"      # adjust
 mkdir -p keys && cp token.jwt keys/../
 python3 -B - <<'PY'
 open("keys/demo-1","wb").write(b"a-32-byte-secret-from-a-csprng!!")

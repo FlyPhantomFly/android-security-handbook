@@ -40,7 +40,7 @@ time you write one.
 
 ```bash
 # host
-cd Android-Pentesting-Notes/32-Manifest/examples
+cd Android-Security-Handbook/32-Manifest/examples
 ls
 ```
 

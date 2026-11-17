@@ -125,7 +125,7 @@ make_key() {
     local ks="$1" alias="$2" cn="$3"
     [ -f "$ks" ] && return 0
     keytool -genkeypair -keystore "$(p "$ks")" -storepass android -keypass android \
-        -alias "$alias" -dname "CN=$cn,O=Android Pentesting Notes" \
+        -alias "$alias" -dname "CN=$cn,O=Android Security Handbook" \
         -validity 10000 -keyalg RSA -keysize 2048 >/dev/null 2>&1 \
         || { echo "error: keytool failed -- is a JDK on PATH?"; exit 2; }
     echo "generated throwaway key: $ks (alias $alias)"

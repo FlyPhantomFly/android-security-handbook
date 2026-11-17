@@ -103,7 +103,7 @@ echo "device: $MODEL   Android $REL (API $SDKV)"
 # --- build, strictly out of tree -------------------------------------------------------------------
 WORKDIR="${WORKDIR:-$(mktemp -d 2>/dev/null || mktemp -d -t ch50)}"
 case "$WORKDIR" in
-    *Android-Pentesting-Notes*) die "refusing to build inside the repository ($WORKDIR)";;
+    *Android-Security-Handbook*) die "refusing to build inside the repository ($WORKDIR)";;
 esac
 trap 'rm -rf "$WORKDIR"' EXIT
 echo "build dir: $WORKDIR"

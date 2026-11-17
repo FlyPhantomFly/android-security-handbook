@@ -1,6 +1,6 @@
 /*
  * ============================================================================
- * NullSafetyDemo.kt — chapter 05 (Kotlin), Android Pentesting Notes
+ * NullSafetyDemo.kt — chapter 05 (Kotlin), Android Security Handbook
  * ============================================================================
  *
  * WHAT THIS FILE DOES
