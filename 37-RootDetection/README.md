@@ -3335,14 +3335,14 @@ mindmap
 ### OWASP
 
 - OWASP MASVS — https://mas.owasp.org/MASVS/
-- MASVS-RESILIENCE — https://mas.owasp.org/MASVS/09-MASVS-RESILIENCE/
+- MASVS-RESILIENCE — https://mas.owasp.org/MASVS/11-MASVS-RESILIENCE/
 - OWASP MASTG — https://mas.owasp.org/MASTG/
-- MASTG Android anti-reversing and platform-integrity tests — https://mas.owasp.org/MASTG/tests/android/
+- MASTG Android anti-reversing and platform-integrity tests — https://mas.owasp.org/MASTG/tests/
 
 ### Tooling and projects
 
 - Magisk — https://topjohnwu.github.io/Magisk/
-- Magisk DenyList documentation — https://topjohnwu.github.io/Magisk/deny.html
+- Magisk DenyList documentation — https://github.com/topjohnwu/Magisk/blob/master/native/src/core/deny/cli.cpp
 - Zygisk — https://topjohnwu.github.io/Magisk/guides.html
 - RootBeer — https://github.com/scottyab/rootbeer
 - Frida — https://frida.re/docs/android/

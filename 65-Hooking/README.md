@@ -145,15 +145,17 @@ scope precisely: **not how to use a hooking tool, but what a hook physically is.
 | Anti-hooking detection and defeating it | [67-BypassingProtections](../67-BypassingProtections/README.md) | Own the mechanism; hand over the arms race |
 | Calling conventions, stack frames, ABI | [01-Computer-Science-Basics](../01-Computer-Science-Basics/README.md), [18-ARM §3.4](../18-ARM/README.md) | Put them to work |
 
-**LSPosed** — the managed-layer hooking framework in current use — is
+**LSPosed** — the managed-layer hooking framework whose lineage continues as **Vector** in 2026 — is
 [63-LSPosed](../63-LSPosed/README.md). It owns the framework: injection into Zygote through Zygisk,
 the `XposedBridge` API, per-application scope, and LSPlant's **backup method**, which is this
 chapter's trampoline problem solved in the managed layer. Cite it rather than re-deriving the managed
-side here. **Classic Xposed** — the historical framework whose `app_process` replacement 63 contrasts
-against — is [64-Xposed](../64-Xposed/README.md). It owns the one case in this chapter's taxonomy
-that is not in the taxonomy: a framework that needed **none** of the five hook types to reach every
-process, because it replaced the program those processes start from. It also owns `hookMethodNative`
-in depth and the Xposed-specific detection surface, measured.
+side here; [81-Android-Runtime-Internals](../81-Android-Runtime-Internals/README.md) extends it with
+the current Vector architecture and the full runtime stack. **Classic Xposed** — the historical
+framework whose `app_process` replacement 63 contrasts against — is
+[64-Xposed](../64-Xposed/README.md). It owns the one case in this chapter's taxonomy that is not in
+the taxonomy: a framework that needed **none** of the five hook types to reach every process, because
+it replaced the program those processes start from. It also owns `hookMethodNative` in depth and the
+Xposed-specific detection surface, measured.
 
 ---
 
@@ -2599,3 +2601,4 @@ Full annotated list with a related-chapters table: [`references/README.md`](refe
 | [38-TamperDetection](../38-TamperDetection/README.md) | Integrity checks, and what they can and cannot buy |
 | [40-Obfuscation](../40-Obfuscation/README.md) | What obfuscation does to target selection |
 | [37-RootDetection](../37-RootDetection/README.md) | The most common thing people hook |
+| [81-Android-Runtime-Internals](../81-Android-Runtime-Internals/README.md) | **Extends** this chapter's managed-hook taxonomy into the full zygote-to-`ArtMethod` stack, including ZygiskNext and Vector |

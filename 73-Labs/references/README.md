@@ -26,7 +26,7 @@ python3 -B scripts/build-lab-index.py --verify-links
 ```
 
 ```
-links=410 broken=0
+links=415 broken=0
 ```
 
 ---
@@ -168,10 +168,10 @@ File paths only. Line numbers move and are never quoted here.
 | `adb` | Everything device-side |
 | Android SDK build-tools (`aapt2`, `d8`, `zipalign`, `apksigner`, `dexdump`) | The out-of-tree build, and reading a binary manifest without third-party tools |
 | JDK (`javac`, `keytool`) | Compiling the target and generating its key |
-| Android NDK | 50 labs in the corpus, and the 16 KiB page-size flag |
+| Android NDK | 51 labs in the corpus, and the 16 KiB page-size flag |
 | `jadx` | Decompilation. Convenient, not required by this chapter's labs |
 | `apktool` | Resource decoding. **Absent on the measured setup**, and the labs route around it |
-| Frida | 128 labs in the corpus; **the largest single block on the measured setup** |
+| Frida | 130 labs in the corpus; **the largest single block on the 327-lab measured snapshot (128)** |
 | Python 3 | The two generators, and a portable substitute for `zip`/`unzip` |
 
 ---

@@ -1253,7 +1253,7 @@ mindmap
 ### On diagramming systems and security
 
 - C4 model for software architecture — https://c4model.com/ — the clearest public treatment of *levels of abstraction* in a diagram, which is the discipline this chapter's section 6.3 is about
-- Microsoft Threat Modeling and the STRIDE method — https://learn.microsoft.com/en-us/security/engineering/threat-modeling-with-stride — data-flow diagrams where trust boundaries are the primary object
+- Microsoft Threat Modeling and the STRIDE method — https://learn.microsoft.com/en-us/azure/security/develop/threat-modeling-tool-threats — data-flow diagrams where trust boundaries are the primary object
 - OWASP Threat Modeling — https://owasp.org/www-community/Threat_Modeling
 - CISA Secure by Design — https://www.cisa.gov/securebydesign
 

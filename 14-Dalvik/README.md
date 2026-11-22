@@ -4135,7 +4135,7 @@ or earlier. The `vm/` directory does not exist on later branches.
 - Android Security Bulletins — https://source.android.com/docs/security/bulletin — the place to
   source a real identifier rather than recalling one
 - Google Project Zero — https://googleprojectzero.blogspot.com/
-- Android VRP rules — https://bughunters.google.com/about/rules/android-friends
+- Android VRP rules — https://bughunters.google.com/about/rules
 
 ### Talks and papers
 

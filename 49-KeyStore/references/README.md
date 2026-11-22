@@ -116,7 +116,7 @@ change every release.
 | Gal Beniamini's published work on Qualcomm's Secure Execution Environment | The foundational public research on TrustZone exploitation on Android. Long, technical, and worth the time. |
 | [Android Security Bulletins](https://source.android.com/docs/security/bulletin) | Monthly, authoritative. Read for the *pattern* of which components recur, and pull any specific identifier from the bulletin for the affected release rather than from memory. |
 | [Google Project Zero](https://googleprojectzero.blogspot.com/) | Occasional deep work on TEEs and secure elements |
-| [Android VRP rules](https://bughunters.google.com/about/rules/android-friends) | How Google itself rates a Keystore or TEE issue — useful for calibrating severity |
+| [Android VRP rules](https://bughunters.google.com/about/rules) | How Google itself rates a Keystore or TEE issue — useful for calibrating severity |
 
 > **Note on CVE citation.** This chapter describes vulnerability *classes* rather than accumulating
 > identifiers. Keystore and TEE issues are numerous, vendor-specific and version-specific, and a

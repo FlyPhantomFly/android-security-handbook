@@ -6247,7 +6247,7 @@ The full printable version is [`cheatsheet.md`](cheatsheet.md). Condensed:
 - MASVS-RESILIENCE — anti-tampering, anti-hooking, obfuscation requirements — https://mas.owasp.org/MASVS/
 - MASVS-NETWORK — TLS and certificate pinning requirements — https://mas.owasp.org/MASVS/
 - MASTG — dynamic analysis and tampering techniques, including Frida-based tests — https://mas.owasp.org/MASTG/
-- MASTG Android reverse engineering chapter — https://mas.owasp.org/MASTG/techniques/android/
+- MASTG Android reverse engineering chapter — https://mas.owasp.org/MASTG/0x05b-Android-Security-Testing/
 
 ### Community tooling built on Frida
 

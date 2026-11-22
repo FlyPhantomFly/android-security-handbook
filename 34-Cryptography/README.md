@@ -4114,7 +4114,7 @@ mindmap
 ### OWASP
 
 - MASVS — https://mas.owasp.org/MASVS/
-- MASVS-CRYPTO — https://mas.owasp.org/MASVS/05-MASVS-CRYPTO/
+- MASVS-CRYPTO — https://mas.owasp.org/MASVS/06-MASVS-CRYPTO/
 - MASTG cryptography tests — https://mas.owasp.org/MASTG/
 - OWASP Password Storage Cheat Sheet — https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html
 

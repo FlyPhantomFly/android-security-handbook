@@ -2653,7 +2653,7 @@ The full printable version is [`cheatsheet.md`](cheatsheet.md). Condensed:
 
 ### Compiler and bytecode
 
-- `kotlin.Metadata` — https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.metadata.jvm/
+- `kotlin.Metadata` — https://kotlinlang.org/api/kotlinx-metadata-jvm/
 - kotlinx-metadata-jvm (parse `@Metadata` programmatically) — https://github.com/JetBrains/kotlin/tree/master/libraries/kotlinx-metadata
 - Kotlin compiler source — https://github.com/JetBrains/kotlin
 - "Show Kotlin Bytecode" in IntelliJ/Android Studio — the fastest way to answer "what does this

@@ -40,7 +40,7 @@ These are the primary sources. When a tutorial and a specification disagree, the
 | Android developer reference | https://developer.android.com/reference/packages | The `android.*` API surface that does not exist on the desktop JVM |
 | `android.os.Parcelable` reference | https://developer.android.com/reference/android/os/Parcelable | The `CREATOR` contract and the ordering requirement that makes `Parcelable` fragile |
 | `java.io.Serializable` on Android | https://developer.android.com/reference/java/io/Serializable | Android's own documentation of the interface, and its recommendation to prefer explicit formats |
-| Restrictions on non-SDK interfaces | https://developer.android.com/guide/app-compat/restrictions-non-sdk-interfaces | Why reflection into hidden APIs is blocklisted, and how apps try to get around it |
+| Restrictions on non-SDK interfaces | https://developer.android.com/guide/app-compatibility/restrictions-non-sdk-interfaces | Why reflection into hidden APIs is blocklisted, and how apps try to get around it |
 | Android API level reference | https://developer.android.com/guide/topics/manifest/uses-sdk-element | Mapping between API levels, versions, and the desugaring behaviour that follows |
 
 ---

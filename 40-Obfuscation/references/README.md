@@ -62,9 +62,9 @@ Read these on [cs.android.com](https://cs.android.com/), which gives cross-refer
 | Resource | Relevance |
 |---|---|
 | [MASVS](https://mas.owasp.org/MASVS/) | The standard your client's requirements are probably derived from |
-| [MASVS-RESILIENCE](https://mas.owasp.org/MASVS/09-MASVS-RESILIENCE/) | The category obfuscation sits in. Note the framing: *resilience*, not *security* — that distinction is this chapter's whole argument, and it is in the standard |
+| [MASVS-RESILIENCE](https://mas.owasp.org/MASVS/11-MASVS-RESILIENCE/) | The category obfuscation sits in. Note the framing: *resilience*, not *security* — that distinction is this chapter's whole argument, and it is in the standard |
 | [MASTG](https://mas.owasp.org/MASTG/) | Test procedures |
-| [MASTG Android reverse-engineering and tampering](https://mas.owasp.org/MASTG/techniques/android/) | Concrete techniques mapping onto §6 and §7 |
+| [MASTG Android reverse-engineering and tampering](https://mas.owasp.org/MASTG/0x05b-Android-Security-Testing/) | Concrete techniques mapping onto §6 and §7 |
 | MASTG UnCrackable series | Canonical practice targets. Levels 1–4 walk almost exactly the ladder in this chapter — see [80-Appendix](../../80-Appendix/README.md) |
 
 ---

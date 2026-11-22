@@ -116,7 +116,7 @@ anywhere in this chapter; they change every release.
 |---|---|
 | [Android Security Bulletins](https://source.android.com/docs/security/bulletin) | Monthly, authoritative. Read for the *pattern* of which subsystems recur — drivers, media, `system_server` — rather than for individual identifiers. |
 | [Google Project Zero](https://googleprojectzero.blogspot.com/) | The highest-quality public work on Android kernel and privileged-service exploitation, which is where genuine sandbox escapes live |
-| [Android VRP rules](https://bughunters.google.com/about/rules/android-friends) | Google's own severity model — useful for calibrating how *they* rate an escape versus an app misconfiguration |
+| [Android VRP rules](https://bughunters.google.com/about/rules) | Google's own severity model — useful for calibrating how *they* rate an escape versus an app misconfiguration |
 | [Android Compatibility Definition Document](https://source.android.com/docs/compatibility/cdd) | What an OEM is *required* to implement. When a device behaves oddly, this tells you whether that is permitted. |
 
 > **Note on CVE citation.** This chapter deliberately describes vulnerability *classes* rather than

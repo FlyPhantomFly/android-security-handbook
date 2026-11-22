@@ -1233,3 +1233,17 @@ nav:
       - 79-Glossary/README.md
   - 80-Appendix:
       - 80-Appendix/README.md
+  - 81-Android-Runtime-Internals:
+      - 81-Android-Runtime-Internals/README.md
+      - 81-Android-Runtime-Internals/cheatsheet.md
+      - 81-Android-Runtime-Internals/faq.md
+      - 81-Android-Runtime-Internals/mindmap.md
+      - examples:
+          - 81-Android-Runtime-Internals/examples/02-art-entrypoint-session.md
+      - labs:
+          - 81-Android-Runtime-Internals/labs/lab-01-runtime-anatomy.md
+          - 81-Android-Runtime-Internals/labs/lab-02-artmethod-entrypoints.md
+          - 81-Android-Runtime-Internals/labs/lab-03-zygisk-module-anatomy.md
+          - 81-Android-Runtime-Internals/labs/lab-04-ctf-the-invisible-hook.md
+      - references:
+          - 81-Android-Runtime-Internals/references/README.md

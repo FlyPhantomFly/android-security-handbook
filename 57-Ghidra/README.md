@@ -3532,7 +3532,7 @@ The full printable version is [`cheatsheet.md`](cheatsheet.md). Condensed:
 | https://github.com/NationalSecurityAgency/ghidra | Source, issues, and the release ZIPs you actually download |
 | https://github.com/NationalSecurityAgency/ghidra/releases | The builds. Note the JDK version each release requires |
 | https://ghidra.re/ghidra_docs/api/ | **The Program API Javadoc.** The reference for every script you write |
-| https://ghidra.re/courses/ | The official course material, including the exercises |
+| https://ghidra.re/ghidra_docs/GhidraClass/Beginner/Introduction_to_Ghidra_Student_Guide.html | The official course material, including the exercises |
 | https://github.com/NationalSecurityAgency/ghidra/tree/master/GhidraDocs | In-tree documentation, including the SLEIGH language reference |
 | https://ghidra-sre.org/CheatSheet.html | The keyboard shortcut reference, worth printing |
 | https://github.com/NationalSecurityAgency/ghidra/discussions | Where behaviour questions get answered by the developers |
@@ -3588,7 +3588,7 @@ Browse all of it on Android Code Search — https://cs.android.com/ — and see
 |---|---|
 | MASVS-CODE | Code quality and binary-level protections |
 | MASVS-RESILIENCE | Anti-tampering, obfuscation and integrity requirements — the standard against which "the app is obfuscated" is judged |
-| https://mas.owasp.org/MASTG/techniques/android/ | The Android technique catalogue, including native-code reverse engineering |
+| https://mas.owasp.org/MASTG/0x05b-Android-Security-Testing/ | The Android technique catalogue, including native-code reverse engineering |
 | https://mas.owasp.org/MASTG/ | The testing guide, with concrete procedures |
 
 Cite MASVS identifiers in findings. "The library contains an embedded HMAC key" is an observation;

@@ -66,7 +66,7 @@ navigation technique. File paths are stable across releases; line numbers are no
 |---|---|
 | [Platform architecture](https://developer.android.com/guide/platform) | The canonical layer diagram, from the developer side |
 | [Android Open Source Project](https://source.android.com/) | The platform-side documentation root |
-| [Treble](https://source.android.com/docs/core/architecture/treble) | The vendor/system split and why it exists |
+| [Treble](https://source.android.com/docs/core/architecture/partitions) | The vendor/system split and why it exists |
 | [HAL types](https://source.android.com/docs/core/architecture/hal-types) | HIDL vs AIDL vs passthrough |
 | [VNDK](https://source.android.com/docs/core/architecture/vndk) | Which native libraries vendor code may use |
 

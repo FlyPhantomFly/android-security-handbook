@@ -213,7 +213,22 @@ html {
    document CSS can neither see nor style the diagram itself — no card
    frame here (it could never key on the rendered state, and the empty
    pre-render placeholder would show as a framed box). The diagrams come
-   pre-sized by mermaid's useMaxWidth, which caps them to the container. */
+   pre-sized by mermaid's useMaxWidth, which caps them to the container.
+   Centering therefore happens on the host: a flex host centers the
+   shadow SVG whenever useMaxWidth caps it below the column width. */
+.md-typeset .mermaid {
+  display: flex;
+  justify-content: center;
+  margin: 1.5em 0;
+}
+
+/* Standalone content images: centre the image, not inline icons or
+   badges that happen to sit inside a link or a sentence. */
+.md-typeset p > img:only-child,
+.md-typeset figure > img {
+  display: block;
+  margin: 1.25em auto;
+}
 
 /* ------------------------------------------------------------ footer */
 

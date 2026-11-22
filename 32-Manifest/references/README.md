@@ -128,9 +128,9 @@ Where the parsing and enforcement actually happen. Read on [cs.android.com](http
 
 | Resource | Relevance |
 |---|---|
-| [MASVS-PLATFORM](https://mas.owasp.org/MASVS/07-MASVS-PLATFORM/) | The control category most manifest findings map to |
-| [MASVS-CODE](https://mas.owasp.org/MASVS/08-MASVS-CODE/) | `debuggable`, `testOnly`, shipped instrumentation |
-| [MASVS-STORAGE](https://mas.owasp.org/MASVS/02-MASVS-STORAGE/) | `allowBackup` and backup rules |
+| [MASVS-PLATFORM](https://mas.owasp.org/MASVS/09-MASVS-PLATFORM/) | The control category most manifest findings map to |
+| [MASVS-CODE](https://mas.owasp.org/MASVS/10-MASVS-CODE/) | `debuggable`, `testOnly`, shipped instrumentation |
+| [MASVS-STORAGE](https://mas.owasp.org/MASVS/05-MASVS-STORAGE/) | `allowBackup` and backup rules |
 | [MASTG](https://mas.owasp.org/MASTG/) | Test procedures; cite the IDs in reports |
 
 ---

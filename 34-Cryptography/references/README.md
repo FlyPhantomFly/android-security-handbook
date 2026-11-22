@@ -12,7 +12,7 @@ stale and are not easy to misattribute.
 | Document | Open it when |
 |---|---|
 | [**RFC 8018** — PKCS #5 v2.1](https://www.rfc-editor.org/rfc/rfc8018) | You need the authoritative definition of PBKDF2, including the minimum salt length (8 bytes) and the structure `T_i = U_1 ⊕ … ⊕ U_c`. **This is the citation for every password-derivation finding.** It also explains why requesting more output than one hash length costs the defender more than the attacker |
-| [**NIST SP 800-38D** — GCM and GMAC](https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-38d.pdf) | You are writing up a GCM finding. §8 is the uniqueness requirement for the IV; §5.2.1.2 gives the permitted tag lengths (128, 120, 112, 104, 96); Appendix A quantifies the forgery probability for short tags. **The citation for nonce reuse and for tag-length bugs** |
+| [**NIST SP 800-38D** — GCM and GMAC](https://csrc.nist.gov/pubs/sp/800/38/d/final) | You are writing up a GCM finding. §8 is the uniqueness requirement for the IV; §5.2.1.2 gives the permitted tag lengths (128, 120, 112, 104, 96); Appendix A quantifies the forgery probability for short tags. **The citation for nonce reuse and for tag-length bugs** |
 | [RFC 2104 — HMAC](https://www.rfc-editor.org/rfc/rfc2104) | You need to explain why `H(secret ‖ data)` is not a MAC, and what HMAC's two-pass construction fixes |
 | [RFC 5869 — HKDF](https://www.rfc-editor.org/rfc/rfc5869) | You are separating a password KDF from a key-based KDF, or explaining what the `info` parameter is for. §3 on the salt and `info` is short and worth reading in full |
 | [RFC 8017 — PKCS #1 v2.2](https://www.rfc-editor.org/rfc/rfc8017) | RSA: OAEP for encryption, PSS for signatures, and why PKCS#1 v1.5 encryption padding is the Bleichenbacher class |
@@ -24,8 +24,8 @@ stale and are not easy to misattribute.
 | [NIST SP 800-57 Part 1 — Key management](https://csrc.nist.gov/publications/detail/sp/800-57-part-1/rev-5/final) | You need a defensible statement about key lifetimes or crypto-period |
 | [NIST SP 800-131A — Algorithm transitions](https://csrc.nist.gov/publications/detail/sp/800-131a/rev-2/final) | You need an authority for "2048-bit RSA is the minimum" or "SHA-1 is disallowed for signatures" |
 | [NIST SP 800-90A — DRBGs](https://csrc.nist.gov/publications/detail/sp/800-90a/rev-1/final) | You are reasoning about what `SecureRandom` is actually doing underneath |
-| [FIPS 197 — AES](https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.197-upd1.pdf) | You want the actual specification: SubBytes, ShiftRows, MixColumns, AddRoundKey |
-| [FIPS 186-5 — Digital Signature Standard](https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.186-5.pdf) | ECDSA and RSA signature parameters, curve definitions |
+| [FIPS 197 — AES](https://csrc.nist.gov/pubs/fips/197/final) | You want the actual specification: SubBytes, ShiftRows, MixColumns, AddRoundKey |
+| [FIPS 186-5 — Digital Signature Standard](https://csrc.nist.gov/pubs/fips/186-5/final) | ECDSA and RSA signature parameters, curve definitions |
 
 ---
 
@@ -33,10 +33,10 @@ stale and are not easy to misattribute.
 
 | Resource | Why |
 |---|---|
-| [**MASVS-CRYPTO**](https://mas.owasp.org/MASVS/05-MASVS-CRYPTO/) | The two controls every finding in this chapter maps to. **MASVS-CRYPTO-1**: the app uses current, strong cryptography according to industry best practice. **MASVS-CRYPTO-2**: the app performs key management according to industry best practice. Cite the *control*, not the MASTG test id, because control ids are stable across MASTG refactors |
+| [**MASVS-CRYPTO**](https://mas.owasp.org/MASVS/06-MASVS-CRYPTO/) | The two controls every finding in this chapter maps to. **MASVS-CRYPTO-1**: the app uses current, strong cryptography according to industry best practice. **MASVS-CRYPTO-2**: the app performs key management according to industry best practice. Cite the *control*, not the MASTG test id, because control ids are stable across MASTG refactors |
 | [MASVS](https://mas.owasp.org/MASVS/) | The full control set. MASVS-STORAGE and MASVS-AUTH also carry crypto findings — see §5.4 |
 | [MASTG](https://mas.owasp.org/MASTG/) | The test procedures. Relevant entries: testing symmetric cryptography, testing the configuration of cryptographic standard algorithms, testing key management, testing random number generation |
-| [MASTG Android crypto tests](https://mas.owasp.org/MASTG/tests/android/MASVS-CRYPTO/) | The Android-specific procedures, with the exact greps and hooks |
+| [MASTG Android crypto tests](https://mas.owasp.org/MASTG/0x05e-Testing-Cryptography/) | The Android-specific procedures, with the exact greps and hooks |
 | [**Password Storage Cheat Sheet**](https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html) | **The source for the iteration counts in this chapter.** Check it rather than quoting a number from memory; it is updated as hardware improves |
 | [Cryptographic Storage Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Cryptographic_Storage_Cheat_Sheet.html) | A concise defensible answer for "what should we use", suitable for pasting into a remediation section |
 | [Key Management Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Key_Management_Cheat_Sheet.html) | Rotation, storage and lifecycle guidance when the finding is architectural rather than a single line |
@@ -55,7 +55,7 @@ stale and are not easy to misattribute.
 | [Behaviour changes by API level](https://developer.android.com/about/versions) | **Check before asserting any version-dependent claim.** The `setSeed` change at API 24 and the Bouncy Castle removals are the ones that bite most often |
 | [Cryptography changes in Android P](https://android-developers.googleblog.com/2018/03/cryptography-changes-in-android-p.html) | Why Bouncy Castle algorithms started disappearing and what replaced them. Explains a whole class of "worked on Android 8, crashes on Android 9" reports |
 | [Tink](https://developers.google.com/tink) | The library to recommend. The "Primitives" and "Key management" pages are the ones worth reading |
-| [Tink Android integration](https://github.com/tink-crypto/tink-java/blob/main/docs/ANDROID-HOWTO.md) | `AndroidKeysetManager` and the master key URI — the part apps get wrong |
+| [Tink Android integration](https://github.com/tink-crypto/tink-java/tree/main/src_android) | `AndroidKeysetManager` and the master key URI — the part apps get wrong |
 | [Conscrypt](https://github.com/google/conscrypt) | The provider that implements almost everything. Read `OpenSSLCipher` when you need to know what a transformation actually resolves to |
 | [BoringSSL](https://boringssl.googlesource.com/boringssl/) | The native layer beneath Conscrypt. Read it when hooking below the JCA |
 

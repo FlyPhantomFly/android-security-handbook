@@ -38,7 +38,8 @@ Paths are stable; line numbers are not, and none are quoted anywhere in this cha
 
 | Project | Why |
 |---|---|
-| **LSPosed** — https://github.com/LSPosed/LSPosed | The framework itself. Read the Zygisk module entry (`onLoad`, `preAppSpecialize`, `postAppSpecialize`) for the concrete use of the API described in README §3.2, and the `lspd` daemon for scope storage and `system_server` injection |
+| **LSPosed** — https://github.com/LSPosed/LSPosed | The historical framework. Read the Zygisk module entry (`onLoad`, `preAppSpecialize`, `postAppSpecialize`) for the concrete use of the API described in README §3.2, and the `lspd` daemon for scope storage and `system_server` injection. The 2026 continuation is **Vector** |
+| **Vector** — https://github.com/JingMatrix/Vector | The current LSPosed lineage: rewritten Zygisk architecture, libxposed API 102, and the implementation described in [81-Android-Runtime-Internals §3.12](../../81-Android-Runtime-Internals/README.md#312-vector-the-framework-above-the-hook) |
 | **LSPlant** — https://github.com/LSPosed/LSPlant | **The single most instructive thing in this list.** LSPosed's ART hooking engine, as a standalone library: backup-method creation, entry-point swap, deoptimisation, and offset derivation at runtime. Read it next to [`65-Hooking/examples/trampoline-hook.c`](../../65-Hooking/examples/trampoline-hook.c) — the same problem, *keep a way to call the original*, solved once with a trampoline page and once with a synthetic method |
 | **libxposed** — https://github.com/libxposed | The newer, cleaner API surface. Modules may target it or the classic `de.robv` API; LSPosed reads both |
 | **Magisk** — https://github.com/topjohnwu/Magisk | Zygisk. Owned by [62-Magisk](../../62-Magisk/README.md); read it for the injection half, not for LSPosed |
@@ -124,6 +125,7 @@ Paths are stable; line numbers are not, and none are quoted anywhere in this cha
 | Chapter | Relationship to LSPosed |
 |---|---|
 | [13-ART](../../13-ART/README.md) | **Owns** `ArtMethod`, `entry_point_from_quick_compiled_code_`, and the four causes of hook failure. Its framework table already names LSPosed; this chapter is what that row expands into |
+| [81-Android-Runtime-Internals](../../81-Android-Runtime-Internals/README.md) | **Extends** this chapter: the 2026 Vector continuation, the rewritten injection path, and the runtime stack from zygote to LSPlant |
 | [62-Magisk](../../62-Magisk/README.md) | **Owns** root, the module system and **Zygisk's injection mechanism**, including `preAppSpecialize`/`postAppSpecialize`, `connectCompanion` and DenyList. This chapter owns what LSPosed *does with* that API |
 | [65-Hooking](../../65-Hooking/README.md) | **Owns** hooking from first principles. LSPosed is its hook type 1, delivered using types 3 and 5. Its §3.10 backup-versus-trampoline symmetry is the single best cross-chapter comparison here |
 | [53-Frida](../../53-Frida/README.md) | **Owns** Frida as a tool. Its FAQ 24 already compares Frida with LSPosed; this chapter's §7.9 extends that table with the cases that decide real engagements rather than repeating it |

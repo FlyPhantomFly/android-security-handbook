@@ -40,7 +40,7 @@ description of it is authoritative.
 | [Magisk documentation](https://topjohnwu.github.io/Magisk/) | First stop for anything factual. Short, accurate, and maintained alongside the code |
 | [Installation guide](https://topjohnwu.github.io/Magisk/install.html) | Before you touch a device. It is the canonical answer to "boot or init_boot", to the recovery-partition case, and to taking an OTA without losing root |
 | [Module developer guide](https://topjohnwu.github.io/Magisk/guides.html) | Writing anything in `labs/lab-02`. Defines `module.prop`, the boot-stage scripts, `system.prop`, `sepolicy.rule`, `skip_mount`, and the installer environment your `customize.sh` runs in |
-| [DenyList documentation](https://topjohnwu.github.io/Magisk/deny.html) | Before making any claim about what DenyList does. Notably, it is explicit about what it does *not* do — which is the part everyone skips |
+| [DenyList documentation](https://github.com/topjohnwu/Magisk/blob/master/native/src/core/deny/cli.cpp) | Before making any claim about what DenyList does. Notably, it is explicit about what it does *not* do — which is the part everyone skips |
 | [Zygisk module sample](https://github.com/topjohnwu/zygisk-module-sample) | Writing native code that runs in every app process. The API surface with a working build |
 | [Magisk releases page](https://github.com/topjohnwu/Magisk/releases) | Downloading the APK. **Only** here — not an APK mirror. You are giving this binary permanent boot-time control of a device |
 
@@ -144,9 +144,9 @@ the kernel sometimes moves you back ahead of a userspace scanner. See
 | Resource | Why |
 |---|---|
 | [MASVS](https://mas.owasp.org/MASVS/) | The standard your client's requirements are probably derived from |
-| [MASVS-RESILIENCE](https://mas.owasp.org/MASVS/09-MASVS-RESILIENCE/) | Where root detection sits.MASVS itself frames these as *resilience* controls, assessed by whether they raise attacker effort — not as security controls that must be unbypassable. Quote that framing; it is the honest one |
+| [MASVS-RESILIENCE](https://mas.owasp.org/MASVS/11-MASVS-RESILIENCE/) | Where root detection sits.MASVS itself frames these as *resilience* controls, assessed by whether they raise attacker effort — not as security controls that must be unbypassable. Quote that framing; it is the honest one |
 | [MASTG](https://mas.owasp.org/MASTG/) | Test procedures, including the platform-integrity and anti-reversing tests |
-| [MASTG Android tests](https://mas.owasp.org/MASTG/tests/android/) | The specific tests to cite alongside a root-detection finding |
+| [MASTG Android tests](https://mas.owasp.org/MASTG/tests/) | The specific tests to cite alongside a root-detection finding |
 
 ---
 
@@ -156,7 +156,7 @@ the kernel sometimes moves you back ahead of a userspace scanner. See
 |---|---|
 | [Android Security Bulletins](https://source.android.com/docs/security/bulletin) | The authoritative record of privilege-escalation fixes. Read for the *pattern* of which subsystems recur, not to memorise identifiers |
 | [Google Project Zero](https://googleprojectzero.blogspot.com/) | The highest-quality public work on the Android privilege-escalation bugs that made rooting possible before unlockable bootloaders |
-| [Android VRP rules](https://bughunters.google.com/about/rules/android-friends) | What Google considers reportable in this area, and the severity model they apply |
+| [Android VRP rules](https://bughunters.google.com/about/rules) | What Google considers reportable in this area, and the severity model they apply |
 
 > **Note on CVE citation.** This chapter deliberately describes vulnerability *classes* rather than
 > naming identifiers. Bootloader, attestation and privilege-escalation bugs are numerous,

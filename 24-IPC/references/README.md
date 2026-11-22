@@ -112,7 +112,7 @@ the enforcing function.
 | `man 2 memfd_create`, `man 2 fcntl` (F_ADD_SEALS) | memfd and file sealing, for the shared-memory fix in §3.13. |
 | [Android Security Bulletins](https://source.android.com/docs/security/bulletin) | Monthly, authoritative. Read for the *pattern* of which subsystems recur rather than for individual entries. |
 | [Google Project Zero](https://googleprojectzero.blogspot.com/) | The highest-quality public work on Android IPC and Binder bugs. |
-| [Android VRP rules](https://bughunters.google.com/about/rules/android-friends) | What Google itself considers reportable, and its severity model — a useful external anchor when a client disputes a rating. |
+| [Android VRP rules](https://bughunters.google.com/about/rules) | What Google itself considers reportable, and its severity model — a useful external anchor when a client disputes a rating. |
 
 > **Note on CVE citation.** This chapter deliberately describes vulnerability *classes* rather than
 > naming identifiers. Android IPC bugs are numerous, version-specific and frequently

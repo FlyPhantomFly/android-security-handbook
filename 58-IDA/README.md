@@ -1479,7 +1479,7 @@ fully reversed binary are ones where the secret or the decision lives on a serve
 | **MASVS-RESILIENCE** | Anti-tampering, obfuscation, integrity, debugger and root detection — the standard against which "the app is obfuscated" is judged, and the one this chapter's techniques test |
 | **MASVS-CRYPTO** | Where a key found in a `.so` maps to |
 | **MASVS-STORAGE** | Where a native-derived encryption key protecting local data lands |
-| MASTG, Android techniques | The catalogue of concrete procedures, including native reverse engineering — <https://mas.owasp.org/MASTG/techniques/android/> |
+| MASTG, Android techniques | The catalogue of concrete procedures, including native reverse engineering — <https://mas.owasp.org/MASTG/0x05b-Android-Security-Testing/> |
 
 Cite the identifier in the finding. "The library contains an embedded HMAC key" is an observation;
 mapping it to a control is what makes it something a programme can track.
@@ -2526,7 +2526,7 @@ The full printable version is [`cheatsheet.md`](cheatsheet.md). Condensed:
 | <https://docs.hex-rays.com/core/decompiler> | The decompiler user guide, including the microcode view |
 | <https://python.docs.hex-rays.com/> | **The IDAPython API reference.** The authority for every script in [`scripts/`](scripts/) |
 | <https://cpp.docs.hex-rays.com/> | The C++ SDK reference, including `hexrays.hpp` and the `mba_maturity_t` enum |
-| <https://docs.hex-rays.com/developer-guide/idapython/idapython-porting-guide-ida-9> | **Read before running any pre-9.0 script.** The `ida_struct` / `ida_enum` removals |
+| <https://docs.hex-rays.com/developer/idapython/how-tos/idapython-porting-guide-ida-9> | **Read before running any pre-9.0 script.** The `ida_struct` / `ida_enum` removals |
 | <https://hex-rays.com/blog/> | Where new decompiler and microcode capabilities are explained first |
 | <https://community.hex-rays.com/> | Where behaviour questions get answered, including the cloud-decompiler thread |
 | <https://hex-rays.com/faqs/which-information-does-ida-share-with-cloud-services> | The cloud and Lumina data statements quoted in §3.11 |
@@ -2571,7 +2571,7 @@ Browse on <https://cs.android.com/>; see [07-AOSP](../07-AOSP/README.md) for the
 | MASVS-CODE | Binary-level code quality and protections |
 | MASVS-RESILIENCE | The standard against which "the app is obfuscated" is judged |
 | MASVS-CRYPTO | Where a key recovered from a `.so` maps |
-| <https://mas.owasp.org/MASTG/techniques/android/> | Concrete Android procedures, including native RE |
+| <https://mas.owasp.org/MASTG/0x05b-Android-Security-Testing/> | Concrete Android procedures, including native RE |
 
 ### This chapter's own files
 

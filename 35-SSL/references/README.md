@@ -116,11 +116,11 @@ file's directory.
 
 | Resource | Why |
 |---|---|
-| [**MASVS-NETWORK-1**](https://mas.owasp.org/MASVS/09-MASVS-NETWORK/) | *The app secures all network traffic according to the current best practices.* **The control every finding in this chapter maps to** except the pinning ones. Covers protocol version, cipher suites, certificate validation and hostname verification together |
-| [**MASVS-NETWORK-2**](https://mas.owasp.org/MASVS/09-MASVS-NETWORK/) | *The app performs identity pinning for all remote endpoints under the developer's control.* Owned by chapter 36, CertificatePinning — but trust-store manipulation findings map here too, because replacing the anchor set is an identity decision |
+| [**MASVS-NETWORK-1**](https://mas.owasp.org/MASVS/08-MASVS-NETWORK/) | *The app secures all network traffic according to the current best practices.* **The control every finding in this chapter maps to** except the pinning ones. Covers protocol version, cipher suites, certificate validation and hostname verification together |
+| [**MASVS-NETWORK-2**](https://mas.owasp.org/MASVS/08-MASVS-NETWORK/) | *The app performs identity pinning for all remote endpoints under the developer's control.* Owned by chapter 36, CertificatePinning — but trust-store manipulation findings map here too, because replacing the anchor set is an identity decision |
 | [MASVS](https://mas.owasp.org/MASVS/) | The full control set. MASVS-PLATFORM-2 also carries the WebView `proceed()` finding |
 | [MASTG](https://mas.owasp.org/MASTG/) | The test procedures. The network ones worth working through: testing data encryption on the network, testing the TLS settings, **testing endpoint identity verification**, testing custom certificate stores and pinning, testing the security provider |
-| [MASTG Android network tests](https://mas.owasp.org/MASTG/tests/android/MASVS-NETWORK/) | The Android-specific procedures, with the exact greps and hooks |
+| [MASTG Android network tests](https://mas.owasp.org/MASTG/0x05g-Testing-Network-Communication/) | The Android-specific procedures, with the exact greps and hooks |
 | [MASVS v1 requirement identifiers](https://github.com/OWASP/owasp-masvs) | The legacy `MSTG-NETWORK-1` … `MSTG-NETWORK-6` identifiers are still what many clients' templates expect. `MSTG-NETWORK-3` (endpoint identity verification) is this chapter's core requirement |
 | [Transport Layer Security Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Transport_Layer_Security_Cheat_Sheet.html) | A concise, defensible server-side configuration answer, suitable for pasting into a remediation section |
 | [Certificate Pinning Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Pinning_Cheat_Sheet.html) | For the handoff to chapter 36 |

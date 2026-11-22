@@ -12,7 +12,7 @@ Annotated. Each entry says *why* you would open it, so you can pick the right on
 | https://github.com/NationalSecurityAgency/ghidra | Source, issue tracker, and the discussions where developers answer behaviour questions |
 | https://github.com/NationalSecurityAgency/ghidra/releases | The builds. **Check which JDK version each release requires before downloading** |
 | https://ghidra.re/ghidra_docs/api/ | **The Program API Javadoc.** The reference for every script you write. Bookmark `ghidra.program.model.listing.Function` and `ghidra.program.model.symbol.SymbolTable` |
-| https://ghidra.re/courses/ | The official course material, with exercises. Genuinely good, and free |
+| https://ghidra.re/ghidra_docs/GhidraClass/Beginner/Introduction_to_Ghidra_Student_Guide.html | The official course material, with exercises. Genuinely good, and free |
 | https://ghidra-sre.org/CheatSheet.html | Keyboard shortcuts. Print it |
 | https://github.com/NationalSecurityAgency/ghidra/tree/master/GhidraDocs | In-tree documentation, including the SLEIGH language reference |
 | https://github.com/NationalSecurityAgency/ghidra/tree/master/GhidraDocs/GhidraClass | The slide decks from the official training, including the advanced scripting class |
@@ -97,7 +97,7 @@ navigation technique.
 |---|---|
 | MASVS-CODE | Code quality and binary protections — the control group a "hard-coded key in a native library" finding maps to |
 | MASVS-RESILIENCE | Anti-tampering, obfuscation and integrity. The standard against which "the app is obfuscated" is judged, and the reason "we obfuscated it" is not a control |
-| https://mas.owasp.org/MASTG/techniques/android/ | The Android technique catalogue, including native reverse engineering procedures |
+| https://mas.owasp.org/MASTG/0x05b-Android-Security-Testing/ | The Android technique catalogue, including native reverse engineering procedures |
 | https://mas.owasp.org/MASTG/ | The testing guide |
 | https://mas.owasp.org/MASVS/ | The verification standard |
 

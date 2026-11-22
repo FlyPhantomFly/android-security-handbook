@@ -38,7 +38,7 @@ Every link below has a one-line note saying why you would open it. Grouped by wh
 - **Soong build system** — https://source.android.com/docs/setup/build — the conceptual overview of Soong, Blueprint, Kati and Ninja.
 - **Android.bp file format** — https://source.android.com/docs/setup/reference/androidbp — the reference for every module type and property; keep it open while reading an unfamiliar tree.
 - **Build variants (user / userdebug / eng)** — https://source.android.com/docs/setup/build/building#choose-a-target — the table that explains why `ro.build.type` matters so much.
-- **Soong config variables** — https://source.android.com/docs/setup/build/soong-config-variables — how conditional behaviour is expressed without a Turing-complete language.
+- **Soong config variables** — https://source.android.com/docs/setup/reference/androidbp#conditionals — how conditional behaviour is expressed without a Turing-complete language.
 - **APEX file format** — https://source.android.com/docs/core/ota/apex — the containerised modules the build produces and signs separately.
 - **Build numbers and fingerprints** — https://source.android.com/docs/setup/about/build-numbers — mapping a device's build fingerprint back to a release.
 
@@ -92,8 +92,8 @@ Every link below has a one-line note saying why you would open it. Grouped by wh
 ## OWASP
 
 - **MASVS** — https://mas.owasp.org/MASVS/ — the control framework this chapter maps to.
-- **MASVS-CODE** — https://mas.owasp.org/MASVS/09-MASVS-CODE/ — build settings, dependency management, signing and debug configuration.
-- **MASVS-RESILIENCE** — https://mas.owasp.org/MASVS/10-MASVS-RESILIENCE/ — obfuscation and integrity; where `minifyEnabled` findings belong, and where they do *not*.
+- **MASVS-CODE** — https://mas.owasp.org/MASVS/10-MASVS-CODE/ — build settings, dependency management, signing and debug configuration.
+- **MASVS-RESILIENCE** — https://mas.owasp.org/MASVS/11-MASVS-RESILIENCE/ — obfuscation and integrity; where `minifyEnabled` findings belong, and where they do *not*.
 - **MASTG** — https://mas.owasp.org/MASTG/ — the test procedures; see the Android platform-overview, code-quality and reverse-engineering sections.
 - **OWASP Dependency-Check** — https://owasp.org/www-project-dependency-check/ — the Gradle plugin for known-vulnerable dependency detection; remember it reports the declared graph, not the shipped one.
 - **Software Component Verification Standard** — https://owasp.org/www-project-software-component-verification-standard/ — a maturity model for the supply-chain controls in §5.4.

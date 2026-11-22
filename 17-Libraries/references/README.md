@@ -170,10 +170,10 @@ client.
 | Resource | Relevance |
 |---|---|
 | [MASVS](https://mas.owasp.org/MASVS/) | The standard your client's requirements are probably derived from |
-| [MASVS-CODE](https://mas.owasp.org/MASVS/07-MASVS-CODE/) | Third-party components and code quality. **The primary mapping for this chapter** |
-| [MASVS-PRIVACY](https://mas.owasp.org/MASVS/09-MASVS-PRIVACY/) | Where the SDK data-collection table from lab 03 belongs |
+| [MASVS-CODE](https://mas.owasp.org/MASVS/10-MASVS-CODE/) | Third-party components and code quality. **The primary mapping for this chapter** |
+| [MASVS-PRIVACY](https://mas.owasp.org/MASVS/12-MASVS-PRIVACY/) | Where the SDK data-collection table from lab 03 belongs |
 | [MASTG](https://mas.owasp.org/MASTG/) | Test procedures, including dependency and native-library checks |
-| [MASTG Android techniques](https://mas.owasp.org/MASTG/techniques/android/) | Concrete procedures mapping onto §7 and §8 |
+| [MASTG Android techniques](https://mas.owasp.org/MASTG/0x05b-Android-Security-Testing/) | Concrete procedures mapping onto §7 and §8 |
 
 ---
 

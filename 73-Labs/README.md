@@ -1,6 +1,6 @@
 # 73 — Labs
 
-> After this chapter you will be able to find any of this repository's 327 labs by what it teaches,
+> After this chapter you will be able to find any of this repository's 331 labs by what it teaches,
 > what it costs and what it demands of your hardware; to know — measured, not guessed — which of them
 > your own machine can run today and why the rest cannot; to follow an ordered route through them
 > toward a stated goal instead of reading in chapter order; to build the environment they assume and
@@ -19,7 +19,7 @@ devices named beside them; the method is not.
 
 ## What this chapter is, and what it deliberately is not
 
-**79 of this repository's 81 chapters ship labs — 327 of them, measured rather than estimated**
+**80 of this repository's 82 chapters ship labs — 331 of them, measured rather than estimated**
 ([§3.1](#31-what-the-corpus-actually-contains) has the count and the script that produced it). The
 obvious version of chapter 73 collects them. That version would be roughly a third of the
 repository's total length, would duplicate material that is already better placed next to the
@@ -31,7 +31,7 @@ can contain, because each of them is a property of the corpus rather than of any
 | | What | Where |
 |---|---|---|
 | **1** | **A generated index** of every lab — by chapter, by difficulty, by what it teaches, by what it *requires*. Built by script from the labs themselves, with the evidence line for every claim, so it cannot drift | [§3.2](#32-the-index-and-why-it-is-generated), [`references/`](references/) |
-| **2** | **Learning paths.** Ordered routes for stated goals. 327 labs in reading order is not a curriculum | [§3.5](#35-learning-paths), [`references/learning-paths.md`](references/learning-paths.md) |
+| **2** | **Learning paths.** Ordered routes for stated goals. 331 labs in reading order is not a curriculum | [§3.5](#35-learning-paths), [`references/learning-paths.md`](references/learning-paths.md) |
 | **3** | **The lab environment, end to end and honestly** — what actually works on what hardware, including the four things on the verified setup that do not | [§3.6](#36-the-environment-what-actually-works-here)–[§3.9](#39-the-install-floor-and-three-refusals-that-look-alike) |
 | **4** | **How to build a lab**, to this repository's conventions, and how to validate it mechanically | [§3.10](#310-how-to-build-a-lab), [Lab 03](labs/lab-03-write-a-lab-that-survives.md) |
 | **5** | **What to do when a lab does not reproduce** — ranked causes, and why `DIVERGED, cause not established` is a complete answer | [§11.4](#114-when-a-lab-does-not-reproduce), [`examples/divergence-report.md`](examples/divergence-report.md) |
@@ -126,13 +126,13 @@ that gap is where all the interesting security work lives.
 Every chapter here is written to be read in isolation, which is right. It has a cost, and this
 chapter exists to pay it.
 
-**You cannot find anything.** There are 327 labs. Without an index, the only access path is reading
-79 chapter READMEs. Nobody does that; in practice people do the labs in the first chapters they open
+**You cannot find anything.** There are 331 labs. Without an index, the only access path is reading
+82 chapter READMEs. Nobody does that; in practice people do the labs in the first chapters they open
 and never discover the ones that would have helped most.
 
 **You do not know what you can run.** Every lab states its requirements in prose, in its own words,
 in its own format. Nothing aggregates them, so you discover a blocker forty minutes in, having
-already built the target. On the setup this chapter measured, **187 of 327 labs are blocked** — and
+already built the target. On the 327-lab snapshot this chapter measured, **187 labs were blocked** — and
 almost all of it is four missing downloads, which is a fact you would never learn one lab at a time.
 
 **You have no route.** Reading order is chapter order, which is a dependency order for *concepts*
@@ -163,11 +163,11 @@ Everything else here is in service of one of those three.
 
 ```mermaid
 flowchart TB
-    subgraph Chapters["79 chapters — each owns its own labs"]
+    subgraph Chapters["80 chapters — each owns its own labs"]
         C1["10-APK-Internals/labs/"]
         C2["27-ContentProviders/labs/"]
         C3["53-Frida/labs/"]
-        CN["...76 more"]
+        CN["...77 more"]
     end
     subgraph Aggregator["73-Labs — owns nothing, derives everything"]
         G["scripts/build-lab-index.py"]
@@ -201,7 +201,7 @@ The important property of that picture is the direction of every arrow into the 
 reads from the chapters and never writes to them.** It owns no lab material of its own except the
 four cross-chapter labs in §12, which exist precisely because they cannot live anywhere else. Your
 machine is drawn as attacker-coloured because from the corpus's point of view it is the untrusted,
-unknown variable — the one thing none of the 327 labs can see.
+unknown variable — the one thing none of the 331 labs can see.
 
 ### 2.2 How the index is produced
 
@@ -214,7 +214,7 @@ sequenceDiagram
 
     U->>S: python3 -B build-lab-index.py
     S->>FS: list NN-*/labs/*.md
-    FS-->>S: 327 paths
+    FS-->>S: 331 paths
     loop per lab
         S->>FS: read (strict UTF-8, BOM reported)
         S->>S: parse header block (4 formats)
@@ -285,7 +285,7 @@ information. `Diverged` is a *terminal, respectable* state that preserves the qu
 
 ### 3.1 What the corpus actually contains
 
-Measured on 2026-08-16 by `scripts/build-lab-index.py --stats`. Nothing here is remembered:
+Measured on 2026-11-20 by `scripts/build-lab-index.py --stats`. Nothing here is remembered:
 
 ```bash
 # host — from 73-Labs
@@ -294,27 +294,27 @@ python3 -B scripts/build-lab-index.py --stats
 
 | Quantity | Measured |
 |---|---:|
-| Chapters shipping labs | **79** |
-| Lab markdown files | **327** |
+| Chapters shipping labs | **80** |
+| Lab markdown files | **331** |
 | Beginner | 61 |
-| Intermediate | 120 |
-| Advanced | 66 |
-| CTF | 74 |
+| Intermediate | 122 |
+| Advanced | 67 |
+| CTF | 75 |
 | Difficulty not declared by the lab | 6 |
 
 And by requirement — this is the table that decides what your afternoon looks like:
 
 | Tag | Meaning | Labs |
 |---|---|---:|
-| `device` | needs an Android device or emulator | 269 |
-| `frida` | needs Frida, at **both** ends | 128 |
-| `jdk` | JDK plus SDK build-tools | 107 |
-| `root` | needs root on the device | 82 |
+| `device` | needs an Android device or emulator | 273 |
+| `frida` | needs Frida, at **both** ends | 130 |
+| `jdk` | JDK plus SDK build-tools | 109 |
+| `root` | needs root on the device | 85 |
 | `apktool` | needs apktool | 72 |
-| `no-root` | states in its own header that root is not needed | 69 |
+| `no-root` | states in its own header that root is not needed | 70 |
 | `no-device` | contains no `adb` invocation anywhere | 58 |
-| `ndk` | native toolchain | 50 |
-| `jadx` | needs jadx | 80 |
+| `ndk` | native toolchain | 51 |
+| `jadx` | needs jadx | 81 |
 | `ghidra` / `xposed` | 14 each | 28 |
 | `radare2` / `physical` | 8 each | 16 |
 | `mobsf` / `proxy` | 6 each | 12 |
@@ -432,7 +432,7 @@ measurement.
 
 ### 3.5 Learning paths
 
-327 labs in reading order is a corpus, not a curriculum. [`references/learning-paths.md`](references/learning-paths.md)
+331 labs in reading order is a corpus, not a curriculum. [`references/learning-paths.md`](references/learning-paths.md)
 gives five ordered routes. The chapter sequence is curated; the lab list under each step is
 **generated**, so a path can never name a lab that has been renamed or deleted.
 
@@ -559,8 +559,9 @@ same device seconds later.
 > conclude it works and then debug a script that was never going to run. **Test a capability with the
 > operation you need it for.**
 
-This single capability blocks **128 of 327** labs here, and it is also the cheapest to fix. Measured:
-`--assume frida` takes runnable from **140 to 210**.
+The index tags **130 of 331** labs as needing Frida. On the 327-lab probe snapshot it was the
+single largest block at **128 of 327**, and it is also the cheapest to fix: `--assume frida` took
+runnable from **140 to 210** there.
 
 ### 3.9 The install floor, and three refusals that look alike
 
@@ -863,7 +864,8 @@ python3 -B scripts/lab-env-probe.py --no-device --match
 python3 -B scripts/lab-env-probe.py --match --json > "$HOME/manifest.json"
 ```
 
-Measured on the AVD, final run:
+Measured on the API 35 AVD on 2026-08-16, final run. This is the **327-lab snapshot**; the four
+chapter 81 labs landed afterwards and are not part of this probe run:
 
 ```
 Capability tags satisfied: device, docker, jadx, jdk, ndk, no-device, no-root, objection,
@@ -1081,7 +1083,7 @@ python3 -B scripts/lab-env-probe.py --match --assume frida
 python3 -B scripts/lab-env-probe.py --match --assume frida,apktool,ghidra,radare2
 ```
 
-Measured: **140 → 210 → 288** of 327. A working `frida-server` alone is worth 70 labs, which is more
+Measured on the 327-lab snapshot: **140 → 210 → 288** of 327. A working `frida-server` alone is worth 70 labs, which is more
 than any other single change you could make to that machine. That is a purchasing decision made with
 a measurement instead of a feeling.
 
@@ -1195,11 +1197,11 @@ error that every future reader inherits.
 Derive requirements from the material mechanically rather than asking authors to declare them —
 authors declare what they remember, and this chapter measured a lab whose header said "no Frida"
 while a section used root. Probe each machine. Match. Then treat the blocked table as a purchasing
-decision: on the setup here, four downloads move 140 runnable labs to 288, and the emulator accounts
+decision: on the 327-lab snapshot, four downloads move 140 runnable labs to 288, and the emulator accounts
 for only 8 of the 187 blocks. Without the measurement the obvious conclusion — "we need more
 phones" — is wrong.
 
-**Q. How do you keep an index of 327 items from going stale?**
+**Q. How do you keep an index of 331 items from going stale?**
 Generate it, put the regeneration command in the file's own banner, and make the checker resolve what
 it emits rather than inspect it. This repository learned the second half expensively: a link checker
 had an exemption for "forward references to unwritten chapters" that never re-tested whether the
@@ -1318,7 +1320,7 @@ not run**, which is why none of them requires Frida.
 | 03 | [Write a lab that survives someone else running it](labs/lab-03-write-a-lab-that-survives.md) | Intermediate | Python. No device for the validation half |
 | 04 | [CTF: The Gauntlet](labs/lab-04-ctf-the-gauntlet.md) | **CTF** | Device, JDK, SDK. Root for flag 4 only |
 
-**Lab 01** produces an evidence-backed manifest of which of the 327 labs your machine can run, and
+**Lab 01** produces an evidence-backed manifest of which of the 331 labs your machine can run, and
 sorts the blocked ones into three classes: a download away, a licence away, and not obtainable here.
 It is distinct from [00-Introduction lab 01](../00-Introduction/labs/lab-01-build-your-lab.md), which
 *installs* a toolchain; this one *measures* one and maps it onto the corpus.
@@ -1344,7 +1346,7 @@ decompiler.
 
 - **This chapter copies nothing.** It generates, measures, routes, and documents failure — the four
   things a member of a set cannot do for the set.
-- **327 labs across 79 chapters**, 74 of them CTFs, measured by script and re-measurable in one
+- **331 labs across 80 chapters**, 75 of them CTFs, measured by script and re-measurable in one
   command.
 - **A requirement is derived, not declared.** Every tag in the index carries the line of the lab that
   produced it, so any claim can be audited back to a sentence.
@@ -1353,9 +1355,9 @@ decompiler.
 - **Verify links by resolving them.** The one-level relative path from a `references/` or `labs/`
   file is silently wrong and produced 1,495 broken links elsewhere here.
 - **Runnability is a property of your setup AND of the probe, and both moved.** The first pass
-  measured **140 of 327** runnable against the API 35 AVD. A later audit found the probe was
+  measured **140 of 327** runnable against the API 35 AVD (the 327-lab snapshot). A later audit found the probe was
   resolving tools by command name only, so **apktool and Ghidra were installed and reported
-  absent**; with that fixed and the Redmi attached it reads **173 of 327**. Four downloads take it
+  absent**; with that fixed and the Redmi attached it read **173 of 327**; four downloads took it
   to 288. The emulator accounts for 8 blocks, not the bulk of them. **Run the probe rather than
   quoting either number** — that is what it is for.
 <!-- lint:allow SU-DASH-C SU-DASH-C-BARE -- the broken form, quoted as the counter-example this bullet teaches -->
@@ -1431,7 +1433,7 @@ mindmap
 
 ### 13.4 Quick revision
 
-- How many labs, and how do you find out? — **327; `--stats`, never memory.**
+- How many labs, and how do you find out? — **331; `--stats`, never memory.**
 - What does a requirement tag mean? — **A command or a prerequisites line. Not a mention.**
 - Depth of a link from `labs/` to another chapter? — **`../../NN-Chapter/…`**
 - The `su` form on the API 35 AVD? — **`su 0 <cmd>`. `su -c` returns `invalid uid/gid '-c'`.**

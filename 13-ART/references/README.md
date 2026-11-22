@@ -93,7 +93,7 @@ See [07-AOSP](../../07-AOSP/README.md) for the navigation technique.
 |---|---|
 | [Android Security Bulletins](https://source.android.com/docs/security/bulletin) | Monthly. The authoritative record of runtime vulnerabilities. Read for the *pattern* of which subsystems recur |
 | [Google Project Zero](https://googleprojectzero.blogspot.com/) | The highest-quality public research on Android runtime and JIT bugs |
-| [Android VRP rules](https://bughunters.google.com/about/rules/android-friends) | What Google considers a reportable runtime vulnerability, and the severity model |
+| [Android VRP rules](https://bughunters.google.com/about/rules) | What Google considers a reportable runtime vulnerability, and the severity model |
 
 > **Note on CVE citation.** This chapter deliberately describes runtime vulnerability *classes* rather
 > than naming specific identifiers, because ART bugs are numerous and version-specific and a

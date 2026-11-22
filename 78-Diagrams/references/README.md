@@ -73,7 +73,7 @@ Re-run before quoting. Every number moves when a chapter is edited.
 | Link | Note |
 |---|---|
 | https://c4model.com/ | The clearest public treatment of *levels of abstraction* in a diagram. Its central discipline — one level per diagram — is what stops the 40-node monsters |
-| https://learn.microsoft.com/en-us/security/engineering/threat-modeling-with-stride | Data-flow diagrams where **trust boundaries are the primary object**, not decoration. The closest formal relative of section 6.1 |
+| https://learn.microsoft.com/en-us/azure/security/develop/threat-modeling-tool-threats | Data-flow diagrams where **trust boundaries are the primary object**, not decoration. The closest formal relative of section 6.1 |
 | https://owasp.org/www-community/Threat_Modeling | OWASP's overview, including the four questions a threat model answers |
 | https://www.threatmodelingmanifesto.org/ | Short, and the "values" section is a good corrective to template-filling |
 | https://cisa.gov/securebydesign | Design-level security guidance. Useful vocabulary when a diagram has to be defended to a non-technical audience |

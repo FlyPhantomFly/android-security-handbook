@@ -70,9 +70,9 @@ Read these on [cs.android.com](https://cs.android.com/), which gives cross-refer
 | Resource | Relevance |
 |---|---|
 | [MASVS](https://mas.owasp.org/MASVS/) | The standard your client's requirements are probably derived from |
-| [MASVS-RESILIENCE](https://mas.owasp.org/MASVS/09-MASVS-RESILIENCE/) | The category root detection sits in.MASVS itself frames these as *resilience*, not *security* controls — that framing is the whole argument of this chapter |
+| [MASVS-RESILIENCE](https://mas.owasp.org/MASVS/11-MASVS-RESILIENCE/) | The category root detection sits in.MASVS itself frames these as *resilience*, not *security* controls — that framing is the whole argument of this chapter |
 | [MASTG](https://mas.owasp.org/MASTG/) | Test procedures |
-| [MASTG Android tests](https://mas.owasp.org/MASTG/tests/android/) | The platform-integrity and anti-reversing tests map onto §3 |
+| [MASTG Android tests](https://mas.owasp.org/MASTG/tests/) | The platform-integrity and anti-reversing tests map onto §3 |
 | MASTG UnCrackable series | Canonical practice targets — see [80-Appendix](../../80-Appendix/README.md) |
 
 ---
@@ -82,7 +82,7 @@ Read these on [cs.android.com](https://cs.android.com/), which gives cross-refer
 | Tool | Where | Use |
 |---|---|---|
 | [Magisk](https://topjohnwu.github.io/Magisk/) | device | The root implementation you will actually meet |
-| [Magisk DenyList](https://topjohnwu.github.io/Magisk/deny.html) | device | Step 1 of the bypass ladder — read this before writing any hook |
+| [Magisk DenyList](https://github.com/topjohnwu/Magisk/blob/master/native/src/core/deny/cli.cpp) | device | Step 1 of the bypass ladder — read this before writing any hook |
 | [Zygisk](https://topjohnwu.github.io/Magisk/guides.html) | device | Zygote injection; also the module API, if you want to understand hiding modules |
 | [RootBeer](https://github.com/scottyab/rootbeer) | source | Read the source. It is the library you will meet most often and it documents its own limitations honestly |
 | [Frida](https://frida.re/docs/android/) | host + device | Everything in §7 |
@@ -117,7 +117,7 @@ rather than security.
 |---|---|
 | [Android Security Bulletins](https://source.android.com/docs/security/bulletin) | The authoritative record. Read for the *pattern* of which subsystems recur, not to memorise identifiers |
 | [Google Project Zero](https://googleprojectzero.blogspot.com/) | The highest-quality public work on Android privilege escalation — the mechanisms that make rooting possible in the first place |
-| [Android VRP rules](https://bughunters.google.com/about/rules/android-friends) | What Google considers reportable, and the severity model |
+| [Android VRP rules](https://bughunters.google.com/about/rules) | What Google considers reportable, and the severity model |
 | [OWASP MAS research](https://mas.owasp.org/) | The community's accumulated position on resilience controls |
 
 > **Note on CVE citation.** This chapter deliberately describes vulnerability *classes* rather than

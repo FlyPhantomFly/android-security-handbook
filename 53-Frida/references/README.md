@@ -116,7 +116,7 @@ See [07-AOSP](../../07-AOSP/README.md) for the navigation technique.
 | MASVS-RESILIENCE | The control group covering anti-tampering, anti-hooking and obfuscation. Read it to understand what a client is *allowed* to claim |
 | MASVS-NETWORK | TLS and pinning requirements — the standard a pinning finding is written against |
 | MASTG (Testing Guide) | Concrete test procedures, many of which are Frida-based |
-| https://mas.owasp.org/MASTG/techniques/android/ | The Android technique catalogue: reverse engineering, tampering, dynamic analysis |
+| https://mas.owasp.org/MASTG/0x05b-Android-Security-Testing/ | The Android technique catalogue: reverse engineering, tampering, dynamic analysis |
 | https://mas.owasp.org/MASVS/ | The verification standard itself |
 
 Use MASVS identifiers in reports. "Client-side authorisation decision" is an observation; mapping it to

@@ -78,8 +78,8 @@ Browse at <https://cs.android.com/> or <https://android.googlesource.com/>.
 | MASTG, "Testing Emulator Detection" (Android) | The procedure. README §7 is a longer version |
 
 - MASVS — <https://mas.owasp.org/MASVS/>
-- MASVS-RESILIENCE — <https://mas.owasp.org/MASVS/09-MASVS-RESILIENCE/>
-- MASTG Android RESILIENCE tests — <https://mas.owasp.org/MASTG/tests/android/MASVS-RESILIENCE/>
+- MASVS-RESILIENCE — <https://mas.owasp.org/MASVS/11-MASVS-RESILIENCE/>
+- MASTG Android RESILIENCE tests — <https://mas.owasp.org/MASTG/0x05j-Testing-Resiliency-Against-Reverse-Engineering/>
 
 > **MASTG test identifiers drift**
 > The MASTG has been reorganised more than once and test numbers have moved between schemes. Cite the

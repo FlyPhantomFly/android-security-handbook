@@ -3138,7 +3138,7 @@ Full version in [`cheatsheet.md`](cheatsheet.md). Condensed:
 - A/B (seamless) updates — https://source.android.com/docs/core/ota/ab
 - APEX file format — https://source.android.com/docs/core/ota/apex
 - Modular System Components (Mainline) — https://source.android.com/docs/core/ota/modular-system
-- Treble — https://source.android.com/docs/core/architecture/treble
+- Treble — https://source.android.com/docs/core/architecture/partitions
 - HAL types — https://source.android.com/docs/core/architecture/hal-types
 - Android Security Bulletins — https://source.android.com/docs/security/bulletin
 

@@ -4871,8 +4871,8 @@ The full printable version is [`cheatsheet.md`](cheatsheet.md). Condensed:
 
 - MASVS — https://mas.owasp.org/MASVS/
 - MASTG — https://mas.owasp.org/MASTG/
-- MASVS-CODE (build settings, dependencies, signing) — https://mas.owasp.org/MASVS/09-MASVS-CODE/
-- MASVS-RESILIENCE (obfuscation, integrity) — https://mas.owasp.org/MASVS/10-MASVS-RESILIENCE/
+- MASVS-CODE (build settings, dependencies, signing) — https://mas.owasp.org/MASVS/10-MASVS-CODE/
+- MASVS-RESILIENCE (obfuscation, integrity) — https://mas.owasp.org/MASVS/11-MASVS-RESILIENCE/
 - OWASP Dependency-Check — https://owasp.org/www-project-dependency-check/
 - OWASP Software Component Verification Standard — https://owasp.org/www-project-software-component-verification-standard/
 

@@ -9,9 +9,9 @@ Annotated. Every link says what it is *for*, and where it stops.
 | Link | What it gives you | Where it stops |
 |---|---|---|
 | [sensepost/objection](https://github.com/sensepost/objection) | The tool. Issues and releases are the fastest way to learn whether a behaviour you are seeing is a known bug | The README documents the command *surface*, not what each canned script hooks |
-| [The agent source](https://github.com/sensepost/objection/tree/master/agents/frida) | **The most important link on this page.** The TypeScript that compiles to the `agent.js` on your disk | It is `master`. Your installed version is probably older — read yours |
-| [`agents/frida/src/android/root.ts`](https://github.com/sensepost/objection/blob/master/agents/frida/src/android/root.ts) | The three hooks and the thirteen hard-coded paths behind `android root disable`. Everything in chapter §3.5 came from here | Java layer only, by construction |
-| [`agents/frida/src/android/pinning.ts`](https://github.com/sensepost/objection/blob/master/agents/frida/src/android/pinning.ts) | The seven pinning hooks behind `android sslpinning disable`, with the authors' own comments citing the research each one came from | No native, no WebView, no `network_security_config` |
+| [The agent source](https://github.com/sensepost/objection/tree/master/agent/src) | **The most important link on this page.** The TypeScript that compiles to the `agent.js` on your disk | It is `master`. Your installed version is probably older — read yours |
+| [`agent/src/android/root.ts`](https://github.com/sensepost/objection/blob/master/agent/src/android/root.ts) | The three hooks and the thirteen hard-coded paths behind `android root disable`. Everything in chapter §3.5 came from here | Java layer only, by construction |
+| [`agent/src/android/pinning.ts`](https://github.com/sensepost/objection/blob/master/agent/src/android/pinning.ts) | The seven pinning hooks behind `android sslpinning disable`, with the authors' own comments citing the research each one came from | No native, no WebView, no `network_security_config` |
 | [The wiki](https://github.com/sensepost/objection/wiki) | Installation, the `patchapk` / gadget workflow, plugin authoring | Thin on failure diagnosis, which is most of what you need |
 | [Updating](https://github.com/sensepost/objection/wiki/Updating) | The page the start-up banner points at | Says nothing about keeping frida and frida-server in step, which is the actual risk |
 

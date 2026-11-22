@@ -36,7 +36,7 @@ contribute a fix rather than complain about a gap.
 |---|---|
 | [`OWASP/owasp-masvs`](https://github.com/OWASP/owasp-masvs) | The standard's source, plus translations. **The release tags are how you pin a version** in a methodology statement |
 | [`OWASP/owasp-mastg`](https://github.com/OWASP/owasp-mastg) | Every test, technique, tool page and demo as Markdown. `git log` on a test file tells you when a procedure changed, which matters when you are reconciling two assessments |
-| [`OWASP/owasp-maswe`](https://github.com/OWASP/owasp-maswe) | The weakness catalogue's source. Useful when an entry is newer than the rendered site |
+| [`OWASP/owasp-maswe`](https://github.com/OWASP/maswe) | The weakness catalogue's source. Useful when an entry is newer than the rendered site |
 
 > **Why the repositories are worth knowing, not just the site.** The rendered site shows you the
 > current state. A diff shows you the *history*, and history is what you need when a client's
@@ -92,7 +92,7 @@ and the backend is where severity concentrates.
 | [OWASP API Security Top 10](https://owasp.org/www-project-api-security/) | Fast shape for API findings when you need an awareness-level label for an executive summary | Awareness list, like the Mobile Top 10. Not a verification standard |
 | [OWASP Mobile Top 10](https://owasp.org/www-project-mobile-top-10/) | Communicating risk categories to non-specialists | **Not interchangeable with MASVS** — see [faq.md §2](../faq.md). Awareness versus verification |
 | [OWASP SAMM](https://owaspsamm.org/) | When the client's question is "how do we stop producing these findings" rather than "what is wrong with this build" | Programme maturity, one level up from any per-app standard |
-| [NIST SP 800-163 Rev.1](https://csrc.nist.gov/publications/detail/sp/800-163/rev-1/final) | US federal mobile app vetting. Open it when the client is a government supplier, or when someone asks for a *process* standard rather than a control standard | Process-oriented; describes how an organisation vets apps. MASVS describes what a good app looks like |
+| [NIST SP 800-163 Rev.1](https://csrc.nist.gov/pubs/sp/800/163/r1/final) | US federal mobile app vetting. Open it when the client is a government supplier, or when someone asks for a *process* standard rather than a control standard | Process-oriented; describes how an organisation vets apps. MASVS describes what a good app looks like |
 | [NIST SP 800-218 (SSDF)](https://csrc.nist.gov/publications/detail/sp/800-218/final) | Secure software development practices; increasingly cited in procurement | Development lifecycle, not app verification |
 | [PCI Mobile Payments on COTS (MPoC)](https://www.pcisecuritystandards.org/) | When the app accepts card payments on the device itself. **Mandatory controls, formal labs, and an attestation process** — this is not a self-assessment | Overlaps MASVS-CRYPTO, AUTH and RESILIENCE, and goes considerably further on attestation and monitoring |
 | [PCI DSS](https://www.pcisecuritystandards.org/) | When the app touches cardholder data at all | Organisational and network scope; your report becomes evidence within it |
@@ -119,7 +119,7 @@ than the standard. Developers implement what Google documents.
 | [Android security overview (AOSP)](https://source.android.com/docs/security) | The platform model behind most PLATFORM and STORAGE controls |
 | [Behaviour changes, all releases](https://developer.android.com/about/versions) | **Check before asserting any version-dependent claim.** A control written against older platform assumptions may be moot on a current `targetSdk` |
 | [Android Security Bulletins](https://source.android.com/docs/security/bulletin) | Environmental findings — issues in the platform rather than the app |
-| [Play Console policy and data safety](https://play.google.com/console/about/programs/datasafety/) | PRIVACY findings frequently have a policy consequence as well as a security one, and the policy consequence is what gets a fix scheduled |
+| [Play Console policy and data safety](https://support.google.com/googleplay/android-developer/answer/10787469) | PRIVACY findings frequently have a policy consequence as well as a security one, and the policy consequence is what gets a fix scheduled |
 | [Android Code Search](https://cs.android.com/) | Settling an argument about what the platform actually does |
 
 ---

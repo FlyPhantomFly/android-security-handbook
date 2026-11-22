@@ -2882,9 +2882,9 @@ Full command reference in [`cheatsheet.md`](cheatsheet.md).
 
 ### OWASP
 
-- MASVS-RESILIENCE — <https://mas.owasp.org/MASVS/09-MASVS-RESILIENCE/>
+- MASVS-RESILIENCE — <https://mas.owasp.org/MASVS/11-MASVS-RESILIENCE/>
 - MASTG, Android anti-tampering and reverse-engineering resilience —
-  <https://mas.owasp.org/MASTG/tests/android/MASVS-RESILIENCE/>
+  <https://mas.owasp.org/MASTG/0x05j-Testing-Resiliency-Against-Reverse-Engineering/>
 - MASTG "Testing Emulator Detection" (Android) — cite the title alongside any test number; MASTG
   identifiers have been renumbered more than once
 

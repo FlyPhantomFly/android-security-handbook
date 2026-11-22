@@ -59,7 +59,7 @@ Read on [cs.android.com](https://cs.android.com/), which gives cross-references 
 | [Restrictions on non-SDK interfaces](https://developer.android.com/guide/app-compatibility/restrictions-non-sdk-interfaces) | The hidden-API lists, and the `hidden_api_policy` setting |
 | [Dex format](https://source.android.com/docs/core/runtime/dex-format) | Cross-reference with [12-DEX-Internals](../../12-DEX-Internals/README.md) |
 | [Android behaviour changes](https://developer.android.com/about/versions) | Check before asserting version-dependent runtime behaviour |
-| [Play policy: device and network abuse](https://support.google.com/googleplay/android-developer/answer/9888379) | The rules on downloading and executing code — relevant to §5.4 |
+| [Play policy: device and network abuse](https://support.google.com/googleplay/android-developer/answer/9888379?hl=en) | The rules on downloading and executing code — relevant to §5.4 |
 
 ---
 
@@ -93,7 +93,7 @@ Read on [cs.android.com](https://cs.android.com/), which gives cross-references 
 |---|---|
 | [Android Security Bulletins](https://source.android.com/docs/security/bulletin) | Monthly. Read for the *pattern* of which subsystems recur |
 | [Google Project Zero](https://googleprojectzero.blogspot.com/) | The highest-quality public Android runtime research |
-| [Android VRP rules](https://bughunters.google.com/about/rules/android-friends) | What Google treats as a reportable runtime vulnerability |
+| [Android VRP rules](https://bughunters.google.com/about/rules) | What Google treats as a reportable runtime vulnerability |
 
 > **Note on CVE citation.** This chapter describes runtime vulnerability *classes* rather than naming
 > identifiers, because runtime bugs are numerous and version-specific and a misattributed CVE in a

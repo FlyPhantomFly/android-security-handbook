@@ -183,7 +183,7 @@ URLs are omitted where they are not certain; the title and venue are enough to f
 | MASTG chapter — *Android Anti-Reversing Defenses* | OWASP | Systematic treatment of integrity checks, including the ones that read the app's own signature. |
 | Research on Android manifest and AXML parser divergence | Multiple groups, ongoing | Search terms: "AXML parser confusion", "Android manifest parser differential", "APK tool evasion". Treat individual write-ups carefully — several describe techniques against tool versions that have since been hardened. |
 | Baksmali / smali documentation | Ben Gruver, project wiki | The Smali syntax reference you need for [lab 02](../labs/lab-02-unpack-modify-rebuild-resign.md). |
-| Apktool documentation | Connor Tumbleson, https://apktool.org/docs/ | `apktool.yml`, framework handling, and the known limitations that cause rebuild failures. |
+| Apktool documentation | Connor Tumbleson, https://ibotpeaches.github.io/Apktool/documentation/ | `apktool.yml`, framework handling, and the known limitations that cause rebuild failures. |
 | JADX documentation | skylot, project wiki | Flags that change what you see, including `--show-bad-code`. See [56-JADX](../../56-JADX/README.md). |
 
 ---

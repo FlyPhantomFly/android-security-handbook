@@ -2540,3 +2540,4 @@ The full printable version is [`cheatsheet.md`](cheatsheet.md). Condensed:
 - [53-Frida](../53-Frida/README.md) — the tool that operationalises Section 3.17
 - [63-LSPosed](../63-LSPosed/README.md) — persistent hooking via the same mechanism
 - [65-Hooking](../65-Hooking/README.md) — hooking from first principles across all layers
+- [81-Android-Runtime-Internals](../81-Android-Runtime-Internals/README.md) — the advanced capstone that extends this chapter's `ArtMethod` and entrypoint material into the full injection stack

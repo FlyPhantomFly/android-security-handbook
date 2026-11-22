@@ -62,7 +62,7 @@ These are file paths, which are stable across releases. Line numbers are deliber
   over-rating in mobile reports.
 - [OWASP MASTG](https://mas.owasp.org/MASTG/) — the test procedures: root detection, anti-debugging,
   file integrity, reverse-engineering resilience, emulator detection.
-- [MASTG — Android anti-reversing defences](https://mas.owasp.org/MASTG/Android/) — the catalogue
+- [MASTG — Android anti-reversing defences](https://mas.owasp.org/MASTG/0x05a-Platform-Overview/) — the catalogue
   this chapter's §3.10 and §3.11 tables expand with costs.
 
 ---

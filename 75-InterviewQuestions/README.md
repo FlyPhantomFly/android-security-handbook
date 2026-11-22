@@ -22,8 +22,8 @@ about which.
 
 ## What this chapter is, and what it deliberately is not
 
-**73 of this repository's 81 chapters are written, and every one of them already ends with a
-five-tier interview section** — over 1,300 questions in total, measured rather than estimated
+**78 of this repository's 82 chapters already end with a five-tier interview section** —
+**1,373 questions** in total, measured rather than estimated
 ([§3.16](#316-the-curated-index-by-role-and-by-round) shows the count and the script that
 produced it). The obvious version of chapter 75 is to concatenate them. That version would
 be enormous, would duplicate content that is already better placed next to the mechanism it
@@ -444,7 +444,7 @@ repository's rule is that a number you did not measure does not get written down
 | 3 | **Altitude** — answered a Staff question at Intermediate level, or the reverse | "That is right, but I was asking about the trade-off" | [§3.4](#34-the-five-tiers-what-actually-escalates), [§3.5](#35-one-question-escalated-through-all-five-tiers) |
 | 4 | **Severity** — could not defend a rating, or inflated everything | "Would you really rate that High?" and the candidate folds instantly | [§3.10](#310-severity-language-and-defending-a-rating-under-pushback) |
 | 5 | **Tool-first** — every answer opens with a tool name | "…and if Frida is not available?" | [§3.3](#33-the-answer-shape-and-why-it-is-this-repositorys-own-house-style) |
-| 6 | **Genuine knowledge gap** | Several unrelated boundaries in one round | Read the chapters. This is the one this repository's other 80 chapters address |
+| 6 | **Genuine knowledge gap** | Several unrelated boundaries in one round | Read the chapters. This is the one this repository's other 81 chapters address |
 
 The ordering is the point. **The most common cause of failure is not the one candidates
 prepare for.** Almost all preparation effort goes into rank 6, and ranks 1 to 5 are where
@@ -2799,7 +2799,7 @@ Full printable version in [`cheatsheet.md`](cheatsheet.md). Condensed:
   [`61-Fastboot`](../61-Fastboot/README.md) and [`64-Xposed`](../64-Xposed/README.md) are the
   richest, and [`references/README.md`](references/README.md) indexes them with a line on each.
   **Never quote one without its device and its method**
-- [`references/question-index.md`](references/question-index.md) — all 1,258 questions by tier,
+- [`references/question-index.md`](references/question-index.md) — all 1,373 questions by tier,
   generated
 - [`references/question-index-by-role.md`](references/question-index-by-role.md) — six role
   tracks, generated
@@ -2833,7 +2833,7 @@ Full printable version in [`cheatsheet.md`](cheatsheet.md). Condensed:
 
 - Google Play Security Reward Program — https://bughunters.google.com/
 - Android Vulnerability Rewards Program —
-  https://bughunters.google.com/about/rules/android-friends
+  https://bughunters.google.com/about/rules
 - `security.txt` (RFC 9116) — https://www.rfc-editor.org/rfc/rfc9116 — the standard place a
   disclosure channel is published
 - CVE Program — https://www.cve.org/ — identifier assignment; never quote an identifier you

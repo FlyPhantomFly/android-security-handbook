@@ -12,10 +12,10 @@ people end up reciting a claim they cannot defend, which is exactly the failure 
 [`../README.md`](../README.md) section 5 is about.
 
 
-**1336 questions across 76 chapters, in 5 tiers.** Generated grouping: `tier`.
+**1373 questions across 78 chapters, in 5 tiers.** Generated grouping: `tier`.
 
 
-## Beginner (340)
+## Beginner (348)
 
 | Chapter | Question |
 |---|---|
@@ -347,6 +347,10 @@ people end up reciting a claim they cannot defend, which is exactly the failure 
 | [72](../../72-RealWorldFindings/README.md#10-common-interview-questions) | What is the difference between a vulnerability and a finding? |
 | [72](../../72-RealWorldFindings/README.md#10-common-interview-questions) | An app has an exported Activity with no permission. Is that a vulnerability? |
 | [72](../../72-RealWorldFindings/README.md#10-common-interview-questions) | Why is severity not the same as confidence? |
+| [73](../../73-Labs/README.md#10-common-interview-questions) | What is the difference between a lab, a tutorial and a cheatsheet? |
+| [73](../../73-Labs/README.md#10-common-interview-questions) | Why do you need a device at all if you can decompile the APK? |
+| [73](../../73-Labs/README.md#10-common-interview-questions) | What does "rooted" actually mean for a lab? |
+| [73](../../73-Labs/README.md#10-common-interview-questions) | Why does this repository ship sources instead of APKs? |
 | [74](../../74-CaseStudies/README.md#10-common-interview-questions) | What is the difference between a finding and a case study? |
 | [74](../../74-CaseStudies/README.md#10-common-interview-questions) | Why would a root-detection check that "works" on your test device fail in production? |
 | [74](../../74-CaseStudies/README.md#10-common-interview-questions) | What does `File.exists()` returning `false` tell you? |
@@ -359,8 +363,12 @@ people end up reciting a claim they cannot defend, which is exactly the failure 
 | [77](../../77-UsefulCommands/README.md#10-common-interview-questions) | What is the difference between `adb shell` and a root shell? |
 | [77](../../77-UsefulCommands/README.md#10-common-interview-questions) | Why does `adb root` fail on my phone? |
 | [77](../../77-UsefulCommands/README.md#10-common-interview-questions) | What does `pm path` do? |
+| [81](../../81-Android-Runtime-Internals/README.md#10-common-interview-questions) | What is the difference between Zygisk and LSPlant? |
+| [81](../../81-Android-Runtime-Internals/README.md#10-common-interview-questions) | Why does Android use zygote instead of starting a new runtime for every app? |
+| [81](../../81-Android-Runtime-Internals/README.md#10-common-interview-questions) | What is `ArtMethod`? |
+| [81](../../81-Android-Runtime-Internals/README.md#10-common-interview-questions) | What does "the hook installed but never fired" mean? |
 
-## Intermediate (350)
+## Intermediate (359)
 
 | Chapter | Question |
 |---|---|
@@ -707,6 +715,10 @@ people end up reciting a claim they cannot defend, which is exactly the failure 
 | [72](../../72-RealWorldFindings/README.md#10-common-interview-questions) | You grep for `FLAG_SECURE` and get three hits across seventeen apps. What do you report? |
 | [72](../../72-RealWorldFindings/README.md#10-common-interview-questions) | Your scanner reports the same control in 18 of 18 apps. What is your first move? |
 | [72](../../72-RealWorldFindings/README.md#10-common-interview-questions) | How do you decide whether an exported ContentProvider is a finding? |
+| [73](../../73-Labs/README.md#10-common-interview-questions) | `adb install` fails. Walk me through your diagnosis. |
+| [73](../../73-Labs/README.md#10-common-interview-questions) | You run `am start` with an extra and nothing happens, but the command reports success. Why? |
+| [73](../../73-Labs/README.md#10-common-interview-questions) | How would you decide which labs a new team member can run on day one? |
+| [73](../../73-Labs/README.md#10-common-interview-questions) | What is a "vantage" and why does it belong in a report? |
 | [74](../../74-CaseStudies/README.md#10-common-interview-questions) | Why can `-O2` leak a string that `-O0` hides, from identical source? |
 | [75](../../75-InterviewQuestions/README.md#10-common-interview-questions) | Your two interviewers consistently disagree about the same candidates. What is wrong? |
 | [75](../../75-InterviewQuestions/README.md#10-common-interview-questions) | Why is finding count a poor take-home metric? |
@@ -714,8 +726,13 @@ people end up reciting a claim they cannot defend, which is exactly the failure 
 | [75](../../75-InterviewQuestions/README.md#10-common-interview-questions) | How would you interview for a skill you do not have yourself? |
 | [77](../../77-UsefulCommands/README.md#10-common-interview-questions) | What is the difference between `adb forward` and `adb reverse`? |
 | [77](../../77-UsefulCommands/README.md#10-common-interview-questions) | How do you get an app's private data with no root? |
+| [81](../../81-Android-Runtime-Internals/README.md#10-common-interview-questions) | Why is patching one `ArtMethod` entrypoint not enough to intercept every call? |
+| [81](../../81-Android-Runtime-Internals/README.md#10-common-interview-questions) | What is the difference between `preAppSpecialize` and `postAppSpecialize`? |
+| [81](../../81-Android-Runtime-Internals/README.md#10-common-interview-questions) | How does `InMemoryDexClassLoader` change the artifact story? |
+| [81](../../81-Android-Runtime-Internals/README.md#10-common-interview-questions) | What is hidden-API enforcement, and why does a hook framework care? |
+| [81](../../81-Android-Runtime-Internals/README.md#10-common-interview-questions) | Why does a hook work with `verify` but fail with `speed`? |
 
-## Senior (290)
+## Senior (297)
 
 | Chapter | Question |
 |---|---|
@@ -1001,6 +1018,8 @@ people end up reciting a claim they cannot defend, which is exactly the failure 
 | [72](../../72-RealWorldFindings/README.md#10-common-interview-questions) | A client asks why you rated a cross-app file read as Informational. |
 | [72](../../72-RealWorldFindings/README.md#10-common-interview-questions) | How do you report coverage without lying? |
 | [72](../../72-RealWorldFindings/README.md#10-common-interview-questions) | When is "the app does not detect root" a finding? |
+| [73](../../73-Labs/README.md#10-common-interview-questions) | Why is `Binder.getCallingUid()` inside `onReceive` not the caller's uid? |
+| [73](../../73-Labs/README.md#10-common-interview-questions) | You cannot reproduce a documented finding. What do you do? |
 | [74](../../74-CaseStudies/README.md#10-common-interview-questions) | How do you grade a root-detection check that cannot function? |
 | [74](../../74-CaseStudies/README.md#10-common-interview-questions) | When two integrity signals disagree, which do you believe? |
 | [75](../../75-InterviewQuestions/README.md#10-common-interview-questions) | How do you assess "honest severity" in an interview? |
@@ -1009,8 +1028,13 @@ people end up reciting a claim they cannot defend, which is exactly the failure 
 | [75](../../75-InterviewQuestions/README.md#10-common-interview-questions) | Where is your loop leaking legally, and how would you know? |
 | [77](../../77-UsefulCommands/README.md#10-common-interview-questions) | Walk me through what happens between typing `am start -n a/b` and the activity appearing. |
 | [77](../../77-UsefulCommands/README.md#10-common-interview-questions) | How would you verify a `dumpsys` finding is real and not an artefact of your privileged shell? |
+| [81](../../81-Android-Runtime-Internals/README.md#10-common-interview-questions) | Walk me through what happens between `fork()` and the first line of app code. |
+| [81](../../81-Android-Runtime-Internals/README.md#10-common-interview-questions) | How would you prove that a suspicious executable mapping is a hook and not the JIT? |
+| [81](../../81-Android-Runtime-Internals/README.md#10-common-interview-questions) | What does LSPlant's `Deoptimize` actually do, and when does it not help? |
+| [81](../../81-Android-Runtime-Internals/README.md#10-common-interview-questions) | How does ZygiskNext differ from Magisk's built-in Zygisk? |
+| [81](../../81-Android-Runtime-Internals/README.md#10-common-interview-questions) | Why does Vector ship a `dex2oat` wrapper? |
 
-## Staff Engineer (189)
+## Staff Engineer (196)
 
 | Chapter | Question |
 |---|---|
@@ -1197,14 +1221,21 @@ people end up reciting a claim they cannot defend, which is exactly the failure 
 | [71](../../71-OWASP-Mobile/README.md#10-common-interview-questions) | Argue against over-reliance on the standard. |
 | [72](../../72-RealWorldFindings/README.md#10-common-interview-questions) | Design a triage process for a scanner that produces 5,000 hits per app. |
 | [72](../../72-RealWorldFindings/README.md#10-common-interview-questions) | Two of your tools disagree about a manifest. How do you proceed? |
+| [73](../../73-Labs/README.md#10-common-interview-questions) | You are asked to build a lab programme for a team of ten with mixed hardware. How? |
+| [73](../../73-Labs/README.md#10-common-interview-questions) | How do you keep an index of 327 items from going stale? |
+| [73](../../73-Labs/README.md#10-common-interview-questions) | What is the argument against collecting all the labs into one document? |
 | [74](../../74-CaseStudies/README.md#10-common-interview-questions) | Design a verified-boot check you would actually ship. |
 | [74](../../74-CaseStudies/README.md#10-common-interview-questions) | How do you keep a body of published measurements from decaying? |
 | [75](../../75-InterviewQuestions/README.md#10-common-interview-questions) | How would you calibrate five interviewers so their scores mean the same thing? |
 | [75](../../75-InterviewQuestions/README.md#10-common-interview-questions) | A senior candidate is technically outstanding and dismissive about developers. Hire? |
 | [75](../../75-InterviewQuestions/README.md#10-common-interview-questions) | What would you measure to know whether your interview process is working at all? |
 | [77](../../77-UsefulCommands/README.md#10-common-interview-questions) | Design a repeatable engagement harness for testing 40 builds of the same app per quarter. |
+| [81](../../81-Android-Runtime-Internals/README.md#10-common-interview-questions) | Design a detection for runtime hooking that does not rely on a filename. |
+| [81](../../81-Android-Runtime-Internals/README.md#10-common-interview-questions) | How would you make a Java security check resistant to entrypoint patching? |
+| [81](../../81-Android-Runtime-Internals/README.md#10-common-interview-questions) | A module works on Android 15 but crashes `system_server` on Android 16. How do you debug it? |
+| [81](../../81-Android-Runtime-Internals/README.md#10-common-interview-questions) | How do you evaluate a closed-source root loader? |
 
-## Principal Engineer (167)
+## Principal Engineer (173)
 
 | Chapter | Question |
 |---|---|
@@ -1369,10 +1400,16 @@ people end up reciting a claim they cannot defend, which is exactly the failure 
 | [71](../../71-OWASP-Mobile/README.md#10-common-interview-questions) | What would you change about the standard? |
 | [72](../../72-RealWorldFindings/README.md#10-common-interview-questions) | Your team's reports are technically correct and clients are not remediating. Diagnose it. |
 | [72](../../72-RealWorldFindings/README.md#10-common-interview-questions) | How would you build an organisational base-rate dataset, and what would you refuse to do with it? |
+| [73](../../73-Labs/README.md#10-common-interview-questions) | Your team's tooling reports zero defects. What is your first question? |
+| [73](../../73-Labs/README.md#10-common-interview-questions) | How do you build an evidence standard a team will actually follow? |
+| [73](../../73-Labs/README.md#10-common-interview-questions) | When is "I could not establish this" the right thing to ship? |
 | [74](../../74-CaseStudies/README.md#10-common-interview-questions) | Argue against this chapter's own thesis. |
 | [74](../../74-CaseStudies/README.md#10-common-interview-questions) | What is the strongest argument that a client-side integrity check is worth shipping anyway? |
 | [74](../../74-CaseStudies/README.md#10-common-interview-questions) | This chapter corrects a published measurement in a sibling chapter. What should the process be? |
 | [75](../../75-InterviewQuestions/README.md#10-common-interview-questions) | Design the interview loop you would want to be assessed by, and say what it costs. |
 | [77](../../77-UsefulCommands/README.md#10-common-interview-questions) | Android keeps tightening what `shell` can do. Argue both sides. |
 | [77](../../77-UsefulCommands/README.md#10-common-interview-questions) | If you could add one capability to the Android platform for security testers, what and why? |
+| [81](../../81-Android-Runtime-Internals/README.md#10-common-interview-questions) | What is the right architectural response to the fact that any client-side runtime can be hooked? |
+| [81](../../81-Android-Runtime-Internals/README.md#10-common-interview-questions) | How would you standardise runtime compatibility across a fleet of Android devices? |
+| [81](../../81-Android-Runtime-Internals/README.md#10-common-interview-questions) | How do you reason about a vulnerability that only appears when a method is JIT-compiled? |
 

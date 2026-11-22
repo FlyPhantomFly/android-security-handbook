@@ -3232,14 +3232,14 @@ Annotated, with a Related-chapters table, in
   — the `<pin-set>` element, `expiration`, and the trust-anchor rules.
 - [Security with HTTPS and SSL](https://developer.android.com/privacy-and-security/security-ssl) —
   Google's own account, including the warning about pinning's operational risk.
-- [OkHttp `CertificatePinner`](https://square.github.io/okhttp/4.x/okhttp/okhttp3/-certificate-pinner/)
+- [OkHttp `CertificatePinner`](https://javadoc.io/doc/com.squareup.okhttp3/okhttp/latest/okhttp3/CertificatePinner.html)
   — the pattern syntax and the exception format.
 - [Conscrypt](https://github.com/google/conscrypt) — the provider itself.
 - [BoringSSL](https://boringssl.googlesource.com/boringssl/) — the native layer.
 
 ### OWASP
 
-- [MASVS-NETWORK](https://mas.owasp.org/MASVS/06-MASVS-NETWORK/) — NETWORK-1 and the **conditional**
+- [MASVS-NETWORK](https://mas.owasp.org/MASVS/08-MASVS-NETWORK/) — NETWORK-1 and the **conditional**
   NETWORK-2.
 - [MASTG](https://mas.owasp.org/MASTG/) — the Android network testing procedures.
 

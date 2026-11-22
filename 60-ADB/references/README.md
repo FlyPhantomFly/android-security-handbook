@@ -56,7 +56,7 @@ without a checkout. Search for a symbol, not a filename.
 |---|---|
 | <https://developer.android.com/tools/adb> | The user-facing reference. Complete on commands, silent on the protocol |
 | <https://developer.android.com/tools/adb#wireless-android11-command-line> | The `adb pair` flow, and the only official description of the Android 11 wireless model |
-| <https://source.android.com/docs/core/architecture/kernel/adb> | The platform view: authentication, `ro.adb.secure`, and what an OEM is expected to configure |
+| <https://source.android.com/docs/compatibility/16/android-16-cdd> | The platform view: authentication, `ro.adb.secure`, and what an OEM is expected to configure |
 | <https://source.android.com/docs/core/ota/modular-system> | APEX and Mainline — why `adbd` moved out of `/system/bin` |
 | <https://source.android.com/docs/security/features/selinux> | Needed to read `adbd.te` and `shell.te` |
 | <https://developer.android.com/reference/android/provider/Settings.Global#ADB_ENABLED> | The setting the Developer Options toggle writes |

@@ -1,0 +1,34 @@
+{
+  "_comment": "Illustrative Vector-style scope configuration. Field names and storage format vary by Vector release; this is a reasoning aid, not a file to import.",
+  "modules": [
+    {
+      "id": "com.example.pinningbypass",
+      "enabled": true,
+      "scope": [
+        "com.example.bank",
+        "com.example.browser"
+      ],
+      "reason": "Hooks certificate pinning in two owned test apps only."
+    },
+    {
+      "id": "com.example.runtimeprobe",
+      "enabled": true,
+      "scope": [
+        "system"
+      ],
+      "reason": "Needs system_server internals; boot-loop risk accepted on a disposable image only."
+    },
+    {
+      "id": "com.example.unused",
+      "enabled": false,
+      "scope": [],
+      "reason": "Disabled: no target app needs it, and an empty scope is not a licence to run everywhere."
+    }
+  ],
+  "policy": {
+    "default": "deny",
+    "apply_on": "next_target_start",
+    "system_server_change": "requires_restart",
+    "selinux": "enforcing"
+  }
+}

@@ -3623,7 +3623,7 @@ Answer these from memory. If any takes more than a sentence or two, re-read the 
   https://github.com/openid/AppAuth-Android
 - AppAuth-Android sample app — a complete, correct flow to compare a target against.
   https://github.com/openid/AppAuth-Android/tree/master/app
-- Google Identity Services for Android — https://developers.google.com/identity/android
+- Google Identity Services for Android — https://developers.google.com/identity/sign-in/android/start
 - Nimbus JOSE + JWT — a correct JWT validator to check a backend's behaviour against.
   https://connect2id.com/products/nimbus-jose-jwt
 

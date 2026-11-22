@@ -54,7 +54,7 @@ Every link has a one-line note saying why you would open it. Grouped by what you
 ## Hidden APIs and SDK surfaces
 
 - **Restrictions on non-SDK interfaces** — https://developer.android.com/guide/app-compatibility/restrictions-non-sdk-interfaces — the official description of the lists, their semantics, and the `targetSdk` interaction.
-- **Testing non-SDK interface usage** — https://developer.android.com/guide/app-compatibility/test-non-sdk — the `hidden_api_policy` setting and the `am instrument --no-hidden-api-checks` flag.
+- **Testing non-SDK interface usage** — https://developer.android.com/guide/app-compatibility/restrictions-non-sdk-interfaces#test-for-non-sdk — the `hidden_api_policy` setting and the `am instrument --no-hidden-api-checks` flag.
 - **List of non-SDK interfaces** — https://developer.android.com/guide/app-compatibility/restrictions-non-sdk-interfaces#list-of-non-sdk-interfaces — the published lists themselves.
 - `art/runtime/hidden_api.cc` and `hidden_api.h` — the implementation. Read these rather than the documentation when you need to know exactly which code paths are checked.
 - `frameworks/base/core/api/current.txt`, `system-current.txt`, `test-current.txt` — the machine-readable surfaces. `git log -p` on `system-current.txt` is a complete history of every system API ever added or removed.
@@ -75,7 +75,7 @@ Every link has a one-line note saying why you would open it. Grouped by what you
 - **Android Security Bulletins** — https://source.android.com/docs/security/bulletin — the monthly list, with the AOSP commits that fix each issue. The authority to cite when you need a specific identifier rather than a class of issue.
 - **Pixel Update Bulletins** — https://source.android.com/docs/security/bulletin/pixel — device-specific fixes, which frequently reveal vendor-layer issue classes.
 - **Android security patch levels explained** — https://source.android.com/docs/security/overview/updates-resources — what `ro.build.version.security_patch` actually asserts, which is less than most people assume.
-- **Android Security Rewards programme rules** — https://bughunters.google.com/about/rules/android-friends — scope, severity criteria and, importantly, the platform-versus-vendor distinction that determines who you report to.
+- **Android Security Rewards programme rules** — https://bughunters.google.com/about/rules — scope, severity criteria and, importantly, the platform-versus-vendor distinction that determines who you report to.
 
 ---
 

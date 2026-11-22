@@ -3662,7 +3662,7 @@ The full printable version is [`cheatsheet.md`](cheatsheet.md). Condensed:
 - Android security overview — https://source.android.com/docs/security
 - Android Security Bulletins — https://source.android.com/docs/security/bulletin
 - Restrictions on non-SDK interfaces — https://developer.android.com/guide/app-compatibility/restrictions-non-sdk-interfaces
-- Testing non-SDK interface usage — https://developer.android.com/guide/app-compatibility/test-non-sdk
+- Testing non-SDK interface usage — https://developer.android.com/guide/app-compatibility/restrictions-non-sdk-interfaces#test-for-non-sdk
 
 ### Key source paths
 
@@ -3694,7 +3694,7 @@ The full printable version is [`cheatsheet.md`](cheatsheet.md). Condensed:
 
 - Google Project Zero — https://googleprojectzero.blogspot.com/ — a large body of Android platform and
   vendor research, frequently with the AOSP source reading shown in full
-- Android Security Rewards Program rules — https://bughunters.google.com/about/rules/android-friends
+- Android Security Rewards Program rules — https://bughunters.google.com/about/rules
 - Android Developers Blog — https://android-developers.googleblog.com/
 - Android Platform Security Model (Mayrhofer et al.) — the paper that states the model this chapter
   traces, searchable by title

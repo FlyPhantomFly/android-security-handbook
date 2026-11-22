@@ -2821,9 +2821,9 @@ Annotated in [`references/README.md`](references/README.md), with a Related-chap
 ### OWASP
 
 - MASVS — https://mas.owasp.org/MASVS/
-- MASVS-RESILIENCE — https://mas.owasp.org/MASVS/09-MASVS-RESILIENCE/
+- MASVS-RESILIENCE — https://mas.owasp.org/MASVS/11-MASVS-RESILIENCE/
 - MASTG — https://mas.owasp.org/MASTG/
-- MASTG Android tests index — https://mas.owasp.org/MASTG/tests/android/
+- MASTG Android tests index — https://mas.owasp.org/MASTG/tests/
 
 ### Tooling
 

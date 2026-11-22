@@ -21,6 +21,16 @@ and §7.1 records exactly what was and was not observable on it — including th
 itself was not installed**, and what that means for which claims here are measured and which are
 source-level.
 
+> **2026 update — the project continues as Vector.** The LSPosed lineage renamed and rewrote its
+> Zygisk architecture as **Vector** ([`JingMatrix/Vector`](https://github.com/JingMatrix/Vector)).
+> The framework layer described in this chapter — a Zygisk module, a daemon, per-app scope, an
+> in-memory framework DEX and LSPlant as the hook engine — is the same architecture; the native
+> injection path, the module metadata handling and the libxposed API version are not. Read this
+> chapter for the LSPosed model and [81-Android-Runtime-Internals §3.12](../81-Android-Runtime-Internals/README.md#312-vector-the-framework-above-the-hook)
+> for the current Vector implementation and its 2026 changes. Historical LSPosed builds remain the
+> subject of the measurements below; do not treat a 2025 LSPosed binary and a 2026 Vector binary as
+> interchangeable when the question is detection or compatibility.
+
 ---
 
 ## Table of Contents
@@ -157,7 +167,7 @@ so it gets a table before anything else.
 | **Xposed** (classic) | rovo89 | Replaces `/system/bin/app_process`; adds `XposedBridge.jar` to the boot class path | `hookMethodNative` in `libxposed_art.so` | **Global** — every process | Ended at API 27. See [64-Xposed](../64-Xposed/README.md) |
 | **Riru** | RikkaW | Replaces a native library Zygote already loads, so the loader pulls Riru in for free | None — Riru is a *substrate*, not a hooking framework | n/a | Superseded by Zygisk |
 | **EdXposed** | ElderDrivers | A **Riru** module | YAHFA, or SandHook, selectable | Per-application (added late) | Largely superseded |
-| **LSPosed** | LSPosed developers | A **Zygisk** module (older builds: a Riru module) | **LSPlant** | Per-application, per-process | Current |
+| **LSPosed** | LSPosed developers | A **Zygisk** module (older builds: a Riru module) | **LSPlant** | Per-application, per-process | Current lineage — continued as **Vector** in 2026; see [81 §3.12](../81-Android-Runtime-Internals/README.md#312-vector-the-framework-above-the-hook) |
 | **libxposed** | LSPosed developers | Same as LSPosed | Same | Same | The newer, cleaner API. Modules may use either |
 
 Three things worth extracting from that table, because they are the parts that get mis-stated:
@@ -3052,6 +3062,7 @@ Full annotated list, with the related-chapters table: [`references/README.md`](r
 | [13-ART](../13-ART/README.md) | **Owns** `ArtMethod`, the entry point, and the four causes of hook failure |
 | [62-Magisk](../62-Magisk/README.md) | **Owns** root, the module system and **Zygisk's injection mechanism**. This chapter owns what LSPosed does with it |
 | [65-Hooking](../65-Hooking/README.md) | **Owns** hooking from first principles. LSPosed is its hook type 1, delivered by types 3 and 5 |
+| [81-Android-Runtime-Internals](../81-Android-Runtime-Internals/README.md) | **Extends** this chapter: the current Vector implementation, the 2026 rewrite, and the full injection stack from zygote to `ArtMethod` |
 | [53-Frida](../53-Frida/README.md) | **Owns** Frida. §7.9 here extends its FAQ 24 comparison rather than repeating it |
 | [64-Xposed](../64-Xposed/README.md) | The historical framework, `app_process` replacement and `hookMethodNative` in depth |
 | [16-JNI](../16-JNI/README.md) | **Owns** `RegisterNatives` — the mechanism Zygisk uses on Zygote's fork functions |

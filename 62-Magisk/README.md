@@ -676,6 +676,11 @@ Zygisk also provides:
 > delegated to the companion. This is the same architectural pattern as a privileged helper daemon
 > in a desktop application.
 
+For the full path from a Zygisk callback to a hooked Java method — including how ZygiskNext provides
+this same ABI without Magisk, and how Vector and LSPlant stack on top of it — see
+[81-Android-Runtime-Internals §3.10–3.14](../81-Android-Runtime-Internals/README.md#310-zygisk-the-module-abi).
+This chapter owns Magisk's implementation; chapter 81 owns the runtime and injection stack above it.
+
 ### 3.9 DenyList — what it really does
 
 This section matters more than any other in the chapter, because DenyList is the single most
@@ -2294,3 +2299,4 @@ mindmap
 - [63-LSPosed](../63-LSPosed/README.md) — the flagship Zygisk module
 - [65-Hooking](../65-Hooking/README.md) — the mechanisms Zygisk exposes
 - [67-BypassingProtections](../67-BypassingProtections/README.md) — the methodology this chapter serves
+- [81-Android-Runtime-Internals](../81-Android-Runtime-Internals/README.md) — ZygiskNext, Vector and LSPlant, and the runtime stack above Zygisk

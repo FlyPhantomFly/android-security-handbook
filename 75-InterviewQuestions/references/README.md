@@ -14,7 +14,7 @@ again.
 
 | File | What it is | Use it when |
 |---|---|---|
-| [`question-index.md`](question-index.md) | All 1,258 questions, grouped by tier, each linked to the chapter section that answers it | you want the whole corpus at your level |
+| [`question-index.md`](question-index.md) | All 1,373 questions, grouped by tier, each linked to the chapter section that answers it | you want the whole corpus at your level |
 | [`question-index-by-role.md`](question-index-by-role.md) | Six role tracks, with per-tier counts per chapter | you know the job title you are interviewing for |
 | [`question-index-by-round.md`](question-index-by-round.md) | Six interview rounds, with the tiers each draws from and the in-scope pool per chapter | you know which stage is next |
 
@@ -31,17 +31,19 @@ python3 -B scripts/build-interview-index.py --by role  --out references/question
 python3 -B scripts/build-interview-index.py --by round --out references/question-index-by-round.md
 ```
 
-**Corpus as measured 2026-08-16** — from `--stats`, not estimated. Two runs, ninety minutes
-apart, with sibling chapters landing in between:
+**Corpus snapshots** — from `--stats`, not estimated. Two runs were taken ninety minutes apart on
+2026-08-16, with sibling chapters landing in between; the third row is the corpus re-measured on
+2026-11-20 after chapter 81 landed:
 
 | | Beginner | Intermediate | Senior | Staff | Principal | Total | Chapters |
 |---|---:|---:|---:|---:|---:|---:|---:|
 | Run 1 | 321 | 333 | 272 | 177 | 155 | **1,258** | 71 |
 | Run 2 | 337 | 346 | 286 | 187 | 164 | **1,320** | 75 |
+| Current | 348 | 359 | 297 | 196 | 173 | **1,373** | 78 |
 
-**Neither number is a constant, and neither should be quoted.** The corpus grows every time a
-chapter lands, which is precisely the argument for generating these files rather than
-transcribing them. Run `--stats` for today's figure.
+**None of these numbers is a constant, and none should be quoted without its date.** The corpus
+grows every time a chapter lands, which is precisely the argument for generating these files rather
+than transcribing them. Run `--stats` for today's figure.
 
 `--check` reported 0 problems on run 1: every chapter with a section carried all five tiers. On
 run 2 it reported one chapter with a README and no section — correctly, because that chapter
@@ -126,7 +128,7 @@ Relevant to [README §5.2](../README.md#52-the-take-home-that-is-unpaid-work-or-
   a vendor publishes a disclosure channel. Knowing it exists is a small differentiator.
 - **Google Play Security Reward Program** — https://bughunters.google.com/
 - **Android Vulnerability Rewards Program** —
-  https://bughunters.google.com/about/rules/android-friends
+  https://bughunters.google.com/about/rules
 - **CVE Program** — https://www.cve.org/ — identifier assignment. **Never quote an identifier
   you have not verified**; describing the class of issue is a correct and respected answer.
 
@@ -178,7 +180,7 @@ Stated so nobody assumes it was overlooked.
   chapter is described generically. A leaked bank is an integrity problem, and in practice it
   is also out of date.
 - **No "top 100 Android interview questions" listicles.** The corpus in
-  [`question-index.md`](question-index.md) is 1,258 questions attached to the chapters that
+  [`question-index.md`](question-index.md) is 1,373 questions attached to the chapters that
   justify their answers, which is strictly better and costs nothing.
 - **No salary or negotiation material.** Out of scope, and done badly by everyone who bolts it
   onto a technical document.

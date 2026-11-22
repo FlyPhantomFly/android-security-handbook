@@ -1863,7 +1863,7 @@ several of these components have migrated into mainline modules under `packages/
 | Class loader and `Application` creation | `frameworks/base/core/java/android/app/LoadedApk.java` |
 | `oom_score_adj` constants | `frameworks/base/services/core/java/com/android/server/am/ProcessList.java` |
 | The killer itself | `system/memory/lmkd/` |
-| Standby buckets | `frameworks/base/services/usage/java/com/android/server/usage/AppStandbyController.java` |
+| Standby buckets | `frameworks/base/apex/jobscheduler/service/java/com/android/server/usage/AppStandbyController.java` |
 
 ### 4.2 Trace one: from a UID to an Android user
 
@@ -4212,7 +4212,7 @@ lives in [`references/README.md`](references/README.md); this is the working sub
 | [App standby buckets](https://developer.android.com/topic/performance/appstandby) | bucket names, values and what each throttles |
 | [Keep your app responsive (ANRs)](https://developer.android.com/topic/performance/anrs/keep-your-app-responsive) | the timeout values and how traces are produced |
 | [Application sandbox](https://source.android.com/docs/security/app-sandbox) | the platform team's own description of the UID sandbox |
-| [Multiple users](https://source.android.com/docs/core/permissions/multi-user) | the platform view of `userId`, profiles and per-user storage |
+| [Multiple users](https://source.android.com/docs/devices/admin/multi-user) | the platform view of `userId`, profiles and per-user storage |
 | [File-based encryption](https://source.android.com/docs/security/features/encryption/file-based) | the mechanism behind CE and DE |
 | [Low memory killer daemon](https://source.android.com/docs/core/perf/lmkd) | how pressure becomes a kill |
 | [Android security bulletins](https://source.android.com/docs/security/bulletin) | the authoritative place to look up real CVEs in this area |
@@ -4222,10 +4222,10 @@ lives in [`references/README.md`](references/README.md); this is the working sub
 | Identifier | Relevance |
 |---|---|
 | [MASVS-STORAGE](https://mas.owasp.org/MASVS/05-MASVS-STORAGE/) | STORAGE-1 and STORAGE-2 — sandbox storage and leakage |
-| [MASVS-PLATFORM](https://mas.owasp.org/MASVS/07-MASVS-PLATFORM/) | PLATFORM-1 — IPC, exported components, shared UIDs |
-| [MASVS-RESILIENCE](https://mas.owasp.org/MASVS/09-MASVS-RESILIENCE/) | RESILIENCE-1, -2, -4 — platform integrity, anti-tamper, anti-debug |
+| [MASVS-PLATFORM](https://mas.owasp.org/MASVS/09-MASVS-PLATFORM/) | PLATFORM-1 — IPC, exported components, shared UIDs |
+| [MASVS-RESILIENCE](https://mas.owasp.org/MASVS/11-MASVS-RESILIENCE/) | RESILIENCE-1, -2, -4 — platform integrity, anti-tamper, anti-debug |
 | [MASVS-CODE](https://mas.owasp.org/MASVS/10-MASVS-CODE/) | CODE-3 — third-party components and the startup supply chain |
-| [MASTG Android techniques](https://mas.owasp.org/MASTG/techniques/android/) | concrete `adb`, `frida` and `objection` recipes matching this chapter |
+| [MASTG Android techniques](https://mas.owasp.org/MASTG/0x05b-Android-Security-Testing/) | concrete `adb`, `frida` and `objection` recipes matching this chapter |
 
 ### 14.4 Research and talks
 

@@ -101,7 +101,7 @@ navigation technique.
 |---|---|
 | [Android Security Bulletins](https://source.android.com/docs/security/bulletin) | Where to find real identifiers for verifier and parser vulnerabilities |
 | [Google Project Zero](https://googleprojectzero.blogspot.com/) | High-quality research on runtime and format parsing bugs |
-| [Android VRP rules](https://bughunters.google.com/about/rules/android-friends) | What Google treats as reportable |
+| [Android VRP rules](https://bughunters.google.com/about/rules) | What Google treats as reportable |
 
 > **Note on CVE citation.** This chapter describes vulnerability *classes* — parser divergence,
 > verifier bypass, map inconsistency — rather than naming identifiers, because format bugs are

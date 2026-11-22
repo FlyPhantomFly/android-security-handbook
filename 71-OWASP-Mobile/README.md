@@ -911,7 +911,7 @@ mindmap
 
 - OWASP ASVS (for the backend) — https://owasp.org/www-project-application-security-verification-standard/
 - OWASP Mobile Top 10 — https://owasp.org/www-project-mobile-top-10/
-- NIST SP 800-163 Rev.1, Vetting the Security of Mobile Applications — https://csrc.nist.gov/publications/detail/sp/800-163/rev-1/final
+- NIST SP 800-163 Rev.1, Vetting the Security of Mobile Applications — https://csrc.nist.gov/pubs/sp/800/163/r1/final
 - PCI Mobile Payments on COTS — https://www.pcisecuritystandards.org/
 - FIRST CVSS v3.1 — https://www.first.org/cvss/v3-1/specification-document
 

@@ -145,7 +145,7 @@ per-release history. The navigation technique is in [07-AOSP](../../07-AOSP/READ
 |---|---|
 | [Android Security Bulletins](https://source.android.com/docs/security/bulletin) | Monthly, authoritative. Read for the *pattern* of which components recur, not to memorise identifiers. Provider and URI-grant issues appear regularly under the Framework component. |
 | [Google Project Zero](https://googleprojectzero.blogspot.com/) | The highest-quality public writing on Android IPC and confused-deputy chains. |
-| [Android VRP rules](https://bughunters.google.com/about/rules/android-friends) | What Google itself considers a reportable provider vulnerability and at what severity. Useful for calibrating your own severity ratings against an external standard. |
+| [Android VRP rules](https://bughunters.google.com/about/rules) | What Google itself considers a reportable provider vulnerability and at what severity. Useful for calibrating your own severity ratings against an external standard. |
 | [Android Code Search](https://cs.android.com/) | Not a paper, but the single most useful research tool in this list. |
 
 ---

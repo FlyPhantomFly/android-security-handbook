@@ -132,7 +132,7 @@ this chapter.**
 | MASVS-CRYPTO-1 | The key you found in `.rodata` |
 | MASVS-RESILIENCE-1 … -4 | Anti-tampering, obfuscation and integrity — the layer implemented in the `.so` |
 | MASVS-STORAGE-2 | Secrets recoverable from the shipped package |
-| [MASTG — Android techniques](https://mas.owasp.org/MASTG/techniques/android/) | Procedural companions, including native reverse engineering |
+| [MASTG — Android techniques](https://mas.owasp.org/MASTG/0x05b-Android-Security-Testing/) | Procedural companions, including native reverse engineering |
 | [MASTG](https://mas.owasp.org/MASTG/) | The testing guide itself |
 
 Cite the identifier in every finding. "The library has no stack canaries" is an observation;

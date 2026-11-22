@@ -689,7 +689,7 @@ mindmap
 - FIRST CVSS v3.1 specification — https://www.first.org/cvss/v3-1/specification-document
 - FIRST CVSS calculator — https://www.first.org/cvss/calculator/3.1
 - Google Play Security Reward Program — https://bughunters.google.com/
-- Android Vulnerability Rewards Program — https://bughunters.google.com/about/rules/android-friends
+- Android Vulnerability Rewards Program — https://bughunters.google.com/about/rules
 
 ### Related chapters
 

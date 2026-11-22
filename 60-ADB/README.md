@@ -3101,7 +3101,7 @@ mindmap
 
 - Android Debug Bridge — https://developer.android.com/tools/adb
 - Wireless debugging (Android 11+) — https://developer.android.com/tools/adb#wireless-android11-command-line
-- ADB security and authorisation — https://source.android.com/docs/core/architecture/kernel/adb
+- ADB security and authorisation — https://source.android.com/docs/compatibility/16/android-16-cdd
 - APEX / Mainline modules — https://source.android.com/docs/core/ota/modular-system
 - Android permissions reference — https://developer.android.com/reference/android/Manifest.permission
 

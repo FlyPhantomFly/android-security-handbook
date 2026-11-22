@@ -53,7 +53,7 @@ Annotated. Each row says **what the link is good for**, not just what it is.
 |---|---|
 | <https://python.docs.hex-rays.com/> | **The IDAPython API reference.** The authority for every script in [`../scripts/`](../scripts/), and the thing to check before believing a snippet from a blog |
 | <https://cpp.docs.hex-rays.com/> | The C++ SDK reference. `hexrays.hpp` is here, including the `mba_maturity_t` enum whose members §3.4 quotes |
-| <https://docs.hex-rays.com/developer-guide/idapython/idapython-porting-guide-ida-9> | **Read before running any script written before 9.0.** `ida_struct` and `ida_enum` were removed; `get_inf_structure()` was removed |
+| <https://docs.hex-rays.com/developer/idapython/how-tos/idapython-porting-guide-ida-9> | **Read before running any script written before 9.0.** `ida_struct` and `ida_enum` were removed; `get_inf_structure()` was removed |
 | <https://hex-rays.com/blog/ida-9-0-sdk-idapython-porting-guides> | The same changes, with the reasoning |
 | <https://docs.hex-rays.com/developer/idapython/idapython-getting-started> | Your first script. Shorter than it looks |
 | <https://hex-rays.com/blog/> | Where new decompiler and microcode capabilities are explained first, usually with a worked example |
@@ -138,7 +138,7 @@ this chapter — file paths are stable, line numbers are not.
 | **MASVS-RESILIENCE** | Anti-tampering, obfuscation, integrity, debugger and root detection. **The standard against which "the app is obfuscated" is judged** |
 | **MASVS-CRYPTO** | Where a key recovered from a `.so` maps |
 | **MASVS-STORAGE** | Where a native-derived key protecting local data lands |
-| <https://mas.owasp.org/MASTG/techniques/android/> | The Android technique catalogue, including native reverse engineering |
+| <https://mas.owasp.org/MASTG/0x05b-Android-Security-Testing/> | The Android technique catalogue, including native reverse engineering |
 | <https://mas.owasp.org/MASTG/> | The testing guide, with concrete procedures |
 
 Cite the identifier in the finding. "The library contains an embedded HMAC key" is an observation;

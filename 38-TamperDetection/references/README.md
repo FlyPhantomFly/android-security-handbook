@@ -88,9 +88,9 @@ this chapter** — file paths are stable across releases and line numbers are no
 | Link | Why |
 |---|---|
 | [MASVS](https://mas.owasp.org/MASVS/) | The standard itself |
-| [MASVS-RESILIENCE](https://mas.owasp.org/MASVS/09-MASVS-RESILIENCE/) | **RESILIENCE-2** (anti-tampering) and **RESILIENCE-4** (anti-dynamic-analysis) are this chapter. Note the category is explicitly *conditional* on a threat model that includes a compromised device — applying it to every app is a misreading, not a strict reading |
+| [MASVS-RESILIENCE](https://mas.owasp.org/MASVS/11-MASVS-RESILIENCE/) | **RESILIENCE-2** (anti-tampering) and **RESILIENCE-4** (anti-dynamic-analysis) are this chapter. Note the category is explicitly *conditional* on a threat model that includes a compromised device — applying it to every app is a misreading, not a strict reading |
 | [MASTG](https://mas.owasp.org/MASTG/) | The testing guide |
-| [MASTG Android tests](https://mas.owasp.org/MASTG/tests/android/) | The anti-tampering and anti-dynamic-analysis tests. **A MASTG test tells you how to determine whether a control is present. "Absent" is a test result, not a severity** — see README §5.3 |
+| [MASTG Android tests](https://mas.owasp.org/MASTG/tests/) | The anti-tampering and anti-dynamic-analysis tests. **A MASTG test tells you how to determine whether a control is present. "Absent" is a test result, not a severity** — see README §5.3 |
 
 [71-OWASP-Mobile](../../71-OWASP-Mobile/README.md) carries the full mapping across all categories.
 

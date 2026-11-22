@@ -73,7 +73,7 @@ Every entry has a one-line annotation saying **why you would open it**. Links to
 | [`frameworks/base/core/jni/com_android_internal_os_Zygote.cpp`](https://android.googlesource.com/platform/frameworks/base/+/refs/heads/main/core/jni/com_android_internal_os_Zygote.cpp) | The native specialisation: `setuid`, `setgroups`, `capset`, `selinux_android_setcontext`. |
 | [`frameworks/base/core/java/android/os/ZygoteProcess.java`](https://android.googlesource.com/platform/frameworks/base/+/refs/heads/main/core/java/android/os/ZygoteProcess.java) | The socket protocol AMS uses to ask Zygote for a new process. |
 | [`frameworks/base/core/java/android/os/Looper.java`](https://android.googlesource.com/platform/frameworks/base/+/refs/heads/main/core/java/android/os/Looper.java) | The main-thread loop whose starvation produces an ANR. |
-| [`frameworks/base/core/java/android/os/MessageQueue.java`](https://android.googlesource.com/platform/frameworks/base/+/refs/heads/main/core/java/android/os/MessageQueue.java) | `epoll`-backed queue; the native side of "the UI thread is blocked". |
+| [`frameworks/base/core/java/android/os/MessageQueue.java`](https://android.googlesource.com/platform/frameworks/base/+/refs/tags/android-13.0.0_r1/core/java/android/os/MessageQueue.java) | `epoll`-backed queue; the native side of "the UI thread is blocked". |
 | [`frameworks/base/services/core/java/com/android/server/am/ActivityManagerService.java`](https://android.googlesource.com/platform/frameworks/base/+/refs/heads/main/services/core/java/com/android/server/am/ActivityManagerService.java) | Decides when to start a process and when to kill one. |
 | [`frameworks/base/services/core/java/com/android/server/am/ProcessList.java`](https://android.googlesource.com/platform/frameworks/base/+/refs/heads/main/services/core/java/com/android/server/am/ProcessList.java) | The `*_ADJ` constants written to `/proc/<pid>/oom_score_adj`. |
 | [`system/memory/lmkd/`](https://android.googlesource.com/platform/system/memory/lmkd/+/refs/heads/main/) | The userspace low-memory killer that turns those adj values into dead processes. |
@@ -85,8 +85,8 @@ Every entry has a one-line annotation saying **why you would open it**. Links to
 
 | Path | Why you would read it |
 |---|---|
-| [`frameworks/base/services/usage/java/com/android/server/usage/AppStandbyController.java`](https://android.googlesource.com/platform/frameworks/base/+/refs/heads/main/services/usage/java/com/android/server/usage/AppStandbyController.java) | Bucket assignment logic behind `am get-standby-bucket`. |
-| [`frameworks/base/services/core/java/com/android/server/DeviceIdleController.java`](https://android.googlesource.com/platform/frameworks/base/+/refs/heads/main/services/core/java/com/android/server/DeviceIdleController.java) | The Doze state machine you drive with `dumpsys deviceidle`. |
+| [`frameworks/base/apex/jobscheduler/service/java/com/android/server/usage/AppStandbyController.java`](https://android.googlesource.com/platform/frameworks/base/+/refs/tags/android-13.0.0_r1/apex/jobscheduler/service/java/com/android/server/usage/AppStandbyController.java) | Bucket assignment logic behind `am get-standby-bucket`. |
+| [`frameworks/base/apex/jobscheduler/service/java/com/android/server/DeviceIdleController.java`](https://android.googlesource.com/platform/frameworks/base/+/refs/tags/android-13.0.0_r1/apex/jobscheduler/service/java/com/android/server/DeviceIdleController.java) | The Doze state machine you drive with `dumpsys deviceidle`. |
 | [`frameworks/base/core/java/android/app/usage/UsageStatsManager.java`](https://android.googlesource.com/platform/frameworks/base/+/refs/heads/main/core/java/android/app/usage/UsageStatsManager.java) | `STANDBY_BUCKET_*` constants (10/20/30/40/45/50). |
 
 ---
@@ -110,7 +110,7 @@ Every entry has a one-line annotation saying **why you would open it**. Links to
 | [`<manifest>` element](https://developer.android.com/guide/topics/manifest/manifest-element) | Where `sharedUserId` and `sharedUserMaxSdkVersion` are documented, deprecation included. |
 | [`<application>` element](https://developer.android.com/guide/topics/manifest/application-element) | `debuggable`, `allowBackup`, `process`, `directBootAware`. |
 | [`<service>` element](https://developer.android.com/guide/topics/manifest/service-element) | `android:isolatedProcess` and `android:process`. |
-| [Support multiple users](https://developer.android.com/topic/multiuser) | Developer-facing view of per-user app instances. |
+| [Support multiple users](https://developer.android.com/reference/android/os/UserManager) | Developer-facing view of per-user app instances. |
 | [Work profiles / enterprise](https://developer.android.com/work/managed-profiles) | How the profile boundary behaves for an ordinary app. |
 | [App standby buckets](https://developer.android.com/topic/performance/appstandby) | Bucket names, numeric values and what each bucket throttles. |
 | [Doze and App Standby](https://developer.android.com/training/monitoring-device-state/doze-standby) | The idle state machine and the whitelist. |
@@ -131,7 +131,7 @@ Every entry has a one-line annotation saying **why you would open it**. Links to
 | [SELinux concepts](https://source.android.com/docs/security/features/selinux/concepts) | Domains, types and the MLS categories on app labels. |
 | [Implementing SELinux](https://source.android.com/docs/security/features/selinux/implement) | `seapp_contexts`, `file_contexts` and how labels are actually assigned. |
 | [File-based encryption](https://source.android.com/docs/security/features/encryption/file-based) | The mechanism behind CE and DE directories. |
-| [Multiple users](https://source.android.com/docs/core/permissions/multi-user) | Platform view of `userId`, profiles and per-user storage. |
+| [Multiple users](https://source.android.com/docs/devices/admin/multi-user) | Platform view of `userId`, profiles and per-user storage. |
 | [APK signature scheme v2](https://source.android.com/docs/security/features/apksigning/v2) | What install-time verification is checking. |
 | [APK signature scheme v3](https://source.android.com/docs/security/features/apksigning/v3) | Key rotation and the proof-of-rotation lineage PMS records. |
 | [APK signature scheme v4](https://source.android.com/docs/security/features/apksigning/v4) | Incremental/streamed installs and fs-verity. |
@@ -150,10 +150,10 @@ Application Security Testing Guide (MASTG) states *how* you test it.
 |---|---|
 | [MASVS-STORAGE-1](https://mas.owasp.org/MASVS/05-MASVS-STORAGE/) | Sensitive data must be stored securely in app-private storage — i.e. inside the UID sandbox, not on shared storage. |
 | MASVS-STORAGE-2 | The app must prevent leakage of sensitive data — backups, logs, external storage, DE storage. |
-| [MASVS-PLATFORM-1](https://mas.owasp.org/MASVS/07-MASVS-PLATFORM/) | IPC mechanisms must be used securely — exported components, providers, shared UIDs. |
+| [MASVS-PLATFORM-1](https://mas.owasp.org/MASVS/09-MASVS-PLATFORM/) | IPC mechanisms must be used securely — exported components, providers, shared UIDs. |
 | MASVS-PLATFORM-2 | WebViews configured securely — relevant to isolated renderer processes. |
 | MASVS-PLATFORM-3 | Sensitive data must not be exposed through the user interface or notifications. |
-| [MASVS-RESILIENCE-1](https://mas.owasp.org/MASVS/09-MASVS-RESILIENCE/) | The app validates the integrity of the platform (root/emulator/debuggable checks). |
+| [MASVS-RESILIENCE-1](https://mas.owasp.org/MASVS/11-MASVS-RESILIENCE/) | The app validates the integrity of the platform (root/emulator/debuggable checks). |
 | MASVS-RESILIENCE-2 | The app implements anti-tampering — signature checks, which is the only real package-identity control. |
 | MASVS-RESILIENCE-4 | The app impedes dynamic analysis — debuggable flag, JDWP, `ptrace`, Frida detection. |
 | [MASVS-CODE-3](https://mas.owasp.org/MASVS/10-MASVS-CODE/) | Third-party components must be current and free of known vulnerabilities — the SDK-provider supply-chain problem. |
@@ -173,7 +173,7 @@ the numeric test IDs were renumbered in MASTG v2:
 | Testing for Debugging Symbols / Debugging Code | leftover debug scaffolding in release builds |
 | Testing Anti-Debugging Detection | `TracerPid`, `ptrace`, JDWP detection |
 | Testing Enforced Updating / Integrity | signature verification and install provenance |
-| [MASTG demos and Android hacking techniques](https://mas.owasp.org/MASTG/techniques/android/) | Concrete `adb`, `frida` and `objection` recipes matching this chapter's commands |
+| [MASTG demos and Android hacking techniques](https://mas.owasp.org/MASTG/0x05b-Android-Security-Testing/) | Concrete `adb`, `frida` and `objection` recipes matching this chapter's commands |
 
 ---
 

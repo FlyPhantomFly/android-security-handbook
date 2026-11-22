@@ -36,7 +36,7 @@ cited anywhere in this chapter** — they move between releases and a wrong one 
 
 | Resource | Why |
 |---|---|
-| [OkHttp `CertificatePinner`](https://square.github.io/okhttp/4.x/okhttp/okhttp3/-certificate-pinner/) | **The reference for the `sha256/` format**, the wildcard pattern semantics (`*` versus `**`), and the exact exception text. Read the "Note about self-signed certificates" and the "How to configure" sections before advising anybody |
+| [OkHttp `CertificatePinner`](https://javadoc.io/doc/com.squareup.okhttp3/okhttp/latest/okhttp3/CertificatePinner.html) | **The reference for the `sha256/` format**, the wildcard pattern semantics (`*` versus `**`), and the exact exception text. Pair it with the [HTTPS guide](https://github.com/square/okhttp/blob/master/docs/features/https.md) before advising anybody |
 | [OkHttp source, `CertificatePinner.kt`](https://github.com/square/okhttp/blob/master/okhttp/src/commonJvmAndroid/kotlin/okhttp3/CertificatePinner.kt) | `findMatchingPins`, the `check` loop, and `check$okhttp`. Answers "would this pattern match that host" definitively |
 | [Conscrypt](https://github.com/google/conscrypt) | The provider itself, with a readable history of how `TrustManagerImpl` changed |
 | [BoringSSL](https://boringssl.googlesource.com/boringssl/) | The native layer under everything on Android |
@@ -82,10 +82,10 @@ Safe to cite in a client report. Unlike CVE identifiers, standards numbers do no
 
 | Resource | Why |
 |---|---|
-| [**MASVS-NETWORK**](https://mas.owasp.org/MASVS/06-MASVS-NETWORK/) | The two controls every finding here maps to. **NETWORK-1**: traffic is secured per current best practice. **NETWORK-2**: identity pinning for endpoints under the developer's control. **Read the qualifiers in NETWORK-2 before writing a finding** — it is conditional on the threat model, not universal |
-| [MASVS-RESILIENCE](https://mas.owasp.org/MASVS/07-MASVS-RESILIENCE/) | Where pinning-as-anti-analysis actually belongs. RESILIENCE controls are explicitly best-effort, which is the project agreeing that a pin does not survive device compromise |
+| [**MASVS-NETWORK**](https://mas.owasp.org/MASVS/08-MASVS-NETWORK/) | The two controls every finding here maps to. **NETWORK-1**: traffic is secured per current best practice. **NETWORK-2**: identity pinning for endpoints under the developer's control. **Read the qualifiers in NETWORK-2 before writing a finding** — it is conditional on the threat model, not universal |
+| [MASVS-RESILIENCE](https://mas.owasp.org/MASVS/11-MASVS-RESILIENCE/) | Where pinning-as-anti-analysis actually belongs. RESILIENCE controls are explicitly best-effort, which is the project agreeing that a pin does not survive device compromise |
 | [MASTG](https://mas.owasp.org/MASTG/) | The test procedures. Cite the **control id**, not the test id — control ids are stable across MASTG refactors |
-| [MASTG Android network tests](https://mas.owasp.org/MASTG/tests/android/MASVS-NETWORK/) | The Android-specific procedures, with the greps and hooks |
+| [MASTG Android network tests](https://mas.owasp.org/MASTG/0x05g-Testing-Network-Communication/) | The Android-specific procedures, with the greps and hooks |
 | [OWASP Certificate and Public Key Pinning cheat sheet](https://cheatsheetseries.owasp.org/cheatsheets/Pinning_Cheat_Sheet.html) | A concise defensible answer for "what should we pin", suitable for pasting into a remediation section |
 | [OWASP Transport Layer Security cheat sheet](https://cheatsheetseries.owasp.org/cheatsheets/Transport_Layer_Security_Cheat_Sheet.html) | The baseline the app should meet before pinning is even the question |
 | [MASTG test apps](https://mas.owasp.org/MASTG/apps/) | Legal practice targets. Use these rather than a real third-party app |

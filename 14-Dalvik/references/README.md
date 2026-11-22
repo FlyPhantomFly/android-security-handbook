@@ -145,7 +145,7 @@ and they are still the clearest explanation of several things nothing else expla
 |---|---|
 | [Android Security Bulletins](https://source.android.com/docs/security/bulletin) | **Where to source a real CVE identifier** for a runtime or verifier issue, rather than recalling one. Searchable by release |
 | [Google Project Zero](https://googleprojectzero.blogspot.com/) | High-quality research on runtime, parser and verifier bugs |
-| [Android VRP rules](https://bughunters.google.com/about/rules/android-friends) | What Google treats as reportable in this area |
+| [Android VRP rules](https://bughunters.google.com/about/rules) | What Google treats as reportable in this area |
 
 > **Note on CVE citation.** This chapter names **CVE-2017-13156 (Janus)** because it is precisely the
 > "two parsers, one file" pattern the chapter teaches, and it names **CVE-2013-4787 ("Master Key")**

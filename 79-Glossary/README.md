@@ -527,9 +527,15 @@ reads everything — which is why "I found the token in logcat" needs the `shell
 before it becomes a finding. Filter with `adb logcat --pid=$(adb shell pidof -s <pkg>)`.
 *Chapter: [51](../51-DynamicAnalysis/README.md)* · *See also: daemon, shell (UID 2000)*
 
+**LSPlant** — an ART hook library: it replaces a method's quick entrypoint, keeps a backup method for
+the original, and can deoptimize callers whose inlined copies bypass the hook. It is the engine
+underneath Vector/LSPosed, not a module loader or a scope manager.
+*Chapter: [81](../81-Android-Runtime-Internals/README.md)* · *See also: `ArtMethod`, Vector*
+
 **LSPosed** — a modern Xposed-API implementation built on Zygisk, hooking Java methods by patching ART
-entry points.
-*Chapter: [63](../63-LSPosed/README.md)*
+entry points. In 2026 the lineage continues as **Vector**; the LSPosed architecture and the Vector
+implementation are the same stack, but the native injection path and API version differ.
+*Chapter: [63](../63-LSPosed/README.md)* · *See also: Vector, LSPlant, Zygisk*
 
 ### M
 
@@ -570,6 +576,12 @@ Frequently the reason your proxy silently fails.
 **Nonce** — a number used once, for a given key. Overlaps with IV in practice; the distinguishing
 requirement is *uniqueness*, whereas a CBC IV additionally requires *unpredictability*.
 *Chapter: [34](../34-Cryptography/README.md)* · *Often confused with: IV, salt*
+
+**nterp** — ART's native-stack interpreter. It is the preferred interpreter on many configurations,
+but not a universal one: debuggable or interpret-only builds, incompatible instrumentation and some
+exception/listener states can exclude it. Its entrypoint lives in `libart.so` and is one of the
+possible values of a method's quick entrypoint.
+*Chapter: [81](../81-Android-Runtime-Internals/README.md)* · *See also: ART, JIT, OAT*
 
 ### O
 
@@ -820,6 +832,11 @@ redirection.
 **VDEX** — the ART artifact holding verified DEX plus verifier dependencies, alongside OAT.
 *Chapter: [13](../13-ART/README.md)*
 
+**Vector** — the 2026 continuation of LSPosed: a Zygisk-based Xposed/libxposed framework that loads
+its framework DEX in memory, selects scope per app, and uses LSPlant for ART entrypoint hooks. Its
+native injection path is a rewrite, not the old LSPosed binary.
+*Chapter: [81](../81-Android-Runtime-Internals/README.md)* · *See also: LSPosed, LSPlant, Zygisk*
+
 **VNDK (Vendor Native Development Kit)** — the stable set of native libraries vendor code may use,
 part of Treble.
 *Chapter: [06](../06-Android-Architecture/README.md)*
@@ -843,7 +860,12 @@ survives in LSPosed.
 
 **Zygisk** — Magisk's mechanism for injecting modules into Zygote so they run inside every app
 process.
-*Chapter: [62](../62-Magisk/README.md)*
+*Chapter: [62](../62-Magisk/README.md)* · *See also: ZygiskNext, Vector*
+
+**ZygiskNext** — a standalone implementation of the Zygisk module ABI for KernelSU, Magisk and
+APatch. It is not a different module API for authors. Closed-source since `v4-0.9.2`; the public
+repository carries the README, `module.yaml`, the native extension header and documentation.
+*Chapter: [81](../81-Android-Runtime-Internals/README.md)* · *See also: Zygisk, KernelSU, Magisk*
 
 **Zygote** — the process that preloads framework classes and resources and forks every app process.
 Forking (rather than exec'ing) is why app startup is fast — and why library addresses are identical

@@ -2630,8 +2630,8 @@ mindmap
 
 - **`sensepost/objection`** — https://github.com/sensepost/objection — the tool. The
   repository is the authority for the command surface of *your* version.
-- **The agent source** — https://github.com/sensepost/objection/tree/master/agents/frida —
-  the TypeScript that compiles to the `agent.js` on your disk. `agents/frida/src/android/root.ts`
+- **The agent source** — https://github.com/sensepost/objection/tree/master/agent/src —
+  the TypeScript that compiles to the `agent.js` on your disk. `agent/src/android/root.ts`
   and `.../android/pinning.ts` are the two files behind §3.5 and §3.6.
 - **The wiki** — https://github.com/sensepost/objection/wiki — installation, the
   gadget/`patchapk` workflow, and the update policy the start-up banner points at.

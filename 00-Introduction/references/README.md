@@ -305,7 +305,7 @@ suggested order.
   skimming.
 - **Ole André Vadla Ravnås and the Frida project blog** — https://frida.re/news — Release notes and
   design write-ups explaining what the instrumentation engine can now do.
-- **John Wu, Magisk author** — https://topjohnwu.github.io and the Magisk repository — Design notes
+- **John Wu, Magisk author** — https://topjohnwu.github.io/Magisk/ and the Magisk repository — Design notes
   on systemless root and Zygisk that explain *why* the hiding mechanisms work.
 - **Maddie Stone's public Android research** — published through Project Zero and conference talks;
   particularly good on in-the-wild Android exploitation and malware.

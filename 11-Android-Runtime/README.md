@@ -2810,7 +2810,7 @@ Full version in [`cheatsheet.md`](cheatsheet.md). Condensed:
 - Configuring ART — https://source.android.com/docs/core/runtime/configure
 - ART Mainline module — https://source.android.com/docs/core/ota/modular-system/art
 - Google Play device and network abuse policy (downloading executable code) —
-  https://support.google.com/googleplay/android-developer/answer/9888379
+  https://support.google.com/googleplay/android-developer/answer/9888379?hl=en
 
 ### OWASP
 
@@ -2828,3 +2828,4 @@ Full version in [`cheatsheet.md`](cheatsheet.md). Condensed:
 - [40-Obfuscation](../40-Obfuscation/README.md) — packers and unpacking methodology
 - [53-Frida](../53-Frida/README.md) — the instrumentation these techniques rely on
 - [65-Hooking](../65-Hooking/README.md) — hooking across managed and native layers
+- [81-Android-Runtime-Internals](../81-Android-Runtime-Internals/README.md) — the advanced runtime and injection capstone that extends this chapter's zygote, class-loader and `ArtMethod` material

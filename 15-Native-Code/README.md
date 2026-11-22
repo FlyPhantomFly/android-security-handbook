@@ -3522,7 +3522,7 @@ technique. **File paths are stable; line numbers are not, and none are quoted an
 | MASVS-CODE-1, MASVS-CODE-2 | Third-party components and platform API use |
 | MASVS-CRYPTO-1 | Keys in `.rodata` |
 | MASVS-RESILIENCE-1 through -4 | Where anti-tampering is implemented |
-| [MASTG Android techniques](https://mas.owasp.org/MASTG/techniques/android/) | Procedural companions, including native reverse engineering |
+| [MASTG Android techniques](https://mas.owasp.org/MASTG/0x05b-Android-Security-Testing/) | Procedural companions, including native reverse engineering |
 | [MASTG](https://mas.owasp.org/MASTG/) | The testing guide |
 
 ### CVEs and vulnerability history

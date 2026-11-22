@@ -100,7 +100,7 @@ jadx**, which is also the fastest demonstration of the `java-convert` plugin.
 |---|---|
 | https://mas.owasp.org/MASVS/ | MASVS. **RESILIENCE-1** (impede comprehension) is measured by jadx output; **CODE-4** (no debug symbols in release builds) is §3.11 |
 | https://mas.owasp.org/MASTG/ | MASTG. Many static tests begin "decompile the app". Cite the tool version alongside the test id |
-| https://mas.owasp.org/MASTG/tools/android/ | MASTG's own tool listing, including jadx |
+| https://mas.owasp.org/MASTG/tools/ | MASTG's own tool listing, including jadx |
 | https://owasp.org/www-project-mobile-top-10/ | The higher-level framing for the finding classes of §5.2 |
 
 ## Background — decompilation as a research problem

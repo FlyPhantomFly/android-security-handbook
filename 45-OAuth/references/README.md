@@ -77,7 +77,7 @@ actually need them.
 | [AppAuth-Android](https://github.com/openid/AppAuth-Android) | The OpenID Foundation's certified client library — the reference implementation of RFC 8252. Refuses to run the flow in a `WebView` |
 | [AppAuth-Android sample app](https://github.com/openid/AppAuth-Android/tree/master/app) | A known-correct flow to diff a target's behaviour against |
 | [AppAuth `TokenRequest`](https://github.com/openid/AppAuth-Android/blob/master/library/java/net/openid/appauth/TokenRequest.java) | Read this to know exactly what `getRequestParameters()` returns — the highest-value Frida hook in the chapter |
-| [Google Identity Services for Android](https://developers.google.com/identity/android) | What "Sign in with Google" actually does on Android today |
+| [Google Identity Services for Android](https://developers.google.com/identity/sign-in/android/start) | What "Sign in with Google" actually does on Android today |
 | [Nimbus JOSE + JWT](https://connect2id.com/products/nimbus-jose-jwt) | A correct JWT validator — use it to demonstrate what a backend *should* have done |
 | [jwt.io](https://jwt.io/) | Quick decoding during testing. Never paste a real production token into a third-party site |
 

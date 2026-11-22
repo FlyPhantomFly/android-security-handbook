@@ -62,7 +62,7 @@ Annotated. Each entry says what it is *for*, not just what it is.
 |---|---|
 | [Megabeets — A journey into radare2](https://www.megabeets.net/a-journey-into-radare-2-part-1/) | The introduction most people actually learn from. Worked examples rather than a command dump |
 | [r2con](https://rada.re/con/) | The project's own conference. The workshop tracks are the best structured teaching material that exists for this tool |
-| [radare2 explorations](https://monosource.gitbooks.io/radare2-explorations/content/) | Community walkthroughs, CTF-flavoured |
+| [radare2 explorations](https://book.rada.re/) | Community walkthroughs, CTF-flavoured |
 | [Cutter documentation](https://cutter.re/docs/) | If you prefer the GUI, this is the equivalent orientation |
 
 ---
@@ -109,7 +109,7 @@ These are paths in the AOSP tree, not URLs. They define what radare2 is showing 
 |---|---|
 | [MASVS](https://mas.owasp.org/MASVS/) | **MASVS-CODE-4** (third-party/native code), **MASVS-CRYPTO-1/2** (keys, proven implementations), **MASVS-RESILIENCE-1..4** (platform integrity, anti-tampering, anti-static-analysis, anti-dynamic-analysis) |
 | [MASTG](https://mas.owasp.org/MASTG/) | The testing guide. Its native-code static analysis tests are what §8 of the chapter implements |
-| [MASTG — Android reverse engineering](https://mas.owasp.org/MASTG/techniques/android/) | Tool-level techniques, including radare2 usage |
+| [MASTG — Android reverse engineering](https://mas.owasp.org/MASTG/0x05b-Android-Security-Testing/) | Tool-level techniques, including radare2 usage |
 
 > The measured `-O2` string-folding failure in §5.3 is a **MASVS-RESILIENCE-3** finding: the
 > anti-static-analysis control was present in source and absent from the shipped artefact.
