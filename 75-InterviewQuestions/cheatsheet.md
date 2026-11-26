@@ -81,7 +81,7 @@ Degrades gracefully: interrupted after 2 it is complete; after 3 it is good.
 | 3 | Altitude | mechanism vs system vs programme |
 | 4 | Severity | hold, locate the disagreement |
 | 5 | Tool-first | never open with a tool name |
-| 6 | Knowledge | the other 80 chapters |
+| 6 | Knowledge | the other chapters |
 
 ---
 

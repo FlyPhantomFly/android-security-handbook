@@ -42,8 +42,8 @@ python3 -B scripts/lint-commands.py --format md --summary-only \
 
 | Script | Purpose | Executed? |
 |---|---|---|
-| [`../scripts/build-cheatsheet-index.py`](../scripts/build-cheatsheet-index.py) | Builds the three routers; `--stats`, `--check`, `--verify-links` | **Yes** — 78 sheets parsed, 1,628 links emitted, 0 broken |
-| [`../scripts/lint-commands.py`](../scripts/lint-commands.py) | Eight rules for measured-broken command forms; `--self-test`, `--only-sheets` | **Yes** — 38/38 self-test cases pass; 787 markdown files scanned |
+| [`../scripts/build-cheatsheet-index.py`](../scripts/build-cheatsheet-index.py) | Builds the three routers; `--stats`, `--check`, `--verify-links` | **Yes** — 80 sheets parsed, 1,660 links resolved, 0 broken |
+| [`../scripts/lint-commands.py`](../scripts/lint-commands.py) | Eight rules for measured-broken command forms; `--self-test`, `--only-sheets` | **Yes** — 38/38 self-test cases pass; 839 markdown files scanned |
 | [`../scripts/vantage.sh`](../scripts/vantage.sh) | One probe from `shell`, `root` and an app uid on an attached device | **Yes** — on `sdk_gphone16k_x86_64`, API 35, with a debuggable package |
 
 ---

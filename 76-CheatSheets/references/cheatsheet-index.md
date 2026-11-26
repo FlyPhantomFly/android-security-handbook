@@ -10,7 +10,7 @@ separated from the chapter that justifies it is how a reader ends up pasting a
 command they cannot defend — see [`../README.md`](../README.md) section 7.
 
 
-**79 sheets, 1212 sections, 29484 lines.** Concatenating them would produce a 29,484-line file that is stale the moment any chapter is edited. This is the index instead.
+**80 sheets, 1224 sections, 29663 lines.** Concatenating them would produce a 29,663-line file that is stale the moment any chapter is edited. This is the index instead.
 
 
 | Sheet | Lines | Sections | Fences | Covers |
@@ -93,7 +93,8 @@ command they cannot defend — see [`../README.md`](../README.md) section 7.
 | [75 — InterviewQuestions](../../75-InterviewQuestions/cheatsheet.md) | 291 | 16 | 1 | The answer shape — five moves, 90–150 s; The five tiers — what escalates; Not knowing — four parts, 20 s; Stage → what is measured; Where candidates are lost (most → least common); Situation → move; … |
 | [76 — CheatSheets](../../76-CheatSheets/cheatsheet.md) | 353 | 17 | 6 | Start of every session — four commands; The five shell rules; Device posture; Root; Vantage — the same probe, three heights; Task: APK and one hour; … |
 | [77 — UsefulCommands](../../77-UsefulCommands/cheatsheet.md) | 291 | 17 | 6 | Connection; Files; Install; Packages; Activities & Intents; Providers; … |
-| [78 — Diagrams](../../78-Diagrams/cheatsheet.md) | 238 | 12 | 3 | Mermaid families; Flowchart notation; Sequence notation; State and class notation; Repository conventions (STYLE-GUIDE.md §6); Commands; … |
+| [78 — Diagrams](../../78-Diagrams/cheatsheet.md) | 240 | 12 | 3 | Mermaid families; Flowchart notation; Sequence notation; State and class notation; Repository conventions (STYLE-GUIDE.md §6); Commands; … |
+| [81 — Android Runtime Internals](../../81-Android-Runtime-Internals/cheatsheet.md) | 177 | 12 | 2 | The one command that matters; The three seams; Process identity; `ArtMethod` fields that matter; Entrypoint destinations; Dispatch and hook failures; … |
 
 ---
 
@@ -1701,10 +1702,27 @@ Jump straight to the block you need. Anchors are GitHub's.
 - [State and class notation](../../78-Diagrams/cheatsheet.md#state-and-class-notation)
 - [Repository conventions (STYLE-GUIDE.md §6)](../../78-Diagrams/cheatsheet.md#repository-conventions-style-guidemd-6)
 - [Commands](../../78-Diagrams/cheatsheet.md#commands)
-- [Parse failures measured in this repository](../../78-Diagrams/cheatsheet.md#parse-failures-measured-in-this-repository)
+- [Parse failures measured in the 2026-08-16 snapshot](../../78-Diagrams/cheatsheet.md#parse-failures-measured-in-the-2026-08-16-snapshot)
 - [Escapes and entities](../../78-Diagrams/cheatsheet.md#escapes-and-entities)
 - [Family selection](../../78-Diagrams/cheatsheet.md#family-selection)
 - [Pre-ship checklist](../../78-Diagrams/cheatsheet.md#pre-ship-checklist)
 - [Boxes that are drawn as boundaries and are not](../../78-Diagrams/cheatsheet.md#boxes-that-are-drawn-as-boundaries-and-are-not)
 - [The one claim every diagram makes](../../78-Diagrams/cheatsheet.md#the-one-claim-every-diagram-makes)
+
+### 81 — Android Runtime Internals
+
+*Printable. No prose. See [README.md](../../81-Android-Runtime-Internals/README.md) for why each of these works.*
+
+- [The one command that matters](../../81-Android-Runtime-Internals/cheatsheet.md#the-one-command-that-matters)
+- [The three seams](../../81-Android-Runtime-Internals/cheatsheet.md#the-three-seams)
+- [Process identity](../../81-Android-Runtime-Internals/cheatsheet.md#process-identity)
+- [`ArtMethod` fields that matter](../../81-Android-Runtime-Internals/cheatsheet.md#artmethod-fields-that-matter)
+- [Entrypoint destinations](../../81-Android-Runtime-Internals/cheatsheet.md#entrypoint-destinations)
+- [Dispatch and hook failures](../../81-Android-Runtime-Internals/cheatsheet.md#dispatch-and-hook-failures)
+- [Zygisk callbacks (API v5)](../../81-Android-Runtime-Internals/cheatsheet.md#zygisk-callbacks-api-v5)
+- [Layer map](../../81-Android-Runtime-Internals/cheatsheet.md#layer-map)
+- [Commands](../../81-Android-Runtime-Internals/cheatsheet.md#commands)
+- [Detection evidence](../../81-Android-Runtime-Internals/cheatsheet.md#detection-evidence)
+- [Version matrix](../../81-Android-Runtime-Internals/cheatsheet.md#version-matrix)
+- [Related chapters](../../81-Android-Runtime-Internals/cheatsheet.md#related-chapters)
 

@@ -4,9 +4,9 @@ Real questions, including the ones people feel stupid asking. Answered directly.
 
 ---
 
-### 1. Why isn't this chapter just all 76 cheat sheets stuck together?
+### 1. Why isn't this chapter just all 80 cheat sheets stuck together?
 
-Because that file would be 29,189 lines, and — more importantly — it would be a **copy**. A copy has
+Because that file would be 29,663 lines, and — more importantly — it would be a **copy**. A copy has
 no relationship to its source. The moment `33-Storage/cheatsheet.md` is edited, the copy is wrong,
 and nothing in the copy says so. A reader who finds a stale command in it has no way to know which
 of the two versions is current.

@@ -7,10 +7,10 @@ three on the right are what it *guards against*.
 mindmap
   root((76 · Cheat Sheets))
     Why this chapter is not a concatenation
-      78 sheets
-      29,189 lines
-      1,198 H2 sections
-      747 fenced blocks
+      80 sheets
+      29,663 lines
+      1,224 H2 sections
+      761 fenced blocks
       A copy has no link to its source
       Stale on the first chapter edit
       Unnavigable at that size
@@ -25,7 +25,7 @@ mindmap
         --verify-links
       Parses H2, fences, tables
       Copies nothing
-      1,628 links emitted
+      1,660 links resolved
       0 broken after verification
       Two levels down means ../../
       Quoting text with links IS a link operation

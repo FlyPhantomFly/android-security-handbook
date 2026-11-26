@@ -1,0 +1,24 @@
+sequenceDiagram
+    autonumber
+    participant Init as init
+    participant Zyg as zygote
+    participant Loader as ZygiskNext loader
+    participant App as app process
+    participant Vector as Vector framework
+    participant LS as LSPlant
+    participant ART as ART
+    Init->>Zyg: exec app_process --zygote
+    Zyg->>Zyg: AndroidRuntime::start + preload
+    Note over Zyg: module code is loaded after fork,<br/>not into the long-lived zygote
+    Zyg->>Loader: fork + ptrace stop (implementation-specific)
+    Loader->>App: inject libzgn / module libraries
+    App->>App: specialize (UID, SELinux, seccomp, mounts)
+    App->>Vector: postAppSpecialize
+    Vector->>Vector: daemon says "in scope"
+    Vector->>App: InMemoryDexClassLoader(framework DEX)
+    Vector->>LS: Init + Hook(target, callback)
+    LS->>ART: replace entrypoint, keep backup
+    App->>ART: call target method
+    ART-->>LS: trampoline
+    LS-->>Vector: callback(args)
+    Vector-->>App: result (or call backup)

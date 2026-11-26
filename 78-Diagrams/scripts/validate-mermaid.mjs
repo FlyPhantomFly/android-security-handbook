@@ -2,8 +2,8 @@
 // 78-Diagrams/scripts/validate-mermaid.mjs
 //
 // PURPOSE
-//   Parse every fenced ```mermaid block in this repository with the REAL Mermaid
-//   parser and report the ones that do not parse.
+//   Parse every fenced ```mermaid block and every standalone .mmd source in this
+//   repository with the REAL Mermaid parser and report the ones that do not parse.
 //
 //   A diagram that does not parse renders on GitHub as a red error box. It is the
 //   one defect in this repository that every reader sees and no author does,
@@ -154,7 +154,12 @@ async function loadMermaid() {
                             { pretendToBeVisual: true });
       globalThis.window = dom.window;
       globalThis.document = dom.window.document;
-      globalThis.navigator = dom.window.navigator;
+      // Node 24 defines `globalThis.navigator` as a getter, so a plain assignment
+      // throws. Redefine it instead; the validator needs jsdom's navigator for
+      // Mermaid's browser feature checks.
+      Object.defineProperty(globalThis, 'navigator', {
+        value: dom.window.navigator, configurable: true, writable: true,
+      });
       // These four are NOT decoration. jsdom keeps them on `window` but not on
       // `globalThis`, and mermaid's sequence grammar reaches for the bare global
       // `Option` when a diagram uses a `box`. Without this line every `box`
@@ -191,6 +196,9 @@ const FENCE = /^\s*(`{3,})\s*([A-Za-z0-9_-]*)\s*$/;
 
 function blocksIn(file) {
   const text = readFileSync(file, 'utf8').replace(/^﻿/, '').replace(/\r\n?/g, '\n');
+  // A standalone .mmd file is one diagram. Chapter 81 keeps its sources this way
+  // because GitHub's Mermaid iframe can time out; the rendered page uses SVG.
+  if (file.toLowerCase().endsWith('.mmd')) return [{ file, line: 1, src: text }];
   const lines = text.split('\n');
   const out = [];
   let ticks = null, info = null, start = 0, body = [];
@@ -297,7 +305,8 @@ function walk(dir, acc) {
     const p = join(dir, name);
     const st = statSync(p);
     if (st.isDirectory()) walk(p, acc);
-    else if (name.toLowerCase().endsWith('.md')) acc.push(p);
+    else if (name.toLowerCase().endsWith('.md') ||
+             name.toLowerCase().endsWith('.mmd')) acc.push(p);
   }
   return acc;
 }

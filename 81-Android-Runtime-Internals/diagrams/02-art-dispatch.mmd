@@ -1,0 +1,22 @@
+flowchart LR
+    subgraph Java["Java source"]
+        J["call site<br/>obj.method()"]
+    end
+    subgraph Dispatch["ART dispatch"]
+        D["resolve method<br/>ArtMethod*"]
+        E{"entry_point_from_<br/>quick_compiled_code_"}
+    end
+    subgraph Targets["Possible destinations"]
+        AOT["AOT compiled code<br/>OAT"]
+        JIT["JIT compiled code<br/>code cache"]
+        NTERP["nterp interpreter"]
+        JNI["JNI trampoline"]
+        RES["resolution / clinit stub"]
+    end
+    J --> D --> E
+    E --> AOT
+    E --> JIT
+    E --> NTERP
+    E --> JNI
+    E --> RES
+    style J fill:#f9d0d0

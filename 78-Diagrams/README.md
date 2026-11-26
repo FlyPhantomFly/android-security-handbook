@@ -24,14 +24,14 @@
 
 ## 1. Introduction
 
-This repository contains **775 Mermaid diagrams** outside this chapter. That number is measured, not
+This repository contains **787 Mermaid diagrams** outside this chapter. That number is measured, not
 estimated — [`scripts/diagram-census.py`](scripts/diagram-census.py) counted them, and section 3
 reports the full breakdown.
 
-It was 771 when this chapter was started and 775 by the time it was finished, because
-`76-CheatSheets` landed in between. Nothing was retyped to accommodate that; the script was re-run.
-That is the entire argument for the design of this chapter, demonstrated on itself within a single
-afternoon.
+It was 771 when this chapter was started and 775 when the first census was written, because
+`76-CheatSheets` landed in between. The current census reports 787, because later chapters kept
+landing. Nothing was retyped to accommodate any of those changes; the script was re-run. That is the
+entire argument for the design of this chapter, demonstrated on itself.
 
 That creates two problems, and only one of them is "where is the diagram I remember seeing".
 
@@ -63,7 +63,7 @@ that failure, with cases this repository measured rather than imagined.
 
 ### What this chapter deliberately does not contain
 
-**It does not reproduce the 775 diagrams.** That was the obvious design, and it is wrong for two
+**It does not reproduce the 787 diagrams.** That was the obvious design, and it is wrong for two
 reasons that are worth stating plainly, because the same reasoning applies to any aggregation you are
 tempted to build:
 
@@ -73,7 +73,7 @@ tempted to build:
   is regenerated rather than transcribed.
 - **A copied diagram loses its prose.** STYLE-GUIDE.md section 2 requires that "every diagram is
   followed by prose explaining what the reader is looking at — never leave a diagram to speak for
-  itself." Copying the diagram and not the prose breaks that rule 775 times. Copying both would be
+  itself." Copying the diagram and not the prose breaks that rule 787 times. Copying both would be
   copying the repository.
 
 What is genuinely this chapter's own work is the census, the diagrams that belong at repository level
@@ -153,9 +153,10 @@ survived for months. Eyes cannot count `../`. Resolve them.
 
 ## 3. The census — what the repository actually contains
 
-Everything in this section is a measurement taken on **2026-08-16** with CPython 3.13.3 and Node
-v20.19.1 on Windows 11. Re-run the scripts before quoting any of it; every number here moves when a
-chapter is edited.
+Everything in this section is a measurement taken on **2026-11-24** with CPython 3.13.5 and Node
+24.22.2 on Linux. The failure table in section 3.3 keeps its 2026-08-16 snapshot because that is the
+run the six causes came from. Re-run the scripts before quoting any of it; every number here moves
+when a chapter is edited.
 
 ### 3.1 Diagram count and mix
 
@@ -164,18 +165,20 @@ chapter is edited.
 python3 -B scripts/diagram-census.py --stats
 ```
 
-**775 Mermaid diagrams** across **172 markdown files**, in every chapter that has a README plus the
-repository-root files. That is the count *excluding this chapter*; chapter 78 contributes 37 of its
-own, which the script counts and reports separately, for a repository total of **812**.
+**787 Mermaid diagrams** across **180 files** outside this chapter, in every chapter that has a
+`README` plus the repository-root files. Chapter 78 contributes 37 of its own, in 8 files, which the
+script counts and reports separately, for a repository total of **824 across 188 files**. Six of the
+824 are standalone `.mmd` sources in chapter 81, counted because the page renders them as SVG; the
+rest are fenced blocks.
 
 | Family | Count | Share | What it is used for here |
 |---|---:|---:|---|
-| flowchart | 402 | 51.9% | Structure, layering, decision paths, "where does the data go" |
-| mindmap | 159 | 20.5% | The per-chapter `mindmap.md` and the Summary block of each README |
-| sequence | 144 | 18.6% | Anything with ordering: IPC, boot, handshakes, hook installation |
-| state | 32 | 4.1% | Lifecycles — activity, process, key, token, session |
-| block layout | 27 | 3.5% | Memory maps and file layouts, where a flowchart would lie about adjacency |
-| class | 11 | 1.4% | Object models: `ArtMethod`, `Parcel`, provider hierarchies |
+| flowchart | 422 | 51.2% | Structure, layering, decision paths, "where does the data go" |
+| mindmap | 169 | 20.5% | The per-chapter `mindmap.md` and the Summary block of each README |
+| sequence | 157 | 19.1% | Anything with ordering: IPC, boot, handshakes, hook installation |
+| state | 36 | 4.4% | Lifecycles — activity, process, key, token, session |
+| block layout | 28 | 3.4% | Memory maps and file layouts, where a flowchart would lie about adjacency |
+| class | 12 | 1.5% | Object models: `ArtMethod`, `Parcel`, provider hierarchies |
 
 Two things in that table are worth stopping on.
 
@@ -184,9 +187,9 @@ family — but it is the family that most easily hides ordering. When you see a 
 about a protocol, ask whether the author meant a sequence diagram and reached for the familiar tool.
 [Section 6.3](#63-choosing-the-family) is about that choice.
 
-**Sequence diagrams are only 18.6%, and they are where the parse failures cluster** (section 3.3).
-The sequence grammar has more reserved words and stricter statement termination than flowchart, so it
-punishes casual text. That is a fact about Mermaid, not about the authors.
+**Sequence diagrams are only 19.1%, and they were where the 2026-08-16 parse failures clustered**
+(section 3.3). The sequence grammar has more reserved words and stricter statement termination than
+flowchart, so it punishes casual text. That is a fact about Mermaid, not about the authors.
 
 Size distribution: the **median diagram has 7 nodes** and the largest has **46**. A 7-node diagram is
 the right size for this material. Treat 30-plus as a smell — it is usually two diagrams that have not
@@ -196,21 +199,21 @@ Convention adoption, which is the interesting part:
 
 | Convention (STYLE-GUIDE.md section 6) | Diagrams using it | Share |
 |---|---:|---:|
-| Draws at least one `subgraph` (a named trust boundary) | 215 | 27.7% |
-| Colours attacker-controlled input `#f9d0d0` | 300 | 38.7% |
+| Draws at least one `subgraph` (a named trust boundary) | 229 | 27.8% |
+| Colours attacker-controlled input `#f9d0d0` | 312 | 37.9% |
 
 > **Warning**
 > Read those two numbers together and the finding is uncomfortable: **more diagrams mark
-> attacker-controlled input than draw a boundary for it to cross.** 300 diagrams say "this is hostile"
-> and only 215 say where hostile stops being able to reach. Marking the input without drawing the
+> attacker-controlled input than draw a boundary for it to cross.** 312 diagrams say "this is hostile"
+> and only 229 say where hostile stops being able to reach. Marking the input without drawing the
 > boundary is the more dangerous half done first — it tells the reader to worry without telling them
 > where the worrying ends. [Section 6.1](#61-show-the-boundary-do-not-imply-it) is the fix.
 
 ### 3.2 Where the diagrams are, and where they are not
 
-**663** diagrams sit in chapter `README.md` files. **112** sit elsewhere — in `mindmap.md`, in
-`faq.md`, in individual lab files. Any aggregator that only walked READMEs would silently miss one
-diagram in seven.
+**682** diagrams sit in chapter `README.md` files. **142** sit elsewhere — in `mindmap.md`, in
+`faq.md`, in individual lab files, and in chapter 81's standalone `.mmd` sources. Any aggregator that
+only walked READMEs would silently miss about one diagram in six.
 
 ```bash
 # host, from 78-Diagrams/
@@ -236,7 +239,7 @@ Every non-reference chapter README clears the STYLE-GUIDE.md section 2 minimum o
 ```bash
 # host, from 78-Diagrams/
 python3 -B scripts/diagram-census.py --check
-# checked 80 chapter READMEs; 0 problem(s)
+# checked 82 chapter READMEs; 0 problem(s)
 ```
 
 > **Pentester's Note**
@@ -256,17 +259,21 @@ This is the measurement that matters most, because a diagram that does not parse
 a red error box — a defect every reader sees and no author does, since editor previews vary and a
 broken block often looks fine while you are writing it.
 
-**753 of 812 blocks parse. 59 do not, across 44 files in 40 chapters — 7.3%.** None of the 59 is in
-this chapter, and none is in `76-CheatSheets`; every one of the 37 diagrams authored here parses.
+**All 824 sources parse. 0 fail.** That is 818 fenced blocks plus chapter 81's six `.mmd` sources,
+measured on 2026-11-24 with `mermaid@11` and the validator below. The 2026-08-16 run, on an earlier
+Mermaid release, found **753 of 812 parsing, with 59 failures across 44 files in 40 chapters — 7.3%**.
+That snapshot is kept because the six causes are still the checklist, and because it is the evidence
+that the check earns its place.
 
-That is a real result and it is reported here rather than quietly fixed, because this chapter's job is
-to measure the repository, and because fixing 40 other chapters is not this chapter's mandate. Every
-failure has a file and a line in the validator's output.
+At the time, the 59 failures were reported rather than quietly fixed, because this chapter's job is
+to measure the repository, and because fixing 40 other chapters was not this chapter's mandate. Every
+failure had a file and a line in the validator's output. The current validator reports none, which is
+the only result worth shipping.
 
 The six causes, each confirmed by reducing it to a two-line diagram that fails and a one-character
 edit that fixes it:
 
-| Count | Cause | Why Mermaid rejects it | The fix |
+| Count (2026-08-16) | Cause | Why Mermaid rejects it | The fix |
 |---:|---|---|---|
 | 35 | A **semicolon** inside message or label text, e.g. `K-->>SH: SIGCHLD; wait4() returns status` | `;` is a statement separator. Everything after it is parsed as a new statement | Use a comma, or `<br/>` |
 | 10 | **Unquoted parentheses or brackets in mindmap text**, e.g. `O(1) average O(n) worst` | In `mindmap`, `(`, `[` and `{` are the node *shape* delimiters | Quote it: `id["O(1) average"]` |
@@ -280,8 +287,8 @@ edit that fixes it:
 > diagram until you add a second message. The reserved ids in a sequence diagram include `opt`, `alt`,
 > `else`, `loop`, `par`, `and`, `rect`, `break`, `critical`, `note`, `end`, `activate`, `deactivate`,
 > `box`, `over`, `link` and `title` — matched **without regard to case**. `participant Note as Notepad`
-> is broken. `participant N as Notepad` is fine. Sequence diagrams are 18.6% of this repository and
-> carry a disproportionate share of its parse failures for exactly this kind of reason.
+> is broken. `participant N as Notepad` is fine. Sequence diagrams were 18.6% of the 2026-08-16
+> snapshot and carried a disproportionate share of its parse failures for exactly this kind of reason.
 
 A seventh cause was found by this chapter, in this chapter, and it is worth recording because it is
 the same shape as the sixth. The Summary mind map in [section 8](#8-summary) originally contained the
@@ -295,13 +302,14 @@ check theirs.
 > Mermaid tells you **where** it stopped, never **why**. Its reported line number is the line where the
 > parser gave up, which is frequently the line *after* the one that broke it: an unterminated message
 > swallows the following line before failing. `validate-mermaid.mjs` prints the reported line, the
-> source at that line, and a suggested cause — but the suggestion is a heuristic over six known
-> patterns, not a second parser. Read the line above it too.
+> source at that line, and a suggested cause — but the suggestion is a heuristic over known patterns,
+> not a second parser. Read the line above it too.
 
 ### 3.4 How the census is produced
 
-Both scripts extract fenced blocks with the same state machine, and two details make it correct.
-Both are worth copying, because both were bugs first.
+Both scripts extract fenced blocks with the same state machine, and the census and validator also
+treat each standalone `.mmd` file as one diagram. Two details make the fence scanner correct; both
+are worth copying, because both were bugs first.
 
 **A fence is closed only by a run of at least as many backticks with no info string.** Without that
 rule, a `mermaid` block shown as an *example* inside a wider four-backtick fence gets counted as a
@@ -313,6 +321,11 @@ them and is wrong.
 paragraph that happens to *begin* with backticks as opening a fence, and everything after it — every
 heading, every link — disappears from the parser's view. That defect produced twenty phantom
 "no such anchor" reports in this chapter before it was found.
+
+Chapter 81 is the one place that does not use a fence. Its six diagrams live in `diagrams/*.mmd` and
+render from committed SVG, because GitHub's Mermaid iframe can time out on a slow connection and
+leave the reader with "Unable to render rich display". The `.mmd` source is still a Mermaid diagram:
+the census indexes it, the validator parses it, and the page links to it under each figure.
 
 Neither script transcribes anything. The census reads the repository; the index is written from what
 it read; nothing in `references/` is hand-edited. That is the whole design, and it is borrowed
@@ -877,7 +890,7 @@ Three specific mistakes to avoid, all of them observed:
 - **Marking the attacker's *process*.** Every other app is attacker-controlled. Marking them all is
   the same as marking none. Mark the *data* — the extra in the Intent, the URI, the response body.
 - **Marking the input and stopping.** As measured in [section 3.1](#31-diagram-count-and-mix), this
-  repository has 300 diagrams that mark attacker input and only 215 that draw any boundary. Marking
+  repository has 312 diagrams that mark attacker input and only 229 that draw any boundary. Marking
   says "worry"; the boundary says "worry up to here". Only the pair is useful.
 
 ### 6.3 Choosing the family
@@ -1138,13 +1151,14 @@ under a second and it resolves every link on disk instead of trusting the shape 
 
 ### Key points
 
-- The repository contains **775 Mermaid diagrams** outside this chapter, in 172 files: 51.9%
-  flowcharts, 20.5% mindmaps, 18.6% sequence, and the rest state, block and class. All numbers are
+- The repository contains **787 Mermaid diagrams** outside this chapter, in 180 files: 51.2%
+  flowcharts, 20.5% mindmaps, 19.1% sequence, and the rest state, block and class. All numbers are
   generated, never transcribed.
-- **753 of 812 parse**, counting this chapter's own 37, all of which do. The 59 failures cluster in six
-  causes, of which a semicolon in message text is 35 on its own, and the most instructive is a
-  participant id colliding with a sequence keyword.
-- **300 diagrams mark attacker-controlled input; only 215 draw a boundary.** Marking hostility without
+- **824 of 824 sources parse**, counting this chapter's own 37 and chapter 81's six `.mmd` sources.
+  The 2026-08-16 snapshot had 59 failures in 812, clustering in six causes, of which a semicolon in
+  message text was 35 on its own; the most instructive is a participant id colliding with a sequence
+  keyword.
+- **312 diagrams mark attacker-controlled input; only 229 draw a boundary.** Marking hostility without
   drawing where it stops is the more dangerous half done first.
 - This chapter indexes rather than copies. A copied diagram is stale immediately and separated from the
   prose the style guide requires beside it.
@@ -1165,17 +1179,18 @@ under a second and it resolves every link on disk instead of trusting the shape 
 mindmap
   root((Diagrams))
     The census
-      775 outside this chapter
-      172 files
-      flowcharts 402
-      mindmaps 159
-      sequences 144
-      state 32 block 27 class 11
+      787 outside this chapter
+      180 files
+      flowcharts 422
+      mindmaps 169
+      sequences 157
+      state 36 block 28 class 12
       median 7 nodes largest 46
       generated never transcribed
     Validation
-      753 of 812 parse
-      59 failures 40 chapters
+      824 of 824 parse
+      0 failures on 2026-11-24
+      was 59 failures in 812
       semicolon in message text 35
       unquoted parens in mindmap 10
       escaped quote in label 6

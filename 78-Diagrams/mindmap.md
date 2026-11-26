@@ -6,7 +6,7 @@ One map of the whole chapter. Chapter: [README.md](README.md).
 mindmap
   root((78 Diagrams))
     Why this chapter exists
-      775 diagrams outside it
+      787 diagrams outside it
       finding one is the easy problem
       believing one is the hard problem
       an index cannot go stale
@@ -14,25 +14,25 @@ mindmap
       style guide requires prose beside every diagram
     The census
       generated never transcribed
-      diagram-census.py walks every md file
-      775 blocks in 172 files
-      663 in chapter READMEs
-      112 in mindmap faq and labs
-      one in seven lives outside a README
+      diagram-census.py walks every md and mmd file
+      787 sources in 180 files
+      682 in chapter READMEs
+      142 in mindmap faq labs and mmd
+      one in six lives outside a README
       Mix
-        flowcharts 402 at 51.9 percent
-        mindmaps 159 at 20.5 percent
-        sequences 144 at 18.6 percent
-        states 32
-        block layouts 27
-        classes 11
+        flowcharts 422 at 51.2 percent
+        mindmaps 169 at 20.5 percent
+        sequences 157 at 19.1 percent
+        states 36
+        block layouts 28
+        classes 12
       Size
         median 7 nodes
         largest 46 nodes
         30 plus is usually two diagrams
       Conventions adopted
-        215 draw a subgraph boundary
-        300 colour attacker input
+        229 draw a subgraph boundary
+        312 colour attacker input
         more mark hostility than draw where it stops
       Diagram poor chapters
         79 and 80 by design
@@ -42,8 +42,9 @@ mindmap
         the answer may be no
     Validation
       real Mermaid parser under jsdom
-      753 of 812 parse
-      59 fail across 40 chapters
+      824 of 824 parse
+      0 failures now
+      was 59 failures in 812
       Causes
         semicolon in message text 35
         unquoted parens in mindmap 10

@@ -8,12 +8,12 @@ Notation, conventions, commands and failure modes on one page. Chapter: [README.
 
 | Family | Question it answers | Count in repo | Share |
 |---|---|---:|---:|
-| `flowchart` | What connects to what | 402 | 51.9% |
-| `mindmap` | What are the parts of this topic | 159 | 20.5% |
-| `sequenceDiagram` | Who, in what order | 144 | 18.6% |
-| `stateDiagram-v2` | What state, and what changes it | 32 | 4.1% |
-| `block-beta` | Where it sits in memory or on disk | 27 | 3.5% |
-| `classDiagram` | The shape of the data | 11 | 1.4% |
+| `flowchart` | What connects to what | 422 | 51.2% |
+| `mindmap` | What are the parts of this topic | 169 | 20.5% |
+| `sequenceDiagram` | Who, in what order | 157 | 19.1% |
+| `stateDiagram-v2` | What state, and what changes it | 36 | 4.4% |
+| `block-beta` | Where it sits in memory or on disk | 28 | 3.4% |
+| `classDiagram` | The shape of the data | 12 | 1.5% |
 
 ---
 
@@ -148,11 +148,13 @@ python3 -B scripts/verify-index-links.py --verbose
 
 ---
 
-## Parse failures measured in this repository
+## Parse failures measured in the 2026-08-16 snapshot
 
-753 of 812 blocks parse. 59 fail, across 44 files in 40 chapters. None is in chapter 78.
+753 of 812 blocks parsed; 59 failed, across 44 files in 40 chapters. None was in chapter 78. The
+current validator reports 824 of 824 sources parsing and 0 failures, but the six causes below are
+still the checklist to run when an edit breaks a diagram.
 
-| Count | Cause | Fix |
+| Count (2026-08-16) | Cause | Fix |
 |---:|---|---|
 | 35 | `;` in message or label text | Comma, or `<br/>` |
 | 10 | Unquoted `(` `[` `{` in **mindmap** node text | `id["the text (here)"]` |

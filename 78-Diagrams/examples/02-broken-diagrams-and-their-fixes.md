@@ -4,8 +4,9 @@ Every failure pattern measured in this repository, as a minimal reproduction and
 fix. Each broken case is shown as *text* — inside a wider fence, so it is never counted as a diagram
 and never renders as a red box. Each fixed case is a real, rendering diagram.
 
-Measured with Mermaid 11.16.1 under Node v20.19.1 on 2026-08-16: **753 of 812 blocks parse, 59 do
-not**, across 44 files in 40 chapters.
+Measured with Mermaid 11.16.1 under Node v20.19.1 on 2026-08-16: **753 of 812 blocks parsed, 59 did
+not**, across 44 files in 40 chapters. The current validator reports 824 of 824 parsing and 0
+failures; the broken cases below are kept as reproductions inside wider fences.
 
 Chapter: [../README.md](../README.md). Cheat sheet: [../cheatsheet.md](../cheatsheet.md).
 

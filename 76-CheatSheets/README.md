@@ -25,9 +25,9 @@
 
 ## 1. Introduction
 
-Seventy-eight of the chapters in this repository ship a `cheatsheet.md`. Together they are 29,189
-lines across 1,198 sections. That is not a cheat sheet; that is a second copy of the repository with
-the explanations removed.
+Eighty of the chapters in this repository ship a `cheatsheet.md`. Together they are 29,663 lines
+across 1,224 sections. That is not a cheat sheet; that is a second copy of the repository with the
+explanations removed.
 
 So the obvious thing to do here — concatenate them — is the one thing this chapter must not do. A
 single 29,000-line file is unnavigable, and worse, it is **stale the moment any chapter is edited**,
@@ -85,7 +85,7 @@ the thing it condenses. A cheat sheet read by someone who has not is just a list
 
 | Artefact | What it is | Reach for it when |
 |---|---|---|
-| §3 + [`references/`](references/README.md) | **Generated router.** Pointers into all 78 sheets | You know roughly what you want and need the page number |
+| §3 + [`references/`](references/README.md) | **Generated router.** Pointers into all 80 sheets | You know roughly what you want and need the page number |
 | §4 and [`cheatsheet.md`](cheatsheet.md) | **Task sheets.** Written here, cross-chapter | You know what you are *doing* but not what you need |
 | §6 | **Corrections.** Measured contradictions of the standard answer | Before you trust a tool's output |
 
@@ -205,12 +205,12 @@ Generated, three ways. Pick the one that matches how you are lost.
 | [`cheatsheet-index-by-task.md`](references/cheatsheet-index-by-task.md) | What you are doing | You know the goal, not the chapter |
 | [`cheatsheet-index-by-tool.md`](references/cheatsheet-index-by-tool.md) | Tool name, by frequency | You know the tool |
 
-Measured over this repository on 2026-08-16, with `--stats` and `--verify-links`:
+Measured over this repository on 2026-11-24, with `--stats` and `--verify-links`:
 
-> **Warning — this row is a snapshot, and it moved while this chapter was being written.**
-> Another chapter landed mid-session and the sheet count went from 76 to 78, the line total from
-> 28,594 to 29,189, and the emitted-link count from 1,595 to 1,628. Nothing was wrong with the first
-> measurement; the repository changed underneath it.
+> **Warning — this row is a snapshot, and it moves.**
+> On 2026-08-16 the same commands reported 78 sheets, 29,189 lines and 1,628 links; chapter 81 and
+> later edits moved those numbers. Nothing was wrong with the earlier measurement; the repository
+> changed underneath it.
 >
 > **Re-run rather than quoting.** That is not a caveat bolted on — it is the reason this chapter
 > generates its index instead of transcribing one. A transcribed number goes quietly stale; a
@@ -218,12 +218,12 @@ Measured over this repository on 2026-08-16, with `--stats` and `--verify-links`
 
 | | |
 |---|---:|
-| Chapter directories with a README | 80 |
-| Chapters carrying a `cheatsheet.md` | 78 |
-| Total lines across all sheets | 29,189 |
-| Total H2 sections across all sheets | 1,198 |
-| Total fenced code blocks | 747 |
-| Links emitted by the generator | 1,628 |
+| Chapter directories with a README | 82 |
+| Chapters carrying a `cheatsheet.md` | 80 |
+| Total lines across all sheets | 29,663 |
+| Total H2 sections across all sheets | 1,224 |
+| Total fenced code blocks | 761 |
+| Links resolved by `--verify-links` | 1,660 |
 | Broken links after `--verify-links` | **0** |
 
 The two chapters with a README and no sheet are [`79-Glossary`](../79-Glossary/README.md) and
@@ -812,7 +812,7 @@ Two lessons, and only the first is about paths:
 ### 7.4 Reading the router as a summary
 
 The generated index in [`references/`](references/README.md) contains headings and counts. It
-deliberately contains **no commands**. If it did, it would be a second copy of 29,189 lines with its
+deliberately contains **no commands**. If it did, it would be a second copy of 29,663 lines with its
 own truth, diverging from the sheets the moment either changed.
 
 A reader who scans the router and concludes "chapter 44 covers `trust-anchors`" has learned where to
@@ -865,7 +865,7 @@ Worked examples of both, side by side, are in
 
 ### Key points
 
-- **Do not concatenate.** 78 sheets, 29,189 lines, 1,198 sections. A copy has no relationship to its
+- **Do not concatenate.** 80 sheets, 29,663 lines, 1,224 sections. A copy has no relationship to its
   source and goes stale on the first edit. Generate a router instead, and verify its links by
   resolving them.
 - **The unit of a real cheat sheet is a task, not a chapter.** "I have an APK and one hour" crosses
@@ -891,7 +891,7 @@ Worked examples of both, side by side, are in
 mindmap
   root((76 Cheat Sheets))
     Why not concatenate
-      78 sheets · 29,189 lines · 1,198 sections
+      80 sheets · 29,663 lines · 1,224 sections
       A copy has no link to its source
       Stale on the first edit
       Generate a router instead

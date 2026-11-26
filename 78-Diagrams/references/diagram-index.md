@@ -1,6 +1,7 @@
 <!-- GENERATED FILE. Do not edit by hand.
      Rebuild with:  python3 -B scripts/diagram-census.py
-     Source: every fenced ```mermaid block in every .md file in this repository. -->
+     Source: every fenced ```mermaid block in every .md file in this repository,
+     plus every standalone .mmd source file. -->
 
 # Diagram index — by chapter
 
@@ -18,30 +19,30 @@ marks a diagram that colours attacker-controlled input `#f9d0d0`, the convention
 STYLE-GUIDE.md section 6.
 
 
-**818 diagrams across 182 files in 82 chapters.**
+**824 diagrams across 188 files in 83 chapters.**
 
 
 ## (root) (2)
 
 | # | Depicts | Type | Nodes | Boundaries | Atk | Location |
 |---:|---|---|---:|---:|:---:|---|
-| 1 | Learning path | flowchart | 13 | 0 |  | [README.md:94](../../README.md#learning-path) |
+| 1 | Learning path | flowchart | 14 | 0 |  | [README.md:46](../../README.md#learning-path) |
 | 2 | 6. Diagram conventions | flowchart | 5 | 2 | yes | [STYLE-GUIDE.md:227](../../STYLE-GUIDE.md#6-diagram-conventions) |
 
 ## 00-Introduction (11)
 
 | # | Depicts | Type | Nodes | Boundaries | Atk | Location |
 |---:|---|---|---:|---:|:---:|---|
-| 1 | 2.1 The map of the whole field | flowchart | 29 | 6 |  | [README.md:181](../../00-Introduction/README.md#21-the-map-of-the-whole-field) |
-| 2 | 2.2 Where the attacker sits relative to the app | flowchart | 22 | 8 | yes | [README.md:234](../../00-Introduction/README.md#22-where-the-attacker-sits-relative-to-the-app) |
-| 3 | 2.3 What a typical engagement looks like as a sequence | sequence | 5 | 0 |  | [README.md:320](../../00-Introduction/README.md#23-what-a-typical-engagement-looks-like-as-a-sequence) |
-| 4 | 2.4 The learning state machine | state | 0 | 0 |  | [README.md:356](../../00-Introduction/README.md#24-the-learning-state-machine) |
-| 5 | 3.2 The career ladder | flowchart | 10 | 0 |  | [README.md:423](../../00-Introduction/README.md#32-the-career-ladder) |
-| 6 | Magisk: the systemless approach | flowchart | 6 | 0 |  | [README.md:1280](../../00-Introduction/README.md#magisk-the-systemless-approach) |
-| 7 | Decision flow | flowchart | 11 | 0 | yes | [README.md:1550](../../00-Introduction/README.md#decision-flow) |
-| 8 | 5.5 How to actually study this repository | flowchart | 9 | 0 |  | [README.md:2097](../../00-Introduction/README.md#55-how-to-actually-study-this-repository) |
-| 9 | 8.1 The order of operations | flowchart | 10 | 0 |  | [README.md:2434](../../00-Introduction/README.md#81-the-order-of-operations) |
-| 10 | 13.2 Chapter mind map | mindmap | 1 | 0 |  | [README.md:3054](../../00-Introduction/README.md#132-chapter-mind-map) |
+| 1 | 2.1 The map of the whole field | flowchart | 29 | 6 |  | [README.md:197](../../00-Introduction/README.md#21-the-map-of-the-whole-field) |
+| 2 | 2.2 Where the attacker sits relative to the app | flowchart | 22 | 8 | yes | [README.md:250](../../00-Introduction/README.md#22-where-the-attacker-sits-relative-to-the-app) |
+| 3 | 2.3 What a typical engagement looks like as a sequence | sequence | 5 | 0 |  | [README.md:336](../../00-Introduction/README.md#23-what-a-typical-engagement-looks-like-as-a-sequence) |
+| 4 | 2.4 The learning state machine | state | 0 | 0 |  | [README.md:372](../../00-Introduction/README.md#24-the-learning-state-machine) |
+| 5 | 3.2 The career ladder | flowchart | 10 | 0 |  | [README.md:439](../../00-Introduction/README.md#32-the-career-ladder) |
+| 6 | Magisk: the systemless approach | flowchart | 6 | 0 |  | [README.md:1413](../../00-Introduction/README.md#magisk-the-systemless-approach) |
+| 7 | Decision flow | flowchart | 11 | 0 | yes | [README.md:1683](../../00-Introduction/README.md#decision-flow) |
+| 8 | 5.5 How to actually study this repository | flowchart | 9 | 0 |  | [README.md:2280](../../00-Introduction/README.md#55-how-to-actually-study-this-repository) |
+| 9 | 8.1 The order of operations | flowchart | 10 | 0 |  | [README.md:2617](../../00-Introduction/README.md#81-the-order-of-operations) |
+| 10 | 13.2 Chapter mind map | mindmap | 1 | 0 |  | [README.md:3237](../../00-Introduction/README.md#132-chapter-mind-map) |
 | 11 | _(no heading above it)_ | mindmap | 1 | 0 |  | [mindmap.md:7](../../00-Introduction/mindmap.md) |
 
 ## 01-Computer-Science-Basics (25)
@@ -49,27 +50,27 @@ STYLE-GUIDE.md section 6.
 | # | Depicts | Type | Nodes | Boundaries | Atk | Location |
 |---:|---|---|---:|---:|:---:|---|
 | 1 | 2.1 The stack from transistor to app | flowchart | 24 | 5 | yes | [README.md:196](../../01-Computer-Science-Basics/README.md#21-the-stack-from-transistor-to-app) |
-| 2 | 2.2 What one function call actually costs | block layout | 12 | 0 |  | [README.md:275](../../01-Computer-Science-Basics/README.md#22-what-one-function-call-actually-costs) |
-| 3 | 2.3 A process's address space | block layout | 13 | 0 |  | [README.md:313](../../01-Computer-Science-Basics/README.md#23-a-processs-address-space) |
-| 4 | 2.4 The lifetime of one instruction | sequence | 8 | 0 |  | [README.md:361](../../01-Computer-Science-Basics/README.md#24-the-lifetime-of-one-instruction) |
-| 5 | 2.5 Trust boundaries | flowchart | 14 | 5 | yes | [README.md:412](../../01-Computer-Science-Basics/README.md#25-trust-boundaries) |
-| 6 | 3.6 What a CPU does: fetch, decode, execute | state | 0 | 0 |  | [README.md:903](../../01-Computer-Science-Basics/README.md#36-what-a-cpu-does-fetch-decode-execute) |
-| 7 | 3.11 Kernel space, user space, privilege rings and exception levels | flowchart | 10 | 2 | yes | [README.md:1266](../../01-Computer-Science-Basics/README.md#311-kernel-space-user-space-privilege-rings-and-exception-levels) |
-| 8 | 3.12 Processes: address space, PID, and the process control block | flowchart | 11 | 1 |  | [README.md:1380](../../01-Computer-Science-Basics/README.md#312-processes-address-space-pid-and-the-process-control-block) |
-| 9 | 3.12 Processes: address space, PID, and the process control block | state | 6 | 0 |  | [README.md:1405](../../01-Computer-Science-Basics/README.md#312-processes-address-space-pid-and-the-process-control-block) |
-| 10 | 3.13 `fork`, `exec`, and why Zygote exists | sequence | 4 | 0 |  | [README.md:1469](../../01-Computer-Science-Basics/README.md#313-fork-exec-and-why-zygote-exists) |
-| 11 | 3.13.1 Zygote: `fork` without `exec` | sequence | 4 | 0 |  | [README.md:1558](../../01-Computer-Science-Basics/README.md#3131-zygote-fork-without-exec) |
-| 12 | 3.16 The stack, in full | block layout | 15 | 0 |  | [README.md:1798](../../01-Computer-Science-Basics/README.md#316-the-stack-in-full) |
-| 13 | 3.17 The heap, in full | flowchart | 15 | 0 | yes | [README.md:1960](../../01-Computer-Science-Basics/README.md#317-the-heap-in-full) |
-| 14 | 3.18.1 Pages and page tables | flowchart | 8 | 0 | yes | [README.md:2151](../../01-Computer-Science-Basics/README.md#3181-pages-and-page-tables) |
-| 15 | 3.19 System calls | sequence | 4 | 0 |  | [README.md:2378](../../01-Computer-Science-Basics/README.md#319-system-calls) |
-| 16 | 3.23 ELF: the container for all native code | block layout | 15 | 0 |  | [README.md:2763](../../01-Computer-Science-Basics/README.md#323-elf-the-container-for-all-native-code) |
-| 17 | 3.24 The compilation pipeline | flowchart | 8 | 0 | yes | [README.md:2858](../../01-Computer-Science-Basics/README.md#324-the-compilation-pipeline) |
-| 18 | 3.25 Static versus dynamic linking | sequence | 5 | 0 |  | [README.md:2967](../../01-Computer-Science-Basics/README.md#325-static-versus-dynamic-linking) |
-| 19 | 4.2 Trace one: `open()` in Java reaches the kernel | sequence | 6 | 0 |  | [README.md:3121](../../01-Computer-Science-Basics/README.md#42-trace-one-open-in-java-reaches-the-kernel) |
-| 20 | 4.3 Trace two: an app process is born | sequence | 6 | 0 |  | [README.md:3161](../../01-Computer-Science-Basics/README.md#43-trace-two-an-app-process-is-born) |
-| 21 | 7. Dynamic Analysis | flowchart | 12 | 0 |  | [README.md:3659](../../01-Computer-Science-Basics/README.md#7-dynamic-analysis) |
-| 22 | 13.2 Chapter mind map | mindmap | 1 | 0 |  | [README.md:4774](../../01-Computer-Science-Basics/README.md#132-chapter-mind-map) |
+| 2 | 2.2 What one function call actually costs | block layout | 12 | 0 |  | [README.md:307](../../01-Computer-Science-Basics/README.md#22-what-one-function-call-actually-costs) |
+| 3 | 2.3 A process's address space | block layout | 13 | 0 |  | [README.md:345](../../01-Computer-Science-Basics/README.md#23-a-processs-address-space) |
+| 4 | 2.4 The lifetime of one instruction | sequence | 8 | 0 |  | [README.md:393](../../01-Computer-Science-Basics/README.md#24-the-lifetime-of-one-instruction) |
+| 5 | 2.5 Trust boundaries | flowchart | 14 | 5 | yes | [README.md:444](../../01-Computer-Science-Basics/README.md#25-trust-boundaries) |
+| 6 | 3.6 What a CPU does: fetch, decode, execute | state | 0 | 0 |  | [README.md:935](../../01-Computer-Science-Basics/README.md#36-what-a-cpu-does-fetch-decode-execute) |
+| 7 | 3.11 Kernel space, user space, privilege rings and exception levels | flowchart | 10 | 2 | yes | [README.md:1298](../../01-Computer-Science-Basics/README.md#311-kernel-space-user-space-privilege-rings-and-exception-levels) |
+| 8 | 3.12 Processes: address space, PID, and the process control block | flowchart | 11 | 1 |  | [README.md:1412](../../01-Computer-Science-Basics/README.md#312-processes-address-space-pid-and-the-process-control-block) |
+| 9 | 3.12 Processes: address space, PID, and the process control block | state | 6 | 0 |  | [README.md:1437](../../01-Computer-Science-Basics/README.md#312-processes-address-space-pid-and-the-process-control-block) |
+| 10 | 3.13 `fork`, `exec`, and why Zygote exists | sequence | 4 | 0 |  | [README.md:1501](../../01-Computer-Science-Basics/README.md#313-fork-exec-and-why-zygote-exists) |
+| 11 | 3.13.1 Zygote: `fork` without `exec` | sequence | 4 | 0 |  | [README.md:1590](../../01-Computer-Science-Basics/README.md#3131-zygote-fork-without-exec) |
+| 12 | 3.16 The stack, in full | block layout | 15 | 0 |  | [README.md:1830](../../01-Computer-Science-Basics/README.md#316-the-stack-in-full) |
+| 13 | 3.17 The heap, in full | flowchart | 15 | 0 | yes | [README.md:1992](../../01-Computer-Science-Basics/README.md#317-the-heap-in-full) |
+| 14 | 3.18.1 Pages and page tables | flowchart | 8 | 0 | yes | [README.md:2183](../../01-Computer-Science-Basics/README.md#3181-pages-and-page-tables) |
+| 15 | 3.19 System calls | sequence | 4 | 0 |  | [README.md:2410](../../01-Computer-Science-Basics/README.md#319-system-calls) |
+| 16 | 3.23 ELF: the container for all native code | block layout | 15 | 0 |  | [README.md:2795](../../01-Computer-Science-Basics/README.md#323-elf-the-container-for-all-native-code) |
+| 17 | 3.24 The compilation pipeline | flowchart | 8 | 0 | yes | [README.md:2890](../../01-Computer-Science-Basics/README.md#324-the-compilation-pipeline) |
+| 18 | 3.25 Static versus dynamic linking | sequence | 5 | 0 |  | [README.md:2999](../../01-Computer-Science-Basics/README.md#325-static-versus-dynamic-linking) |
+| 19 | 4.2 Trace one: `open()` in Java reaches the kernel | sequence | 6 | 0 |  | [README.md:3153](../../01-Computer-Science-Basics/README.md#42-trace-one-open-in-java-reaches-the-kernel) |
+| 20 | 4.3 Trace two: an app process is born | sequence | 6 | 0 |  | [README.md:3193](../../01-Computer-Science-Basics/README.md#43-trace-two-an-app-process-is-born) |
+| 21 | 7. Dynamic Analysis | flowchart | 12 | 0 |  | [README.md:3691](../../01-Computer-Science-Basics/README.md#7-dynamic-analysis) |
+| 22 | 13.2 Chapter mind map | mindmap | 1 | 0 |  | [README.md:4806](../../01-Computer-Science-Basics/README.md#132-chapter-mind-map) |
 | 23 | _(no heading above it)_ | mindmap | 1 | 0 |  | [mindmap.md:13](../../01-Computer-Science-Basics/mindmap.md) |
 | 24 | Part C — Reading `/proc/<pid>/maps` | block layout | 13 | 0 |  | [labs/lab-02-processes-memory-maps.md:355](../../01-Computer-Science-Basics/labs/lab-02-processes-memory-maps.md#part-c--reading-procpidmaps) |
 | 25 | Part B — Read the prologue and epilogue | block layout | 10 | 0 |  | [labs/lab-03-stack-frames-and-overflow.md:299](../../01-Computer-Science-Basics/labs/lab-03-stack-frames-and-overflow.md#part-b--read-the-prologue-and-epilogue) |
@@ -430,15 +431,15 @@ STYLE-GUIDE.md section 6.
 
 | # | Depicts | Type | Nodes | Boundaries | Atk | Location |
 |---:|---|---|---:|---:|:---:|---|
-| 1 | 2.1 The life of one permission, end to end | flowchart | 15 | 3 | yes | [README.md:204](../../23-Permissions/README.md#21-the-life-of-one-permission-end-to-end) |
-| 2 | 2.2 The three lists, and why conflating them produces wrong findings | flowchart | 9 | 4 | yes | [README.md:258](../../23-Permissions/README.md#22-the-three-lists-and-why-conflating-them-produces-wrong-findings) |
-| 3 | 2.3 The two enforcement points | sequence | 5 | 0 |  | [README.md:302](../../23-Permissions/README.md#23-the-two-enforcement-points) |
-| 4 | 2.4 The trust boundary drawn properly | flowchart | 10 | 4 | yes | [README.md:345](../../23-Permissions/README.md#24-the-trust-boundary-drawn-properly) |
-| 5 | The flow | sequence | 5 | 0 |  | [README.md:1319](../../23-Permissions/README.md#the-flow) |
-| 6 | Where the framework check physically lives | flowchart | 11 | 0 | yes | [README.md:1507](../../23-Permissions/README.md#where-the-framework-check-physically-lives) |
-| 7 | The idea | flowchart | 8 | 3 | yes | [README.md:1557](../../23-Permissions/README.md#the-idea) |
-| 8 | 4.3 From `<permission>` in XML to a decision at install | sequence | 6 | 0 |  | [README.md:2023](../../23-Permissions/README.md#43-from-permission-in-xml-to-a-decision-at-install) |
-| 9 | 13.2 Mind map | mindmap | 1 | 0 |  | [README.md:3562](../../23-Permissions/README.md#132-mind-map) |
+| 1 | 2.1 The life of one permission, end to end | flowchart | 15 | 3 | yes | [README.md:207](../../23-Permissions/README.md#21-the-life-of-one-permission-end-to-end) |
+| 2 | 2.2 The three lists, and why conflating them produces wrong findings | flowchart | 9 | 4 | yes | [README.md:261](../../23-Permissions/README.md#22-the-three-lists-and-why-conflating-them-produces-wrong-findings) |
+| 3 | 2.3 The two enforcement points | sequence | 5 | 0 |  | [README.md:305](../../23-Permissions/README.md#23-the-two-enforcement-points) |
+| 4 | 2.4 The trust boundary drawn properly | flowchart | 10 | 4 | yes | [README.md:348](../../23-Permissions/README.md#24-the-trust-boundary-drawn-properly) |
+| 5 | The flow | sequence | 5 | 0 |  | [README.md:1322](../../23-Permissions/README.md#the-flow) |
+| 6 | Where the framework check physically lives | flowchart | 11 | 0 | yes | [README.md:1510](../../23-Permissions/README.md#where-the-framework-check-physically-lives) |
+| 7 | The idea | flowchart | 8 | 3 | yes | [README.md:1560](../../23-Permissions/README.md#the-idea) |
+| 8 | 4.3 From `<permission>` in XML to a decision at install | sequence | 6 | 0 |  | [README.md:2026](../../23-Permissions/README.md#43-from-permission-in-xml-to-a-decision-at-install) |
+| 9 | 13.2 Mind map | mindmap | 1 | 0 |  | [README.md:3565](../../23-Permissions/README.md#132-mind-map) |
 | 10 | _(no heading above it)_ | mindmap | 1 | 0 |  | [mindmap.md:8](../../23-Permissions/mindmap.md) |
 
 ## 24-IPC (10)
@@ -507,55 +508,55 @@ STYLE-GUIDE.md section 6.
 
 | # | Depicts | Type | Nodes | Boundaries | Atk | Location |
 |---:|---|---|---:|---:|:---:|---|
-| 1 | 1.4 The three shapes, in one paragraph each | flowchart | 9 | 1 |  | [README.md:133](../../28-Services/README.md#14-the-three-shapes-in-one-paragraph-each) |
-| 2 | 2.1 Who is involved | flowchart | 18 | 4 | yes | [README.md:191](../../28-Services/README.md#21-who-is-involved) |
-| 3 | 2.2 One `bindService` call, end to end | sequence | 5 | 0 |  | [README.md:248](../../28-Services/README.md#22-one-bindservice-call-end-to-end) |
-| 4 | 2.3 The lifecycle, as a state machine | state | 9 | 0 |  | [README.md:294](../../28-Services/README.md#23-the-lifecycle-as-a-state-machine) |
-| 5 | 2.4 The trust boundaries, named | flowchart | 12 | 5 | yes | [README.md:326](../../28-Services/README.md#24-the-trust-boundaries-named) |
-| 6 | 2.5 Where the three IBinder shapes sit | flowchart | 9 | 1 | yes | [README.md:367](../../28-Services/README.md#25-where-the-three-ibinder-shapes-sit) |
-| 7 | Mind map | mindmap | 2 | 0 |  | [README.md:3629](../../28-Services/README.md#mind-map) |
+| 1 | 1.4 The three shapes, in one paragraph each | flowchart | 9 | 1 |  | [README.md:137](../../28-Services/README.md#14-the-three-shapes-in-one-paragraph-each) |
+| 2 | 2.1 Who is involved | flowchart | 18 | 4 | yes | [README.md:195](../../28-Services/README.md#21-who-is-involved) |
+| 3 | 2.2 One `bindService` call, end to end | sequence | 5 | 0 |  | [README.md:252](../../28-Services/README.md#22-one-bindservice-call-end-to-end) |
+| 4 | 2.3 The lifecycle, as a state machine | state | 9 | 0 |  | [README.md:298](../../28-Services/README.md#23-the-lifecycle-as-a-state-machine) |
+| 5 | 2.4 The trust boundaries, named | flowchart | 12 | 5 | yes | [README.md:330](../../28-Services/README.md#24-the-trust-boundaries-named) |
+| 6 | 2.5 Where the three IBinder shapes sit | flowchart | 9 | 1 | yes | [README.md:371](../../28-Services/README.md#25-where-the-three-ibinder-shapes-sit) |
+| 7 | Mind map | mindmap | 2 | 0 |  | [README.md:3637](../../28-Services/README.md#mind-map) |
 | 8 | _(no heading above it)_ | mindmap | 1 | 0 |  | [mindmap.md:7](../../28-Services/mindmap.md) |
 
 ## 29-BroadcastReceivers (9)
 
 | # | Depicts | Type | Nodes | Boundaries | Atk | Location |
 |---:|---|---|---:|---:|:---:|---|
-| 1 | 2.1 The whole path, in one picture | flowchart | 26 | 4 | yes | [README.md:199](../../29-BroadcastReceivers/README.md#21-the-whole-path-in-one-picture) |
-| 2 | 2.2 The two registration paths — the visibility gap | flowchart | 15 | 2 | yes | [README.md:277](../../29-BroadcastReceivers/README.md#22-the-two-registration-paths--the-visibility-gap) |
-| 3 | 2.3 The trust boundary, drawn explicitly | flowchart | 16 | 3 | yes | [README.md:346](../../29-BroadcastReceivers/README.md#23-the-trust-boundary-drawn-explicitly) |
-| 4 | 2.4 What actually happens on the wire, in order | sequence | 7 | 0 |  | [README.md:409](../../29-BroadcastReceivers/README.md#24-what-actually-happens-on-the-wire-in-order) |
-| 5 | 2.5 The life of one broadcast, as a state machine | state | 6 | 0 |  | [README.md:463](../../29-BroadcastReceivers/README.md#25-the-life-of-one-broadcast-as-a-state-machine) |
-| 6 | 3.8 The two permission checks, and their asymmetry | flowchart | 8 | 0 | yes | [README.md:1028](../../29-BroadcastReceivers/README.md#38-the-two-permission-checks-and-their-asymmetry) |
-| 7 | 5.1 The taxonomy | mindmap | 1 | 0 |  | [README.md:1521](../../29-BroadcastReceivers/README.md#51-the-taxonomy) |
-| 8 | 13.2 Mind map | mindmap | 1 | 0 |  | [README.md:3118](../../29-BroadcastReceivers/README.md#132-mind-map) |
+| 1 | 2.1 The whole path, in one picture | flowchart | 26 | 4 | yes | [README.md:202](../../29-BroadcastReceivers/README.md#21-the-whole-path-in-one-picture) |
+| 2 | 2.2 The two registration paths — the visibility gap | flowchart | 15 | 2 | yes | [README.md:280](../../29-BroadcastReceivers/README.md#22-the-two-registration-paths--the-visibility-gap) |
+| 3 | 2.3 The trust boundary, drawn explicitly | flowchart | 16 | 3 | yes | [README.md:349](../../29-BroadcastReceivers/README.md#23-the-trust-boundary-drawn-explicitly) |
+| 4 | 2.4 What actually happens on the wire, in order | sequence | 7 | 0 |  | [README.md:412](../../29-BroadcastReceivers/README.md#24-what-actually-happens-on-the-wire-in-order) |
+| 5 | 2.5 The life of one broadcast, as a state machine | state | 6 | 0 |  | [README.md:466](../../29-BroadcastReceivers/README.md#25-the-life-of-one-broadcast-as-a-state-machine) |
+| 6 | 3.8 The two permission checks, and their asymmetry | flowchart | 8 | 0 | yes | [README.md:1031](../../29-BroadcastReceivers/README.md#38-the-two-permission-checks-and-their-asymmetry) |
+| 7 | 5.1 The taxonomy | mindmap | 1 | 0 |  | [README.md:1524](../../29-BroadcastReceivers/README.md#51-the-taxonomy) |
+| 8 | 13.2 Mind map | mindmap | 1 | 0 |  | [README.md:3121](../../29-BroadcastReceivers/README.md#132-mind-map) |
 | 9 | _(no heading above it)_ | mindmap | 3 | 0 |  | [mindmap.md:6](../../29-BroadcastReceivers/mindmap.md) |
 
 ## 30-Activities (10)
 
 | # | Depicts | Type | Nodes | Boundaries | Atk | Location |
 |---:|---|---|---:|---:|:---:|---|
-| 1 | 2.1 The four nouns, and how they nest | flowchart | 10 | 4 | yes | [README.md:155](../../30-Activities/README.md#21-the-four-nouns-and-how-they-nest) |
-| 2 | 2.2 What actually happens when you call `startActivity` | sequence | 6 | 0 |  | [README.md:206](../../30-Activities/README.md#22-what-actually-happens-when-you-call-startactivity) |
-| 3 | 2.3 The trust boundary | flowchart | 12 | 3 | yes | [README.md:248](../../30-Activities/README.md#23-the-trust-boundary) |
-| 4 | 2.4 Where the two signature attacks sit | flowchart | 11 | 0 | yes | [README.md:296](../../30-Activities/README.md#24-where-the-two-signature-attacks-sit) |
-| 5 | 3.1 The lifecycle, and which parts an attacker controls | state | 8 | 0 |  | [README.md:329](../../30-Activities/README.md#31-the-lifecycle-and-which-parts-an-attacker-controls) |
-| 6 | 3.9 Tapjacking — a different subsystem entirely | sequence | 4 | 0 |  | [README.md:860](../../30-Activities/README.md#39-tapjacking--a-different-subsystem-entirely) |
-| 7 | 3.10 The result channel | sequence | 2 | 0 |  | [README.md:948](../../30-Activities/README.md#310-the-result-channel) |
-| 8 | The intended mechanism | sequence | 5 | 0 |  | [README.md:1352](../../30-Activities/README.md#the-intended-mechanism) |
-| 9 | The chapter as one map | mindmap | 1 | 0 |  | [README.md:3300](../../30-Activities/README.md#the-chapter-as-one-map) |
+| 1 | 2.1 The four nouns, and how they nest | flowchart | 10 | 4 | yes | [README.md:159](../../30-Activities/README.md#21-the-four-nouns-and-how-they-nest) |
+| 2 | 2.2 What actually happens when you call `startActivity` | sequence | 6 | 0 |  | [README.md:210](../../30-Activities/README.md#22-what-actually-happens-when-you-call-startactivity) |
+| 3 | 2.3 The trust boundary | flowchart | 12 | 3 | yes | [README.md:252](../../30-Activities/README.md#23-the-trust-boundary) |
+| 4 | 2.4 Where the two signature attacks sit | flowchart | 11 | 0 | yes | [README.md:300](../../30-Activities/README.md#24-where-the-two-signature-attacks-sit) |
+| 5 | 3.1 The lifecycle, and which parts an attacker controls | state | 8 | 0 |  | [README.md:333](../../30-Activities/README.md#31-the-lifecycle-and-which-parts-an-attacker-controls) |
+| 6 | 3.9 Tapjacking — a different subsystem entirely | sequence | 4 | 0 |  | [README.md:864](../../30-Activities/README.md#39-tapjacking--a-different-subsystem-entirely) |
+| 7 | 3.10 The result channel | sequence | 2 | 0 |  | [README.md:952](../../30-Activities/README.md#310-the-result-channel) |
+| 8 | The intended mechanism | sequence | 5 | 0 |  | [README.md:1356](../../30-Activities/README.md#the-intended-mechanism) |
+| 9 | The chapter as one map | mindmap | 1 | 0 |  | [README.md:3304](../../30-Activities/README.md#the-chapter-as-one-map) |
 | 10 | _(no heading above it)_ | mindmap | 1 | 0 |  | [mindmap.md:6](../../30-Activities/mindmap.md) |
 
 ## 31-Fragments (8)
 
 | # | Depicts | Type | Nodes | Boundaries | Atk | Location |
 |---:|---|---|---:|---:|:---:|---|
-| 1 | 2.1 Where a Fragment actually sits | flowchart | 14 | 2 | yes | [README.md:166](../../31-Fragments/README.md#21-where-a-fragment-actually-sits) |
-| 2 | 2.2 Two Fragment implementations, and why an app has both | class | 4 | 0 |  | [README.md:222](../../31-Fragments/README.md#22-two-fragment-implementations-and-why-an-app-has-both) |
-| 3 | 2.3 The trust boundary | flowchart | 14 | 3 | yes | [README.md:272](../../31-Fragments/README.md#23-the-trust-boundary) |
-| 4 | 2.4 The injection, end to end | sequence | 5 | 0 |  | [README.md:322](../../31-Fragments/README.md#24-the-injection-end-to-end) |
-| 5 | 3.1 The Fragment lifecycle, and the four ways it differs from an Activity's | state | 10 | 0 |  | [README.md:369](../../31-Fragments/README.md#31-the-fragment-lifecycle-and-the-four-ways-it-differs-from-an-activitys) |
-| 6 | 5.1 The taxonomy | flowchart | 12 | 0 | yes | [README.md:1149](../../31-Fragments/README.md#51-the-taxonomy) |
-| 7 | The chapter as one map | mindmap | 4 | 0 |  | [README.md:2660](../../31-Fragments/README.md#the-chapter-as-one-map) |
+| 1 | 2.1 Where a Fragment actually sits | flowchart | 14 | 2 | yes | [README.md:170](../../31-Fragments/README.md#21-where-a-fragment-actually-sits) |
+| 2 | 2.2 Two Fragment implementations, and why an app has both | class | 4 | 0 |  | [README.md:226](../../31-Fragments/README.md#22-two-fragment-implementations-and-why-an-app-has-both) |
+| 3 | 2.3 The trust boundary | flowchart | 14 | 3 | yes | [README.md:276](../../31-Fragments/README.md#23-the-trust-boundary) |
+| 4 | 2.4 The injection, end to end | sequence | 5 | 0 |  | [README.md:326](../../31-Fragments/README.md#24-the-injection-end-to-end) |
+| 5 | 3.1 The Fragment lifecycle, and the four ways it differs from an Activity's | state | 10 | 0 |  | [README.md:373](../../31-Fragments/README.md#31-the-fragment-lifecycle-and-the-four-ways-it-differs-from-an-activitys) |
+| 6 | 5.1 The taxonomy | flowchart | 12 | 0 | yes | [README.md:1153](../../31-Fragments/README.md#51-the-taxonomy) |
+| 7 | The chapter as one map | mindmap | 4 | 0 |  | [README.md:2664](../../31-Fragments/README.md#the-chapter-as-one-map) |
 | 8 | _(no heading above it)_ | mindmap | 16 | 0 |  | [mindmap.md:7](../../31-Fragments/mindmap.md) |
 
 ## 32-Manifest (12)
@@ -629,12 +630,12 @@ STYLE-GUIDE.md section 6.
 
 | # | Depicts | Type | Nodes | Boundaries | Atk | Location |
 |---:|---|---|---:|---:|:---:|---|
-| 1 | 2.1 The layers | flowchart | 15 | 5 | yes | [README.md:199](../../36-CertificatePinning/README.md#21-the-layers) |
-| 2 | 2.2 Order of operations for one connection | sequence | 7 | 0 |  | [README.md:261](../../36-CertificatePinning/README.md#22-order-of-operations-for-one-connection) |
-| 3 | 2.3 Where the code physically lives | flowchart | 11 | 2 | yes | [README.md:303](../../36-CertificatePinning/README.md#23-where-the-code-physically-lives) |
-| 4 | 2.4 The decision tree you are actually walking | state | 0 | 0 |  | [README.md:344](../../36-CertificatePinning/README.md#24-the-decision-tree-you-are-actually-walking) |
-| 5 | 7.1 The workflow, in the order that works | flowchart | 11 | 0 | yes | [README.md:1767](../../36-CertificatePinning/README.md#71-the-workflow-in-the-order-that-works) |
-| 6 | 13.2 Mind map | mindmap | 1 | 0 |  | [README.md:3105](../../36-CertificatePinning/README.md#132-mind-map) |
+| 1 | 2.1 The layers | flowchart | 15 | 5 | yes | [README.md:204](../../36-CertificatePinning/README.md#21-the-layers) |
+| 2 | 2.2 Order of operations for one connection | sequence | 7 | 0 |  | [README.md:266](../../36-CertificatePinning/README.md#22-order-of-operations-for-one-connection) |
+| 3 | 2.3 Where the code physically lives | flowchart | 11 | 2 | yes | [README.md:308](../../36-CertificatePinning/README.md#23-where-the-code-physically-lives) |
+| 4 | 2.4 The decision tree you are actually walking | state | 0 | 0 |  | [README.md:349](../../36-CertificatePinning/README.md#24-the-decision-tree-you-are-actually-walking) |
+| 5 | 7.1 The workflow, in the order that works | flowchart | 11 | 0 | yes | [README.md:1772](../../36-CertificatePinning/README.md#71-the-workflow-in-the-order-that-works) |
+| 6 | 13.2 Mind map | mindmap | 1 | 0 |  | [README.md:3110](../../36-CertificatePinning/README.md#132-mind-map) |
 | 7 | _(no heading above it)_ | mindmap | 1 | 0 |  | [mindmap.md:6](../../36-CertificatePinning/mindmap.md) |
 | 8 | 1. The failure this lab is designed to give you | flowchart | 9 | 0 | yes | [labs/lab-02-defeat-a-two-layer-pin.md:28](../../36-CertificatePinning/labs/lab-02-defeat-a-two-layer-pin.md#1-the-failure-this-lab-is-designed-to-give-you) |
 | 9 | 4.1 The topology | flowchart | 10 | 2 | yes | [labs/lab-04-ctf-the-pin-that-moved.md:102](../../36-CertificatePinning/labs/lab-04-ctf-the-pin-that-moved.md#41-the-topology) |
@@ -643,29 +644,29 @@ STYLE-GUIDE.md section 6.
 
 | # | Depicts | Type | Nodes | Boundaries | Atk | Location |
 |---:|---|---|---:|---:|:---:|---|
-| 1 | 2.1 What is on the device after rooting | flowchart | 18 | 4 | yes | [README.md:174](../../37-RootDetection/README.md#21-what-is-on-the-device-after-rooting) |
-| 2 | 2.2 The detection surface map | flowchart | 16 | 3 | yes | [README.md:233](../../37-RootDetection/README.md#22-the-detection-surface-map) |
-| 3 | 2.3 Where a check runs, and why that decides your approach | flowchart | 11 | 0 | yes | [README.md:274](../../37-RootDetection/README.md#23-where-a-check-runs-and-why-that-decides-your-approach) |
-| 4 | 2.4 The trust boundary, drawn honestly | flowchart | 9 | 2 | yes | [README.md:301](../../37-RootDetection/README.md#24-the-trust-boundary-drawn-honestly) |
-| 5 | How it works | flowchart | 12 | 0 | yes | [README.md:1635](../../37-RootDetection/README.md#how-it-works) |
-| 6 | The arms race, drawn | sequence | 4 | 0 |  | [README.md:1853](../../37-RootDetection/README.md#the-arms-race-drawn) |
-| 7 | 4.1 `File.exists()` → `faccessat` syscall | sequence | 7 | 0 |  | [README.md:2041](../../37-RootDetection/README.md#41-fileexists--faccessat-syscall) |
-| 8 | 4.3 `PackageManager.getPackageInfo` across Binder | sequence | 5 | 0 |  | [README.md:2144](../../37-RootDetection/README.md#43-packagemanagergetpackageinfo-across-binder) |
-| 9 | 7.1 The methodology, before any tool | flowchart | 13 | 0 | yes | [README.md:2459](../../37-RootDetection/README.md#71-the-methodology-before-any-tool) |
-| 10 | 9.4 Real application — a banking app's layered posture | flowchart | 9 | 0 | yes | [README.md:2871](../../37-RootDetection/README.md#94-real-application--a-banking-apps-layered-posture) |
-| 11 | Mind map | mindmap | 1 | 0 |  | [README.md:3220](../../37-RootDetection/README.md#mind-map) |
+| 1 | 2.1 What is on the device after rooting | flowchart | 18 | 4 | yes | [README.md:175](../../37-RootDetection/README.md#21-what-is-on-the-device-after-rooting) |
+| 2 | 2.2 The detection surface map | flowchart | 16 | 3 | yes | [README.md:234](../../37-RootDetection/README.md#22-the-detection-surface-map) |
+| 3 | 2.3 Where a check runs, and why that decides your approach | flowchart | 11 | 0 | yes | [README.md:275](../../37-RootDetection/README.md#23-where-a-check-runs-and-why-that-decides-your-approach) |
+| 4 | 2.4 The trust boundary, drawn honestly | flowchart | 9 | 2 | yes | [README.md:302](../../37-RootDetection/README.md#24-the-trust-boundary-drawn-honestly) |
+| 5 | How it works | flowchart | 12 | 0 | yes | [README.md:1636](../../37-RootDetection/README.md#how-it-works) |
+| 6 | The arms race, drawn | sequence | 4 | 0 |  | [README.md:1854](../../37-RootDetection/README.md#the-arms-race-drawn) |
+| 7 | 4.1 `File.exists()` → `faccessat` syscall | sequence | 7 | 0 |  | [README.md:2042](../../37-RootDetection/README.md#41-fileexists--faccessat-syscall) |
+| 8 | 4.3 `PackageManager.getPackageInfo` across Binder | sequence | 5 | 0 |  | [README.md:2145](../../37-RootDetection/README.md#43-packagemanagergetpackageinfo-across-binder) |
+| 9 | 7.1 The methodology, before any tool | flowchart | 13 | 0 | yes | [README.md:2460](../../37-RootDetection/README.md#71-the-methodology-before-any-tool) |
+| 10 | 9.4 Real application — a banking app's layered posture | flowchart | 9 | 0 | yes | [README.md:2872](../../37-RootDetection/README.md#94-real-application--a-banking-apps-layered-posture) |
+| 11 | Mind map | mindmap | 1 | 0 |  | [README.md:3221](../../37-RootDetection/README.md#mind-map) |
 | 12 | _(no heading above it)_ | mindmap | 2 | 0 |  | [mindmap.md:15](../../37-RootDetection/mindmap.md) |
 
 ## 38-TamperDetection (8)
 
 | # | Depicts | Type | Nodes | Boundaries | Atk | Location |
 |---:|---|---|---:|---:|:---:|---|
-| 1 | 2.1 The life of a tampered app | flowchart | 17 | 2 | yes | [README.md:261](../../38-TamperDetection/README.md#21-the-life-of-a-tampered-app) |
-| 2 | 2.2 The five tiers — when each check runs | flowchart | 14 | 0 |  | [README.md:308](../../38-TamperDetection/README.md#22-the-five-tiers--when-each-check-runs) |
-| 3 | 2.3 Where a self-signature check gets its answer | sequence | 5 | 0 |  | [README.md:358](../../38-TamperDetection/README.md#23-where-a-self-signature-check-gets-its-answer) |
-| 4 | 2.4 The detection surface, drawn honestly | flowchart | 16 | 3 | yes | [README.md:399](../../38-TamperDetection/README.md#24-the-detection-surface-drawn-honestly) |
-| 5 | 2.5 A decision tree for the first ten minutes | flowchart | 15 | 0 | yes | [README.md:445](../../38-TamperDetection/README.md#25-a-decision-tree-for-the-first-ten-minutes) |
-| 6 | Mind map | mindmap | 1 | 0 |  | [README.md:2665](../../38-TamperDetection/README.md#mind-map) |
+| 1 | 2.1 The life of a tampered app | flowchart | 17 | 2 | yes | [README.md:265](../../38-TamperDetection/README.md#21-the-life-of-a-tampered-app) |
+| 2 | 2.2 The five tiers — when each check runs | flowchart | 14 | 0 |  | [README.md:312](../../38-TamperDetection/README.md#22-the-five-tiers--when-each-check-runs) |
+| 3 | 2.3 Where a self-signature check gets its answer | sequence | 5 | 0 |  | [README.md:362](../../38-TamperDetection/README.md#23-where-a-self-signature-check-gets-its-answer) |
+| 4 | 2.4 The detection surface, drawn honestly | flowchart | 16 | 3 | yes | [README.md:403](../../38-TamperDetection/README.md#24-the-detection-surface-drawn-honestly) |
+| 5 | 2.5 A decision tree for the first ten minutes | flowchart | 15 | 0 | yes | [README.md:449](../../38-TamperDetection/README.md#25-a-decision-tree-for-the-first-ten-minutes) |
+| 6 | Mind map | mindmap | 1 | 0 |  | [README.md:2669](../../38-TamperDetection/README.md#mind-map) |
 | 7 | _(no heading above it)_ | mindmap | 2 | 0 |  | [mindmap.md:6](../../38-TamperDetection/mindmap.md) |
 | 8 | Cross-chapter map | flowchart | 16 | 0 |  | [mindmap.md:222](../../38-TamperDetection/mindmap.md#cross-chapter-map) |
 
@@ -673,11 +674,11 @@ STYLE-GUIDE.md section 6.
 
 | # | Depicts | Type | Nodes | Boundaries | Atk | Location |
 |---:|---|---|---:|---:|:---:|---|
-| 1 | 2.1 Where the signals come from | flowchart | 16 | 5 | yes | [README.md:200](../../39-EmulatorDetection/README.md#21-where-the-signals-come-from) |
-| 2 | 2.2 The detection surface, by cost to defeat | flowchart | 15 | 4 | yes | [README.md:268](../../39-EmulatorDetection/README.md#22-the-detection-surface-by-cost-to-defeat) |
-| 3 | 2.3 The trust boundary, drawn honestly | flowchart | 11 | 4 | yes | [README.md:323](../../39-EmulatorDetection/README.md#23-the-trust-boundary-drawn-honestly) |
-| 4 | 5.8 The correct architecture | sequence | 4 | 0 |  | [README.md:1635](../../39-EmulatorDetection/README.md#58-the-correct-architecture) |
-| 5 | Mind map | mindmap | 1 | 0 |  | [README.md:2750](../../39-EmulatorDetection/README.md#mind-map) |
+| 1 | 2.1 Where the signals come from | flowchart | 16 | 5 | yes | [README.md:201](../../39-EmulatorDetection/README.md#21-where-the-signals-come-from) |
+| 2 | 2.2 The detection surface, by cost to defeat | flowchart | 15 | 4 | yes | [README.md:269](../../39-EmulatorDetection/README.md#22-the-detection-surface-by-cost-to-defeat) |
+| 3 | 2.3 The trust boundary, drawn honestly | flowchart | 11 | 4 | yes | [README.md:324](../../39-EmulatorDetection/README.md#23-the-trust-boundary-drawn-honestly) |
+| 4 | 5.8 The correct architecture | sequence | 4 | 0 |  | [README.md:1636](../../39-EmulatorDetection/README.md#58-the-correct-architecture) |
+| 5 | Mind map | mindmap | 1 | 0 |  | [README.md:2751](../../39-EmulatorDetection/README.md#mind-map) |
 | 6 | _(no heading above it)_ | mindmap | 1 | 0 |  | [mindmap.md:7](../../39-EmulatorDetection/mindmap.md) |
 | 7 | Related chapters | flowchart | 12 | 0 | yes | [mindmap.md:176](../../39-EmulatorDetection/mindmap.md#related-chapters) |
 
@@ -685,18 +686,18 @@ STYLE-GUIDE.md section 6.
 
 | # | Depicts | Type | Nodes | Boundaries | Atk | Location |
 |---:|---|---|---:|---:|:---:|---|
-| 1 | Where obfuscation happens in the build | flowchart | 23 | 5 | yes | [README.md:156](../../40-Obfuscation/README.md#where-obfuscation-happens-in-the-build) |
-| 2 | The attacker's decision tree | flowchart | 12 | 0 | yes | [README.md:234](../../40-Obfuscation/README.md#the-attackers-decision-tree) |
-| 3 | The runtime picture: what a packed app does at process start | sequence | 6 | 0 |  | [README.md:263](../../40-Obfuscation/README.md#the-runtime-picture-what-a-packed-app-does-at-process-start) |
-| 4 | Layer map: what protects what | block layout | 9 | 0 |  | [README.md:303](../../40-Obfuscation/README.md#layer-map-what-protects-what) |
-| 5 | 3.3.2 Control-flow flattening — the important one | flowchart | 10 | 1 |  | [README.md:797](../../40-Obfuscation/README.md#332-control-flow-flattening--the-important-one) |
-| 6 | 3.3.2 Control-flow flattening — the important one | flowchart | 11 | 1 | yes | [README.md:813](../../40-Obfuscation/README.md#332-control-flow-flattening--the-important-one) |
-| 7 | 3.7.3 The general unpacking methodology | flowchart | 12 | 0 | yes | [README.md:1200](../../40-Obfuscation/README.md#373-the-general-unpacking-methodology) |
-| 8 | 3.7.4 Commercial protector families, descriptively | flowchart | 7 | 0 |  | [README.md:1333](../../40-Obfuscation/README.md#374-commercial-protector-families-descriptively) |
-| 9 | 4.3 The framework side — how a packer's stub gets control | sequence | 5 | 0 |  | [README.md:1634](../../40-Obfuscation/README.md#43-the-framework-side--how-a-packers-stub-gets-control) |
-| 10 | 6.1 THE DEOBFUSCATION METHODOLOGY | flowchart | 12 | 0 | yes | [README.md:1798](../../40-Obfuscation/README.md#61-the-deobfuscation-methodology) |
-| 11 | Phase 2 — Decide static or dynamic | flowchart | 7 | 0 | yes | [README.md:1852](../../40-Obfuscation/README.md#phase-2--decide-static-or-dynamic) |
-| 12 | Mind map | mindmap | 1 | 0 |  | [README.md:2866](../../40-Obfuscation/README.md#mind-map) |
+| 1 | Where obfuscation happens in the build | flowchart | 23 | 5 | yes | [README.md:160](../../40-Obfuscation/README.md#where-obfuscation-happens-in-the-build) |
+| 2 | The attacker's decision tree | flowchart | 12 | 0 | yes | [README.md:238](../../40-Obfuscation/README.md#the-attackers-decision-tree) |
+| 3 | The runtime picture: what a packed app does at process start | sequence | 6 | 0 |  | [README.md:267](../../40-Obfuscation/README.md#the-runtime-picture-what-a-packed-app-does-at-process-start) |
+| 4 | Layer map: what protects what | block layout | 9 | 0 |  | [README.md:307](../../40-Obfuscation/README.md#layer-map-what-protects-what) |
+| 5 | 3.3.2 Control-flow flattening — the important one | flowchart | 10 | 1 |  | [README.md:801](../../40-Obfuscation/README.md#332-control-flow-flattening--the-important-one) |
+| 6 | 3.3.2 Control-flow flattening — the important one | flowchart | 11 | 1 | yes | [README.md:817](../../40-Obfuscation/README.md#332-control-flow-flattening--the-important-one) |
+| 7 | 3.7.3 The general unpacking methodology | flowchart | 12 | 0 | yes | [README.md:1204](../../40-Obfuscation/README.md#373-the-general-unpacking-methodology) |
+| 8 | 3.7.4 Commercial protector families, descriptively | flowchart | 7 | 0 |  | [README.md:1337](../../40-Obfuscation/README.md#374-commercial-protector-families-descriptively) |
+| 9 | 4.3 The framework side — how a packer's stub gets control | sequence | 5 | 0 |  | [README.md:1638](../../40-Obfuscation/README.md#43-the-framework-side--how-a-packers-stub-gets-control) |
+| 10 | 6.1 THE DEOBFUSCATION METHODOLOGY | flowchart | 12 | 0 | yes | [README.md:1802](../../40-Obfuscation/README.md#61-the-deobfuscation-methodology) |
+| 11 | Phase 2 — Decide static or dynamic | flowchart | 7 | 0 | yes | [README.md:1856](../../40-Obfuscation/README.md#phase-2--decide-static-or-dynamic) |
+| 12 | Mind map | mindmap | 1 | 0 |  | [README.md:2870](../../40-Obfuscation/README.md#mind-map) |
 | 13 | _(no heading above it)_ | mindmap | 2 | 0 |  | [mindmap.md:20](../../40-Obfuscation/mindmap.md) |
 
 ## 41-ProGuard (9)
@@ -717,23 +718,23 @@ STYLE-GUIDE.md section 6.
 
 | # | Depicts | Type | Nodes | Boundaries | Atk | Location |
 |---:|---|---|---:|---:|:---:|---|
-| 1 | 2.1 Where R8 sits in the build | flowchart | 17 | 4 | yes | [README.md:137](../../42-R8/README.md#21-where-r8-sits-in-the-build) |
-| 2 | 2.2 The four phases inside R8 | sequence | 6 | 0 |  | [README.md:181](../../42-R8/README.md#22-the-four-phases-inside-r8) |
-| 3 | 2.3 What comes out, and who is allowed to see it | flowchart | 10 | 3 | yes | [README.md:218](../../42-R8/README.md#23-what-comes-out-and-who-is-allowed-to-see-it) |
-| 4 | 2.4 The compatibility-mode split | state | 1 | 0 |  | [README.md:250](../../42-R8/README.md#24-the-compatibility-mode-split) |
-| 5 | Mind map | mindmap | 1 | 0 |  | [README.md:2361](../../42-R8/README.md#mind-map) |
+| 1 | 2.1 Where R8 sits in the build | flowchart | 17 | 4 | yes | [README.md:139](../../42-R8/README.md#21-where-r8-sits-in-the-build) |
+| 2 | 2.2 The four phases inside R8 | sequence | 6 | 0 |  | [README.md:183](../../42-R8/README.md#22-the-four-phases-inside-r8) |
+| 3 | 2.3 What comes out, and who is allowed to see it | flowchart | 10 | 3 | yes | [README.md:220](../../42-R8/README.md#23-what-comes-out-and-who-is-allowed-to-see-it) |
+| 4 | 2.4 The compatibility-mode split | state | 1 | 0 |  | [README.md:252](../../42-R8/README.md#24-the-compatibility-mode-split) |
+| 5 | Mind map | mindmap | 1 | 0 |  | [README.md:2363](../../42-R8/README.md#mind-map) |
 | 6 | _(no heading above it)_ | mindmap | 1 | 0 |  | [mindmap.md:5](../../42-R8/mindmap.md) |
 
 ## 43-WebView (7)
 
 | # | Depicts | Type | Nodes | Boundaries | Atk | Location |
 |---:|---|---|---:|---:|:---:|---|
-| 1 | 2.1 Where everything actually runs | flowchart | 15 | 4 | yes | [README.md:212](../../43-WebView/README.md#21-where-everything-actually-runs) |
-| 2 | 2.2 A page load, from `loadUrl` to pixels | sequence | 7 | 0 |  | [README.md:275](../../43-WebView/README.md#22-a-page-load-from-loadurl-to-pixels) |
-| 3 | 2.3 The class stack, from the API you type to the code that runs | flowchart | 15 | 2 |  | [README.md:330](../../43-WebView/README.md#23-the-class-stack-from-the-api-you-type-to-the-code-that-runs) |
-| 4 | 2.4 The certificate-error path, drawn on its own | flowchart | 15 | 0 | yes | [README.md:388](../../43-WebView/README.md#24-the-certificate-error-path-drawn-on-its-own) |
-| 5 | 2.5 The two network stacks in one app | flowchart | 11 | 3 | yes | [README.md:434](../../43-WebView/README.md#25-the-two-network-stacks-in-one-app) |
-| 6 | 13.2 The chapter as a map | mindmap | 1 | 0 |  | [README.md:3259](../../43-WebView/README.md#132-the-chapter-as-a-map) |
+| 1 | 2.1 Where everything actually runs | flowchart | 15 | 4 | yes | [README.md:217](../../43-WebView/README.md#21-where-everything-actually-runs) |
+| 2 | 2.2 A page load, from `loadUrl` to pixels | sequence | 7 | 0 |  | [README.md:280](../../43-WebView/README.md#22-a-page-load-from-loadurl-to-pixels) |
+| 3 | 2.3 The class stack, from the API you type to the code that runs | flowchart | 15 | 2 |  | [README.md:335](../../43-WebView/README.md#23-the-class-stack-from-the-api-you-type-to-the-code-that-runs) |
+| 4 | 2.4 The certificate-error path, drawn on its own | flowchart | 15 | 0 | yes | [README.md:393](../../43-WebView/README.md#24-the-certificate-error-path-drawn-on-its-own) |
+| 5 | 2.5 The two network stacks in one app | flowchart | 11 | 3 | yes | [README.md:439](../../43-WebView/README.md#25-the-two-network-stacks-in-one-app) |
+| 6 | 13.2 The chapter as a map | mindmap | 1 | 0 |  | [README.md:3268](../../43-WebView/README.md#132-the-chapter-as-a-map) |
 | 7 | _(no heading above it)_ | mindmap | 2 | 0 |  | [mindmap.md:6](../../43-WebView/mindmap.md) |
 
 ## 44-NetworkSecurityConfig (6)
@@ -802,22 +803,22 @@ STYLE-GUIDE.md section 6.
 | 6 | 3.5 The autofill framework — a third party is offered your password field | sequence | 4 | 0 |  | [README.md:764](../../47-Authentication/README.md#35-the-autofill-framework--a-third-party-is-offered-your-password-field) |
 | 7 | 3.6 Credential Manager and passkeys | sequence | 5 | 0 |  | [README.md:861](../../47-Authentication/README.md#36-credential-manager-and-passkeys) |
 | 8 | 4.1 The account stack | sequence | 5 | 0 |  | [README.md:1296](../../47-Authentication/README.md#41-the-account-stack) |
-| 9 | 7.1 The order of operations, and why traffic comes first | flowchart | 6 | 0 | yes | [README.md:2562](../../47-Authentication/README.md#71-the-order-of-operations-and-why-traffic-comes-first) |
-| 10 | 13.2 Mind map | mindmap | 1 | 0 |  | [README.md:3509](../../47-Authentication/README.md#132-mind-map) |
+| 9 | 7.1 The order of operations, and why traffic comes first | flowchart | 6 | 0 | yes | [README.md:2563](../../47-Authentication/README.md#71-the-order-of-operations-and-why-traffic-comes-first) |
+| 10 | 13.2 Mind map | mindmap | 1 | 0 |  | [README.md:3510](../../47-Authentication/README.md#132-mind-map) |
 | 11 | _(no heading above it)_ | mindmap | 1 | 0 |  | [mindmap.md:5](../../47-Authentication/mindmap.md) |
 
 ## 48-Biometrics (10)
 
 | # | Depicts | Type | Nodes | Boundaries | Atk | Location |
 |---:|---|---|---:|---:|:---:|---|
-| 1 | 2.1 The whole system, once | flowchart | 18 | 4 | yes | [README.md:188](../../48-Biometrics/README.md#21-the-whole-system-once) |
-| 2 | 2.2 The successful path, in order | sequence | 7 | 0 |  | [README.md:260](../../48-Biometrics/README.md#22-the-successful-path-in-order) |
-| 3 | 2.3 Where each authenticator class can and cannot reach | flowchart | 12 | 3 | yes | [README.md:324](../../48-Biometrics/README.md#23-where-each-authenticator-class-can-and-cannot-reach) |
-| 4 | 2.4 Trust boundaries, drawn honestly | block layout | 6 | 0 | yes | [README.md:377](../../48-Biometrics/README.md#24-trust-boundaries-drawn-honestly) |
-| 5 | 3.8 What actually reaches the TEE — enrolment, matching, and the token | flowchart | 10 | 2 | yes | [README.md:846](../../48-Biometrics/README.md#38-what-actually-reaches-the-tee--enrolment-matching-and-the-token) |
-| 6 | 7.1 The three-pass method | flowchart | 12 | 0 | yes | [README.md:1786](../../48-Biometrics/README.md#71-the-three-pass-method) |
-| 7 | 9.4 Real application — a password manager | flowchart | 6 | 0 |  | [README.md:2388](../../48-Biometrics/README.md#94-real-application--a-password-manager) |
-| 8 | 13.2 Mind map | mindmap | 3 | 0 |  | [README.md:2797](../../48-Biometrics/README.md#132-mind-map) |
+| 1 | 2.1 The whole system, once | flowchart | 18 | 4 | yes | [README.md:190](../../48-Biometrics/README.md#21-the-whole-system-once) |
+| 2 | 2.2 The successful path, in order | sequence | 7 | 0 |  | [README.md:262](../../48-Biometrics/README.md#22-the-successful-path-in-order) |
+| 3 | 2.3 Where each authenticator class can and cannot reach | flowchart | 12 | 3 | yes | [README.md:326](../../48-Biometrics/README.md#23-where-each-authenticator-class-can-and-cannot-reach) |
+| 4 | 2.4 Trust boundaries, drawn honestly | block layout | 6 | 0 | yes | [README.md:379](../../48-Biometrics/README.md#24-trust-boundaries-drawn-honestly) |
+| 5 | 3.8 What actually reaches the TEE — enrolment, matching, and the token | flowchart | 10 | 2 | yes | [README.md:848](../../48-Biometrics/README.md#38-what-actually-reaches-the-tee--enrolment-matching-and-the-token) |
+| 6 | 7.1 The three-pass method | flowchart | 12 | 0 | yes | [README.md:1788](../../48-Biometrics/README.md#71-the-three-pass-method) |
+| 7 | 9.4 Real application — a password manager | flowchart | 6 | 0 |  | [README.md:2390](../../48-Biometrics/README.md#94-real-application--a-password-manager) |
+| 8 | 13.2 Mind map | mindmap | 3 | 0 |  | [README.md:2799](../../48-Biometrics/README.md#132-mind-map) |
 | 9 | _(no heading above it)_ | mindmap | 1 | 0 |  | [mindmap.md:6](../../48-Biometrics/mindmap.md) |
 | 10 | 0. The shape of the work | flowchart | 7 | 0 |  | [labs/lab-03-audit-a-real-app.md:32](../../48-Biometrics/labs/lab-03-audit-a-real-app.md#0-the-shape-of-the-work) |
 
@@ -825,13 +826,13 @@ STYLE-GUIDE.md section 6.
 
 | # | Depicts | Type | Nodes | Boundaries | Atk | Location |
 |---:|---|---|---:|---:|:---:|---|
-| 1 | 2.1 The full stack, from your `Cipher` call to the silicon | flowchart | 23 | 5 | yes | [README.md:113](../../49-KeyStore/README.md#21-the-full-stack-from-your-cipher-call-to-the-silicon) |
-| 2 | 2.2 The lifecycle of one key, as a sequence | sequence | 5 | 0 |  | [README.md:179](../../49-KeyStore/README.md#22-the-lifecycle-of-one-key-as-a-sequence) |
-| 3 | 2.4 Trust boundaries, drawn explicitly | flowchart | 11 | 3 | yes | [README.md:268](../../49-KeyStore/README.md#24-trust-boundaries-drawn-explicitly) |
-| 4 | 3.7.3 The chain | flowchart | 5 | 0 |  | [README.md:534](../../49-KeyStore/README.md#373-the-chain) |
-| 5 | 3.7.5 How a server verifies, step by step | flowchart | 20 | 0 | yes | [README.md:625](../../49-KeyStore/README.md#375-how-a-server-verifies-step-by-step) |
-| 6 | 7.1 The methodology, as a process | flowchart | 9 | 0 |  | [README.md:1298](../../49-KeyStore/README.md#71-the-methodology-as-a-process) |
-| 7 | 13.2 Mindmap | mindmap | 1 | 0 |  | [README.md:1737](../../49-KeyStore/README.md#132-mindmap) |
+| 1 | 2.1 The full stack, from your `Cipher` call to the silicon | flowchart | 23 | 5 | yes | [README.md:115](../../49-KeyStore/README.md#21-the-full-stack-from-your-cipher-call-to-the-silicon) |
+| 2 | 2.2 The lifecycle of one key, as a sequence | sequence | 5 | 0 |  | [README.md:181](../../49-KeyStore/README.md#22-the-lifecycle-of-one-key-as-a-sequence) |
+| 3 | 2.4 Trust boundaries, drawn explicitly | flowchart | 11 | 3 | yes | [README.md:270](../../49-KeyStore/README.md#24-trust-boundaries-drawn-explicitly) |
+| 4 | 3.7.3 The chain | flowchart | 5 | 0 |  | [README.md:536](../../49-KeyStore/README.md#373-the-chain) |
+| 5 | 3.7.5 How a server verifies, step by step | flowchart | 20 | 0 | yes | [README.md:627](../../49-KeyStore/README.md#375-how-a-server-verifies-step-by-step) |
+| 6 | 7.1 The methodology, as a process | flowchart | 9 | 0 |  | [README.md:1300](../../49-KeyStore/README.md#71-the-methodology-as-a-process) |
+| 7 | 13.2 Mindmap | mindmap | 1 | 0 |  | [README.md:1739](../../49-KeyStore/README.md#132-mindmap) |
 | 8 | _(no heading above it)_ | mindmap | 1 | 0 |  | [mindmap.md:15](../../49-KeyStore/mindmap.md) |
 
 ## 50-HardwareBackedSecurity (7)
@@ -850,14 +851,14 @@ STYLE-GUIDE.md section 6.
 
 | # | Depicts | Type | Nodes | Boundaries | Atk | Location |
 |---:|---|---|---:|---:|:---:|---|
-| 1 | 2.1 The pipeline | flowchart | 20 | 2 | yes | [README.md:208](../../51-DynamicAnalysis/README.md#21-the-pipeline) |
-| 2 | 2.2 The nine observation channels, and what each can and cannot see | flowchart | 12 | 0 |  | [README.md:271](../../51-DynamicAnalysis/README.md#22-the-nine-observation-channels-and-what-each-can-and-cannot-see) |
-| 3 | 2.3 The life of an observation | state | 0 | 0 |  | [README.md:338](../../51-DynamicAnalysis/README.md#23-the-life-of-an-observation) |
-| 4 | 2.4 The other half of the loop | sequence | 3 | 0 |  | [README.md:390](../../51-DynamicAnalysis/README.md#24-the-other-half-of-the-loop) |
-| 5 | 2.5 The trust boundary you are standing on | flowchart | 11 | 3 | yes | [README.md:441](../../51-DynamicAnalysis/README.md#25-the-trust-boundary-you-are-standing-on) |
-| 6 | 3.5.1 The four altitudes | flowchart | 10 | 0 | yes | [README.md:1025](../../51-DynamicAnalysis/README.md#351-the-four-altitudes) |
-| 7 | 7.4 Instrumenting: the decision, not the mechanism | flowchart | 11 | 0 | yes | [README.md:2783](../../51-DynamicAnalysis/README.md#74-instrumenting-the-decision-not-the-mechanism) |
-| 8 | 13.2 Mind map | mindmap | 1 | 0 |  | [README.md:3768](../../51-DynamicAnalysis/README.md#132-mind-map) |
+| 1 | 2.1 The pipeline | flowchart | 20 | 2 | yes | [README.md:212](../../51-DynamicAnalysis/README.md#21-the-pipeline) |
+| 2 | 2.2 The nine observation channels, and what each can and cannot see | flowchart | 12 | 0 |  | [README.md:275](../../51-DynamicAnalysis/README.md#22-the-nine-observation-channels-and-what-each-can-and-cannot-see) |
+| 3 | 2.3 The life of an observation | state | 0 | 0 |  | [README.md:342](../../51-DynamicAnalysis/README.md#23-the-life-of-an-observation) |
+| 4 | 2.4 The other half of the loop | sequence | 3 | 0 |  | [README.md:394](../../51-DynamicAnalysis/README.md#24-the-other-half-of-the-loop) |
+| 5 | 2.5 The trust boundary you are standing on | flowchart | 11 | 3 | yes | [README.md:445](../../51-DynamicAnalysis/README.md#25-the-trust-boundary-you-are-standing-on) |
+| 6 | 3.5.1 The four altitudes | flowchart | 10 | 0 | yes | [README.md:1029](../../51-DynamicAnalysis/README.md#351-the-four-altitudes) |
+| 7 | 7.4 Instrumenting: the decision, not the mechanism | flowchart | 11 | 0 | yes | [README.md:2787](../../51-DynamicAnalysis/README.md#74-instrumenting-the-decision-not-the-mechanism) |
+| 8 | 13.2 Mind map | mindmap | 1 | 0 |  | [README.md:3772](../../51-DynamicAnalysis/README.md#132-mind-map) |
 | 9 | _(no heading above it)_ | mindmap | 1 | 0 |  | [mindmap.md:8](../../51-DynamicAnalysis/mindmap.md) |
 
 ## 52-StaticAnalysis (7)
@@ -876,21 +877,21 @@ STYLE-GUIDE.md section 6.
 
 | # | Depicts | Type | Nodes | Boundaries | Atk | Location |
 |---:|---|---|---:|---:|:---:|---|
-| 1 | 2.1 The whole system, one picture | flowchart | 25 | 6 | yes | [README.md:139](../../53-Frida/README.md#21-the-whole-system-one-picture) |
-| 2 | 2.2 The injection sequence, step by step | sequence | 6 | 0 |  | [README.md:217](../../53-Frida/README.md#22-the-injection-sequence-step-by-step) |
-| 3 | 2.3 Spawn versus attach | flowchart | 16 | 2 | yes | [README.md:275](../../53-Frida/README.md#23-spawn-versus-attach) |
-| 4 | 2.4 The message channel | sequence | 6 | 0 |  | [README.md:330](../../53-Frida/README.md#24-the-message-channel) |
-| 5 | 2.5 The no-root path: frida-gadget | flowchart | 14 | 2 | yes | [README.md:367](../../53-Frida/README.md#25-the-no-root-path-frida-gadget) |
-| 6 | 3.3 What lives inside the agent | block layout | 9 | 0 |  | [README.md:597](../../53-Frida/README.md#33-what-lives-inside-the-agent) |
-| 7 | 3.6.1 `Interceptor` — attach versus replace | flowchart | 18 | 2 |  | [README.md:793](../../53-Frida/README.md#361-interceptor--attach-versus-replace) |
-| 8 | 3.7 `Stalker` — instruction-level tracing | flowchart | 13 | 2 | yes | [README.md:1321](../../53-Frida/README.md#37-stalker--instruction-level-tracing) |
-| 9 | 3.9.2 How a Java hook is installed, at the ART level | flowchart | 11 | 0 |  | [README.md:1538](../../53-Frida/README.md#392-how-a-java-hook-is-installed-at-the-art-level) |
-| 10 | 7.2 The engagement workflow | flowchart | 10 | 0 |  | [README.md:3096](../../53-Frida/README.md#72-the-engagement-workflow) |
-| 11 | 7.4 The four failure modes, exhaustively | flowchart | 12 | 0 | yes | [README.md:3439](../../53-Frida/README.md#74-the-four-failure-modes-exhaustively) |
-| 12 | 7.4.2 Failure 2 — `ClassNotFoundException` and the ClassLoader problem | flowchart | 5 | 0 | yes | [README.md:3598](../../53-Frida/README.md#742-failure-2--classnotfoundexception-and-the-classloader-problem) |
-| 13 | 7.4.4 Failure 4 — attaching instead of spawning | sequence | 5 | 0 |  | [README.md:3885](../../53-Frida/README.md#744-failure-4--attaching-instead-of-spawning) |
-| 14 | 7.10 The no-root path: `frida-gadget` | flowchart | 11 | 0 | yes | [README.md:4600](../../53-Frida/README.md#710-the-no-root-path-frida-gadget) |
-| 15 | Mind map | mindmap | 1 | 0 |  | [README.md:5992](../../53-Frida/README.md#mind-map) |
+| 1 | 2.1 The whole system, one picture | flowchart | 25 | 6 | yes | [README.md:204](../../53-Frida/README.md#21-the-whole-system-one-picture) |
+| 2 | 2.2 The injection sequence, step by step | sequence | 6 | 0 |  | [README.md:282](../../53-Frida/README.md#22-the-injection-sequence-step-by-step) |
+| 3 | 2.3 Spawn versus attach | flowchart | 16 | 2 | yes | [README.md:340](../../53-Frida/README.md#23-spawn-versus-attach) |
+| 4 | 2.4 The message channel | sequence | 6 | 0 |  | [README.md:395](../../53-Frida/README.md#24-the-message-channel) |
+| 5 | 2.5 The no-root path: frida-gadget | flowchart | 14 | 2 | yes | [README.md:432](../../53-Frida/README.md#25-the-no-root-path-frida-gadget) |
+| 6 | 3.3 What lives inside the agent | block layout | 9 | 0 |  | [README.md:662](../../53-Frida/README.md#33-what-lives-inside-the-agent) |
+| 7 | 3.6.1 `Interceptor` — attach versus replace | flowchart | 18 | 2 |  | [README.md:858](../../53-Frida/README.md#361-interceptor--attach-versus-replace) |
+| 8 | 3.7 `Stalker` — instruction-level tracing | flowchart | 13 | 2 | yes | [README.md:1386](../../53-Frida/README.md#37-stalker--instruction-level-tracing) |
+| 9 | 3.9.2 How a Java hook is installed, at the ART level | flowchart | 11 | 0 |  | [README.md:1603](../../53-Frida/README.md#392-how-a-java-hook-is-installed-at-the-art-level) |
+| 10 | 7.2 The engagement workflow | flowchart | 10 | 0 |  | [README.md:3181](../../53-Frida/README.md#72-the-engagement-workflow) |
+| 11 | 7.4 The four failure modes, exhaustively | flowchart | 12 | 0 | yes | [README.md:3524](../../53-Frida/README.md#74-the-four-failure-modes-exhaustively) |
+| 12 | 7.4.2 Failure 2 — `ClassNotFoundException` and the ClassLoader problem | flowchart | 5 | 0 | yes | [README.md:3683](../../53-Frida/README.md#742-failure-2--classnotfoundexception-and-the-classloader-problem) |
+| 13 | 7.4.4 Failure 4 — attaching instead of spawning | sequence | 5 | 0 |  | [README.md:3970](../../53-Frida/README.md#744-failure-4--attaching-instead-of-spawning) |
+| 14 | 7.10 The no-root path: `frida-gadget` | flowchart | 11 | 0 | yes | [README.md:4685](../../53-Frida/README.md#710-the-no-root-path-frida-gadget) |
+| 15 | Mind map | mindmap | 1 | 0 |  | [README.md:6077](../../53-Frida/README.md#mind-map) |
 | 16 | _(no heading above it)_ | mindmap | 2 | 0 |  | [mindmap.md:12](../../53-Frida/mindmap.md) |
 
 ## 54-Objection (8)
@@ -903,7 +904,7 @@ STYLE-GUIDE.md section 6.
 | 4 | 3.11 Version skew — the commonest real-world blocker | flowchart | 5 | 0 | yes | [README.md:1194](../../54-Objection/README.md#311-version-skew--the-commonest-real-world-blocker) |
 | 5 | 4.1 One command, end to end | flowchart | 16 | 0 | yes | [README.md:1254](../../54-Objection/README.md#41-one-command-end-to-end) |
 | 6 | 7.3 The four failure modes, and how to tell them apart | flowchart | 10 | 0 | yes | [README.md:1800](../../54-Objection/README.md#73-the-four-failure-modes-and-how-to-tell-them-apart) |
-| 7 | 13.2 Mind map | mindmap | 1 | 0 |  | [README.md:2544](../../54-Objection/README.md#132-mind-map) |
+| 7 | 13.2 Mind map | mindmap | 1 | 0 |  | [README.md:2545](../../54-Objection/README.md#132-mind-map) |
 | 8 | _(no heading above it)_ | mindmap | 1 | 0 |  | [mindmap.md:6](../../54-Objection/mindmap.md) |
 
 ## 55-MobSF (8)
@@ -930,34 +931,34 @@ STYLE-GUIDE.md section 6.
 | 5 | 2.4 GUI or CLI: a decision, not a preference | flowchart | 4 | 0 |  | [README.md:444](../../56-JADX/README.md#24-gui-or-cli-a-decision-not-a-preference) |
 | 6 | 2.5 Trust boundary: jadx runs attacker-supplied input | flowchart | 9 | 3 | yes | [README.md:474](../../56-JADX/README.md#25-trust-boundary-jadx-runs-attacker-supplied-input) |
 | 7 | 7.1 The read-hook-verify loop | sequence | 4 | 0 |  | [README.md:2805](../../56-JADX/README.md#71-the-read-hook-verify-loop) |
-| 8 | Mind map | mindmap | 1 | 0 |  | [README.md:4122](../../56-JADX/README.md#mind-map) |
+| 8 | Mind map | mindmap | 1 | 0 |  | [README.md:4123](../../56-JADX/README.md#mind-map) |
 | 9 | _(no heading above it)_ | mindmap | 1 | 0 |  | [mindmap.md:8](../../56-JADX/mindmap.md) |
 
 ## 57-Ghidra (9)
 
 | # | Depicts | Type | Nodes | Boundaries | Atk | Location |
 |---:|---|---|---:|---:|:---:|---|
-| 1 | The decompilation pipeline | flowchart | 13 | 0 |  | [README.md:158](../../57-Ghidra/README.md#the-decompilation-pipeline) |
-| 2 | Ghidra's process architecture | flowchart | 8 | 2 |  | [README.md:198](../../57-Ghidra/README.md#ghidras-process-architecture) |
-| 3 | Where Ghidra sits in the Android RE workflow | flowchart | 9 | 0 | yes | [README.md:242](../../57-Ghidra/README.md#where-ghidra-sits-in-the-android-re-workflow) |
-| 4 | 3.8 The JNIEnv problem, and how to solve it | flowchart | 8 | 0 |  | [README.md:662](../../57-Ghidra/README.md#38-the-jnienv-problem-and-how-to-solve-it) |
-| 5 | 3.9 Finding JNI entry points | flowchart | 9 | 0 | yes | [README.md:765](../../57-Ghidra/README.md#39-finding-jni-entry-points) |
-| 6 | 3.15 The Ghidra debugger against an Android target | sequence | 5 | 0 |  | [README.md:1189](../../57-Ghidra/README.md#315-the-ghidra-debugger-against-an-android-target) |
-| 7 | 7.1 The address arithmetic that connects the two worlds | flowchart | 4 | 0 |  | [README.md:1825](../../57-Ghidra/README.md#71-the-address-arithmetic-that-connects-the-two-worlds) |
-| 8 | Mind map | mindmap | 1 | 0 |  | [README.md:3201](../../57-Ghidra/README.md#mind-map) |
-| 9 | _(no heading above it)_ | mindmap | 1 | 0 |  | [mindmap.md:12](../../57-Ghidra/mindmap.md) |
+| 1 | The decompilation pipeline | flowchart | 13 | 0 |  | [README.md:207](../../57-Ghidra/README.md#the-decompilation-pipeline) |
+| 2 | Ghidra's process architecture | flowchart | 8 | 2 |  | [README.md:247](../../57-Ghidra/README.md#ghidras-process-architecture) |
+| 3 | Where Ghidra sits in the Android RE workflow | flowchart | 9 | 0 | yes | [README.md:291](../../57-Ghidra/README.md#where-ghidra-sits-in-the-android-re-workflow) |
+| 4 | 3.8 The JNIEnv problem, and how to solve it | flowchart | 8 | 0 |  | [README.md:712](../../57-Ghidra/README.md#38-the-jnienv-problem-and-how-to-solve-it) |
+| 5 | 3.9 Finding JNI entry points | flowchart | 9 | 0 | yes | [README.md:815](../../57-Ghidra/README.md#39-finding-jni-entry-points) |
+| 6 | 3.15 The Ghidra debugger against an Android target | sequence | 5 | 0 |  | [README.md:1245](../../57-Ghidra/README.md#315-the-ghidra-debugger-against-an-android-target) |
+| 7 | 7.1 The address arithmetic that connects the two worlds | flowchart | 4 | 0 |  | [README.md:1889](../../57-Ghidra/README.md#71-the-address-arithmetic-that-connects-the-two-worlds) |
+| 8 | Mind map | mindmap | 1 | 0 |  | [README.md:3418](../../57-Ghidra/README.md#mind-map) |
+| 9 | _(no heading above it)_ | mindmap | 1 | 0 |  | [mindmap.md:18](../../57-Ghidra/mindmap.md) |
 
 ## 58-IDA (8)
 
 | # | Depicts | Type | Nodes | Boundaries | Atk | Location |
 |---:|---|---|---:|---:|:---:|---|
-| 1 | 2.1 The pipeline | flowchart | 11 | 0 |  | [README.md:241](../../58-IDA/README.md#21-the-pipeline) |
-| 2 | 2.2 The database, and what is actually in it | flowchart | 8 | 1 | yes | [README.md:282](../../58-IDA/README.md#22-the-database-and-what-is-actually-in-it) |
-| 3 | 2.3 Where IDA sits in an Android workflow | flowchart | 12 | 0 | yes | [README.md:334](../../58-IDA/README.md#23-where-ida-sits-in-an-android-workflow) |
-| 4 | 3.4 Hex-Rays: microcode, and why it is not P-Code | flowchart | 13 | 0 |  | [README.md:546](../../58-IDA/README.md#34-hex-rays-microcode-and-why-it-is-not-p-code) |
-| 5 | 3.7 FLIRT — measured, not described | flowchart | 9 | 0 | yes | [README.md:837](../../58-IDA/README.md#37-flirt--measured-not-described) |
-| 6 | 3.9 The debugger and `android_server` | sequence | 5 | 0 |  | [README.md:935](../../58-IDA/README.md#39-the-debugger-and-android_server) |
-| 7 | Mind map | mindmap | 1 | 0 |  | [README.md:2397](../../58-IDA/README.md#mind-map) |
+| 1 | 2.1 The pipeline | flowchart | 11 | 0 |  | [README.md:243](../../58-IDA/README.md#21-the-pipeline) |
+| 2 | 2.2 The database, and what is actually in it | flowchart | 8 | 1 | yes | [README.md:284](../../58-IDA/README.md#22-the-database-and-what-is-actually-in-it) |
+| 3 | 2.3 Where IDA sits in an Android workflow | flowchart | 12 | 0 | yes | [README.md:336](../../58-IDA/README.md#23-where-ida-sits-in-an-android-workflow) |
+| 4 | 3.4 Hex-Rays: microcode, and why it is not P-Code | flowchart | 13 | 0 |  | [README.md:548](../../58-IDA/README.md#34-hex-rays-microcode-and-why-it-is-not-p-code) |
+| 5 | 3.7 FLIRT — measured, not described | flowchart | 9 | 0 | yes | [README.md:839](../../58-IDA/README.md#37-flirt--measured-not-described) |
+| 6 | 3.9 The debugger and `android_server` | sequence | 5 | 0 |  | [README.md:937](../../58-IDA/README.md#39-the-debugger-and-android_server) |
+| 7 | Mind map | mindmap | 1 | 0 |  | [README.md:2402](../../58-IDA/README.md#mind-map) |
 | 8 | _(no heading above it)_ | mindmap | 1 | 0 |  | [mindmap.md:5](../../58-IDA/mindmap.md) |
 
 ## 59-radare2 (11)
@@ -971,7 +972,7 @@ STYLE-GUIDE.md section 6.
 | 5 | 3.6 Analysis levels — `aaa` and what it actually costs | flowchart | 8 | 0 |  | [README.md:882](../../59-radare2/README.md#36-analysis-levels--aaa-and-what-it-actually-costs) |
 | 6 | 3.14 radare2 versus rizin versus Cutter | flowchart | 6 | 0 |  | [README.md:1327](../../59-radare2/README.md#314-radare2-versus-rizin-versus-cutter) |
 | 7 | 7.1 The address arithmetic that connects static to dynamic | flowchart | 7 | 0 |  | [README.md:2001](../../59-radare2/README.md#71-the-address-arithmetic-that-connects-static-to-dynamic) |
-| 8 | Mind map | mindmap | 1 | 0 |  | [README.md:2922](../../59-radare2/README.md#mind-map) |
+| 8 | Mind map | mindmap | 1 | 0 |  | [README.md:2926](../../59-radare2/README.md#mind-map) |
 | 9 | _(no heading above it)_ | mindmap | 1 | 0 |  | [mindmap.md:5](../../59-radare2/mindmap.md) |
 | 10 | How the pieces connect | flowchart | 11 | 0 | yes | [mindmap.md:166](../../59-radare2/mindmap.md#how-the-pieces-connect) |
 | 11 | The two failure modes, side by side | flowchart | 15 | 2 | yes | [mindmap.md:195](../../59-radare2/mindmap.md#the-two-failure-modes-side-by-side) |
@@ -1012,22 +1013,22 @@ STYLE-GUIDE.md section 6.
 | 2 | 2.2 The overlay illusion | flowchart | 13 | 4 | yes | [README.md:223](../../62-Magisk/README.md#22-the-overlay-illusion) |
 | 3 | 2.3 The `su` request flow | sequence | 5 | 0 |  | [README.md:267](../../62-Magisk/README.md#23-the-su-request-flow) |
 | 4 | 2.4 Zygisk — injection into every app | flowchart | 16 | 3 | yes | [README.md:312](../../62-Magisk/README.md#24-zygisk--injection-into-every-app) |
-| 5 | Mind map | mindmap | 1 | 0 |  | [README.md:2139](../../62-Magisk/README.md#mind-map) |
+| 5 | Mind map | mindmap | 1 | 0 |  | [README.md:2144](../../62-Magisk/README.md#mind-map) |
 | 6 | _(no heading above it)_ | mindmap | 1 | 0 |  | [mindmap.md:3](../../62-Magisk/mindmap.md) |
 
 ## 63-LSPosed (13)
 
 | # | Depicts | Type | Nodes | Boundaries | Atk | Location |
 |---:|---|---|---:|---:|:---:|---|
-| 1 | 2.1 The injection chain, end to end | flowchart | 20 | 4 | yes | [README.md:249](../../63-LSPosed/README.md#21-the-injection-chain-end-to-end) |
-| 2 | 2.2 One app launch, as a sequence | sequence | 7 | 0 |  | [README.md:310](../../63-LSPosed/README.md#22-one-app-launch-as-a-sequence) |
-| 3 | 2.3 Four processes, four privilege levels | flowchart | 10 | 4 | yes | [README.md:353](../../63-LSPosed/README.md#23-four-processes-four-privilege-levels) |
-| 4 | 2.5 Classic Xposed and LSPosed, side by side | flowchart | 10 | 2 | yes | [README.md:421](../../63-LSPosed/README.md#25-classic-xposed-and-lsposed-side-by-side) |
-| 5 | 3.5 Getting a module's DEX into a foreign process — and the class-loader problem | flowchart | 4 | 0 | yes | [README.md:606](../../63-LSPosed/README.md#35-getting-a-modules-dex-into-a-foreign-process--and-the-class-loader-problem) |
-| 6 | 3.7 `XC_MethodHook` — the lifecycle, precisely | state | 4 | 0 |  | [README.md:736](../../63-LSPosed/README.md#37-xc_methodhook--the-lifecycle-precisely) |
-| 7 | 3.10 The backup method — the trampoline of the managed world | flowchart | 7 | 2 | yes | [README.md:873](../../63-LSPosed/README.md#310-the-backup-method--the-trampoline-of-the-managed-world) |
-| 8 | 3.13 Timing: the three entry points and what exists at each | flowchart | 12 | 0 |  | [README.md:986](../../63-LSPosed/README.md#313-timing-the-three-entry-points-and-what-exists-at-each) |
-| 9 | 13.2 Mind map | mindmap | 1 | 0 |  | [README.md:2884](../../63-LSPosed/README.md#132-mind-map) |
+| 1 | 2.1 The injection chain, end to end | flowchart | 20 | 4 | yes | [README.md:261](../../63-LSPosed/README.md#21-the-injection-chain-end-to-end) |
+| 2 | 2.2 One app launch, as a sequence | sequence | 7 | 0 |  | [README.md:322](../../63-LSPosed/README.md#22-one-app-launch-as-a-sequence) |
+| 3 | 2.3 Four processes, four privilege levels | flowchart | 10 | 4 | yes | [README.md:365](../../63-LSPosed/README.md#23-four-processes-four-privilege-levels) |
+| 4 | 2.5 Classic Xposed and LSPosed, side by side | flowchart | 10 | 2 | yes | [README.md:433](../../63-LSPosed/README.md#25-classic-xposed-and-lsposed-side-by-side) |
+| 5 | 3.5 Getting a module's DEX into a foreign process — and the class-loader problem | flowchart | 4 | 0 | yes | [README.md:618](../../63-LSPosed/README.md#35-getting-a-modules-dex-into-a-foreign-process--and-the-class-loader-problem) |
+| 6 | 3.7 `XC_MethodHook` — the lifecycle, precisely | state | 4 | 0 |  | [README.md:748](../../63-LSPosed/README.md#37-xc_methodhook--the-lifecycle-precisely) |
+| 7 | 3.10 The backup method — the trampoline of the managed world | flowchart | 7 | 2 | yes | [README.md:885](../../63-LSPosed/README.md#310-the-backup-method--the-trampoline-of-the-managed-world) |
+| 8 | 3.13 Timing: the three entry points and what exists at each | flowchart | 12 | 0 |  | [README.md:998](../../63-LSPosed/README.md#313-timing-the-three-entry-points-and-what-exists-at-each) |
+| 9 | 13.2 Mind map | mindmap | 1 | 0 |  | [README.md:2896](../../63-LSPosed/README.md#132-mind-map) |
 | 10 | The chapter | mindmap | 1 | 0 |  | [mindmap.md:11](../../63-LSPosed/mindmap.md#the-chapter) |
 | 11 | Decision: which instrument? | flowchart | 15 | 0 |  | [mindmap.md:165](../../63-LSPosed/mindmap.md#decision-which-instrument) |
 | 12 | Diagnostic: the hook did not fire | flowchart | 18 | 0 | yes | [mindmap.md:196](../../63-LSPosed/mindmap.md#diagnostic-the-hook-did-not-fire) |
@@ -1037,22 +1038,22 @@ STYLE-GUIDE.md section 6.
 
 | # | Depicts | Type | Nodes | Boundaries | Atk | Location |
 |---:|---|---|---:|---:|:---:|---|
-| 1 | 2.1 The boot chain classic Xposed inserted itself into | flowchart | 20 | 3 | yes | [README.md:313](../../64-Xposed/README.md#21-the-boot-chain-classic-xposed-inserted-itself-into) |
-| 2 | 2.2 One app launch, as a sequence | sequence | 6 | 0 |  | [README.md:371](../../64-Xposed/README.md#22-one-app-launch-as-a-sequence) |
-| 3 | 2.3 What a classic install physically wrote to disk | block layout | 11 | 0 | yes | [README.md:415](../../64-Xposed/README.md#23-what-a-classic-install-physically-wrote-to-disk) |
-| 4 | 2.5 The four things Xposed needed, and when each became impossible | flowchart | 10 | 2 | yes | [README.md:490](../../64-Xposed/README.md#25-the-four-things-xposed-needed-and-when-each-became-impossible) |
-| 5 | 13.2 Mind map | mindmap | 2 | 0 |  | [README.md:3027](../../64-Xposed/README.md#132-mind-map) |
+| 1 | 2.1 The boot chain classic Xposed inserted itself into | flowchart | 20 | 3 | yes | [README.md:316](../../64-Xposed/README.md#21-the-boot-chain-classic-xposed-inserted-itself-into) |
+| 2 | 2.2 One app launch, as a sequence | sequence | 6 | 0 |  | [README.md:374](../../64-Xposed/README.md#22-one-app-launch-as-a-sequence) |
+| 3 | 2.3 What a classic install physically wrote to disk | block layout | 11 | 0 | yes | [README.md:418](../../64-Xposed/README.md#23-what-a-classic-install-physically-wrote-to-disk) |
+| 4 | 2.5 The four things Xposed needed, and when each became impossible | flowchart | 10 | 2 | yes | [README.md:493](../../64-Xposed/README.md#25-the-four-things-xposed-needed-and-when-each-became-impossible) |
+| 5 | 13.2 Mind map | mindmap | 2 | 0 |  | [README.md:3030](../../64-Xposed/README.md#132-mind-map) |
 | 6 | _(no heading above it)_ | mindmap | 1 | 0 |  | [mindmap.md:13](../../64-Xposed/mindmap.md) |
 
 ## 65-Hooking (7)
 
 | # | Depicts | Type | Nodes | Boundaries | Atk | Location |
 |---:|---|---|---:|---:|:---:|---|
-| 1 | 2.1 The five places a call can be intercepted | flowchart | 20 | 2 | yes | [README.md:167](../../65-Hooking/README.md#21-the-five-places-a-call-can-be-intercepted) |
-| 2 | 2.2 What each hook physically overwrites | flowchart | 11 | 2 |  | [README.md:211](../../65-Hooking/README.md#22-what-each-hook-physically-overwrites) |
-| 3 | 2.3 The anatomy of an inline hook | sequence | 4 | 0 |  | [README.md:242](../../65-Hooking/README.md#23-the-anatomy-of-an-inline-hook) |
-| 4 | 2.5 Blast radius: the property that should drive your choice | flowchart | 6 | 0 | yes | [README.md:318](../../65-Hooking/README.md#25-blast-radius-the-property-that-should-drive-your-choice) |
-| 5 | 13.2 Mind map | mindmap | 1 | 0 |  | [README.md:2449](../../65-Hooking/README.md#132-mind-map) |
+| 1 | 2.1 The five places a call can be intercepted | flowchart | 20 | 2 | yes | [README.md:169](../../65-Hooking/README.md#21-the-five-places-a-call-can-be-intercepted) |
+| 2 | 2.2 What each hook physically overwrites | flowchart | 11 | 2 |  | [README.md:213](../../65-Hooking/README.md#22-what-each-hook-physically-overwrites) |
+| 3 | 2.3 The anatomy of an inline hook | sequence | 4 | 0 |  | [README.md:244](../../65-Hooking/README.md#23-the-anatomy-of-an-inline-hook) |
+| 4 | 2.5 Blast radius: the property that should drive your choice | flowchart | 6 | 0 | yes | [README.md:320](../../65-Hooking/README.md#25-blast-radius-the-property-that-should-drive-your-choice) |
+| 5 | 13.2 Mind map | mindmap | 1 | 0 |  | [README.md:2451](../../65-Hooking/README.md#132-mind-map) |
 | 6 | _(no heading above it)_ | mindmap | 2 | 0 |  | [mindmap.md:6](../../65-Hooking/mindmap.md) |
 | 7 | The one-diagram version | flowchart | 13 | 0 | yes | [mindmap.md:163](../../65-Hooking/mindmap.md#the-one-diagram-version) |
 
@@ -1060,21 +1061,21 @@ STYLE-GUIDE.md section 6.
 
 | # | Depicts | Type | Nodes | Boundaries | Atk | Location |
 |---:|---|---|---:|---:|:---:|---|
-| 1 | 2.1 The command path | flowchart | 17 | 4 | yes | [README.md:180](../../66-Instrumentation/README.md#21-the-command-path) |
-| 2 | 2.2 The Binder sequence, with the ordering that matters | sequence | 7 | 0 |  | [README.md:232](../../66-Instrumentation/README.md#22-the-binder-sequence-with-the-ordering-that-matters) |
-| 3 | 2.4 The lifecycle as a state machine | state | 4 | 0 |  | [README.md:328](../../66-Instrumentation/README.md#24-the-lifecycle-as-a-state-machine) |
-| 4 | 13.2 Mind map | mindmap | 1 | 0 |  | [README.md:2402](../../66-Instrumentation/README.md#132-mind-map) |
+| 1 | 2.1 The command path | flowchart | 17 | 4 | yes | [README.md:184](../../66-Instrumentation/README.md#21-the-command-path) |
+| 2 | 2.2 The Binder sequence, with the ordering that matters | sequence | 7 | 0 |  | [README.md:236](../../66-Instrumentation/README.md#22-the-binder-sequence-with-the-ordering-that-matters) |
+| 3 | 2.4 The lifecycle as a state machine | state | 4 | 0 |  | [README.md:332](../../66-Instrumentation/README.md#24-the-lifecycle-as-a-state-machine) |
+| 4 | 13.2 Mind map | mindmap | 1 | 0 |  | [README.md:2420](../../66-Instrumentation/README.md#132-mind-map) |
 | 5 | _(no heading above it)_ | mindmap | 1 | 0 |  | [mindmap.md:6](../../66-Instrumentation/mindmap.md) |
 
 ## 67-BypassingProtections (7)
 
 | # | Depicts | Type | Nodes | Boundaries | Atk | Location |
 |---:|---|---|---:|---:|:---:|---|
-| 1 | 2.1 The five seams | flowchart | 20 | 2 | yes | [README.md:190](../../67-BypassingProtections/README.md#21-the-five-seams) |
-| 2 | 2.2 The same picture as a sequence, with the timing that matters | sequence | 6 | 0 |  | [README.md:241](../../67-BypassingProtections/README.md#22-the-same-picture-as-a-sequence-with-the-timing-that-matters) |
-| 3 | 2.4 The escalation ladder, drawn | state | 3 | 0 |  | [README.md:309](../../67-BypassingProtections/README.md#24-the-escalation-ladder-drawn) |
-| 4 | 2.5 Where the responses live | flowchart | 11 | 0 | yes | [README.md:350](../../67-BypassingProtections/README.md#25-where-the-responses-live) |
-| 5 | 13.2 Mind map | mindmap | 1 | 0 |  | [README.md:2829](../../67-BypassingProtections/README.md#132-mind-map) |
+| 1 | 2.1 The five seams | flowchart | 20 | 2 | yes | [README.md:185](../../67-BypassingProtections/README.md#21-the-five-seams) |
+| 2 | 2.2 The same picture as a sequence, with the timing that matters | sequence | 6 | 0 |  | [README.md:236](../../67-BypassingProtections/README.md#22-the-same-picture-as-a-sequence-with-the-timing-that-matters) |
+| 3 | 2.4 The escalation ladder, drawn | state | 3 | 0 |  | [README.md:304](../../67-BypassingProtections/README.md#24-the-escalation-ladder-drawn) |
+| 4 | 2.5 Where the responses live | flowchart | 11 | 0 | yes | [README.md:345](../../67-BypassingProtections/README.md#25-where-the-responses-live) |
+| 5 | 13.2 Mind map | mindmap | 1 | 0 |  | [README.md:2824](../../67-BypassingProtections/README.md#132-mind-map) |
 | 6 | _(no heading above it)_ | mindmap | 1 | 0 |  | [mindmap.md:6](../../67-BypassingProtections/mindmap.md) |
 | 7 | The same thing as a decision tree | flowchart | 26 | 0 | yes | [mindmap.md:215](../../67-BypassingProtections/mindmap.md#the-same-thing-as-a-decision-tree) |
 
@@ -1082,16 +1083,16 @@ STYLE-GUIDE.md section 6.
 
 | # | Depicts | Type | Nodes | Boundaries | Atk | Location |
 |---:|---|---|---:|---:|:---:|---|
-| 1 | 2.1 The investigation loop | flowchart | 10 | 0 |  | [README.md:335](../../68-ReverseEngineering/README.md#21-the-investigation-loop) |
-| 2 | 2.2 The triage funnel, across both halves | flowchart | 12 | 3 | yes | [README.md:386](../../68-ReverseEngineering/README.md#22-the-triage-funnel-across-both-halves) |
-| 3 | 2.3 The evidence ladder | flowchart | 6 | 0 | yes | [README.md:436](../../68-ReverseEngineering/README.md#23-the-evidence-ladder) |
-| 4 | 2.4 Where the tools sit on the loop | flowchart | 13 | 2 |  | [README.md:486](../../68-ReverseEngineering/README.md#24-where-the-tools-sit-on-the-loop) |
-| 5 | 2.5 The state of a question | state | 0 | 0 |  | [README.md:537](../../68-ReverseEngineering/README.md#25-the-state-of-a-question) |
-| 6 | 3.3 Stage 2 — triage in twenty minutes | flowchart | 5 | 0 | yes | [README.md:702](../../68-ReverseEngineering/README.md#33-stage-2--triage-in-twenty-minutes) |
-| 7 | 3.5 Stage 4 — hypothesis, prediction, experiment, verdict | sequence | 3 | 0 |  | [README.md:793](../../68-ReverseEngineering/README.md#35-stage-4--hypothesis-prediction-experiment-verdict) |
-| 8 | 3.8 Crossing the managed/native boundary as one question | flowchart | 8 | 0 |  | [README.md:992](../../68-ReverseEngineering/README.md#38-crossing-the-managednative-boundary-as-one-question) |
-| 9 | 4.5 Tracing one question from Java to the kernel | sequence | 5 | 0 |  | [README.md:1547](../../68-ReverseEngineering/README.md#45-tracing-one-question-from-java-to-the-kernel) |
-| 10 | 13.2 The chapter as one picture | mindmap | 1 | 0 |  | [README.md:2871](../../68-ReverseEngineering/README.md#132-the-chapter-as-one-picture) |
+| 1 | 2.1 The investigation loop | flowchart | 10 | 0 |  | [README.md:348](../../68-ReverseEngineering/README.md#21-the-investigation-loop) |
+| 2 | 2.2 The triage funnel, across both halves | flowchart | 12 | 3 | yes | [README.md:399](../../68-ReverseEngineering/README.md#22-the-triage-funnel-across-both-halves) |
+| 3 | 2.3 The evidence ladder | flowchart | 6 | 0 | yes | [README.md:449](../../68-ReverseEngineering/README.md#23-the-evidence-ladder) |
+| 4 | 2.4 Where the tools sit on the loop | flowchart | 13 | 2 |  | [README.md:499](../../68-ReverseEngineering/README.md#24-where-the-tools-sit-on-the-loop) |
+| 5 | 2.5 The state of a question | state | 0 | 0 |  | [README.md:550](../../68-ReverseEngineering/README.md#25-the-state-of-a-question) |
+| 6 | 3.3 Stage 2 — triage in twenty minutes | flowchart | 5 | 0 | yes | [README.md:715](../../68-ReverseEngineering/README.md#33-stage-2--triage-in-twenty-minutes) |
+| 7 | 3.5 Stage 4 — hypothesis, prediction, experiment, verdict | sequence | 3 | 0 |  | [README.md:806](../../68-ReverseEngineering/README.md#35-stage-4--hypothesis-prediction-experiment-verdict) |
+| 8 | 3.8 Crossing the managed/native boundary as one question | flowchart | 8 | 0 |  | [README.md:1005](../../68-ReverseEngineering/README.md#38-crossing-the-managednative-boundary-as-one-question) |
+| 9 | 4.5 Tracing one question from Java to the kernel | sequence | 5 | 0 |  | [README.md:1560](../../68-ReverseEngineering/README.md#45-tracing-one-question-from-java-to-the-kernel) |
+| 10 | 13.2 The chapter as one picture | mindmap | 1 | 0 |  | [README.md:2884](../../68-ReverseEngineering/README.md#132-the-chapter-as-one-picture) |
 | 11 | _(no heading above it)_ | mindmap | 1 | 0 |  | [mindmap.md:12](../../68-ReverseEngineering/mindmap.md) |
 
 ## 69-MalwareAnalysis (10)
@@ -1113,13 +1114,13 @@ STYLE-GUIDE.md section 6.
 
 | # | Depicts | Type | Nodes | Boundaries | Atk | Location |
 |---:|---|---|---:|---:|:---:|---|
-| 1 | 1.3 A crash is not a bug, and a bug is not a vulnerability | flowchart | 6 | 0 | yes | [README.md:147](../../70-VulnerabilityResearch/README.md#13-a-crash-is-not-a-bug-and-a-bug-is-not-a-vulnerability) |
-| 2 | 2.1 The pipeline | flowchart | 8 | 0 |  | [README.md:305](../../70-VulnerabilityResearch/README.md#21-the-pipeline) |
-| 3 | 2.2 The Android attack surface, drawn by who can reach what | flowchart | 13 | 5 | yes | [README.md:343](../../70-VulnerabilityResearch/README.md#22-the-android-attack-surface-drawn-by-who-can-reach-what) |
-| 4 | 2.3 The funnel, with real numbers | flowchart | 8 | 0 |  | [README.md:412](../../70-VulnerabilityResearch/README.md#23-the-funnel-with-real-numbers) |
-| 5 | 2.4 Where a crash comes from and where it goes | sequence | 5 | 0 |  | [README.md:442](../../70-VulnerabilityResearch/README.md#24-where-a-crash-comes-from-and-where-it-goes) |
-| 6 | 4.4 Tracing one path from untrusted input to a parser | sequence | 5 | 0 | yes | [README.md:1361](../../70-VulnerabilityResearch/README.md#44-tracing-one-path-from-untrusted-input-to-a-parser) |
-| 7 | The chapter as a map | mindmap | 1 | 0 |  | [README.md:3130](../../70-VulnerabilityResearch/README.md#the-chapter-as-a-map) |
+| 1 | 1.3 A crash is not a bug, and a bug is not a vulnerability | flowchart | 6 | 0 | yes | [README.md:145](../../70-VulnerabilityResearch/README.md#13-a-crash-is-not-a-bug-and-a-bug-is-not-a-vulnerability) |
+| 2 | 2.1 The pipeline | flowchart | 8 | 0 |  | [README.md:303](../../70-VulnerabilityResearch/README.md#21-the-pipeline) |
+| 3 | 2.2 The Android attack surface, drawn by who can reach what | flowchart | 13 | 5 | yes | [README.md:341](../../70-VulnerabilityResearch/README.md#22-the-android-attack-surface-drawn-by-who-can-reach-what) |
+| 4 | 2.3 The funnel, with real numbers | flowchart | 8 | 0 |  | [README.md:410](../../70-VulnerabilityResearch/README.md#23-the-funnel-with-real-numbers) |
+| 5 | 2.4 Where a crash comes from and where it goes | sequence | 5 | 0 |  | [README.md:440](../../70-VulnerabilityResearch/README.md#24-where-a-crash-comes-from-and-where-it-goes) |
+| 6 | 4.4 Tracing one path from untrusted input to a parser | sequence | 5 | 0 | yes | [README.md:1359](../../70-VulnerabilityResearch/README.md#44-tracing-one-path-from-untrusted-input-to-a-parser) |
+| 7 | The chapter as a map | mindmap | 1 | 0 |  | [README.md:3128](../../70-VulnerabilityResearch/README.md#the-chapter-as-a-map) |
 | 8 | _(no heading above it)_ | mindmap | 1 | 0 |  | [mindmap.md:5](../../70-VulnerabilityResearch/mindmap.md) |
 | 9 | The same thing as a decision flow | flowchart | 20 | 0 | yes | [mindmap.md:187](../../70-VulnerabilityResearch/mindmap.md#the-same-thing-as-a-decision-flow) |
 
@@ -1153,7 +1154,7 @@ STYLE-GUIDE.md section 6.
 | 2 | 2.2 How the index is produced | sequence | 4 | 0 |  | [README.md:208](../../73-Labs/README.md#22-how-the-index-is-produced) |
 | 3 | 2.3 The lab environment, as a stack | block layout | 12 | 0 |  | [README.md:245](../../73-Labs/README.md#23-the-lab-environment-as-a-stack) |
 | 4 | 2.4 The lifecycle of one lab attempt | state | 0 | 0 |  | [README.md:263](../../73-Labs/README.md#24-the-lifecycle-of-one-lab-attempt) |
-| 5 | 13.2 Mind map | mindmap | 1 | 0 |  | [README.md:1360](../../73-Labs/README.md#132-mind-map) |
+| 5 | 13.2 Mind map | mindmap | 1 | 0 |  | [README.md:1373](../../73-Labs/README.md#132-mind-map) |
 | 6 | _(no heading above it)_ | mindmap | 2 | 0 |  | [mindmap.md:6](../../73-Labs/mindmap.md) |
 
 ## 74-CaseStudies (6)
@@ -1163,7 +1164,7 @@ STYLE-GUIDE.md section 6.
 | 1 | 2.1 The five phases every investigation actually has | flowchart | 9 | 0 | yes | [README.md:173](../../74-CaseStudies/README.md#21-the-five-phases-every-investigation-actually-has) |
 | 2 | 2.2 What each case is really about — the same shape six times | flowchart | 16 | 2 | yes | [README.md:205](../../74-CaseStudies/README.md#22-what-each-case-is-really-about--the-same-shape-six-times) |
 | 3 | 2.3 Where the evidence for one case comes from | sequence | 5 | 0 |  | [README.md:253](../../74-CaseStudies/README.md#23-where-the-evidence-for-one-case-comes-from) |
-| 4 | 13.2 Mind map | mindmap | 3 | 0 |  | [README.md:2065](../../74-CaseStudies/README.md#132-mind-map) |
+| 4 | 13.2 Mind map | mindmap | 3 | 0 |  | [README.md:2067](../../74-CaseStudies/README.md#132-mind-map) |
 | 5 | _(no heading above it)_ | mindmap | 1 | 0 |  | [mindmap.md:6](../../74-CaseStudies/mindmap.md) |
 | 6 | The chapter as a decision procedure | flowchart | 12 | 0 | yes | [mindmap.md:158](../../74-CaseStudies/mindmap.md#the-chapter-as-a-decision-procedure) |
 
@@ -1174,14 +1175,14 @@ STYLE-GUIDE.md section 6.
 | 1 | 2.1 The pipeline as a system | flowchart | 13 | 4 | yes | [README.md:283](../../75-InterviewQuestions/README.md#21-the-pipeline-as-a-system) |
 | 2 | 2.2 One round, end to end | sequence | 4 | 0 |  | [README.md:342](../../75-InterviewQuestions/README.md#22-one-round-end-to-end) |
 | 3 | 2.3 The state machine of a single answer | state | 0 | 0 |  | [README.md:396](../../75-InterviewQuestions/README.md#23-the-state-machine-of-a-single-answer) |
-| 4 | Mind map | mindmap | 1 | 0 |  | [README.md:2687](../../75-InterviewQuestions/README.md#mind-map) |
+| 4 | Mind map | mindmap | 1 | 0 |  | [README.md:2689](../../75-InterviewQuestions/README.md#mind-map) |
 | 5 | _(no heading above it)_ | mindmap | 1 | 0 |  | [mindmap.md:8](../../75-InterviewQuestions/mindmap.md) |
 
 ## 76-CheatSheets (4)
 
 | # | Depicts | Type | Nodes | Boundaries | Atk | Location |
 |---:|---|---|---:|---:|:---:|---|
-| 1 | Mind map | mindmap | 1 | 0 |  | [README.md:878](../../76-CheatSheets/README.md#mind-map) |
+| 1 | Mind map | mindmap | 1 | 0 |  | [README.md:890](../../76-CheatSheets/README.md#mind-map) |
 | 2 | _(no heading above it)_ | mindmap | 1 | 0 |  | [mindmap.md:6](../../76-CheatSheets/mindmap.md) |
 | 3 | How the parts fit together | flowchart | 14 | 3 | yes | [mindmap.md:112](../../76-CheatSheets/mindmap.md#how-the-parts-fit-together) |
 | 4 | The decision the chapter is built on | flowchart | 6 | 0 | yes | [mindmap.md:163](../../76-CheatSheets/mindmap.md#the-decision-the-chapter-is-built-on) |
@@ -1199,36 +1200,36 @@ STYLE-GUIDE.md section 6.
 
 | # | Depicts | Type | Nodes | Boundaries | Atk | Location |
 |---:|---|---|---:|---:|:---:|---|
-| 1 | 4.1 The Android security stack, end to end | flowchart | 17 | 5 | yes | [README.md:334](../../78-Diagrams/README.md#41-the-android-security-stack-end-to-end) |
-| 2 | 4.2 The boot chain, hardware root of trust to app code | sequence | 6 | 0 |  | [README.md:398](../../78-Diagrams/README.md#42-the-boot-chain-hardware-root-of-trust-to-app-code) |
-| 3 | 4.3 Where every chapter sits in the platform | flowchart | 22 | 11 |  | [README.md:444](../../78-Diagrams/README.md#43-where-every-chapter-sits-in-the-platform) |
-| 4 | 4.4 The complete trust-boundary map | flowchart | 16 | 4 | yes | [README.md:505](../../78-Diagrams/README.md#44-the-complete-trust-boundary-map) |
-| 5 | 4.5 One Binder call, across every boundary | sequence | 5 | 0 |  | [README.md:567](../../78-Diagrams/README.md#45-one-binder-call-across-every-boundary) |
-| 6 | 4.6 The engagement, static through dynamic to reporting | state | 0 | 0 |  | [README.md:606](../../78-Diagrams/README.md#46-the-engagement-static-through-dynamic-to-reporting) |
-| 7 | 4.7 The device-state machine an engagement moves through | state | 0 | 0 |  | [README.md:649](../../78-Diagrams/README.md#47-the-device-state-machine-an-engagement-moves-through) |
-| 8 | 5.2 Flowchart arrows and node shapes | flowchart | 6 | 0 |  | [README.md:707](../../78-Diagrams/README.md#52-flowchart-arrows-and-node-shapes) |
-| 9 | 5.3 Sequence arrows — the four you must tell apart | sequence | 2 | 0 |  | [README.md:734](../../78-Diagrams/README.md#53-sequence-arrows--the-four-you-must-tell-apart) |
-| 10 | 5.4 State and class notation | state | 0 | 0 |  | [README.md:765](../../78-Diagrams/README.md#54-state-and-class-notation) |
-| 11 | 5.4 State and class notation | class | 2 | 0 |  | [README.md:781](../../78-Diagrams/README.md#54-state-and-class-notation) |
-| 12 | 6.1 Show the boundary, do not imply it | flowchart | 6 | 2 | yes | [README.md:847](../../78-Diagrams/README.md#61-show-the-boundary-do-not-imply-it) |
-| 13 | 6.4 Draw the actual flow, not the intended one | flowchart | 8 | 0 | yes | [README.md:919](../../78-Diagrams/README.md#64-draw-the-actual-flow-not-the-intended-one) |
-| 14 | Mind map | mindmap | 1 | 1 |  | [README.md:1164](../../78-Diagrams/README.md#mind-map) |
+| 1 | 4.1 The Android security stack, end to end | flowchart | 17 | 5 | yes | [README.md:347](../../78-Diagrams/README.md#41-the-android-security-stack-end-to-end) |
+| 2 | 4.2 The boot chain, hardware root of trust to app code | sequence | 6 | 0 |  | [README.md:411](../../78-Diagrams/README.md#42-the-boot-chain-hardware-root-of-trust-to-app-code) |
+| 3 | 4.3 Where every chapter sits in the platform | flowchart | 22 | 11 |  | [README.md:457](../../78-Diagrams/README.md#43-where-every-chapter-sits-in-the-platform) |
+| 4 | 4.4 The complete trust-boundary map | flowchart | 16 | 4 | yes | [README.md:518](../../78-Diagrams/README.md#44-the-complete-trust-boundary-map) |
+| 5 | 4.5 One Binder call, across every boundary | sequence | 5 | 0 |  | [README.md:580](../../78-Diagrams/README.md#45-one-binder-call-across-every-boundary) |
+| 6 | 4.6 The engagement, static through dynamic to reporting | state | 0 | 0 |  | [README.md:619](../../78-Diagrams/README.md#46-the-engagement-static-through-dynamic-to-reporting) |
+| 7 | 4.7 The device-state machine an engagement moves through | state | 0 | 0 |  | [README.md:662](../../78-Diagrams/README.md#47-the-device-state-machine-an-engagement-moves-through) |
+| 8 | 5.2 Flowchart arrows and node shapes | flowchart | 6 | 0 |  | [README.md:720](../../78-Diagrams/README.md#52-flowchart-arrows-and-node-shapes) |
+| 9 | 5.3 Sequence arrows — the four you must tell apart | sequence | 2 | 0 |  | [README.md:747](../../78-Diagrams/README.md#53-sequence-arrows--the-four-you-must-tell-apart) |
+| 10 | 5.4 State and class notation | state | 0 | 0 |  | [README.md:778](../../78-Diagrams/README.md#54-state-and-class-notation) |
+| 11 | 5.4 State and class notation | class | 2 | 0 |  | [README.md:794](../../78-Diagrams/README.md#54-state-and-class-notation) |
+| 12 | 6.1 Show the boundary, do not imply it | flowchart | 6 | 2 | yes | [README.md:860](../../78-Diagrams/README.md#61-show-the-boundary-do-not-imply-it) |
+| 13 | 6.4 Draw the actual flow, not the intended one | flowchart | 8 | 0 | yes | [README.md:932](../../78-Diagrams/README.md#64-draw-the-actual-flow-not-the-intended-one) |
+| 14 | Mind map | mindmap | 1 | 1 |  | [README.md:1178](../../78-Diagrams/README.md#mind-map) |
 | 15 | _(no heading above it)_ | mindmap | 1 | 1 |  | [mindmap.md:5](../../78-Diagrams/mindmap.md) |
 | 16 | Version A — the diagram most people draw | flowchart | 5 | 0 |  | [examples/01-one-system-three-diagrams.md:30](../../78-Diagrams/examples/01-one-system-three-diagrams.md#version-a--the-diagram-most-people-draw) |
 | 17 | Version B — the same system with the boundaries drawn | flowchart | 10 | 3 | yes | [examples/01-one-system-three-diagrams.md:106](../../78-Diagrams/examples/01-one-system-three-diagrams.md#version-b--the-same-system-with-the-boundaries-drawn) |
 | 18 | Version C — the same system as a sequence | sequence | 6 | 0 |  | [examples/01-one-system-three-diagrams.md:194](../../78-Diagrams/examples/01-one-system-three-diagrams.md#version-c--the-same-system-as-a-sequence) |
-| 19 | 1 — A semicolon in message or label text | sequence | 2 | 0 |  | [examples/02-broken-diagrams-and-their-fixes.md:47](../../78-Diagrams/examples/02-broken-diagrams-and-their-fixes.md#1--a-semicolon-in-message-or-label-text) |
-| 20 | 1 — A semicolon in message or label text | sequence | 2 | 0 |  | [examples/02-broken-diagrams-and-their-fixes.md:56](../../78-Diagrams/examples/02-broken-diagrams-and-their-fixes.md#1--a-semicolon-in-message-or-label-text) |
-| 21 | 2 — Unquoted parentheses or brackets in mindmap text | mindmap | 3 | 0 |  | [examples/02-broken-diagrams-and-their-fixes.md:92](../../78-Diagrams/examples/02-broken-diagrams-and-their-fixes.md#2--unquoted-parentheses-or-brackets-in-mindmap-text) |
-| 22 | 2 — Unquoted parentheses or brackets in mindmap text | mindmap | 1 | 0 |  | [examples/02-broken-diagrams-and-their-fixes.md:101](../../78-Diagrams/examples/02-broken-diagrams-and-their-fixes.md#2--unquoted-parentheses-or-brackets-in-mindmap-text) |
-| 23 | 3 — A backslash-escaped quote inside a quoted label | flowchart | 3 | 0 |  | [examples/02-broken-diagrams-and-their-fixes.md:128](../../78-Diagrams/examples/02-broken-diagrams-and-their-fixes.md#3--a-backslash-escaped-quote-inside-a-quoted-label) |
-| 24 | 3 — A backslash-escaped quote inside a quoted label | flowchart | 2 | 0 |  | [examples/02-broken-diagrams-and-their-fixes.md:135](../../78-Diagrams/examples/02-broken-diagrams-and-their-fixes.md#3--a-backslash-escaped-quote-inside-a-quoted-label) |
-| 25 | 4 — `style` inside a `sequenceDiagram` | sequence | 2 | 0 |  | [examples/02-broken-diagrams-and-their-fixes.md:165](../../78-Diagrams/examples/02-broken-diagrams-and-their-fixes.md#4--style-inside-a-sequencediagram) |
-| 26 | 4 — `style` inside a `sequenceDiagram` | sequence | 2 | 0 |  | [examples/02-broken-diagrams-and-their-fixes.md:177](../../78-Diagrams/examples/02-broken-diagrams-and-their-fixes.md#4--style-inside-a-sequencediagram) |
-| 27 | 5 — A participant id that collides with a keyword | sequence | 2 | 0 |  | [examples/02-broken-diagrams-and-their-fixes.md:220](../../78-Diagrams/examples/02-broken-diagrams-and-their-fixes.md#5--a-participant-id-that-collides-with-a-keyword) |
-| 28 | 6 — Unquoted parentheses in flowchart node text | flowchart | 3 | 0 |  | [examples/02-broken-diagrams-and-their-fixes.md:254](../../78-Diagrams/examples/02-broken-diagrams-and-their-fixes.md#6--unquoted-parentheses-in-flowchart-node-text) |
-| 29 | 7 — A mindmap leaf whose text starts with a diagram-type keyword | mindmap | 1 | 0 |  | [examples/02-broken-diagrams-and-their-fixes.md:283](../../78-Diagrams/examples/02-broken-diagrams-and-their-fixes.md#7--a-mindmap-leaf-whose-text-starts-with-a-diagram-type-keyword) |
-| 30 | 7 — A mindmap leaf whose text starts with a diagram-type keyword | mindmap | 3 | 0 |  | [examples/02-broken-diagrams-and-their-fixes.md:293](../../78-Diagrams/examples/02-broken-diagrams-and-their-fixes.md#7--a-mindmap-leaf-whose-text-starts-with-a-diagram-type-keyword) |
+| 19 | 1 — A semicolon in message or label text | sequence | 2 | 0 |  | [examples/02-broken-diagrams-and-their-fixes.md:48](../../78-Diagrams/examples/02-broken-diagrams-and-their-fixes.md#1--a-semicolon-in-message-or-label-text) |
+| 20 | 1 — A semicolon in message or label text | sequence | 2 | 0 |  | [examples/02-broken-diagrams-and-their-fixes.md:57](../../78-Diagrams/examples/02-broken-diagrams-and-their-fixes.md#1--a-semicolon-in-message-or-label-text) |
+| 21 | 2 — Unquoted parentheses or brackets in mindmap text | mindmap | 3 | 0 |  | [examples/02-broken-diagrams-and-their-fixes.md:93](../../78-Diagrams/examples/02-broken-diagrams-and-their-fixes.md#2--unquoted-parentheses-or-brackets-in-mindmap-text) |
+| 22 | 2 — Unquoted parentheses or brackets in mindmap text | mindmap | 1 | 0 |  | [examples/02-broken-diagrams-and-their-fixes.md:102](../../78-Diagrams/examples/02-broken-diagrams-and-their-fixes.md#2--unquoted-parentheses-or-brackets-in-mindmap-text) |
+| 23 | 3 — A backslash-escaped quote inside a quoted label | flowchart | 3 | 0 |  | [examples/02-broken-diagrams-and-their-fixes.md:129](../../78-Diagrams/examples/02-broken-diagrams-and-their-fixes.md#3--a-backslash-escaped-quote-inside-a-quoted-label) |
+| 24 | 3 — A backslash-escaped quote inside a quoted label | flowchart | 2 | 0 |  | [examples/02-broken-diagrams-and-their-fixes.md:136](../../78-Diagrams/examples/02-broken-diagrams-and-their-fixes.md#3--a-backslash-escaped-quote-inside-a-quoted-label) |
+| 25 | 4 — `style` inside a `sequenceDiagram` | sequence | 2 | 0 |  | [examples/02-broken-diagrams-and-their-fixes.md:166](../../78-Diagrams/examples/02-broken-diagrams-and-their-fixes.md#4--style-inside-a-sequencediagram) |
+| 26 | 4 — `style` inside a `sequenceDiagram` | sequence | 2 | 0 |  | [examples/02-broken-diagrams-and-their-fixes.md:178](../../78-Diagrams/examples/02-broken-diagrams-and-their-fixes.md#4--style-inside-a-sequencediagram) |
+| 27 | 5 — A participant id that collides with a keyword | sequence | 2 | 0 |  | [examples/02-broken-diagrams-and-their-fixes.md:221](../../78-Diagrams/examples/02-broken-diagrams-and-their-fixes.md#5--a-participant-id-that-collides-with-a-keyword) |
+| 28 | 6 — Unquoted parentheses in flowchart node text | flowchart | 3 | 0 |  | [examples/02-broken-diagrams-and-their-fixes.md:255](../../78-Diagrams/examples/02-broken-diagrams-and-their-fixes.md#6--unquoted-parentheses-in-flowchart-node-text) |
+| 29 | 7 — A mindmap leaf whose text starts with a diagram-type keyword | mindmap | 1 | 0 |  | [examples/02-broken-diagrams-and-their-fixes.md:284](../../78-Diagrams/examples/02-broken-diagrams-and-their-fixes.md#7--a-mindmap-leaf-whose-text-starts-with-a-diagram-type-keyword) |
+| 30 | 7 — A mindmap leaf whose text starts with a diagram-type keyword | mindmap | 3 | 0 |  | [examples/02-broken-diagrams-and-their-fixes.md:294](../../78-Diagrams/examples/02-broken-diagrams-and-their-fixes.md#7--a-mindmap-leaf-whose-text-starts-with-a-diagram-type-keyword) |
 | 31 | Part 5 — Draw it | flowchart | 15 | 4 | yes | [labs/lab-01-boundaries-from-evidence.md:287](../../78-Diagrams/labs/lab-01-boundaries-from-evidence.md#part-5--draw-it) |
 | 32 | Part 5 — Redraw the diagram with the omission in it | flowchart | 10 | 0 | yes | [labs/lab-02-what-the-diagram-omits.md:282](../../78-Diagrams/labs/lab-02-what-the-diagram-omits.md#part-5--redraw-the-diagram-with-the-omission-in-it) |
 | 33 | Part 1 — Draw the intended flow, before measuring | sequence | 4 | 0 |  | [labs/lab-03-intended-versus-actual.md:80](../../78-Diagrams/labs/lab-03-intended-versus-actual.md#part-1--draw-the-intended-flow-before-measuring) |
@@ -1241,11 +1242,22 @@ STYLE-GUIDE.md section 6.
 
 | # | Depicts | Type | Nodes | Boundaries | Atk | Location |
 |---:|---|---|---:|---:|:---:|---|
-| 1 | Mind map | mindmap | 1 | 0 |  | [README.md:845](../../79-Glossary/README.md#mind-map) |
+| 1 | Mind map | mindmap | 1 | 0 |  | [README.md:1027](../../79-Glossary/README.md#mind-map) |
 
 ## 80-Appendix (1)
 
 | # | Depicts | Type | Nodes | Boundaries | Atk | Location |
 |---:|---|---|---:|---:|:---:|---|
 | 1 | Mind map | mindmap | 1 | 0 |  | [README.md:630](../../80-Appendix/README.md#mind-map) |
+
+## 81-Android-Runtime-Internals (6)
+
+| # | Depicts | Type | Nodes | Boundaries | Atk | Location |
+|---:|---|---|---:|---:|:---:|---|
+| 1 | 01-boot-to-app.mmd | flowchart | 19 | 4 | yes | [diagrams/01-boot-to-app.mmd:1](../../81-Android-Runtime-Internals/diagrams/01-boot-to-app.mmd) |
+| 2 | 02-art-dispatch.mmd | flowchart | 12 | 3 | yes | [diagrams/02-art-dispatch.mmd:1](../../81-Android-Runtime-Internals/diagrams/02-art-dispatch.mmd) |
+| 3 | 03-injection-stack.mmd | flowchart | 15 | 5 | yes | [diagrams/03-injection-stack.mmd:1](../../81-Android-Runtime-Internals/diagrams/03-injection-stack.mmd) |
+| 4 | 04-hooked-call-sequence.mmd | sequence | 7 | 0 |  | [diagrams/04-hooked-call-sequence.mmd:1](../../81-Android-Runtime-Internals/diagrams/04-hooked-call-sequence.mmd) |
+| 5 | 05-chapter-mindmap.mmd | mindmap | 1 | 0 |  | [diagrams/05-chapter-mindmap.mmd:1](../../81-Android-Runtime-Internals/diagrams/05-chapter-mindmap.mmd) |
+| 6 | 06-standalone-mindmap.mmd | mindmap | 1 | 0 |  | [diagrams/06-standalone-mindmap.mmd:1](../../81-Android-Runtime-Internals/diagrams/06-standalone-mindmap.mmd) |
 

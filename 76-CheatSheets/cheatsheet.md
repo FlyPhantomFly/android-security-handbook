@@ -329,13 +329,13 @@ python3 -B scripts/build-cheatsheet-index.py --check          # exit 1 if a chap
 python3 -B scripts/build-cheatsheet-index.py --verify-links   # must print 0 broken
 ```
 
-| Measured 2026-08-16 | |
+| Measured 2026-11-24 | |
 |---|---:|
-| Sheets | 78 |
-| Lines across sheets | 29,189 |
-| H2 sections | 1,198 |
-| Fenced blocks | 747 |
-| Links emitted | 1,628 |
+| Sheets | 80 |
+| Lines across sheets | 29,663 |
+| H2 sections | 1,224 |
+| Fenced blocks | 761 |
+| Links resolved | 1,660 |
 | Broken | **0** |
 
 ---

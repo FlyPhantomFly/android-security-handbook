@@ -205,33 +205,20 @@ possible.
 
 ## 2. High-Level Architecture
 
+> **Why these figures are SVG**
+> GitHub renders Mermaid in a cross-origin iframe that can time out on a slow connection, leaving a
+> blank frame or "Unable to render rich display". These five figures are therefore committed as SVG,
+> which renders without JavaScript, and the Mermaid source stays in
+> [`diagrams/`](diagrams/README.md) for editing. The SVG follows the page's light or dark color
+> scheme.
+
 ### 2.1 From boot to an app process
 
-```mermaid
-flowchart TD
-    subgraph Boot["Boot — kernel and init"]
-        K["Linux kernel"] --> I["init"]
-        I --> Z["zygote service<br/>/system/bin/app_process"]
-    end
-    subgraph Zygote["Zygote process — privileged template"]
-        Z --> R["AndroidRuntime::start"]
-        R --> P["ZygoteInit.main<br/>preload classes and resources"]
-        P --> S["ZygoteServer<br/>accepts requests on socket"]
-    end
-    subgraph Child["Child process — after fork"]
-        S -- "fork()" --> C["copy-on-write child"]
-        C --> SP["specialize: UID, GID, caps,<br/>SELinux, seccomp, mount namespace"]
-        SP --> A["ActivityThread.main"]
-        A --> L["class loader and app code"]
-        L --> X["ART dispatch"]
-    end
-    subgraph System["system_server"]
-        S -- "forkSystemServer()" --> SS["system_server"]
-        SS --> SVC["services registered with Binder"]
-    end
-    style C fill:#f9d0d0
-    style A fill:#f9d0d0
-```
+<p align="center">
+  <img src="images/01-boot-to-app.svg" alt="From boot to an app process: init starts app_process, the zygote preloads the framework, fork() creates a copy-on-write child, specialization changes its identity, and system_server is forked separately." width="456">
+</p>
+
+*Figure 1 — From boot to an app process. [Open the full-size SVG](images/01-boot-to-app.svg) · [Mermaid source](diagrams/01-boot-to-app.mmd).*
 
 Read the diagram from the top. `init` starts `app_process` with `--zygote`; that process becomes the
 zygote. It initialises ART, preloads the framework classes and resources the platform expects every
@@ -252,30 +239,11 @@ and the app process after specialization is where every client-side security dec
 
 ### 2.2 From a Java call to machine code
 
-```mermaid
-flowchart LR
-    subgraph Java["Java source"]
-        J["call site<br/>obj.method()"]
-    end
-    subgraph Dispatch["ART dispatch"]
-        D["resolve method<br/>ArtMethod*"]
-        E{"entry_point_from_<br/>quick_compiled_code_"}
-    end
-    subgraph Targets["Possible destinations"]
-        AOT["AOT compiled code<br/>OAT"]
-        JIT["JIT compiled code<br/>code cache"]
-        NTERP["nterp interpreter"]
-        JNI["JNI trampoline"]
-        RES["resolution / clinit stub"]
-    end
-    J --> D --> E
-    E --> AOT
-    E --> JIT
-    E --> NTERP
-    E --> JNI
-    E --> RES
-    style J fill:#f9d0d0
-```
+<p align="center">
+  <img src="images/02-art-dispatch.svg" alt="From a Java call to machine code: the call site resolves an ArtMethod, whose quick entrypoint can point at AOT code, JIT code, the nterp interpreter, a JNI trampoline, or a resolution stub." width="1022">
+</p>
+
+*Figure 2 — From a Java call to machine code. [Open the full-size SVG](images/02-art-dispatch.svg) · [Mermaid source](diagrams/02-art-dispatch.mmd).*
 
 This is the diagram to keep in mind when a hook "does not work". The call site does not necessarily
 look up a name at run time. After resolution, a compiled caller may hold a direct pointer to the
@@ -289,36 +257,11 @@ the same moment. "Compiled" is a per-method state, not a property of the app.
 
 ### 2.3 The injection stack, layer by layer
 
-```mermaid
-flowchart TD
-    subgraph Root["Root / kernel privilege"]
-        M["Magisk, KernelSU or APatch"]
-    end
-    subgraph Loader["Zygote injection layer"]
-        ZN["ZygiskNext<br/>ptrace loader + zygiskd"]
-        ZI["Zygisk API v5<br/>onLoad, pre/post specialize"]
-    end
-    subgraph Framework["Java framework layer"]
-        V["Vector<br/>scope, module dispatch, libxposed"]
-        MGR["Vector manager<br/>configuration UI"]
-    end
-    subgraph Hook["ART hook layer"]
-        L["LSPlant<br/>hook, unhook, deoptimize"]
-        D["Dobby<br/>inline hook primitives"]
-    end
-    subgraph Target["Target process"]
-        AM["ArtMethod entrypoint"]
-        CL["InMemoryDexClassLoader"]
-        APP["app code"]
-    end
-    M --> ZN --> ZI --> V
-    V --> L --> D
-    L --> AM
-    V --> CL --> APP
-    MGR -. "Binder / config" .-> V
-    style APP fill:#f9d0d0
-    style AM fill:#f9d0d0
-```
+<p align="center">
+  <img src="images/03-injection-stack.svg" alt="The injection stack: root privilege, the ZygiskNext loader and Zygisk API, the Vector framework, the LSPlant and Dobby hook layers, and the target process." width="462">
+</p>
+
+*Figure 3 — The injection stack, layer by layer. [Open the full-size SVG](images/03-injection-stack.svg) · [Mermaid source](diagrams/03-injection-stack.mmd).*
 
 Each box is a different trust boundary. Root decides whether the loader can run at all. The loader
 decides whether module code reaches the child. The framework decides which modules are in scope for
@@ -332,32 +275,11 @@ target method resolve? Was the caller inlined?
 
 ### 2.4 One hooked call, as a sequence
 
-```mermaid
-sequenceDiagram
-    autonumber
-    participant Init as init
-    participant Zyg as zygote
-    participant Loader as ZygiskNext loader
-    participant App as app process
-    participant Vector as Vector framework
-    participant LS as LSPlant
-    participant ART as ART
-    Init->>Zyg: exec app_process --zygote
-    Zyg->>Zyg: AndroidRuntime::start + preload
-    Note over Zyg: module code is loaded after fork,<br/>not into the long-lived zygote
-    Zyg->>Loader: fork + ptrace stop (implementation-specific)
-    Loader->>App: inject libzgn / module libraries
-    App->>App: specialize (UID, SELinux, seccomp, mounts)
-    App->>Vector: postAppSpecialize
-    Vector->>Vector: daemon says "in scope"
-    Vector->>App: InMemoryDexClassLoader(framework DEX)
-    Vector->>LS: Init + Hook(target, callback)
-    LS->>ART: replace entrypoint, keep backup
-    App->>ART: call target method
-    ART-->>LS: trampoline
-    LS-->>Vector: callback(args)
-    Vector-->>App: result (or call backup)
-```
+<p align="center">
+  <img src="images/04-hooked-call-sequence.svg" alt="One hooked call as a sequence: init starts zygote, ZygiskNext injects into the child, Vector loads its framework, LSPlant replaces the target entrypoint, and the callback runs." width="1470">
+</p>
+
+*Figure 4 — One hooked call, as a sequence. [Open the full-size SVG](images/04-hooked-call-sequence.svg) · [Mermaid source](diagrams/04-hooked-call-sequence.mmd).*
 
 The sequence shows why "inject at boot" is the wrong mental model for Zygisk modules. The module
 library is loaded into the *child* after the fork, because the child is the process that will become
@@ -1869,101 +1791,14 @@ and offers a static fallback rather than pretending the step succeeded.
 
 ### 13.2 Mind map
 
-```mermaid
-mindmap
-  root((Android Runtime<br/>Internals))
-    Process creation
-      init starts app_process
-      ZygoteInit preloads
-      fork shares COW pages
-      specialization
-        UID and GID
-        capabilities
-        SELinux context
-        seccomp
-        mount namespace
-      system_server path
-      USAP
-    ART execution
-      boot image
-      class linker
-      interpreter
-        switch
-        nterp
-      JIT
-        hotness
-        code cache
-        OSR
-      AOT
-        dex2oat
-        OAT and VDEX
-        profiles
-      deoptimization
-    ArtMethod
-      declaring class
-      access flags
-      dex index
-      dispatch index
-      data_
-      quick entrypoint
-      version matrix
-    Dispatch
-      direct
-      virtual
-      interface and IMT
-      JNI
-      inlining
-      devirtualization
-    Code visibility
-      boot class path
-      PathClassLoader
-      DexClassLoader
-      InMemoryDexClassLoader
-      parent delegation
-      defining loader
-    Hidden API
-      caller domain
-      member flags
-      target SDK
-      trusted DEX
-    Zygisk
-      API v5
-      onLoad
-      pre and post specialize
-      companion
-      flags
-      DenyList
-    ZygiskNext
-      standalone
-      KernelSU and APatch
-      ptrace loader
-      libzgn
-      zygiskd
-      closed source boundary
-    Vector
-      renamed from LSPosed
-      Zygisk module
-      daemon and manager
-      scope
-      system_server
-      in-memory framework DEX
-      dex2oat wrapper
-      libxposed API 102
-    LSPlant
-      InitInfo
-      Hook and backup
-      trampoline
-      flags
-      Deoptimize
-      JIT integration
-    Detection
-      maps
-      TracerPid
-      class loaders
-      entrypoints
-      mount namespace
-      build-matched baseline
-```
+<p align="center">
+  <img src="images/05-chapter-mindmap.svg" alt="A mind map of the chapter: process creation, ART execution, ArtMethod, dispatch, code visibility, hidden API, Zygisk, ZygiskNext, Vector, LSPlant, and the evidence path." width="1673">
+</p>
+
+*Figure 5 — The chapter as a mind map. [Open the full-size SVG](images/05-chapter-mindmap.svg) · [Mermaid source](diagrams/05-chapter-mindmap.mmd).*
+
+Read it outward from the centre: process creation, then ART execution and `ArtMethod`, then the
+injection stack, then the evidence path. Each branch names the section it summarises.
 
 ### 13.3 Cheat sheet
 

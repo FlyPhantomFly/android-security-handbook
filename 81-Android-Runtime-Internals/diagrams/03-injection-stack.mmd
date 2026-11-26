@@ -1,0 +1,28 @@
+flowchart TD
+    subgraph Root["Root / kernel privilege"]
+        M["Magisk, KernelSU or APatch"]
+    end
+    subgraph Loader["Zygote injection layer"]
+        ZN["ZygiskNext<br/>ptrace loader + zygiskd"]
+        ZI["Zygisk API v5<br/>onLoad, pre/post specialize"]
+    end
+    subgraph Framework["Java framework layer"]
+        V["Vector<br/>scope, module dispatch, libxposed"]
+        MGR["Vector manager<br/>configuration UI"]
+    end
+    subgraph Hook["ART hook layer"]
+        L["LSPlant<br/>hook, unhook, deoptimize"]
+        D["Dobby<br/>inline hook primitives"]
+    end
+    subgraph Target["Target process"]
+        AM["ArtMethod entrypoint"]
+        CL["InMemoryDexClassLoader"]
+        APP["app code"]
+    end
+    M --> ZN --> ZI --> V
+    V --> L --> D
+    L --> AM
+    V --> CL --> APP
+    MGR -. "Binder / config" .-> V
+    style APP fill:#f9d0d0
+    style AM fill:#f9d0d0

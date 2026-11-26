@@ -14,8 +14,8 @@ diagram, this chapter holds a second, contradictory version of the same claim, a
 reader which one is current.
 
 It is also **separated from its prose**. STYLE-GUIDE.md section 2 requires that every diagram is
-followed by prose explaining what the reader is looking at. Copy 775 diagrams without their prose and
-you have broken that rule 775 times. Copy both and you have copied the repository.
+followed by prose explaining what the reader is looking at. Copy 787 diagrams without their prose and
+you have broken that rule 787 times. Copy both and you have copied the repository.
 
 An index cannot go stale in that way, because it is regenerated rather than transcribed. Re-run
 `python3 -B scripts/diagram-census.py` and it is correct again.
@@ -36,16 +36,19 @@ maintained.
 
 ### 3. I opened a chapter and one diagram is a red error box. Is my browser broken?
 
-No. That diagram does not parse. **59 of the 812 blocks in this repository have that defect**, in 44
-files across 40 chapters, and every one of them is listed by:
+Not necessarily. A red box means the renderer could not draw the diagram. Every one of the
+repository's 824 sources currently parses, so the cause is usually a local edit, a stale cache, or
+GitHub's Mermaid iframe timing out before it draws. The validator separates the first two from the
+third:
 
 ```bash
 # host, from 78-Diagrams/
 node scripts/validate-mermaid.mjs --modules /tmp/mmv
 ```
 
-The commonest single cause, 35 of the 59, is a **semicolon in message text**. Mermaid treats `;` as a
-statement separator, so everything after it is parsed as a new statement and the diagram collapses.
+The 2026-08-16 snapshot did have 59 failures in 812 blocks, across 44 files and 40 chapters. The
+commonest single cause then, 35 of the 59, was a **semicolon in message text**. Mermaid treats `;` as
+a statement separator, so everything after it is parsed as a new statement and the diagram collapses.
 `K-->>SH: SIGCHLD; wait4() returns status` is broken; `K-->>SH: SIGCHLD, then wait4() returns status`
 is fine.
 
@@ -62,7 +65,7 @@ failures — a reserved word used as an identifier, a statement separator inside
 real grammar finds those.
 
 If you cannot install anything, [mermaid.live](https://mermaid.live/) parses a pasted block in a
-browser. That works for one diagram and does not scale to 812.
+browser. That works for one diagram and does not scale to 824.
 
 ---
 
@@ -147,7 +150,7 @@ Similarly `&lt;` and `&gt;` for angle brackets, `<br/>` for a line break, and `#
 
 ### 11. Why are half the diagrams here flowcharts?
 
-402 of 775, which is 51.9%. Flowchart is the general-purpose family and the first one everybody
+422 of 824, which is 51.2%. Flowchart is the general-purpose family and the first one everybody
 learns, so it gets reached for by default.
 
 That is not automatically wrong, but it has a specific failure mode: **flowcharts hide ordering**. If

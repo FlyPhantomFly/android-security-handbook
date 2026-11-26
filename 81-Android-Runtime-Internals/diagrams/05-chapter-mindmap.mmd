@@ -1,0 +1,93 @@
+mindmap
+  root((Android Runtime<br/>Internals))
+    Process creation
+      init starts app_process
+      ZygoteInit preloads
+      fork shares COW pages
+      specialization
+        UID and GID
+        capabilities
+        SELinux context
+        seccomp
+        mount namespace
+      system_server path
+      USAP
+    ART execution
+      boot image
+      class linker
+      interpreter
+        switch
+        nterp
+      JIT
+        hotness
+        code cache
+        OSR
+      AOT
+        dex2oat
+        OAT and VDEX
+        profiles
+      deoptimization
+    ArtMethod
+      declaring class
+      access flags
+      dex index
+      dispatch index
+      data_
+      quick entrypoint
+      version matrix
+    Dispatch
+      direct
+      virtual
+      interface and IMT
+      JNI
+      inlining
+      devirtualization
+    Code visibility
+      boot class path
+      PathClassLoader
+      DexClassLoader
+      InMemoryDexClassLoader
+      parent delegation
+      defining loader
+    Hidden API
+      caller domain
+      member flags
+      target SDK
+      trusted DEX
+    Zygisk
+      API v5
+      onLoad
+      pre and post specialize
+      companion
+      flags
+      DenyList
+    ZygiskNext
+      standalone
+      KernelSU and APatch
+      ptrace loader
+      libzgn
+      zygiskd
+      closed source boundary
+    Vector
+      renamed from LSPosed
+      Zygisk module
+      daemon and manager
+      scope
+      system_server
+      in-memory framework DEX
+      dex2oat wrapper
+      libxposed API 102
+    LSPlant
+      InitInfo
+      Hook and backup
+      trampoline
+      flags
+      Deoptimize
+      JIT integration
+    Detection
+      maps
+      TracerPid
+      class loaders
+      entrypoints
+      mount namespace
+      build-matched baseline

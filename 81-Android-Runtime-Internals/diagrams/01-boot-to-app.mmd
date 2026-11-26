@@ -1,0 +1,23 @@
+flowchart TD
+    subgraph Boot["Boot — kernel and init"]
+        K["Linux kernel"] --> I["init"]
+        I --> Z["zygote service<br/>/system/bin/app_process"]
+    end
+    subgraph Zygote["Zygote process — privileged template"]
+        Z --> R["AndroidRuntime::start"]
+        R --> P["ZygoteInit.main<br/>preload classes and resources"]
+        P --> S["ZygoteServer<br/>accepts requests on socket"]
+    end
+    subgraph Child["Child process — after fork"]
+        S -- "fork()" --> C["copy-on-write child"]
+        C --> SP["specialize: UID, GID, caps,<br/>SELinux, seccomp, mount namespace"]
+        SP --> A["ActivityThread.main"]
+        A --> L["class loader and app code"]
+        L --> X["ART dispatch"]
+    end
+    subgraph System["system_server"]
+        S -- "forkSystemServer()" --> SS["system_server"]
+        SS --> SVC["services registered with Binder"]
+    end
+    style C fill:#f9d0d0
+    style A fill:#f9d0d0

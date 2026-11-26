@@ -433,8 +433,8 @@ python3 -B scripts/mock-round.py --bank /tmp/bank.json \
 Stated explicitly, because a lab that overclaims is worse than one that does less.
 
 - **It does not measure knowledge.** A candidate who knows nothing can score 12/12 by having
-  excellent shape around an empty answer. The rubric grades delivery; the other 80 chapters
-  grade content.
+  excellent shape around an empty answer. The rubric grades delivery; the other chapters grade
+  content.
 - **It does not simulate an interviewer.** There are no follow-ups, no interruptions, and no
   reaction to what you say. Real rounds are adversarial in a way a script cannot be — that is
   [Lab 03](lab-03-live-triage-and-honest-uncertainty.md) and

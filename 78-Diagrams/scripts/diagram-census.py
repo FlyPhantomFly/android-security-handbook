@@ -11,8 +11,9 @@
 #
 #   The right fix is an index that is regenerated, never transcribed. This script
 #   walks every .md file under the repository root, extracts every fenced
-#   ```mermaid block, classifies it by diagram type, records the heading it lives
-#   under, measures its size, and emits:
+#   ```mermaid block and every standalone .mmd source file, classifies it by
+#   diagram type, records the heading (or file name) it lives under, measures its
+#   size, and emits:
 #
 #       references/diagram-index.md          every diagram, grouped by chapter
 #       references/diagram-index-by-type.md  the same set, grouped by diagram type
@@ -362,17 +363,50 @@ def extract_blocks(path, rel_path):
     return blocks
 
 
+def extract_mmd(path, rel_path):
+    """Return one block for a standalone .mmd source file.
+
+    Chapter 81 keeps its Mermaid sources as .mmd files because GitHub's Mermaid
+    iframe times out on slow connections; the rendered page uses committed SVG.
+    The diagram still exists, so the census counts it and the index links to the
+    source file rather than to a fence in a Markdown page.
+    """
+    text = read_utf8(path).replace("\r\n", "\n").replace("\r", "\n")
+    body = text.split("\n")
+    dtype, title = classify(body)
+    if title is None:
+        title = find_inline_title(body, dtype)
+    return {
+        "file": rel_path,
+        "line": 1,
+        "type": dtype,
+        "type_human": TYPE_HUMAN.get(dtype, dtype or "UNRECOGNISED"),
+        "title": title,
+        "heading": os.path.basename(rel_path),
+        "heading_trail": [os.path.basename(rel_path)],
+        "anchor": "",
+        "source": text,
+        **measure(body, dtype),
+    }
+
+
 def collect(root):
-    """Walk the repository and return (blocks, chapters)."""
+    """Walk the repository and return every Mermaid block and .mmd source."""
     blocks = []
     for dirpath, dirnames, filenames in os.walk(root):
         dirnames[:] = [d for d in sorted(dirnames)
                        if d not in (".git", "node_modules", "__pycache__")]
         for fn in sorted(filenames):
-            if not fn.lower().endswith(".md"):
-                continue
             full = os.path.join(dirpath, fn)
             rel = os.path.relpath(full, root).replace(os.sep, "/")
+            if fn.lower().endswith(".mmd"):
+                try:
+                    blocks.append(extract_mmd(full, rel))
+                except UnicodeDecodeError as exc:
+                    sys.stderr.write("error: %s is not valid UTF-8 (%s)\n" % (rel, exc))
+                continue
+            if not fn.lower().endswith(".md"):
+                continue
             try:
                 blocks.extend(extract_blocks(full, rel))
             except UnicodeDecodeError as exc:
@@ -398,7 +432,8 @@ LINK_PREFIX = "../../"
 
 HEADER = """<!-- GENERATED FILE. Do not edit by hand.
      Rebuild with:  python3 -B scripts/diagram-census.py
-     Source: every fenced ```mermaid block in every .md file in this repository. -->
+     Source: every fenced ```mermaid block in every .md file in this repository,
+     plus every standalone .mmd source file. -->
 
 # %s
 
@@ -571,6 +606,8 @@ def do_stats(blocks, root):
                          len([b for b in blocks
                               if not (b["file"].endswith("/README.md")
                                       and b["file"].count("/") == 1)])))
+    print("%-34s %6d" % ("  of which .mmd sources",
+                         len([b for b in blocks if b["file"].endswith(".mmd")])))
     # Chapter 78 indexes the other 80 chapters and also authors diagrams of its
     # own. Reporting the two separately is the difference between "the repository
     # has N diagrams" and a number that quietly counts this chapter's own work.
@@ -592,14 +629,31 @@ def do_stats(blocks, root):
     return 0
 
 
-def do_poor(blocks, root):
-    per = {}
+def chapter_diagram_counts(blocks):
+    """Count fenced README diagrams and standalone .mmd sources per chapter.
+
+    A .mmd source is a full substitute for a fence: chapter 81 moved its
+    diagrams out of the rendered Markdown so GitHub would stop timing out on
+    the Mermaid iframe, and the source still lives in the repository.
+    """
+    fenced = {}
+    sources = {}
     for b in blocks:
         if b["file"].count("/") == 1 and b["file"].endswith("/README.md"):
-            per[b["chapter"]] = per.get(b["chapter"], 0) + 1
+            fenced[b["chapter"]] = fenced.get(b["chapter"], 0) + 1
+        elif b["file"].endswith(".mmd"):
+            sources[b["chapter"]] = sources.get(b["chapter"], 0) + 1
+    return fenced, sources
+
+
+def do_poor(blocks, root):
+    fenced, sources = chapter_diagram_counts(blocks)
     rows = []
     for ch in readme_chapters(root):
-        rows.append((per.get(ch, 0), ch))
+        n = fenced.get(ch, 0)
+        if n < MIN_DIAGRAMS_PER_CHAPTER:
+            n += sources.get(ch, 0)
+        rows.append((n, ch))
     rows.sort()
     print("%-6s %s" % ("count", "chapter README (ascending) — reference chapters marked *"))
     for n, ch in rows:
@@ -609,15 +663,14 @@ def do_poor(blocks, root):
 
 
 def do_check(blocks, root):
-    per = {}
-    for b in blocks:
-        if b["file"].count("/") == 1 and b["file"].endswith("/README.md"):
-            per[b["chapter"]] = per.get(b["chapter"], 0) + 1
+    fenced, sources = chapter_diagram_counts(blocks)
     problems = []
     for ch in readme_chapters(root):
         if ch in REFERENCE_CHAPTERS:
             continue
-        n = per.get(ch, 0)
+        n = fenced.get(ch, 0)
+        if n < MIN_DIAGRAMS_PER_CHAPTER:
+            n += sources.get(ch, 0)
         if n < MIN_DIAGRAMS_PER_CHAPTER:
             problems.append("%s: %d diagram(s), STYLE-GUIDE section 2 wants >= %d"
                             % (ch, n, MIN_DIAGRAMS_PER_CHAPTER))
