@@ -207,8 +207,8 @@ possible.
 
 > **Why these figures are SVG**
 > GitHub renders Mermaid in a cross-origin iframe that can time out on a slow connection, leaving a
-> blank frame or "Unable to render rich display". These five figures are therefore committed as SVG,
-> which renders without JavaScript, and the Mermaid source stays in
+> blank frame instead of the figure. These five figures are therefore committed as SVG, which
+> renders without JavaScript, and the Mermaid source stays in
 > [`diagrams/`](diagrams/README.md) for editing. The SVG follows the page's light or dark color
 > scheme.
 

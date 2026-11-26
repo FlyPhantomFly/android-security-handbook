@@ -3,8 +3,8 @@
 These six files are the editable Mermaid sources for the figures in
 [the chapter](../README.md) and its [standalone mind map](../mindmap.md). The chapter embeds rendered
 SVG from `../images/` rather than a live Mermaid fence, because GitHub's Mermaid iframe
-can time out on a slow connection and leave the reader with "Unable to render rich display". The SVG
-renders without JavaScript and follows the page's light or dark color scheme.
+can time out on a slow connection and leave the reader with a blank frame. The SVG renders without
+JavaScript and follows the page's light or dark color scheme.
 
 | Source | Figure | Where it appears |
 |---|---|---|
